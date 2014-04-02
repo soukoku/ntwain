@@ -63,7 +63,6 @@
     <Compile Include="Data\TypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="DataTransferredEventArgs.cs" />
     <Compile Include="MemoryManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
