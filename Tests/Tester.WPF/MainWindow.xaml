@@ -1,0 +1,28 @@
+﻿<Window x:Class="Tester.WPF.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:modern="http://modernwpf"
+		Title="TWAIN Tester" Height="600" Width="900" ResizeMode="CanResizeWithGrip"
+        Style="{StaticResource AppWindow}">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<StackPanel Orientation="Horizontal" Grid.ColumnSpan="2">
+			<Button Content="Test Acquire" Click="Button_Click_1"></Button>
+		</StackPanel>
+
+		<ListBox x:Name="CapList" Grid.Row="1" BorderThickness="0"></ListBox>
+
+		<modern:AnimatedScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Auto"
+				HorizontalScrollBarVisibility="Auto">
+			<Image x:Name="ImageDisplay" Stretch="Uniform" MaxWidth="1000"
+					RenderOptions.BitmapScalingMode="HighQuality"></Image>
+		</modern:AnimatedScrollViewer>
+	</Grid>
+</Window>

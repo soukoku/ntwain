@@ -1,0 +1,21 @@
+﻿<Application x:Class="Tester.WPF.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+	<Application.Resources>
+        <ResourceDictionary>
+            <!-- Dummy Style, anything you won't use goes -->
+            <Style TargetType="{x:Type Rectangle}" />
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/ModernWPF;component/Themes/ModernBase.xaml" />
+                <ResourceDictionary Source="/ModernWPF;component/Themes/ModernLight.xaml" />
+                <ResourceDictionary Source="/ModernWPF;component/Themes/ModernStyles.xaml" />
+                
+                <ResourceDictionary>
+                    <Style x:Key="AppWindow" TargetType="Window" BasedOn="{StaticResource ModernWindow}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Application.Resources>
+</Application>
