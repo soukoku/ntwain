@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Diagnostics;
 using System.Security.Permissions;
-using NTwain.Values.Cap;
 using System.IO;
 using System.ComponentModel;
 using System.Threading;
@@ -434,10 +433,10 @@ namespace NTwain
 
             do
             {
-                IList<ImageFileFormat> formats = Enumerable.Empty<ImageFileFormat>().ToList();
+                IList<FileFormat> formats = Enumerable.Empty<FileFormat>().ToList();
                 IList<Compression> compressions = Enumerable.Empty<Compression>().ToList();
                 bool canDoFileXfer = this.CapGetImageXferMech().Contains(XferMech.File);
-                var curFormat = this.GetCurrentCap<ImageFileFormat>(CapabilityId.ICapImageFileFormat);
+                var curFormat = this.GetCurrentCap<FileFormat>(CapabilityId.ICapImageFileFormat);
                 var curComp = this.GetCurrentCap<Compression>(CapabilityId.ICapCompression);
                 TWImageInfo imgInfo;
                 bool skip = false;
@@ -475,7 +474,7 @@ namespace NTwain
 
                 if (!args.CancelAll && !args.CancelCurrent)
                 {
-                    Values.Cap.XferMech mech = this.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech);
+                    Values.XferMech mech = this.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech);
 
                     if (args.CanDoFileXfer && !string.IsNullOrEmpty(args.OutputFile))
                     {
@@ -506,17 +505,17 @@ namespace NTwain
                         ReturnCode xrc = ReturnCode.Cancel;
                         switch (mech)
                         {
-                            case Values.Cap.XferMech.Native:
+                            case Values.XferMech.Native:
                                 xrc = DGImage.ImageNativeXfer.Get(ref dataPtr);
                                 break;
-                            case Values.Cap.XferMech.File:
+                            case Values.XferMech.File:
                                 xrc = DGImage.ImageFileXfer.Get();
                                 if (File.Exists(args.OutputFile))
                                 {
                                     file = args.OutputFile;
                                 }
                                 break;
-                            case Values.Cap.XferMech.MemFile:
+                            case Values.XferMech.MemFile:
                                 // not supported yet
                                 //TWImageMemXfer memxfer = new TWImageMemXfer();
                                 //xrc = DGImage.ImageMemXfer.Get(memxfer);
@@ -718,7 +717,7 @@ namespace NTwain
             TWEvent evt = new TWEvent();
             evt.pEvent = msgPtr;
             var rc = DGControl.Event.ProcessEvent(evt);
-            HandleSourceMsg(null, null, DataGroups.Control, DataArgumentType.None, evt.TWMessage, IntPtr.Zero);
+            HandleSourceMsg(null, null, DataGroups.Control, DataArgumentType.Null, evt.TWMessage, IntPtr.Zero);
             return rc == ReturnCode.DSEvent;
         }
 

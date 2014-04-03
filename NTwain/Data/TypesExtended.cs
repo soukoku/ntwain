@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NTwain.Values;
-using NTwain.Values.Cap;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using NTwain.Properties;
@@ -1804,7 +1803,7 @@ namespace NTwain.Data
                     Major = (short)version.Major,
                     Minor = (short)version.Minor,
                     Country = Country.Usa,
-                    Language = Language.EnglishUsa,
+                    Language = Language.EnglishUSA,
                     Info = productDescription ?? string.Empty,
                 }
             };
@@ -1882,12 +1881,12 @@ namespace NTwain.Data
         /// color is called Rgb, for R-G-B color. There is no
         /// default for this value.
         /// </summary>
-        public PixelType PixelType { get { return (Values.Cap.PixelType)_pixelType; } }
+        public PixelType PixelType { get { return (Values.PixelType)_pixelType; } }
         /// <summary>
         /// The compression method used to process the data being transferred.
         /// Default is no compression.
         /// </summary>
-        public Compression Compression { get { return (Values.Cap.Compression)_compression; } }
+        public Compression Compression { get { return (Values.Compression)_compression; } }
     }
 
     /// <summary>
@@ -2227,7 +2226,7 @@ namespace NTwain.Data
         /// <summary>
         /// The format of the file the Source is to fill. 
         /// </summary>
-        public ImageFileFormat Format { get { return (ImageFileFormat)_format; } set { _format = (ushort)value; } }
+        public FileFormat Format { get { return (FileFormat)_format; } set { _format = (ushort)value; } }
 
         ///// <summary>
         ///// The volume reference number for the file. This applies to Macintosh only. On

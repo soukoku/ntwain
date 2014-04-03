@@ -4,7 +4,6 @@ using System;
 using NTwain.Values;
 using System.Runtime.Serialization;
 using NTwain.Data;
-using NTwain.Values.Cap;
 using System.Collections.Generic;
 
 namespace NTwain.Tests
@@ -17,8 +16,8 @@ namespace NTwain.Tests
         {
             // just some non-default values to test
             TWPendingXfers pending = new TWPendingXfers();
-            List<ImageFileFormat> formats = new List<ImageFileFormat> { ImageFileFormat.Bmp, ImageFileFormat.Tiff };
-            ImageFileFormat curFormat = ImageFileFormat.Tiff;
+            List<FileFormat> formats = new List<FileFormat> { FileFormat.Bmp, FileFormat.Tiff };
+            FileFormat curFormat = FileFormat.Tiff;
             List<Compression> compressions = new List<Compression> { Compression.None, Compression.Group4 };
             Compression curCompress = Compression.None;
             bool fileXfer = true;

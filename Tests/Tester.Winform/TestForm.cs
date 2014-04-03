@@ -10,7 +10,6 @@ using System.IO;
 using System.Drawing.Imaging;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using NTwain.Values.Cap;
 using System.Collections.Generic;
 using System.Reflection;
 using CommonWin32;

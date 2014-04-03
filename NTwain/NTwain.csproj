@@ -119,11 +119,7 @@
     <Compile Include="Triplets\PInvoke.cs" />
     <Compile Include="TwainException.cs" />
     <Compile Include="TwainSession.cs" />
-    <Compile Include="Values\Cap\CapValues.cs" />
     <Compile Include="Values\DataValues.cs" />
-    <Compile Include="Values\Cap\ICapValues.cs" />
-    <Compile Include="Values\ExtendedImage.cs" />
-    <Compile Include="Values\QuerySupportMask.cs" />
     <Compile Include="Values\SourceEnableMode.cs" />
     <Compile Include="Values\TwainConst.cs" />
   </ItemGroup>

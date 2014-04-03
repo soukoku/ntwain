@@ -1,7 +1,6 @@
 ﻿using System;
 using NTwain.Data;
 using NTwain.Values;
-using NTwain.Values.Cap;
 using System.Collections.Generic;
 
 namespace NTwain
@@ -21,7 +20,7 @@ namespace NTwain
         /// <param name="currentCompression">The current compression.</param>
         /// <param name="canDoFileXfer">if set to <c>true</c> then allow file xfer properties.</param>
         /// <param name="imageInfo">The image info.</param>
-        internal TransferReadyEventArgs(TWPendingXfers pending, IList<ImageFileFormat> supportedFormats, ImageFileFormat currentFormat,
+        internal TransferReadyEventArgs(TWPendingXfers pending, IList<FileFormat> supportedFormats, FileFormat currentFormat,
             IList<Compression> supportedCompressions, Compression currentCompression, bool canDoFileXfer, TWImageInfo imageInfo)
         {
             PendingCount = pending.Count;
@@ -126,9 +125,9 @@ namespace NTwain
         /// <value>
         /// The supported formats.
         /// </value>
-        public IList<ImageFileFormat> SupportedFormats { get; private set; }
+        public IList<FileFormat> SupportedFormats { get; private set; }
 
-        private ImageFileFormat _imageFormat;
+        private FileFormat _imageFormat;
         /// <summary>
         /// Gets or sets the image format for image xfer.
         /// </summary>
@@ -136,7 +135,7 @@ namespace NTwain
         /// The image format.
         /// </value>
         /// <exception cref="System.NotSupportedException"></exception>
-        public ImageFileFormat ImageFormat
+        public FileFormat ImageFormat
         {
             get { return _imageFormat; }
             set

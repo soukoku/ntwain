@@ -1,6 +1,5 @@
 ﻿using NTwain.Data;
 using NTwain.Values;
-using NTwain.Values.Cap;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -288,14 +287,14 @@ namespace NTwain
         #region image format
 
         /// <summary>
-        /// Gets the supported <see cref="ImageFileFormat"/> for the current source.
+        /// Gets the supported <see cref="FileFormat"/> for the current source.
         /// Only call this at state 4 or higher.
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<ImageFileFormat> CapGetImageFileFormat(this TwainSession session)
+        public static IList<FileFormat> CapGetImageFileFormat(this TwainSession session)
         {
-            return session.GetCapabilityValues<ImageFileFormat>(CapabilityId.ICapImageFileFormat, true);
+            return session.GetCapabilityValues<FileFormat>(CapabilityId.ICapImageFileFormat, true);
         }
 
         /// <summary>
@@ -304,7 +303,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="format">The format.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetImageFormat(this TwainSession session, ImageFileFormat format)
+        public static ReturnCode CapSetImageFormat(this TwainSession session, FileFormat format)
         {
             using (TWCapability formatCap = new TWCapability(CapabilityId.ICapImageFileFormat, new TWOneValue { Item = (uint)format, ItemType = Values.ItemType.UInt16 }))
             {

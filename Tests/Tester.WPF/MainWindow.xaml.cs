@@ -16,7 +16,6 @@ using NTwain.Data;
 using NTwain.Values;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
-using NTwain.Values.Cap;
 using CommonWin32;
 
 namespace Tester.WPF
