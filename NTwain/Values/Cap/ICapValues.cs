@@ -306,16 +306,16 @@
         PdfA2 = 16
     }
 
-    /// <summary>
-    /// Audio file format values.
-    /// </summary>
-    public enum AudioFileFormat : ushort
-    {
-        Wav = 0,
-        Aiff = 1,
-        AU = 3,
-        Snd = 4,
-    }
+    ///// <summary>
+    ///// Audio file format values.
+    ///// </summary>
+    //public enum AudioFileFormat : ushort
+    //{
+    //    Wav = 0,
+    //    Aiff = 1,
+    //    AU = 3,
+    //    Snd = 4,
+    //}
 
     /// <summary>
     /// ICapImageFilter values.
@@ -360,7 +360,7 @@
         CieXYZ = 8,
         Lab = 9,
         SRGB = 10,
-        ScRGB = 11,
+        //ScRGB = 11,
         Infrared = 16
     }
 

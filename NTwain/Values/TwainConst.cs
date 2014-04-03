@@ -25,7 +25,8 @@
 		/// </summary>
 		public const int String255 = 256;
 
-		public const int String1024 = 1026;
+        // deprecated 
+        //public const int String1024 = 1026;
 
 		/// <summary>
 		/// Don't care value for 8 bit types.
@@ -47,7 +48,7 @@
 		/// <summary>
 		/// The minor version number of TWAIN supported by this library.
 		/// </summary>
-		public const short ProtocolMinor = 2;
+		public const short ProtocolMinor = 3;
 
 		/// <summary>
 		/// Value for false where applicable.

@@ -423,7 +423,7 @@ namespace NTwain.Values
 		CapFeedPage = 0x1009,
 		CapRewindPage = 0x100a,
 		CapIndicators = 0x100b,   /* Added 1.1 */
-		CapSupportedCapsExt = 0x100c,   /* Added 1.6 */
+        //CapSupportedCapsExt = 0x100c,   /* Added 1.6 */
 		CapPaperDetectable = 0x100d,   /* Added 1.6 */
 		CapUIControllable = 0x100e,   /* Added 1.6 */
 		CapDeviceOnline = 0x100f,   /* Added 1.6 */
@@ -705,8 +705,8 @@ namespace NTwain.Values
 		/// Means Item is a char string shorter than 255.
 		/// </summary>
 		String255 = 0xc,
-		String1024 = 0xd,
-		Unicode512 = 0xe,
+        //String1024 = 0xd,
+        //Unicode512 = 0xe,
 		/// <summary>
 		/// Means Item is a handle (pointer).
 		/// </summary>

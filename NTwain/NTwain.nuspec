@@ -11,7 +11,7 @@
     <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>This release is updated for TWAIN 2.3.</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>TWAIN</tags>
   </metadata>

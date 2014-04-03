@@ -26,7 +26,7 @@ namespace NTwain.Data
     /// Stores a fixed point number. This can be implicitly converted 
     /// to a float in dotnet.
     /// </summary>
-    partial struct TWFix32 : IEquatable<TWFix32>, IConvertible
+    public partial struct TWFix32 : IEquatable<TWFix32>, IConvertible
     {
         // the conversion logic is found in the spec.
 
@@ -48,7 +48,13 @@ namespace NTwain.Data
 
         }
 
+        /// <summary>
+        /// The Whole part of the floating point number. This number is signed.
+        /// </summary>
         public short Whole { get { return _whole; } set { _whole = value; } }
+        /// <summary>
+        /// The Fractional part of the floating point number. This number is unsigned.
+        /// </summary>
         public ushort Fraction { get { return _frac; } set { _frac = value; } }
 
         /// <summary>
@@ -236,7 +242,7 @@ namespace NTwain.Data
     /// Embedded in the <see cref="TWImageLayout"/> structure. 
     /// Defines a frame rectangle in ICapUnits coordinates.
     /// </summary>
-    partial struct TWFrame : IEquatable<TWFrame>
+    public partial struct TWFrame : IEquatable<TWFrame>
     {
         #region properties
 
@@ -341,7 +347,7 @@ namespace NTwain.Data
     /// described either as an extended form of the gamma function or as a table look-up with linear
     /// interpolation.
     /// </summary>
-    partial struct TWDecodeFunction : IEquatable<TWDecodeFunction>
+    public partial struct TWDecodeFunction : IEquatable<TWDecodeFunction>
     {
         #region properties
         /// <summary>
@@ -455,26 +461,25 @@ namespace NTwain.Data
         #endregion
     }
 
-    ///// <summary>
-    ///// Specifies the parametrics used for either the ABC or LMN transform stages.
-    ///// </summary>
-    //partial struct TWTransformStage
-    //{
-    //    /// <summary>
-    //    /// Channel-specific transform parameters.
-    //    /// </summary>
-    //    public TWDecodeFunction[] Decode { get { return _decode; } set { _decode = value; } }
-    //    // TODO: research jagged aray mapping. maybe use ptr?
-    //    /// <summary>
-    //    /// 3x3 matrix that specifies how channels are mixed in
-    //    /// </summary>
-    //    public TWFix32[][] Mix { get { return _mix; } set { _mix = value; } }
-    //}
+    /// <summary>
+    /// Specifies the parametrics used for either the ABC or LMN transform stages.
+    /// </summary>
+    public partial struct TWTransformStage
+    {
+        /// <summary>
+        /// Channel-specific transform parameters.
+        /// </summary>
+        public TWDecodeFunction[] Decode { get { return _decode; } set { _decode = value; } }
+        /// <summary>
+        /// 3x3 matrix that specifies how channels are mixed in
+        /// </summary>
+        public TWFix32[][] Mix { get { return _mix; } set { _mix = value; } }
+    }
 
     /// <summary>
     /// Container for a collection of values.
     /// </summary>
-    partial class TWArray
+    public partial class TWArray
     {
         /// <summary>
         /// The type of items in the array. All items in the array have the same size.
@@ -504,7 +509,7 @@ namespace NTwain.Data
     /// <summary>
     /// Used to get audio info.
     /// </summary>
-    partial class TWAudioInfo
+    public partial class TWAudioInfo
     {
         /// <summary>
         /// Name of audio data.
@@ -532,7 +537,7 @@ namespace NTwain.Data
     /// <summary>
     /// Used by an application either to get information about, or control the setting of a capability.
     /// </summary>
-    sealed partial class TWCapability : IDisposable
+    public sealed partial class TWCapability : IDisposable
     {
         #region ctors
 
@@ -817,10 +822,11 @@ namespace NTwain.Data
                     return TwainConst.String128;
                 case ItemType.String255:
                     return TwainConst.String255;
-                case ItemType.String1024:
-                    return TwainConst.String1024;
-                case ItemType.Unicode512:
-                    return TwainConst.String1024;
+                // deprecated 
+                //case ItemType.String1024:
+                //    return TwainConst.String1024;
+                //case ItemType.Unicode512:
+                //    return TwainConst.String1024;
             }
             return 0;
         }
@@ -868,9 +874,9 @@ namespace NTwain.Data
                     WriteValue(baseAddr, ref offset, ItemType.Fix32, frame.Right);
                     WriteValue(baseAddr, ref offset, ItemType.Fix32, frame.Bottom);
                     return; // no need to update offset for this
-                case ItemType.String1024:
-                    WriteString(baseAddr, offset, value as string, 1024);
-                    break;
+                //case ItemType.String1024:
+                //    WriteString(baseAddr, offset, value as string, 1024);
+                //    break;
                 case ItemType.String128:
                     WriteString(baseAddr, offset, value as string, 128);
                     break;
@@ -883,9 +889,9 @@ namespace NTwain.Data
                 case ItemType.String64:
                     WriteString(baseAddr, offset, value as string, 64);
                     break;
-                case ItemType.Unicode512:
-                    WriteUString(baseAddr, offset, value as string, 512);
-                    break;
+                //case ItemType.Unicode512:
+                //    WriteUString(baseAddr, offset, value as string, 512);
+                //    break;
             }
             offset += GetItemTypeSize(type);
         }
@@ -1001,9 +1007,9 @@ namespace NTwain.Data
                     frame.Right = (TWFix32)ReadValue(baseAddr, ref offset, ItemType.Fix32);
                     frame.Bottom = (TWFix32)ReadValue(baseAddr, ref offset, ItemType.Fix32);
                     return frame; // no need to update offset for this
-                case ItemType.String1024:
-                    val = ReadString(baseAddr, offset, 1024);
-                    break;
+                //case ItemType.String1024:
+                //    val = ReadString(baseAddr, offset, 1024);
+                //    break;
                 case ItemType.String128:
                     val = ReadString(baseAddr, offset, 128);
                     break;
@@ -1016,9 +1022,9 @@ namespace NTwain.Data
                 case ItemType.String64:
                     val = ReadString(baseAddr, offset, 64);
                     break;
-                case ItemType.Unicode512:
-                    val = ReadUString(baseAddr, offset, 512);
-                    break;
+                //case ItemType.Unicode512:
+                //    val = ReadUString(baseAddr, offset, 512);
+                //    break;
             }
             offset += GetItemTypeSize(type);
             return val;
@@ -1094,7 +1100,7 @@ namespace NTwain.Data
     /// Embedded in the <see cref="TWCieColor"/> structure;
     /// defines a CIE XYZ space tri-stimulus value.
     /// </summary>
-    partial struct TWCiePoint : IEquatable<TWCiePoint>
+    public partial struct TWCiePoint : IEquatable<TWCiePoint>
     {
         #region properties
         /// <summary>
@@ -1176,90 +1182,90 @@ namespace NTwain.Data
         #endregion
     }
 
-    ///// <summary>
-    ///// Defines the mapping from an RGB color space device into CIE 1931 (XYZ) color space.
-    ///// </summary>
-    //partial class TWCieColor
-    //{
-    //    /// <summary>
-    //    /// Defines the original color space that was transformed into CIE XYZ. 
-    //    /// This value is not set-able by the application. 
-    //    /// Application should write <see cref="TwainConst.DontCare16"/> into this on a set.
-    //    /// </summary>
-    //    TW_UINT16 ColorSpace;
-    //    /// <summary>
-    //    /// Used to indicate which data byte is taken first. If zero, then high byte is
-    //    /// first. If non-zero, then low byte is first.
-    //    /// </summary>
-    //    TW_INT16 LowEndian;
-    //    /// <summary>
-    //    /// If non-zero then color data is device-dependent and only ColorSpace is
-    //    /// valid in this structure.
-    //    /// </summary>
-    //    TW_INT16 DeviceDependent;
-    //    /// <summary>
-    //    /// Version of the color space descriptor specification used to define the
-    //    /// transform data. The current version is zero.
-    //    /// </summary>
-    //    TW_INT32 VersionNumber;
-    //    /// <summary>
-    //    /// Describes parametrics for the first stage transformation of the Postscript
-    //    /// Level 2 CIE color space transform process.
-    //    /// </summary>
-    //    TWTransformStage StageABC;
-    //    /// <summary>
-    //    /// Describes parametrics for the first stage transformation of the Postscript
-    //    /// Level 2 CIE color space transform process.
-    //    /// </summary>
-    //    TWTransformStage StageLMN;
-    //    /// <summary>
-    //    /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of the
-    //    /// diffused white point.
-    //    /// </summary>
-    //    TWCiePoint WhitePoint;
-    //    /// <summary>
-    //    /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of the
-    //    /// diffused black point.
-    //    /// </summary>
-    //    TWCiePoint BlackPoint;
-    //    /// <summary>
-    //    /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of inkless
-    //    /// "paper" from which the image was acquired.
-    //    /// </summary>
-    //    TWCiePoint WhitePaper;
-    //    /// <summary>
-    //    /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of solid
-    //    /// black ink on the "paper" from which the image was acquired.
-    //    /// </summary>
-    //    TWCiePoint WhiteInk;
-    //    /// <summary>
-    //    /// Optional table look-up values used by the decode function. Samples
-    //    /// are ordered sequentially and end-to-end as A, B, C, L, M, and N.
-    //    /// </summary>
-    //    TWFix32[] Samples;
-    //}
+    /// <summary>
+    /// Defines the mapping from an RGB color space device into CIE 1931 (XYZ) color space.
+    /// </summary>
+    public partial class TWCieColor
+    {
+        /// <summary>
+        /// Defines the original color space that was transformed into CIE XYZ. 
+        /// This value is not set-able by the application. 
+        /// Application should write <see cref="TwainConst.DontCare16"/> into this on a set.
+        /// </summary>
+        public ushort ColorSpace { get { return _colorSpace; } set { _colorSpace = value; } }
+        /// <summary>
+        /// Used to indicate which data byte is taken first. If zero, then high byte is
+        /// first. If non-zero, then low byte is first.
+        /// </summary>
+        public short LowEndian { get { return _lowEndian; } set { _lowEndian = value; } }
+        /// <summary>
+        /// If non-zero then color data is device-dependent and only ColorSpace is
+        /// valid in this structure.
+        /// </summary>
+        public short DeviceDependent { get { return _deviceDependent; } set { _deviceDependent = value; } }
+        /// <summary>
+        /// Version of the color space descriptor specification used to define the
+        /// transform data. The current version is zero.
+        /// </summary>
+        public int VersionNumber { get { return _versionNumber; } set { _versionNumber = value; } }
+        /// <summary>
+        /// Describes parametrics for the first stage transformation of the Postscript
+        /// Level 2 CIE color space transform process.
+        /// </summary>
+        public TWTransformStage StageABC { get { return _stageABC; } set { _stageABC = value; } }
+        /// <summary>
+        /// Describes parametrics for the first stage transformation of the Postscript
+        /// Level 2 CIE color space transform process.
+        /// </summary>
+        public TWTransformStage StageLMN { get { return _stageLMN; } set { _stageLMN = value; } }
+        /// <summary>
+        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of the
+        /// diffused white point.
+        /// </summary>
+        public TWCiePoint WhitePoint { get { return _whitePoint; } set { _whitePoint = value; } }
+        /// <summary>
+        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of the
+        /// diffused black point.
+        /// </summary>
+        public TWCiePoint BlackPoint { get { return _blackPoint; } set { _blackPoint = value; } }
+        /// <summary>
+        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of inkless
+        /// "paper" from which the image was acquired.
+        /// </summary>
+        public TWCiePoint WhitePaper { get { return _whitePaper; } set { _whitePaper = value; } }
+        /// <summary>
+        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of solid
+        /// black ink on the "paper" from which the image was acquired.
+        /// </summary>
+        public TWCiePoint WhiteInk { get { return _blackInk; } set { _blackInk = value; } }
+        /// <summary>
+        /// Optional table look-up values used by the decode function. Samples
+        /// are ordered sequentially and end-to-end as A, B, C, L, M, and N.
+        /// </summary>
+        public TWFix32[] Samples { get { return _samples; } set { _samples = value; } }
+    }
 
-    ///// <summary>
-    ///// Allows for a data source and application to pass custom data to each other.
-    ///// </summary>
-    //partial class TWCustomDSData
-    //{
-    //    /// <summary>
-    //    /// Length, in bytes, of data.
-    //    /// </summary>
-    //    TW_UINT32 InfoLength;
-    //    /// <summary>
-    //    /// Handle to memory containing InfoLength bytes of data.
-    //    /// </summary>
-    //    TW_HANDLE hData;
-    //}
+    /// <summary>
+    /// Allows for a data source and application to pass custom data to each other.
+    /// </summary>
+    public partial class TWCustomDSData
+    {
+        /// <summary>
+        /// Length, in bytes, of data.
+        /// </summary>
+        public uint InfoLength { get { return _infoLength; } set { _infoLength = value; } }
+        /// <summary>
+        /// Handle to memory containing InfoLength bytes of data.
+        /// </summary>
+        public IntPtr hData { get { return _hData; } set { _hData = value; } }
+    }
 
     /// <summary>
     /// Provides information about the Event that was raised by the Source. The Source should only fill
     /// in those fields applicable to the Event. The Application must only read those fields applicable to
     /// the Event.
     /// </summary>
-    partial class TWDeviceEvent
+    public partial class TWDeviceEvent
     {
         /// <summary>
         /// Defines event that has taken place.
@@ -1308,43 +1314,13 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// Provides entry points required by TWAIN 2.0 Applications and Sources.
-    /// </summary>
-    partial class TWEntryPoint
-    {
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
-        public TWEntryPoint()
-        {
-            _size = (uint)Marshal.SizeOf(this);
-        }
-
-        /// <summary>
-        /// The memory allocation function.
-        /// </summary>
-        public MemAllocateDelegate AllocateFunction { get { return _dSM_MemAllocate; } }
-        /// <summary>
-        /// The memory free function.
-        /// </summary>
-        public MemFreeDelegate FreeFunction { get { return _dSM_MemFree; } }
-        /// <summary>
-        /// The memory lock function.
-        /// </summary>
-        public MemLockDelegate LockFunction { get { return _dSM_MemLock; } }
-        /// <summary>
-        /// The memory unlock function.
-        /// </summary>
-        public MemUnlockDelegate UnlockFunction { get { return _dSM_MemUnlock; } }
-
-    }
-
-    /// <summary>
     /// Embedded in the <see cref="TWGrayResponse"/>, <see cref="TWPalette8"/>, and <see cref="TWRgbResponse"/> structures.
     /// This structure holds the tri-stimulus color palette information for <see cref="TWPalette8"/> structures.
     /// The order of the channels shall match their alphabetic representation. That is, for RGB data, R
     /// shall be channel 1. For CMY data, C shall be channel 1. This allows the application and Source
     /// to maintain consistency. Grayscale data will have the same values entered in all three channels.
     /// </summary>
-    partial struct TWElement8 : IEquatable<TWElement8>
+    public partial struct TWElement8 : IEquatable<TWElement8>
     {
         /// <summary>
         /// Value used to index into the color table.
@@ -1434,7 +1410,7 @@ namespace NTwain.Data
     /// would be useful to describe the discreet resolutions of a capture device supporting, say, 75, 150,
     /// 300, 400, and 800 dots per inch.
     /// </summary>
-    partial class TWEnumeration
+    public partial class TWEnumeration
     {
         /// <summary>
         /// The type of items in the enumerated list. All items in the array have the same size.
@@ -1471,7 +1447,7 @@ namespace NTwain.Data
         /// <summary>
         /// Gets the byte offset of the item list from a Ptr to the first item.
         /// </summary>
-        public int ItemOffset { get { return 14; } }
+        internal int ItemOffset { get { return 14; } }
     }
 
 
@@ -1480,7 +1456,7 @@ namespace NTwain.Data
     /// responsible for examining the event/message, deciding if it belongs to the Source, and
     /// returning an appropriate return code to indicate whether or not the Source owns the event/message.
     /// </summary>
-    partial class TWEvent
+    public partial class TWEvent
     {
         /// <summary>
         /// A pointer to the event/message to be examined by the Source.
@@ -1496,248 +1472,142 @@ namespace NTwain.Data
         public Message TWMessage { get { return (Message)_tWMessage; } }
     }
 
-    ///// <summary>
-    ///// This structure is used to pass specific information between the data source and the application.
-    ///// </summary>
-    //partial struct TWInfo
-    //{
-    //    /// <summary>
-    //    /// Tag identifying an information.
-    //    /// </summary>
-    //    TW_UINT16 InfoID;
-    //    /// <summary>
-    //    /// Item data type.
-    //    /// </summary>
-    //    public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
-    //    /// <summary>
-    //    /// Number of items for this field.
-    //    /// </summary>
-    //    TW_UINT16 NumItems;
-
-    //    /// <summary>
-    //    /// Depreciated, use ReturnCode. TWAIN 2.0 and older.
-    //    /// </summary>
-    //    TW_UINT16 CondCode;
-    //    ReturnCode ReturnCode;  /* TWAIN 2.1 and newer */
-
-    //    /// <summary>
-    //    /// The TW_Info.Item field contains either data or a handle to data. The field
-    //    /// contains data if the total amount of data is less than or equal to four bytes. The
-    //    /// field contains a handle of the total amount of data is more than four bytes.
-    //    /// The amount of data is determined by multiplying NumItems times
-    //    /// the byte size of the data type specified by ItemType.
-    //    /// If the Item field contains a handle to data, then the Application is
-    //    /// responsible for freeing that memory.
-    //    /// </summary>
-    //    TW_UINTPTR Item;
-    //}
-
-    ///// <summary>
-    ///// This structure is used to pass extended image information from the data source to application at
-    ///// the end of State 7. The application creates this structure at the end of State 7, when it receives
-    ///// XFERDONE. Application fills NumInfos for Number information it needs, and array of
-    ///// extended information attributes in Info[ ] array. Application, then, sends it down to the source
-    ///// using the above operation triplet. The data source then examines each Info, and fills the rest of
-    ///// data with information allocating memory when necessary.
-    ///// </summary>
-    //partial class TWExtImageInfo
-    //{
-    //    /// <summary>
-    //    /// Number of information that application is requesting. This is filled by the
-    //    /// application. If positive, then the application is requesting specific extended
-    //    /// image information. The application should allocate memory and fill in the
-    //    /// attribute tag for image information.
-    //    /// </summary>
-    //    TW_UINT32 NumInfos;
-    //    /// <summary>
-    //    /// Array of information.
-    //    /// </summary>
-    //    TWInfo[] Info;
-    //}
-
-    ///// <summary>
-    ///// Provides information about the currently selected device.
-    ///// </summary>
-    //partial class TWFileSystem
-    //{
-    //    /* DG_CONTROL / DAT_FILESYSTEM / MSG_xxxx fields     */
-    //    /// <summary>
-    //    /// The name of the input or source file.
-    //    /// </summary>
-    //    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
-    //    string InputName;
-    //    /// <summary>
-    //    /// The result of an operation or the name of a destination file.
-    //    /// </summary>
-    //    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
-    //    string OutputName;
-    //    /// <summary>
-    //    /// A pointer to Source specific data used to remember state
-    //    /// information, such as the current directory.
-    //    /// </summary>
-    //    TW_MEMREF Context;
-    //    /* DG_CONTROL / DAT_FILESYSTEM / MSG_DELETE field    */
-    //    //TODO: verify this field
-    //    /// <summary>
-    //    /// When set to TRUE recursively apply the operation. (ex: deletes
-    //    /// all subdirectories in the directory being deleted; or copies all
-    //    /// sub-directories in the directory being copied.
-    //    /// </summary>
-    //    short Recursive; /* recursively delete all sub-directories */
-    //    /* DG_CONTROL / DAT_FILESYSTEM / MSG_GETInfo fields  */
-    //    FileType FileType; /* One of the TWFY_xxxx values */
-    //    TW_UINT32 Size; /* Size of current FileType */
-    //    /// <summary>
-    //    /// The create date of the file, in the form "YYYY/MM/DD
-    //    /// HH:mm:SS:sss" where YYYY is the year, MM is the numerical
-    //    /// month, DD is the numerical day, HH is the hour, mm is the
-    //    /// minute, SS is the second, and sss is the millisecond.
-    //    /// </summary>
-    //    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
-    //    string CreateTimeDate;
-    //    /// <summary>
-    //    /// Last date the file was modified. Same format as CreateTimeDate.
-    //    /// </summary>
-    //    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
-    //    string ModifiedTimeDate;
-    //    /// <summary>
-    //    /// The bytes of free space left on the current device.
-    //    /// </summary>
-    //    TW_UINT32 FreeSpace;
-    //    /// <summary>
-    //    /// An estimate of the amount of space a new image would take
-    //    /// up, based on image layout, resolution and compression.
-    //    /// Dividing this value into the FreeSpace will yield the
-    //    /// approximate number of images that the Device has room for.
-    //    /// </summary>
-    //    TW_INT32 NewImageSize;
-    //    TW_UINT32 NumberOfFiles;
-    //    TW_UINT32 NumberOfSnippets;
-    //    /// <summary>
-    //    /// Used to group cameras (ex: front/rear bitonal, front/rear grayscale...).
-    //    /// </summary>
-    //    TW_UINT32 DeviceGroupMask;
-    //}
-
-    ///// <summary>
-    ///// This structure is used by the application to specify a set of mapping values to be applied to
-    ///// grayscale data.
-    ///// </summary>
-    //partial class TWGrayResponse
-    //{
-    //    /// <summary>
-    //    /// Transfer curve descriptors. All three channels (Channel1, Channel2
-    //    /// and Channel3) must contain the same value for every entry.
-    //    /// </summary>
-    //    TWElement8[] Response;
-    //}
-
     /// <summary>
-    /// Provides identification information about a TWAIN entity. Used to maintain consistent
-    /// communication between entities.
+    /// This structure is used to pass specific information between the data source and the application.
     /// </summary>
-    partial class TWIdentity
+    public partial struct TWInfo
     {
         /// <summary>
-        /// A unique, internal identifier for the TWAIN entity. This field is only
-        /// filled by the Source Manager. Neither an application nor a Source
-        /// should fill this field. The Source uses the contents of this field to
-        /// "identify" which application is invoking the operation sent to the
-        /// Source.
+        /// Tag identifying an information.
         /// </summary>
-        public int Id { get { return (int)_id; } }
+        public ushort InfoID { get { return _infoID; } set { _infoID = value; } }
+        /// <summary>
+        /// Item data type.
+        /// </summary>
+        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
+        /// <summary>
+        /// Number of items for this field.
+        /// </summary>
+        public ushort NumItems { get { return _numItems; } set { _numItems = value; } }
+
+        public ReturnCode ReturnCode { get { return (ReturnCode)_returnCode; } set { _returnCode = (ushort)value; } }
 
         /// <summary>
-        /// Gets the supported data group. The application will normally set this field to specify which Data
-        /// Group(s) it wants the Source Manager to sort Sources by when
-        /// presenting the Select Source dialog, or returning a list of available
-        /// Sources.
+        /// The TW_Info.Item field contains either data or a handle to data. The field
+        /// contains data if the total amount of data is less than or equal to four bytes. The
+        /// field contains a handle of the total amount of data is more than four bytes.
+        /// The amount of data is determined by multiplying NumItems times
+        /// the byte size of the data type specified by ItemType.
+        /// If the Item field contains a handle to data, then the Application is
+        /// responsible for freeing that memory.
         /// </summary>
-        /// <value>The data group.</value>
-        public DataGroups DataGroup
-        {
-            get { return (DataGroups)(_supportedGroups & 0xffff); }
-            set { _supportedGroups |= (uint)value; }
-        }
+        public UIntPtr Item { get { return _item; } set { _item = value; } }
+    }
 
+    /// <summary>
+    /// This structure is used to pass extended image information from the data source to application at
+    /// the end of State 7. The application creates this structure at the end of State 7, when it receives
+    /// XFERDONE. Application fills NumInfos for Number information it needs, and array of
+    /// extended information attributes in Info[ ] array. Application, then, sends it down to the source
+    /// using the above operation triplet. The data source then examines each Info, and fills the rest of
+    /// data with information allocating memory when necessary.
+    /// </summary>
+    public partial class TWExtImageInfo
+    {
         /// <summary>
-        /// Major number of latest TWAIN version that this element supports.
+        /// Number of information that application is requesting. This is filled by the
+        /// application. If positive, then the application is requesting specific extended
+        /// image information. The application should allocate memory and fill in the
+        /// attribute tag for image information.
         /// </summary>
-        public short ProtocolMajor { get { return (short)_protocolMajor; } set { _protocolMajor = (ushort)value; } }
+        public uint NumInfos { get { return _numInfos; } set { _numInfos = value; } }
+        /// <summary>
+        /// Array of information.
+        /// </summary>
+        public TWInfo[] Info { get { return _info; } set { _info = value; } }
+    }
 
+    /// <summary>
+    /// Provides information about the currently selected device.
+    /// </summary>
+    public partial class TWFileSystem
+    {
+        /* DG_CONTROL / DAT_FILESYSTEM / MSG_xxxx fields     */
         /// <summary>
-        /// Minor number of latest TWAIN version that this element supports.
+        /// The name of the input or source file.
         /// </summary>
-        public short ProtocolMinor { get { return (short)_protocolMinor; } set { _protocolMinor = (ushort)value; } }
+        public string InputName { get { return _inputName; } set { _inputName = value; } }
+        /// <summary>
+        /// The result of an operation or the name of a destination file.
+        /// </summary>
+        public string OutputName { get { return _outputName; } set { _outputName = value; } }
+        /// <summary>
+        /// A pointer to Source specific data used to remember state
+        /// information, such as the current directory.
+        /// </summary>
+        public IntPtr Context { get { return _context; } set { _context = value; } }
+        /* DG_CONTROL / DAT_FILESYSTEM / MSG_DELETE field    */
+        //TODO: verify this field
+        /// <summary>
+        /// When set to TRUE recursively apply the operation. (ex: deletes
+        /// all subdirectories in the directory being deleted; or copies all
+        /// sub-directories in the directory being copied.
+        /// </summary>
+        public short Recursive { get { return _recursive; } set { _recursive = value; } }
+        public ushort Subdirectories { get { return _subdirectories; } set { _subdirectories = value; } }
 
+        /* DG_CONTROL / DAT_FILESYSTEM / MSG_GETInfo fields  */
+        public FileType FileType { get { return (FileType)_fileType; } set { _fileType = (int)value; } }
+        public uint FileSystemType { get { return _fileSystemType; } set { _fileSystemType = value; } }
 
+        public uint Size { get { return _size; } set { _size = value; } }
         /// <summary>
-        /// A <see cref="TWVersion"/> structure identifying the TWAIN entity.
+        /// The create date of the file, in the form "YYYY/MM/DD
+        /// HH:mm:SS:sss" where YYYY is the year, MM is the numerical
+        /// month, DD is the numerical day, HH is the hour, mm is the
+        /// minute, SS is the second, and sss is the millisecond.
         /// </summary>
-        public TWVersion Version { get { return _version; } set { _version = value; } }
+        public string CreateTimeDate { get { return _createTimeDate; } set { _createTimeDate = value; } }
         /// <summary>
-        /// Gets the data functionalities for TWAIN 2 detection.
+        /// Last date the file was modified. Same format as CreateTimeDate.
         /// </summary>
-        /// <value>The data functionalities.</value>
-        public DataFunctionalities DataFunctionalities
-        {
-            get { return (DataFunctionalities)(_supportedGroups & 0xffff0000); }
-            set { _supportedGroups |= (uint)value; }
-        }
+        public string ModifiedTimeDate { get { return _modifiedTimeDate; } set { _modifiedTimeDate = value; } }
+        /// <summary>
+        /// The bytes of free space left on the current device.
+        /// </summary>
+        public uint FreeSpace { get { return _freeSpace; } set { _freeSpace = value; } }
+        /// <summary>
+        /// An estimate of the amount of space a new image would take
+        /// up, based on image layout, resolution and compression.
+        /// Dividing this value into the FreeSpace will yield the
+        /// approximate number of images that the Device has room for.
+        /// </summary>
+        public int NewImageSize { get { return _newImageSize; } set { _newImageSize = value; } }
+        public uint NumberOfFiles { get { return _numberOfFiles; } set { _numberOfFiles = value; } }
+        public uint NumberOfSnippets { get { return _numberOfSnippets; } set { _numberOfSnippets = value; } }
+        /// <summary>
+        /// Used to group cameras (ex: front/rear bitonal, front/rear grayscale...).
+        /// </summary>
+        public uint DeviceGroupMask { get { return _deviceGroupMask; } set { _deviceGroupMask = value; } }
+    }
 
+    /// <summary>
+    /// This structure is used by the application to specify a set of mapping values to be applied to
+    /// grayscale data.
+    /// </summary>
+    public partial class TWGrayResponse
+    {
         /// <summary>
-        /// String identifying the manufacturer of the application or Source. e.g. "Aldus".
+        /// Transfer curve descriptors. All three channels (Channel1, Channel2
+        /// and Channel3) must contain the same value for every entry.
         /// </summary>
-        public string Manufacturer { get { return _manufacturer; } set { value.VerifyLengthUnder(TwainConst.String32 - 1); _manufacturer = value; } }
-        /// <summary>
-        /// Tells an application that performs device-specific operations which
-        /// product family the Source supports. This is useful when a new Source
-        /// has been released and the application doesn't know about the
-        /// particular Source but still wants to perform Custom operations with it.
-        /// e.g. "ScanMan".
-        /// </summary>
-        public string ProductFamily { get { return _productFamily; } set { value.VerifyLengthUnder(TwainConst.String32 - 1); _productFamily = value; } }
-        /// <summary>
-        /// A string uniquely identifying the Source. This is the string that will be
-        /// displayed to the user at Source select-time. This string must uniquely
-        /// identify your Source for the user, and should identify the application
-        /// unambiguously for Sources that care. e.g. "ScanJet IIc".
-        /// </summary>
-        public string ProductName { get { return _productName; } set { value.VerifyLengthUnder(TwainConst.String32 - 1); _productName = value; } }
-
-        //public static TWIdentity CreateFromAssembly(DataGroups supportedGroups)
-        //{
-        //	return Create(supportedGroups);
-        //}
-        public static TWIdentity Create(DataGroups supportedGroups, Version version,
-            string manufacturer, string productFamily, string productName, string productDescription)
-        {
-            return new TWIdentity
-            {
-                Manufacturer = manufacturer ?? "UNKNOWN",
-                ProtocolMajor = TwainConst.ProtocolMajor,
-                ProtocolMinor = TwainConst.ProtocolMinor,
-                DataGroup = DataGroups.Control | supportedGroups,
-                DataFunctionalities = DataFunctionalities.App2,
-
-                ProductFamily = productFamily ?? "UNKNOWN",
-                ProductName = productName ?? "UNKNOWN",
-                Version = new TWVersion
-                {
-                    Major = (short)version.Major,
-                    Minor = (short)version.Minor,
-                    Country = Country.Usa,
-                    Language = Language.EnglishUsa,
-                    Info = productDescription ?? string.Empty,
-                }
-            };
-        }
+        public TWElement8[] Response { get { return _response; } set { _response = value; } }
     }
 
     /// <summary>
     /// A general way to describe the version of software that is running.
     /// </summary>
-    partial struct TWVersion : IEquatable<TWVersion>
+    public partial struct TWVersion : IEquatable<TWVersion>
     {
         /// <summary>
         /// This refers to your application or Source’s major revision number. e.g. The
@@ -1840,11 +1710,113 @@ namespace NTwain.Data
     }
 
     /// <summary>
+    /// Provides identification information about a TWAIN entity. Used to maintain consistent
+    /// communication between entities.
+    /// </summary>
+    public partial class TWIdentity
+    {
+        /// <summary>
+        /// A unique, internal identifier for the TWAIN entity. This field is only
+        /// filled by the Source Manager. Neither an application nor a Source
+        /// should fill this field. The Source uses the contents of this field to
+        /// "identify" which application is invoking the operation sent to the
+        /// Source.
+        /// </summary>
+        public int Id { get { return (int)_id; } }
+
+        /// <summary>
+        /// Gets the supported data group. The application will normally set this field to specify which Data
+        /// Group(s) it wants the Source Manager to sort Sources by when
+        /// presenting the Select Source dialog, or returning a list of available
+        /// Sources.
+        /// </summary>
+        /// <value>The data group.</value>
+        public DataGroups DataGroup
+        {
+            get { return (DataGroups)(_supportedGroups & 0xffff); }
+            set { _supportedGroups |= (uint)value; }
+        }
+
+        /// <summary>
+        /// Major number of latest TWAIN version that this element supports.
+        /// </summary>
+        public short ProtocolMajor { get { return (short)_protocolMajor; } set { _protocolMajor = (ushort)value; } }
+
+        /// <summary>
+        /// Minor number of latest TWAIN version that this element supports.
+        /// </summary>
+        public short ProtocolMinor { get { return (short)_protocolMinor; } set { _protocolMinor = (ushort)value; } }
+
+
+        /// <summary>
+        /// A <see cref="TWVersion"/> structure identifying the TWAIN entity.
+        /// </summary>
+        public TWVersion Version { get { return _version; } set { _version = value; } }
+        /// <summary>
+        /// Gets the data functionalities for TWAIN 2 detection.
+        /// </summary>
+        /// <value>The data functionalities.</value>
+        public DataFunctionalities DataFunctionalities
+        {
+            get { return (DataFunctionalities)(_supportedGroups & 0xffff0000); }
+            set { _supportedGroups |= (uint)value; }
+        }
+
+        /// <summary>
+        /// String identifying the manufacturer of the application or Source. e.g. "Aldus".
+        /// </summary>
+        public string Manufacturer { get { return _manufacturer; } set { value.VerifyLengthUnder(TwainConst.String32 - 1); _manufacturer = value; } }
+        /// <summary>
+        /// Tells an application that performs device-specific operations which
+        /// product family the Source supports. This is useful when a new Source
+        /// has been released and the application doesn't know about the
+        /// particular Source but still wants to perform Custom operations with it.
+        /// e.g. "ScanMan".
+        /// </summary>
+        public string ProductFamily { get { return _productFamily; } set { value.VerifyLengthUnder(TwainConst.String32 - 1); _productFamily = value; } }
+        /// <summary>
+        /// A string uniquely identifying the Source. This is the string that will be
+        /// displayed to the user at Source select-time. This string must uniquely
+        /// identify your Source for the user, and should identify the application
+        /// unambiguously for Sources that care. e.g. "ScanJet IIc".
+        /// </summary>
+        public string ProductName { get { return _productName; } set { value.VerifyLengthUnder(TwainConst.String32 - 1); _productName = value; } }
+
+        //public static TWIdentity CreateFromAssembly(DataGroups supportedGroups)
+        //{
+        //	return Create(supportedGroups);
+        //}
+        public static TWIdentity Create(DataGroups supportedGroups, Version version,
+            string manufacturer, string productFamily, string productName, string productDescription)
+        {
+            return new TWIdentity
+            {
+                Manufacturer = manufacturer ?? "UNKNOWN",
+                ProtocolMajor = TwainConst.ProtocolMajor,
+                ProtocolMinor = TwainConst.ProtocolMinor,
+                DataGroup = DataGroups.Control | supportedGroups,
+                DataFunctionalities = DataFunctionalities.App2,
+
+                ProductFamily = productFamily ?? "UNKNOWN",
+                ProductName = productName ?? "UNKNOWN",
+                Version = new TWVersion
+                {
+                    Major = (short)version.Major,
+                    Minor = (short)version.Minor,
+                    Country = Country.Usa,
+                    Language = Language.EnglishUsa,
+                    Info = productDescription ?? string.Empty,
+                }
+            };
+        }
+    }
+
+    /// <summary>
     /// Describes the "real" image data, that is, the complete image being transferred between the
     /// Source and application. The Source may transfer the data in a different format--the information
     /// may be transferred in "strips" or "tiles" in either compressed or uncompressed form.
     /// </summary>
-    partial class TWImageInfo
+    public partial class TWImageInfo
     {
         /// <summary>
         /// The number of pixels per ICapUnits in the horizontal direction. The
@@ -1870,9 +1842,8 @@ namespace NTwain.Data
         /// The number of samples being returned. For R-G-B, this field would be
         /// set to 3. For C-M-Y-K, 4. For Grayscale or Black and White, 1.
         /// </summary>
-        public int SamplesPerPixel { get { return (int)_samplesPerPixel; } }
+        public short SamplesPerPixel { get { return _samplesPerPixel; } }
 
-        //TODO: verify size later
         /// <summary>
         /// For each sample, the number of bits of information. 24-bit R-G-B will
         /// typically have 8 bits of information in each sample (8+8+8). Some 8-bit
@@ -1889,7 +1860,7 @@ namespace NTwain.Data
         /// CMYK has BitsPerPixel=40. 8-bit Grayscale has BitsPerPixel = 8. Black
         /// and White has BitsPerPixel = 1.
         /// </summary>
-        public int BitsPerPixel { get { return (int)_bitsPerPixel; } }
+        public short BitsPerPixel { get { return _bitsPerPixel; } }
         /// <summary>
         /// If SamplesPerPixel > 1, indicates whether the samples follow one
         /// another on a pixel-by-pixel basis (R-G-B-R-G-B-R-G-B...) as is common
@@ -1935,7 +1906,7 @@ namespace NTwain.Data
     /// useful for forms-processing applications and other applications with similar document tracking
     /// requirements.
     /// </summary>
-    partial class TWImageLayout
+    public partial class TWImageLayout
     {
         /// <summary>
         /// Frame coords within larger document.
@@ -1965,148 +1936,143 @@ namespace NTwain.Data
         public int FrameNumber { get { return (int)_frameNumber; } set { _frameNumber = (uint)value; } }
     }
 
-    ///// <summary>
-    ///// Provides information for managing memory buffers. Memory for transfer buffers is allocated
-    ///// by the application--the Source is asked to fill these buffers. This structure keeps straight which
-    ///// entity is responsible for deallocation.
-    ///// </summary>
-    //partial struct TWMemory
-    //{
-    //    // not a class due to embedded
+    /// <summary>
+    /// Provides information for managing memory buffers. Memory for transfer buffers is allocated
+    /// by the application--the Source is asked to fill these buffers. This structure keeps straight which
+    /// entity is responsible for deallocation.
+    /// </summary>
+    public partial struct TWMemory
+    {
+        // not a class due to embedded
 
-    //    /// <summary>
-    //    /// Encodes which entity releases the buffer and how the buffer is referenced.
-    //    /// </summary>
-    //    MemoryFlags Flags;
-    //    /// <summary>
-    //    /// The size of the buffer in bytes. Should always be an even number and wordaligned.
-    //    /// </summary>
-    //    TW_UINT32 Length;
-    //    /// <summary>
-    //    /// Reference to the buffer. May be a Pointer or a Handle (see Flags field to make
-    //    /// this determination).
-    //    /// </summary>
-    //    TW_MEMREF TheMem;
-    //}
+        /// <summary>
+        /// Encodes which entity releases the buffer and how the buffer is referenced.
+        /// </summary>
+        public MemoryFlags Flags { get { return (MemoryFlags)_flags; } set { _flags = (uint)value; } }
+        /// <summary>
+        /// The size of the buffer in bytes. Should always be an even number and wordaligned.
+        /// </summary>
+        public uint Length { get { return _length; } set { _length = value; } }
+        /// <summary>
+        /// Reference to the buffer. May be a Pointer or a Handle (see Flags field to make
+        /// this determination).
+        /// </summary>
+        public IntPtr TheMem { get { return _theMem; } set { _theMem = value; } }
+    }
 
-    ///// <summary>
-    ///// Describes the form of the acquired data being passed from the Source to the application.
-    ///// </summary>
-    //partial class TWImageMemXfer
-    //{
-    //    /// <summary>
-    //    /// The compression method used to process the data being transferred.
-    //    /// </summary>
-    //    TW_UINT16 Compression;
-    //    /// <summary>
-    //    /// The number of uncompressed bytes in each row of the piece of the image
-    //    /// being described in this buffer.
-    //    /// </summary>
-    //    TW_UINT32 BytesPerRow;
-    //    /// <summary>
-    //    /// The number of uncompressed columns (in pixels) in this buffer.
-    //    /// </summary>
-    //    TW_UINT32 Columns;
-    //    /// <summary>
-    //    /// The number or uncompressed rows (in pixels) in this buffer.
-    //    /// </summary>
-    //    TW_UINT32 Rows;
-    //    /// <summary>
-    //    /// How far, in pixels, the left edge of the piece of the image being described
-    //    /// by this structure is inset from the "left" side of the original image. If the
-    //    /// Source is transferring in "strips", this value will equal zero. If the Source
-    //    /// is transferring in "tiles", this value will often be non-zero.
-    //    /// </summary>
-    //    TW_UINT32 XOffset;
-    //    /// <summary>
-    //    /// Same idea as XOffset, but the measure is in pixels from the "top" of the
-    //    /// original image to the upper edge of this piece.
-    //    /// </summary>
-    //    TW_UINT32 YOffset;
-    //    /// <summary>
-    //    /// The number of bytes written into the transfer buffer. This field must
-    //    /// always be filled in correctly, whether compressed or uncompressed data
-    //    /// is being transferred.
-    //    /// </summary>
-    //    TW_UINT32 BytesWritten;
-    //    /// <summary>
-    //    /// A structure of type TW_MEMORY describing who must dispose of the
-    //    /// buffer, the actual size of the buffer, in bytes, and where the buffer is
-    //    /// located in memory.
-    //    /// </summary>
-    //    TWMemory Memory;
-    //}
+    /// <summary>
+    /// Describes the form of the acquired data being passed from the Source to the application.
+    /// </summary>
+    public partial class TWImageMemXfer
+    {
+        /// <summary>
+        /// The compression method used to process the data being transferred.
+        /// </summary>
+        public Compression Compression { get { return (Compression)_compression; } set { _compression = (ushort)value; } }
+        /// <summary>
+        /// The number of uncompressed bytes in each row of the piece of the image
+        /// being described in this buffer.
+        /// </summary>
+        public uint BytesPerRow { get { return _bytesPerRow; } set { _bytesPerRow = value; } }
+        /// <summary>
+        /// The number of uncompressed columns (in pixels) in this buffer.
+        /// </summary>
+        public uint Columns { get { return _columns; } set { _columns = value; } }
+        /// <summary>
+        /// The number or uncompressed rows (in pixels) in this buffer.
+        /// </summary>
+        public uint Rows { get { return _rows; } set { _rows = value; } }
+        /// <summary>
+        /// How far, in pixels, the left edge of the piece of the image being described
+        /// by this structure is inset from the "left" side of the original image. If the
+        /// Source is transferring in "strips", this value will equal zero. If the Source
+        /// is transferring in "tiles", this value will often be non-zero.
+        /// </summary>
+        public uint XOffset { get { return _xOffset; } set { _xOffset = value; } }
+        /// <summary>
+        /// Same idea as XOffset, but the measure is in pixels from the "top" of the
+        /// original image to the upper edge of this piece.
+        /// </summary>
+        public uint YOffset { get { return _yOffset; } set { _yOffset = value; } }
+        /// <summary>
+        /// The number of bytes written into the transfer buffer. This field must
+        /// always be filled in correctly, whether compressed or uncompressed data
+        /// is being transferred.
+        /// </summary>
+        public uint BytesWritten { get { return _bytesWritten; } set { _bytesWritten = value; } }
+        /// <summary>
+        /// A structure of type TW_MEMORY describing who must dispose of the
+        /// buffer, the actual size of the buffer, in bytes, and where the buffer is
+        /// located in memory.
+        /// </summary>
+        public TWMemory Memory { get { return _memory; } set { _memory = value; } }
+    }
 
-    ///// <summary>
-    ///// Describes the information necessary to transfer a JPEG-compressed image during a buffered
-    ///// transfer. Images compressed in this fashion will be compatible with the JPEG File Interchange
-    ///// Format, version 1.1.
-    ///// </summary>
-    //partial class TWJpegCompression
-    //{
-    //    /// <summary>
-    //    /// Defines the color space in which the
-    //    /// compressed components are stored.
-    //    /// </summary>
-    //    PixelType ColorSpace;
-    //    /// <summary>
-    //    /// Encodes the horizontal and vertical subsampling in the form
-    //    /// ABCDEFGH, where ABCD are the high-order four nibbles which
-    //    /// represent the horizontal subsampling and EFGH are the low-order four
-    //    /// nibbles which represent the vertical subsampling. Each nibble may
-    //    /// have a value of 0, 1, 2, 3, or 4. However, max(A,B,C,D) * max(E,F,G,H)
-    //    /// must be less than or equal to 10. Subsampling is irrelevant for single
-    //    /// component images. Therefore, the corresponding nibbles should be set
-    //    /// to 1. e.g. To indicate subsampling two Y for each U and V in a YUV
-    //    /// space image, where the same subsampling occurs in both horizontal
-    //    /// and vertical axes, this field would hold 0x21102110. For a grayscale
-    //    /// image, this field would hold 0x10001000. A CMYK image could hold
-    //    /// 0x11111111.
-    //    /// </summary>
-    //    TW_UINT32 SubSampling;
-    //    /// <summary>
-    //    /// Number of color components in the image to be compressed.
-    //    /// </summary>
-    //    TW_UINT16 NumComponents;
-    //    /// <summary>
-    //    /// Number of MDUs (Minimum Data Units) between restart markers.
-    //    /// Default is 0, indicating that no restart markers are used. An MDU is
-    //    /// defined for interleaved data (i.e. R-G-B, Y-U-V, etc.) as a minimum
-    //    /// complete set of 8x8 component blocks.
-    //    /// </summary>
-    //    TW_UINT16 RestartFrequency;
-    //    /// <summary>
-    //    /// Mapping of components to Quantization tables.
-    //    /// </summary>
-    //    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-    //    TW_UINT16[] QuantMap;
-    //    /// <summary>
-    //    /// Quantization tables.
-    //    /// </summary>
-    //    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-    //    TWMemory[] QuantTable;
-    //    /// <summary>
-    //    /// Mapping of components to Huffman tables. Null entries signify
-    //    /// selection of the default tables.
-    //    /// </summary>
-    //    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-    //    TW_UINT16[] HuffmanMap;
-    //    /// <summary>
-    //    /// DC Huffman tables. Null entries signify selection of the default tables.
-    //    /// </summary>
-    //    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-    //    TWMemory[] HuffmanDC;
-    //    /// <summary>
-    //    /// AC Huffman tables. Null entries signify selection of the default tables.
-    //    /// </summary>
-    //    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-    //    TWMemory[] HuffmanAC;
-    //}
+    /// <summary>
+    /// Describes the information necessary to transfer a JPEG-compressed image during a buffered
+    /// transfer. Images compressed in this fashion will be compatible with the JPEG File Interchange
+    /// Format, version 1.1.
+    /// </summary>
+    public partial class TWJpegCompression
+    {
+        /// <summary>
+        /// Defines the color space in which the
+        /// compressed components are stored.
+        /// </summary>
+        public PixelType ColorSpace { get { return (PixelType)_colorSpace; } set { _colorSpace = (ushort)value; } }
+        /// <summary>
+        /// Encodes the horizontal and vertical subsampling in the form
+        /// ABCDEFGH, where ABCD are the high-order four nibbles which
+        /// represent the horizontal subsampling and EFGH are the low-order four
+        /// nibbles which represent the vertical subsampling. Each nibble may
+        /// have a value of 0, 1, 2, 3, or 4. However, max(A,B,C,D) * max(E,F,G,H)
+        /// must be less than or equal to 10. Subsampling is irrelevant for single
+        /// component images. Therefore, the corresponding nibbles should be set
+        /// to 1. e.g. To indicate subsampling two Y for each U and V in a YUV
+        /// space image, where the same subsampling occurs in both horizontal
+        /// and vertical axes, this field would hold 0x21102110. For a grayscale
+        /// image, this field would hold 0x10001000. A CMYK image could hold
+        /// 0x11111111.
+        /// </summary>
+        public uint SubSampling { get { return _subSampling; } set { _subSampling = value; } }
+        /// <summary>
+        /// Number of color components in the image to be compressed.
+        /// </summary>
+        public ushort NumComponents { get { return _numComponents; } set { _numComponents = value; } }
+        /// <summary>
+        /// Number of MDUs (Minimum Data Units) between restart markers.
+        /// Default is 0, indicating that no restart markers are used. An MDU is
+        /// defined for interleaved data (i.e. R-G-B, Y-U-V, etc.) as a minimum
+        /// complete set of 8x8 component blocks.
+        /// </summary>
+        public ushort RestartFrequency { get { return _restartFrequency; } set { _restartFrequency = value; } }
+        /// <summary>
+        /// Mapping of components to Quantization tables.
+        /// </summary>
+        public ushort[] QuantMap { get { return _quantMap; } set { _quantMap = value; } }
+        /// <summary>
+        /// Quantization tables.
+        /// </summary>
+        public TWMemory[] QuantTable { get { return _quantTable; } set { _quantTable = value; } }
+        /// <summary>
+        /// Mapping of components to Huffman tables. Null entries signify
+        /// selection of the default tables.
+        /// </summary>
+        public ushort[] HuffmanMap { get { return _huffmanMap; } set { _huffmanMap = value; } }
+        /// <summary>
+        /// DC Huffman tables. Null entries signify selection of the default tables.
+        /// </summary>
+        public TWMemory[] HuffmanDC { get { return _huffmanDC; } set { _huffmanDC = value; } }
+        /// <summary>
+        /// AC Huffman tables. Null entries signify selection of the default tables.
+        /// </summary>
+        public TWMemory[] HuffmanAC { get { return _huffmanAC; } set { _huffmanAC = value; } }
+    }
 
     /// <summary>
     /// Container for one value.
     /// </summary>
-    partial class TWOneValue
+    public partial class TWOneValue
     {
         /// <summary>
         /// The type of the item.
@@ -2119,59 +2085,58 @@ namespace NTwain.Data
     }
 
 
-    ///// <summary>
-    ///// This structure holds the color palette information for buffered memory transfers of type
-    ///// ICapPixelType = Palette.
-    ///// </summary>
-    //partial class TWPalette8
-    //{
-    //    /// <summary>
-    //    /// Number of colors in the color table; maximum index into the color table
-    //    /// should be one less than this (since color table indexes are zero-based).
-    //    /// </summary>
-    //    TW_UINT16 NumColors;
-    //    /// <summary>
-    //    /// Specifies type of palette.
-    //    /// </summary>
-    //    PaletteType PaletteType;
-    //    /// <summary>
-    //    /// Array of palette values.
-    //    /// </summary>
-    //    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-    //    TWElement8[] Colors;
-    //}
+    /// <summary>
+    /// This structure holds the color palette information for buffered memory transfers of type
+    /// ICapPixelType = Palette.
+    /// </summary>
+    public partial class TWPalette8
+    {
+        /// <summary>
+        /// Number of colors in the color table; maximum index into the color table
+        /// should be one less than this (since color table indexes are zero-based).
+        /// </summary>
+        public ushort NumColors { get { return _numColors; } set { _numColors = value; } }
+        /// <summary>
+        /// Specifies type of palette.
+        /// </summary>
+        public PaletteType PaletteType { get { return (PaletteType)_paletteType; } set { _paletteType = (ushort)value; } }
+        /// <summary>
+        /// Array of palette values.
+        /// </summary>
+        public TWElement8[] Colors { get { return _colors; } set { _colors = value; } }
+    }
 
-    ///// <summary>
-    ///// Used to bypass the TWAIN protocol when communicating with a device. All memory must be
-    ///// allocated and freed by the Application.
-    ///// </summary>
-    //partial class TWPassThru
-    //{
-    //    /// <summary>
-    //    /// Pointer to Command buffer.
-    //    /// </summary>
-    //    TW_MEMREF pCommand;
-    //    /// <summary>
-    //    /// Number of bytes in Command buffer.
-    //    /// </summary>
-    //    TW_UINT32 CommandBytes;
-    //    /// <summary>
-    //    /// Defines the direction of data flow.
-    //    /// </summary>
-    //    Direction Direction;
-    //    /// <summary>
-    //    /// Pointer to Data buffer.
-    //    /// </summary>
-    //    TW_MEMREF pData;
-    //    /// <summary>
-    //    /// Number of bytes in Data buffer.
-    //    /// </summary>
-    //    TW_UINT32 DataBytes;
-    //    /// <summary>
-    //    /// Number of bytes successfully transferred.
-    //    /// </summary>
-    //    TW_UINT32 DataBytesXfered;
-    //}
+    /// <summary>
+    /// Used to bypass the TWAIN protocol when communicating with a device. All memory must be
+    /// allocated and freed by the Application.
+    /// </summary>
+    public partial class TWPassThru
+    {
+        /// <summary>
+        /// Pointer to Command buffer.
+        /// </summary>
+        public IntPtr pCommand { get { return _pCommand; } set { _pCommand = value; } }
+        /// <summary>
+        /// Number of bytes in Command buffer.
+        /// </summary>
+        public uint CommandBytes { get { return _commandBytes; } set { _commandBytes = value; } }
+        /// <summary>
+        /// Defines the direction of data flow.
+        /// </summary>
+        public Direction Direction { get { return (Direction)_direction; } set { _direction = (int)value; } }
+        /// <summary>
+        /// Pointer to Data buffer.
+        /// </summary>
+        public IntPtr pData { get { return _pData; } set { _pData = value; } }
+        /// <summary>
+        /// Number of bytes in Data buffer.
+        /// </summary>
+        public uint DataBytes { get { return _dataBytes; } set { _dataBytes = value; } }
+        /// <summary>
+        /// Number of bytes successfully transferred.
+        /// </summary>
+        public uint DataBytesXfered { get { return _dataBytesXfered; } set { _dataBytesXfered = value; } }
+    }
 
     /// <summary>
     /// This structure tells the application how many more complete transfers the Source currently has
@@ -2202,7 +2167,7 @@ namespace NTwain.Data
     /// <summary>
     /// Container for a range of values.
     /// </summary>
-    partial class TWRange
+    public partial class TWRange
     {
         /// <summary>
         /// The type of items in the list.
@@ -2234,25 +2199,25 @@ namespace NTwain.Data
         public uint CurrentValue { get { return _currentValue; } set { _currentValue = value; } }
     }
 
-    ///// <summary>
-    ///// This structure is used by the application to specify a set of mapping values to be applied to RGB
-    ///// color data. Use this structure for RGB data whose bit depth is up to, and including, 8-bits.
-    ///// The number of elements in the array is determined by <see cref="TWImageInfo.BItsPerPixel"/>—the number of
-    ///// elements is 2 raised to the power of <see cref="TWImageInfo.BItsPerPixel"/>.
-    ///// </summary>
-    //partial class TWRgbResponse
-    //{
-    //    /// <summary>
-    //    /// Transfer curve descriptors. To minimize color shift problems, writing the
-    //    /// same values into each channel is desirable.
-    //    /// </summary>
-    //    TWElement8[] Response;
-    //}
+    /// <summary>
+    /// This structure is used by the application to specify a set of mapping values to be applied to RGB
+    /// color data. Use this structure for RGB data whose bit depth is up to, and including, 8-bits.
+    /// The number of elements in the array is determined by <see cref="TWImageInfo.BItsPerPixel"/>—the number of
+    /// elements is 2 raised to the power of <see cref="TWImageInfo.BItsPerPixel"/>.
+    /// </summary>
+    public partial class TWRgbResponse
+    {
+        /// <summary>
+        /// Transfer curve descriptors. To minimize color shift problems, writing the
+        /// same values into each channel is desirable.
+        /// </summary>
+        public TWElement8[] Response { get { return _response; } set { _response = value; } }
+    }
 
     /// <summary>
     /// Describes the file format and file specification information for a transfer through a disk file.
     /// </summary>
-    partial class TWSetupFileXfer
+    public partial class TWSetupFileXfer
     {
         /// <summary>
         /// A complete file specifier to the target file. On Windows, be sure to include the
@@ -2276,7 +2241,7 @@ namespace NTwain.Data
     /// Provides the application information about the Source’s requirements and preferences
     /// regarding allocation of transfer buffer(s).
     /// </summary>
-    partial class TWSetupMemXfer
+    public partial class TWSetupMemXfer
     {
         /// <summary>
         /// The size of the smallest transfer buffer, in bytes, that a Source can be
@@ -2306,55 +2271,50 @@ namespace NTwain.Data
     /// <summary>
     /// Describes the status of a source.
     /// </summary>
-    partial class TWStatus
+    public partial class TWStatus
     {
         /// <summary>
         /// Condition Code describing the status.
         /// </summary>
-        public ConditionCode ConditionCode { get { return (ConditionCode)_conditionCode; } }
+        public ConditionCode ConditionCode { get { return (ConditionCode)_conditionCode; } set { _conditionCode = (ushort)value; } }
         /// <summary>
         /// Valid for TWAIN 2.1 and later. This field contains additional
         /// scanner-specific data. If there is no data, then this value must be zero.
         /// </summary>
-        public uint Data { get { return _data; } }
+        public ushort Data { get { return _data; } set { _data = Data; } }
     }
 
-    ///// <summary>
-    ///// Translates the contents of Status into a localized UTF8string, with the total number of bytes
-    ///// in the string.
-    ///// </summary>
-    //partial class TWStatusUtf8
-    //{
-    //    // rather than embedding the twstatus directly use its fields instead
-    //    // so the twstatus could become an object. If twstatus changes
-    //    // definition remember to change it here
+    /// <summary>
+    /// Translates the contents of Status into a localized UTF8string, with the total number of bytes
+    /// in the string.
+    /// </summary>
+    public partial class TWStatusUtf8
+    {
+        /// <summary>
+        /// <see cref="TWStatus"/> data received from a previous call.
+        /// </summary>
+        public TWStatus Status
+        {
+            get { return new TWStatus { ConditionCode = (ConditionCode)_conditionCode, Data = _data }; }
+            set
+            {
+                _conditionCode = (ushort)value.ConditionCode;
+                _data = value.Data;
+            }
+        }
 
-    //    ///// <summary>
-    //    ///// <see cref="TWStatus"/> data received from a previous call.
-    //    ///// </summary>
-    //    //TWStatus Status;
-    //    /// <summary>
-    //    /// Condition Code describing the status.
-    //    /// </summary>
-    //    ConditionCode StatusConditionCode;
-    //    /// <summary>
-    //    /// Valid for TWAIN 2.1 and later. This field contains additional
-    //    /// scanner-specific data. If there is no data, then this value must be zero.
-    //    /// </summary>
-    //    TW_UINT16 StatusData;
-
-    //    /// <summary>
-    //    /// Total number of bytes in the UTF8string, plus the terminating NULL byte. 
-    //    /// This is not the same as the total number of characters in the string.
-    //    /// </summary>
-    //    TW_UINT32 Size;
-    //    /// <summary>
-    //    /// TW_HANDLE to a UTF-8 encoded localized string (based on 
-    //    /// TwIdentity.Language or CapLanguage). The Source allocates
-    //    /// it, the Application frees it.
-    //    /// </summary>
-    //    TW_HANDLE UTF8string;
-    //}
+        /// <summary>
+        /// Total number of bytes in the UTF8string, plus the terminating NULL byte. 
+        /// This is not the same as the total number of characters in the string.
+        /// </summary>
+        public uint Size { get { return _size; } set { _size = value; } }
+        /// <summary>
+        /// TW_HANDLE to a UTF-8 encoded localized string (based on 
+        /// TwIdentity.Language or CapLanguage). The Source allocates
+        /// it, the Application frees it.
+        /// </summary>
+        IntPtr UTF8string { get { return _uTF8string; } set { _uTF8string = value; } }
+    }
 
 
     /// <summary>
@@ -2379,5 +2339,37 @@ namespace NTwain.Data
         /// the hWnd as its parent when creating the Source dialog.
         /// </summary>
         public IntPtr hParent { get { return _hParent; } set { _hParent = value; } }
+    }
+
+
+
+    /// <summary>
+    /// Provides entry points required by TWAIN 2.0 Applications and Sources.
+    /// </summary>
+    partial class TWEntryPoint
+    {
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
+        public TWEntryPoint()
+        {
+            _size = (uint)Marshal.SizeOf(this);
+        }
+
+        /// <summary>
+        /// The memory allocation function.
+        /// </summary>
+        public MemAllocateDelegate AllocateFunction { get { return _dSM_MemAllocate; } }
+        /// <summary>
+        /// The memory free function.
+        /// </summary>
+        public MemFreeDelegate FreeFunction { get { return _dSM_MemFree; } }
+        /// <summary>
+        /// The memory lock function.
+        /// </summary>
+        public MemLockDelegate LockFunction { get { return _dSM_MemLock; } }
+        /// <summary>
+        /// The memory unlock function.
+        /// </summary>
+        public MemUnlockDelegate UnlockFunction { get { return _dSM_MemUnlock; } }
+
     }
 }
