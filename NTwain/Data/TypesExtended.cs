@@ -2372,4 +2372,27 @@ namespace NTwain.Data
         public MemUnlockDelegate UnlockFunction { get { return _dSM_MemUnlock; } }
 
     }
+
+
+    public partial struct TWFilterDescriptor
+    {
+        public UInt32 Size { get { return _size; } set { _size = value; } }
+        public UInt32 HueStart { get { return _hueStart; } set { _hueStart = value; } }
+        public UInt32 HueEnd { get { return _hueEnd; } set { _hueEnd = value; } }
+        public UInt32 SaturationStart { get { return _saturationStart; } set { _saturationStart = value; } }
+        public UInt32 SaturationEnd { get { return _saturationEnd; } set { _saturationEnd = value; } }
+        public UInt32 ValueStart { get { return _valueStart; } set { _valueStart = value; } }
+        public UInt32 ValueEnd { get { return _valueEnd; } set { _valueEnd = value; } }
+        public UInt32 Replacement { get { return _replacement; } set { _replacement = value; } }
+    }
+    public partial class TWFilter
+    {
+        public UInt32 Size { get { return _size; } set { _size = value; } }
+        public UInt32 DescriptorCount { get { return _descriptorCount; } set { _descriptorCount = value; } }
+        public UInt32 MaxDescriptorCount { get { return _maxDescriptorCount; } set { _maxDescriptorCount = value; } }
+        public UInt32 Condition { get { return _condition; } set { _condition = value; } }
+        public IntPtr hDescriptors { get { return _hDescriptors; } set { _hDescriptors = value; } }
+    }
+
+
 }

@@ -541,4 +541,28 @@ namespace NTwain.Data
         public delegate void MemUnlockDelegate(IntPtr handle);
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 2)]
+    partial struct TWFilterDescriptor
+    {
+        TW_UINT32 _size;
+        TW_UINT32 _hueStart;
+        TW_UINT32 _hueEnd;
+        TW_UINT32 _saturationStart;
+        TW_UINT32 _saturationEnd;
+        TW_UINT32 _valueStart;
+        TW_UINT32 _valueEnd;
+        TW_UINT32 _replacement;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 2)]
+    partial class TWFilter
+    {
+        TW_UINT32 _size;
+        TW_UINT32 _descriptorCount;
+        TW_UINT32 _maxDescriptorCount;
+        TW_UINT32 _condition;
+        TW_HANDLE _hDescriptors;
+    }
+
+
 }
