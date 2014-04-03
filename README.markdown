@@ -1,16 +1,13 @@
-TWAIN Application-Side Library in Dotnet
+TWAIN Application-Side Library
 ==============================
 
-Background
+Info
 --------------------------------------
-This is a library created to learn more about TWAIN. 
-It's a learning project that should result in real and useful code.
-
-
-Project Info
---------------------------------------
+This is a dotnet library created to work with [TWAIN](http://twain.org/) interface on Windows. 
 This project follows these general goals:
 
-* Targets latest TWAIN version (2.3 so far)
+* Targets latest TWAIN version (2.3 at the moment)
 * Supports all the TWAIN commands in the spec (or those that are possible)
  
+The solution contains sample projects in both winforms and wpf. A nuget package is also
+[available here](https://www.nuget.org/packages/ntwain)

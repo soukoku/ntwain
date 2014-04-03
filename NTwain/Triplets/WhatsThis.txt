@@ -2,7 +2,7 @@
 Data Group (DG), Data Argument Type (DAT), and Message (MSG) 
 triplets. Rather than letting consumers of this lib deal 
 with all the combinations themselves and risk passing the 
-wrong thing, all defined triplet combinations are simply 
+wrong thing, all valid triplet combinations are simply 
 made available under this namespace.
 
 Example:

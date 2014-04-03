@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using NTwain.Properties;
 using NTwain.Values;
+using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using NTwain.Properties;
 using System.Security.Permissions;
+using System.Text;
 
 namespace NTwain.Data
 {
@@ -14,7 +12,7 @@ namespace NTwain.Data
     //// This file contains custom logic added to the twain types.
     //// Separating the field definitions out makes finding all the
     //// custom code logic easier. Mostly this is just making the fields
-    //// checked and .net friendly properties.
+    //// into .net friendly properties.
 
     //// potentially unit tests for the twain types only need to target 
     //// code in this file since everything else is just interop and 
