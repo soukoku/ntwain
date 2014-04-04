@@ -4,6 +4,8 @@ using NTwain.Values;
 
 namespace NTwain.Triplets
 {
+    // TODO: implement this
+
 	public sealed class XferGroup : OpBase
 	{
 		internal XferGroup(ITwainSessionInternal session) : base(session) { }

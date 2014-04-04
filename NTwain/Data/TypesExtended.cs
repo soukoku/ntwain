@@ -1543,8 +1543,7 @@ namespace NTwain.Data
         /// information, such as the current directory.
         /// </summary>
         public IntPtr Context { get { return _context; } set { _context = value; } }
-        /* DG_CONTROL / DAT_FILESYSTEM / MSG_DELETE field    */
-        //TODO: verify this field
+        
         /// <summary>
         /// When set to TRUE recursively apply the operation. (ex: deletes
         /// all subdirectories in the directory being deleted; or copies all

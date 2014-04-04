@@ -101,7 +101,6 @@ namespace NTwain.Data
     BestFitMapping(false, ThrowOnUnmappableChar = true)]
     partial class TWAudioInfo
     {
-        // TODO: this may be wrong
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _name;
         TW_UINT32 _reserved;
@@ -173,7 +172,6 @@ namespace NTwain.Data
     partial class TWDeviceEvent
     {
         TW_UINT32 _event;
-        // TODO: may be wrong
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _deviceName;
         TW_UINT32 _batteryMinutes;
@@ -250,7 +248,7 @@ namespace NTwain.Data
         [FieldOffset(512)]
         TW_MEMREF _context;
 
-        //TODO: verify this field offset in 64bit
+        //TODO: verify this field offset in 64bit due to previous pointer
         [FieldOffset(520)]
         short _recursive;
         [FieldOffset(520)]
@@ -287,8 +285,6 @@ namespace NTwain.Data
         [FieldOffset(616)]
         TW_UINT32 _deviceGroupMask;
 
-        //TODO: verify this field, check if can just not use it
-        //char       _reserved[508]; /**/
         [FieldOffset(620)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 508)]
         TW_INT8[] _reserved;

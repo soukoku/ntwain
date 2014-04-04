@@ -124,5 +124,7 @@ namespace NTwain.Triplets
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.Capability, Message.Set);
 			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Set, capability);
 		}
+
+        //TODO implement SetConstraint
 	}
 }

@@ -70,6 +70,7 @@
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="TransferReadyEventArgs.cs" />
     <Compile Include="Triplets\DGControl\DGControl.Callback2.cs" />
+    <Compile Include="Triplets\DGImage\DGImage.Filter.cs" />
     <Compile Include="Triplets\OpBase.cs" />
     <Compile Include="Triplets\PInvokes.32bit.cs" />
     <Compile Include="Triplets\PInvokes.64bit.cs" />
