@@ -6,7 +6,7 @@ namespace NTwain.Triplets
 {
 	public sealed class StatusUtf8 : OpBase
 	{
-		internal StatusUtf8(TwainSession session) : base(session) { }
+		internal StatusUtf8(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// Translate the contents of a TW_STATUS structure received from a Source into a localized UTF-8
 		/// encoded string.

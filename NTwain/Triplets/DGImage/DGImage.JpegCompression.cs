@@ -6,7 +6,7 @@ namespace NTwain.Triplets
 {
 	public sealed class JpegCompression : OpBase
 	{
-		internal JpegCompression(TwainSession session) : base(session) { }
+		internal JpegCompression(ITwainSessionInternal session) : base(session) { }
 
 		/// <summary>
 		/// Causes the Source to return the parameters that will be used during the compression of data

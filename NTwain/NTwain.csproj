@@ -60,6 +60,7 @@
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="DataTransferredEventArgs.cs" />
+    <Compile Include="ITwainSession.cs" />
     <Compile Include="MemoryManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

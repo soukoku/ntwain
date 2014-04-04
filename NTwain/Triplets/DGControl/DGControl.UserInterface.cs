@@ -6,7 +6,7 @@ namespace NTwain.Triplets
 {
     sealed class UserInterface : OpBase
     {
-        internal UserInterface(TwainSession session) : base(session) { }
+        internal UserInterface(ITwainSessionInternal session) : base(session) { }
         /// <summary>
         /// This operation causes the Source’s user interface, if displayed during the
         /// EnableDS operation, to be lowered. The Source is returned to
@@ -23,7 +23,7 @@ namespace NTwain.Triplets
             var rc = PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.DisableDS, userInterface);
             if (rc == ReturnCode.Success)
             {
-                Session.State = 4;
+                Session.ChangeState(4, true);
             }
             return rc;
         }

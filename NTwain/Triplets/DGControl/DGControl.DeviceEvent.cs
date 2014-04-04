@@ -6,7 +6,7 @@ namespace NTwain.Triplets
 {
 	public sealed class DeviceEvent : OpBase
 	{
-		internal DeviceEvent(TwainSession session) : base(session) { }
+		internal DeviceEvent(ITwainSessionInternal session) : base(session) { }
 		public ReturnCode Get(out TWDeviceEvent sourceDeviceEvent)
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.DeviceEvent, Message.Get);

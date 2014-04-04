@@ -6,8 +6,8 @@ namespace NTwain.Triplets
 	/// </summary>
 	public sealed class DGControl
 	{
-		TwainSession _session;
-		internal DGControl(TwainSession session)
+        ITwainSessionInternal _session;
+        internal DGControl(ITwainSessionInternal session)
 		{
 			if (session == null) { throw new ArgumentNullException("session"); }
 			_session = session;

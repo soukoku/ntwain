@@ -6,7 +6,7 @@ namespace NTwain.Triplets
 {
 	public sealed class XferGroup : OpBase
 	{
-		internal XferGroup(TwainSession session) : base(session) { }
+		internal XferGroup(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// Returns the Data Group (the type of data) for the upcoming transfer. The Source is required to
 		/// only supply one of the DGs specified in the SupportedGroups field of origin.

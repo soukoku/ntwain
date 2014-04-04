@@ -6,7 +6,7 @@ namespace NTwain.Triplets
 {
 	public sealed class PassThru : OpBase
 	{
-		internal PassThru(TwainSession session) : base(session) { }
+		internal PassThru(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// PASSTHRU is intended for the use of Source writers writing diagnostic applications. It allows
 		/// raw communication with the currently selected device in the Source.

@@ -6,7 +6,7 @@ namespace NTwain.Triplets
 {
 	sealed class EntryPoint : OpBase
 	{
-		internal EntryPoint(TwainSession session) : base(session) { }
+		internal EntryPoint(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// Gets the function entry points for twain 2.0 or higher.
 		/// </summary>

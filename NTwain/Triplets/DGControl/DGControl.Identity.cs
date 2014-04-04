@@ -6,7 +6,7 @@ namespace NTwain.Triplets
 {
 	public sealed class Identity : OpBase
 	{
-		internal Identity(TwainSession session) : base(session) { }
+		internal Identity(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// When an application is finished with a Source, it must formally close the session between them
 		/// using this operation. This is necessary in case the Source only supports connection with a single
@@ -19,8 +19,8 @@ namespace NTwain.Triplets
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.Identity, Message.CloseDS);
 			var rc = PInvoke.DsmEntry(Session.AppId, Message.CloseDS, Session.SourceId);
 			if (rc == ReturnCode.Success)
-			{
-				Session.State = 3;
+            {
+                Session.ChangeState(3, true);
 			}
 			return rc;
 		}
@@ -74,8 +74,8 @@ namespace NTwain.Triplets
 			Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.Identity, Message.OpenDS);
 			var rc = PInvoke.DsmEntry(Session.AppId, Message.OpenDS, source);
 			if (rc == ReturnCode.Success)
-			{
-				Session.State = 4;
+            {
+                Session.ChangeState(4, true);
 			}
 			return rc;
 		}

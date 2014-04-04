@@ -19,7 +19,7 @@ namespace NTwain
     /// <summary>
     /// Provides a session for working with TWAIN api in an application.
     /// </summary>
-    public class TwainSession : IMessageFilter, INotifyPropertyChanged
+    public class TwainSession : ITwainSessionInternal, IMessageFilter, INotifyPropertyChanged
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSession" /> class.
@@ -62,21 +62,11 @@ namespace NTwain
             }
         }
 
-        int _state;
         /// <summary>
         /// Gets the current state number as defined by the TWAIN spec.
         /// </summary>
         /// <value>The state.</value>
-        public int State
-        {
-            get { return _state; }
-            internal set
-            {
-                Debug.WriteLine("TWAIN State = " + value);
-                _state = value;
-                RaisePropertyChanged("State");
-            }
-        }
+        public int State { get; private set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether callback is used parts of source communication
@@ -165,32 +155,20 @@ namespace NTwain
 
         #endregion
 
-        #region quickies
+        #region state transition calls
 
-
-        /// <summary>
-        /// Verifies the session is within the specified state range (inclusive). Throws
-        /// <see cref="TwainStateException" /> if violated.
-        /// </summary>
-        /// <param name="allowedMinimum">The allowed minimum.</param>
-        /// <param name="allowedMaximum">The allowed maximum.</param>
-        /// <param name="group">The triplet data group.</param>
-        /// <param name="dataArgumentType">The triplet data argument type.</param>
-        /// <param name="message">The triplet message.</param>
-        /// <exception cref="TwainStateException"></exception>
-        internal void VerifyState(int allowedMinimum, int allowedMaximum, DataGroups group, DataArgumentType dataArgumentType, NTwain.Values.Message message)
+        void ITwainSessionInternal.ChangeState(int newState, bool notifyChange)
         {
-            if (EnforceState && (State < allowedMinimum || State > allowedMaximum))
-            {
-                throw new TwainStateException(State, allowedMinimum, allowedMaximum, group, dataArgumentType, message,
-                    string.Format("TWAIN state {0} does not match required range {1}-{2} for operation {3}-{4}-{5}.",
-                    State, allowedMinimum, allowedMaximum, group, dataArgumentType, message));
-            }
+            Debug.WriteLine("TWAIN State = " + newState);
+            State = newState;
+            if (notifyChange) { RaisePropertyChanged("State"); }
+        }
+        ICommitable ITwainSessionInternal.GetPendingStateChanger(int newState)
+        {
+            return new TentativeStateChanger(this, newState);
         }
 
-        #endregion
 
-        #region state transition calls
         HandleRef _parentHandle;
 
         /// <summary>
@@ -815,40 +793,25 @@ namespace NTwain
 
         #region nested stuff
 
-        /// <summary>
-        /// Gets the pending state changer and tentatively changes the session state to the specified value.
-        /// Value will only stick if committed.
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <returns></returns>
-        internal ICommitable GetPendingStateChanger(int state)
-        {
-            return new TentativeStateChanger(this, state);
-        }
-
-        internal interface ICommitable : IDisposable
-        {
-            void Commit();
-        }
         class TentativeStateChanger : ICommitable
         {
             bool _commit;
-            TwainSession _session;
+            ITwainSessionInternal _session;
             int _origState;
             int _newState;
-            public TentativeStateChanger(TwainSession session, int newState)
+            public TentativeStateChanger(ITwainSessionInternal session, int newState)
             {
                 _session = session;
                 _origState = session.State;
                 _newState = newState;
-                _session._state = newState;
+                _session.ChangeState(newState, false);
             }
 
             public void Commit()
             {
                 if (_session.State == _newState)
                 {
-                    _session.State = _session.State;
+                    _session.ChangeState(_newState, true);
                 }
                 _commit = true;
             }
@@ -859,7 +822,7 @@ namespace NTwain
             {
                 if (!_commit && _session.State == _newState)
                 {
-                    _session._state = _origState;
+                    _session.ChangeState(_origState, false);
                 }
             }
 

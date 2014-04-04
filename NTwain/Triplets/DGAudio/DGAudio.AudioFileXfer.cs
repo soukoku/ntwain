@@ -5,7 +5,7 @@ namespace NTwain.Triplets
 {
 	sealed class AudioFileXfer : OpBase
 	{
-		internal AudioFileXfer(TwainSession session) : base(session) { }
+        internal AudioFileXfer(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// This operation is used to initiate the transfer of audio from the Source to the application via the
 		/// disk-file transfer mechanism. It causes the transfer to begin.

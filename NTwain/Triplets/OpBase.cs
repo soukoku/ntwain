@@ -11,16 +11,15 @@ namespace NTwain.Triplets
 	/// </summary>
 	public abstract class OpBase
 	{
-		TwainSession _session;
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpBase" /> class.
 		/// </summary>
 		/// <param name="session">The session.</param>
 		/// <exception cref="System.ArgumentNullException"></exception>
-		protected OpBase(TwainSession session)
+        internal OpBase(ITwainSessionInternal session)
 		{
 			if (session == null) { throw new ArgumentNullException("session"); }
-			_session = session;
+			Session = session;
 		}
 
 		/// <summary>
@@ -29,6 +28,6 @@ namespace NTwain.Triplets
 		/// <value>
 		/// The session.
 		/// </value>
-		protected TwainSession Session { get { return _session; } }
+        internal ITwainSessionInternal Session { get; private set; }
 	}
 }

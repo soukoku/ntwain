@@ -6,7 +6,7 @@ namespace NTwain.Triplets
 {
 	public sealed class CustomDSData : OpBase
 	{
-		internal CustomDSData(TwainSession session) : base(session) { }
+		internal CustomDSData(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// This operation is used by the application to query the data source for its current settings, e.g.
         /// DPI, paper size, color format. The actual format of the data is data source dependent and not

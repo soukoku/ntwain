@@ -7,7 +7,7 @@ namespace NTwain.Triplets
 {
     sealed class Parent : OpBase
     {
-        internal Parent(TwainSession session) : base(session) { }
+        internal Parent(ITwainSessionInternal session) : base(session) { }
 
         /// <summary>
         /// When the application has closed all the Sources it had previously opened, and is finished with
@@ -23,7 +23,7 @@ namespace NTwain.Triplets
             var rc = PInvoke.DsmEntry(Session.AppId, null, DataGroups.Control, DataArgumentType.Parent, Message.CloseDsm, ref handle);
             if (rc == ReturnCode.Success)
             {
-                Session.State = 2;
+                Session.ChangeState(2, true);
             }
             return rc;
         }
@@ -41,7 +41,7 @@ namespace NTwain.Triplets
             var rc = PInvoke.DsmEntry(Session.AppId, null, DataGroups.Control, DataArgumentType.Parent, Message.OpenDsm, ref handle);
             if (rc == ReturnCode.Success)
             {
-                Session.State = 3;
+                Session.ChangeState(3, true);
             }
             return rc;
         }
