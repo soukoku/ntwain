@@ -18,6 +18,15 @@ namespace NTwain.Triplets
                 Message msg,
                 ref IntPtr data);
 
+            [DllImport("twain_32", EntryPoint = "#1")]
+            public static extern ReturnCode DsmEntry32(
+                [In, Out]TWIdentity origin,
+                [In, Out]TWIdentity destination,
+                DataGroups dg,
+                DataArgumentType dat,
+                Message msg,
+                ref uint data);
+
 			[DllImport("twain_32", EntryPoint = "#1")]
 			public static extern ReturnCode DsmEntry32(
 				[In, Out]TWIdentity origin,
@@ -178,7 +187,16 @@ namespace NTwain.Triplets
 				DataGroups dg,
 				DataArgumentType dat,
 				Message msg,
-				[In, Out]TWExtImageInfo data);
+                [In, Out]TWExtImageInfo data);
+
+            [DllImport("twain_32", EntryPoint = "#1")]
+            public static extern ReturnCode DsmEntry32(
+                [In, Out]TWIdentity origin,
+                [In, Out]TWIdentity destination,
+                DataGroups dg,
+                DataArgumentType dat,
+                Message msg,
+                [In, Out]TWFilter data);
 
 			[DllImport("twain_32", EntryPoint = "#1")]
 			public static extern ReturnCode DsmEntry32(

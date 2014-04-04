@@ -39,6 +39,18 @@ namespace NTwain.Triplets
             else { return NativeMethods.DsmEntry32(origin, destination, dg, dat, msg, ref data); }
         }
 
+        public static ReturnCode DsmEntry(
+            TWIdentity origin,
+            TWIdentity destination,
+            DataGroups dg,
+            DataArgumentType dat,
+            Message msg,
+            ref uint data)
+        {
+            if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, dg, dat, msg, ref data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, dg, dat, msg, ref data); }
+        }
+
 		public static ReturnCode DsmEntry(
 			TWIdentity origin,
 			TWIdentity destination,
@@ -234,6 +246,15 @@ namespace NTwain.Triplets
 			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
 		}
 
+        public static ReturnCode DsmEntry(
+            TWIdentity origin,
+            TWIdentity destination,
+            Message msg,
+            TWFilter data)
+        {
+            if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
+        }
 
 		public static ReturnCode DsmEntry(
 			TWIdentity origin,

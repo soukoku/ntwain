@@ -113,7 +113,8 @@ namespace NTwain.Triplets
 
 		/// <summary>
 		/// Changes the Current Value(s) and Available Values of the specified capability to those specified
-		/// by the application.
+		/// by the application. As of TWAIN 2.2 this only modifies the Current Value of the specified capability, constraints cannot be
+        /// changed with this.
 		/// Current Values are set when the container is a <see cref="TWOneValue"/> or <see cref="TWArray"/>. Available and
 		/// Current Values are set when the container is a <see cref="TWEnumeration"/> or <see cref="TWRange"/>.
 		/// </summary>
@@ -125,6 +126,18 @@ namespace NTwain.Triplets
 			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Set, capability);
 		}
 
-        //TODO implement SetConstraint
+        /// <summary>
+        /// Changes the Current Value(s) and Available Value(s) of the specified capability to those specified
+        /// by the application.
+        /// </summary>
+        /// Current Values are set when the container is a <see cref="TWOneValue"/> or <see cref="TWArray"/>. Available and
+        /// Current Values are set when the container is a <see cref="TWEnumeration"/> or <see cref="TWRange"/>.
+        /// <param name="capability">The capability.</param>
+        /// <returns></returns>
+        public ReturnCode SetConstraint(TWCapability capability)
+        {
+            Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.Capability, Message.SetConstraint);
+            return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.SetConstraint, capability);
+        }
 	}
 }

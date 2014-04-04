@@ -32,7 +32,18 @@ namespace NTwain.Triplets
 				if (_extImgInfo == null) { _extImgInfo = new ExtImageInfo(_session); }
 				return _extImgInfo;
 			}
-		}
+        }
+
+
+        Filter _filter;
+        public Filter Filter
+        {
+            get
+            {
+                if (_filter == null) { _filter = new Filter(_session); }
+                return _filter;
+            }
+        }
 
 		GrayResponse _grayResponse;
 		public GrayResponse GrayResponse
