@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class Status : OpBase
 	{
-		internal Status(ITwainSessionInternal session) : base(session) { }
+		internal Status(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// Returns the current Condition Code for the Source Manager.
 		/// </summary>

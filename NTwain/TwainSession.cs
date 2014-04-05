@@ -19,7 +19,7 @@ namespace NTwain
     /// <summary>
     /// Provides a session for working with TWAIN api in an application.
     /// </summary>
-    public class TwainSession : ITwainSessionInternal, IMessageFilter, INotifyPropertyChanged
+    public class TwainSession : ITwainStateInternal, IMessageFilter, INotifyPropertyChanged
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSession" /> class.
@@ -29,7 +29,7 @@ namespace NTwain
         public TwainSession(TWIdentity appId)
         {
             if (appId == null) { throw new ArgumentNullException("appId"); }
-            _appId = appId;
+            AppId = appId;
             State = 1;
             EnforceState = true;
         }
@@ -40,27 +40,17 @@ namespace NTwain
         SynchronizationContext _syncer;
 
 
-        TWIdentity _appId;
         /// <summary>
         /// Gets the app id used for the session.
         /// </summary>
         /// <value>The app id.</value>
-        public TWIdentity AppId { get { return _appId; } }
+        public TWIdentity AppId { get; private set; }
 
-        TWIdentity _sourceId;
         /// <summary>
         /// Gets the source id used for the session.
         /// </summary>
         /// <value>The source id.</value>
-        public TWIdentity SourceId
-        {
-            get { return _sourceId; }
-            private set
-            {
-                _sourceId = value;
-                RaisePropertyChanged("SourceId");
-            }
-        }
+        public TWIdentity SourceId { get; private set; }
 
         /// <summary>
         /// Gets the current state number as defined by the TWAIN spec.
@@ -157,15 +147,20 @@ namespace NTwain
 
         #region state transition calls
 
-        void ITwainSessionInternal.ChangeState(int newState, bool notifyChange)
+        void ITwainStateInternal.ChangeState(int newState, bool notifyChange)
         {
             Debug.WriteLine("TWAIN State = " + newState);
             State = newState;
             if (notifyChange) { RaisePropertyChanged("State"); }
         }
-        ICommitable ITwainSessionInternal.GetPendingStateChanger(int newState)
+        ICommitable ITwainStateInternal.GetPendingStateChanger(int newState)
         {
-            return new TentativeStateChanger(this, newState);
+            return new TentativeStateCommitable(this, newState);
+        }
+        void ITwainStateInternal.ChangeSourceId(TWIdentity sourceId)
+        {
+            SourceId = sourceId;
+            RaisePropertyChanged("SourceId");
         }
 
 
@@ -193,7 +188,7 @@ namespace NTwain
                     rc = DGControl.EntryPoint.Get(out entry);
                     if (rc == ReturnCode.Success)
                     {
-                        MemoryManager.Global.UpdateEntryPoint(entry);
+                        MemoryManager.Instance.UpdateEntryPoint(entry);
                         Debug.WriteLine("Using TWAIN2 memory functions.");
                     }
                     else
@@ -218,7 +213,7 @@ namespace NTwain
             if (rc == ReturnCode.Success)
             {
                 _parentHandle = default(HandleRef);
-                MemoryManager.Global.UpdateEntryPoint(null);
+                MemoryManager.Instance.UpdateEntryPoint(null);
             }
             return rc;
         }
@@ -258,7 +253,7 @@ namespace NTwain
                 if (!DisableCallback)
                 {
                     // app v2.2 or higher uses callback2
-                    if (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2)
+                    if (AppId.ProtocolMajor >= 2 && AppId.ProtocolMinor >= 2)
                     {
                         var cb = new TWCallback2(new CallbackDelegate(CallbackHandler));
                         var rc2 = DGControl.Callback2.RegisterCallback(cb);
@@ -289,7 +284,7 @@ namespace NTwain
         ReturnCode CallbackHandler(TWIdentity origin, TWIdentity dest,
             DataGroups dg, DataArgumentType dat, Values.Message msg, IntPtr data)
         {
-            if (origin != null && _sourceId != null && origin.Id == _sourceId.Id)
+            if (origin != null && SourceId != null && origin.Id == SourceId.Id)
             {
                 Debug.WriteLine(string.Format("Thread {0}: GOT TWAIN callback for msg {1}.", Thread.CurrentThread.ManagedThreadId, msg));
                 // spec says should handle this on the thread that enabled the DS, 
@@ -509,7 +504,7 @@ namespace NTwain
                                 {
                                     if (dataPtr != IntPtr.Zero)
                                     {
-                                        lockedPtr = MemoryManager.Global.MemLock(dataPtr);
+                                        lockedPtr = MemoryManager.Instance.MemLock(dataPtr);
                                     }
                                     dtHand(this, new DataTransferredEventArgs(lockedPtr, file));
                                 }
@@ -528,7 +523,7 @@ namespace NTwain
                         //			var dtHand = DataTransferred;
                         //			if (dtHand != null)
                         //			{
-                        //				lockedPtr = MemoryManager.Global.MemLock(dataPtr);
+                        //				lockedPtr = MemoryManager.Instance.MemLock(dataPtr);
                         //				dtHand(this, new DataTransferredEventArgs(lockedPtr));
                         //			}
                         //		}
@@ -542,12 +537,12 @@ namespace NTwain
                         // data here is allocated by source so needs to use shared mem calls
                         if (lockedPtr != IntPtr.Zero)
                         {
-                            MemoryManager.Global.MemUnlock(lockedPtr);
+                            MemoryManager.Instance.MemUnlock(lockedPtr);
                             lockedPtr = IntPtr.Zero;
                         }
                         if (dataPtr != IntPtr.Zero)
                         {
-                            MemoryManager.Global.MemFree(dataPtr);
+                            MemoryManager.Instance.MemFree(dataPtr);
                             dataPtr = IntPtr.Zero;
                         }
                     }
@@ -723,14 +718,14 @@ namespace NTwain
                 try
                 {
                     // no need to lock for marshal alloc
-                    msgPtr = MemoryManager.Global.MemAllocate((uint)Marshal.SizeOf(winmsg));
+                    msgPtr = MemoryManager.Instance.MemAllocate((uint)Marshal.SizeOf(winmsg));
                     Marshal.StructureToPtr(winmsg, msgPtr, false);
                     return HandleLoopMsgEvent(ref msgPtr);
                 }
                 finally
                 {
                     if (msgPtr != IntPtr.Zero)
-                        MemoryManager.Global.MemFree(msgPtr);
+                        MemoryManager.Instance.MemFree(msgPtr);
                 }
             }
             return false;
@@ -762,14 +757,14 @@ namespace NTwain
                 try
                 {
                     // no need to lock for marshal alloc
-                    msgPtr = MemoryManager.Global.MemAllocate((uint)Marshal.SizeOf(winmsg));
+                    msgPtr = MemoryManager.Instance.MemAllocate((uint)Marshal.SizeOf(winmsg));
                     Marshal.StructureToPtr(winmsg, msgPtr, false);
                     handled = HandleLoopMsgEvent(ref msgPtr);
                 }
                 finally
                 {
                     if (msgPtr != IntPtr.Zero)
-                        MemoryManager.Global.MemFree(msgPtr);
+                        MemoryManager.Instance.MemFree(msgPtr);
                 }
             }
             return IntPtr.Zero;
@@ -791,44 +786,5 @@ namespace NTwain
 
         #endregion
 
-        #region nested stuff
-
-        class TentativeStateChanger : ICommitable
-        {
-            bool _commit;
-            ITwainSessionInternal _session;
-            int _origState;
-            int _newState;
-            public TentativeStateChanger(ITwainSessionInternal session, int newState)
-            {
-                _session = session;
-                _origState = session.State;
-                _newState = newState;
-                _session.ChangeState(newState, false);
-            }
-
-            public void Commit()
-            {
-                if (_session.State == _newState)
-                {
-                    _session.ChangeState(_newState, true);
-                }
-                _commit = true;
-            }
-
-            #region IDisposable Members
-
-            public void Dispose()
-            {
-                if (!_commit && _session.State == _newState)
-                {
-                    _session.ChangeState(_origState, false);
-                }
-            }
-
-            #endregion
-        }
-
-        #endregion
     }
 }

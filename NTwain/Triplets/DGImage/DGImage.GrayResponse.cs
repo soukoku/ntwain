@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class GrayResponse : OpBase
 	{
-		internal GrayResponse(ITwainSessionInternal session) : base(session) { }
+		internal GrayResponse(ITwainStateInternal session) : base(session) { }
 
 		/// <summary>
 		/// The Reset operation causes the Source to use its "identity response curve." The identity

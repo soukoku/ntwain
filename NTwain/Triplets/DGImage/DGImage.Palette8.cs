@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class Palette8 : OpBase
 	{
-		internal Palette8(ITwainSessionInternal session) : base(session) { }
+		internal Palette8(ITwainStateInternal session) : base(session) { }
 
 		/// <summary>
 		/// This operation causes the Source to report its current palette information.

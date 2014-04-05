@@ -346,7 +346,7 @@ namespace NTwain.Values
     /// CapClearBuffers values.
     /// Corresponds to TWCB_* values.
     /// </summary>
-    public enum ClearBuffers : ushort
+    public enum ClearBuffer : ushort
     {
         Auto = 0,
         Clear = 1,

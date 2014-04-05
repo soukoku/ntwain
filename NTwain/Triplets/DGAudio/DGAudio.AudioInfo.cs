@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class AudioInfo : OpBase
 	{
-		internal AudioInfo(ITwainSessionInternal session) : base(session) { }
+		internal AudioInfo(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// Used to get the information of the current audio data ready to transfer.
 		/// </summary>

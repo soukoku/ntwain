@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class ExtImageInfo : OpBase
 	{
-		internal ExtImageInfo(ITwainSessionInternal session) : base(session) { }
+		internal ExtImageInfo(ITwainStateInternal session) : base(session) { }
 
 		public ReturnCode Get(TWExtImageInfo info)
 		{

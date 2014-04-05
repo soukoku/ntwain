@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class RgbResponse : OpBase
 	{
-		internal RgbResponse(ITwainSessionInternal session) : base(session) { }
+		internal RgbResponse(ITwainStateInternal session) : base(session) { }
 
 		/// <summary>
 		/// Causes the Source to use its "identity" response curves for future RGB transfers. The identity

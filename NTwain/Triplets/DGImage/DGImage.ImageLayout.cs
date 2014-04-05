@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class ImageLayout : OpBase
 	{
-		internal ImageLayout(ITwainSessionInternal session) : base(session) { }
+		internal ImageLayout(ITwainStateInternal session) : base(session) { }
 
 		public ReturnCode Get(out TWImageLayout layout)
 		{

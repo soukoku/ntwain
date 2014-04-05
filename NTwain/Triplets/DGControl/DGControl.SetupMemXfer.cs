@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class SetupMemXfer : OpBase
 	{
-		internal SetupMemXfer(ITwainSessionInternal session) : base(session) { }
+		internal SetupMemXfer(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// Returns the Source’s preferred, minimum, and maximum allocation sizes for transfer memory
 		/// buffers.

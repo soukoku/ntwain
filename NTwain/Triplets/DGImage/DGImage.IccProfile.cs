@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class IccProfile : OpBase
 	{
-		internal IccProfile(ITwainSessionInternal session) : base(session) { }
+		internal IccProfile(ITwainStateInternal session) : base(session) { }
 
 		/// <summary>
 		/// This operation provides the application with the ICC profile associated with the image which is

@@ -73,7 +73,7 @@ namespace NTwain
         /// <param name="dataArgumentType">The triplet data argument type.</param>
         /// <param name="message">The triplet message.</param>
         /// <exception cref="TwainStateException"></exception>
-        internal static void VerifyState(this ITwainSessionInternal session, int allowedMinimum, int allowedMaximum, DataGroups group, DataArgumentType dataArgumentType, NTwain.Values.Message message)
+        internal static void VerifyState(this ITwainStateInternal session, int allowedMinimum, int allowedMaximum, DataGroups group, DataArgumentType dataArgumentType, NTwain.Values.Message message)
         {
             if (session.EnforceState && (session.State < allowedMinimum || session.State > allowedMaximum))
             {

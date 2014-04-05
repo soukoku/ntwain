@@ -9,15 +9,14 @@ namespace NTwain
 {
     /// <summary>
     /// Provides methods for managing memory on data exchanged with twain sources.
-    /// This should only be used after the DSM has been opened in <see cref="TwainSession"/>
-    /// via <see cref="TwainSession.OpenManager"/>.
+    /// This should only be used after the DSM has been opened.
     /// </summary>
-    public class MemoryManager
+    public class MemoryManager : IMemoryManager
     {
         /// <summary>
-        /// Gets the global <see cref="MemoryManager"/> instance.
+        /// Gets the singleton <see cref="MemoryManager"/> instance.
         /// </summary>
-        public static readonly MemoryManager Global = new MemoryManager();
+        public static readonly MemoryManager Instance = new MemoryManager();
 
         private MemoryManager() { }
 
@@ -46,7 +45,7 @@ namespace NTwain
             else
             {
                 // 0x0040 is GPTR
-                return GlobalAlloc(0x0040, new UIntPtr(size));
+                return WinGlobalAlloc(0x0040, new UIntPtr(size));
             }
         }
 
@@ -62,7 +61,7 @@ namespace NTwain
             }
             else
             {
-                GlobalFree(handle);
+                WinGlobalFree(handle);
             }
         }
 
@@ -79,7 +78,7 @@ namespace NTwain
             }
             else
             {
-                return GlobalLock(handle);
+                return WinGlobalLock(handle);
             }
         }
 
@@ -95,24 +94,25 @@ namespace NTwain
             }
             else
             {
-                GlobalUnlock(handle);
+                WinGlobalUnlock(handle);
             }
         }
 
         #region old mem stuff for twain 1.x
 
-        [DllImport("kernel32", SetLastError = true, ExactSpelling = true)]
-        static extern IntPtr GlobalAlloc(uint uFlags, UIntPtr dwBytes);
 
-        [DllImport("kernel32", SetLastError = true, ExactSpelling = true)]
-        static extern IntPtr GlobalFree(IntPtr hMem);
+        [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalAlloc")]
+        static extern IntPtr WinGlobalAlloc(uint uFlags, UIntPtr dwBytes);
 
-        [DllImport("kernel32", SetLastError = true, ExactSpelling = true)]
-        static extern IntPtr GlobalLock(IntPtr handle);
+        [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalFree")]
+        static extern IntPtr WinGlobalFree(IntPtr hMem);
 
-        [DllImport("kernel32", SetLastError = true, ExactSpelling = true)]
+        [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalLock")]
+        static extern IntPtr WinGlobalLock(IntPtr handle);
+
+        [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalUnlock")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GlobalUnlock(IntPtr handle);
+        static extern bool WinGlobalUnlock(IntPtr handle);
 
         #endregion
     }
