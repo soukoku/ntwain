@@ -1,8 +1,9 @@
-﻿using System;
+﻿using NTwain.Values;
+using System;
 namespace NTwain.Triplets
 {
-	/// <summary>
-	/// Class for grouping triplet operations under the Audio data group.
+    /// <summary>
+    /// Represents <see cref="DataGroups.Audio"/>.
 	/// </summary>
 	public sealed class DGAudio
 	{

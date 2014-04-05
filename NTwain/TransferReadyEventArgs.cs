@@ -24,7 +24,7 @@ namespace NTwain
             IList<Compression> supportedCompressions, Compression currentCompression, bool canDoFileXfer, TWImageInfo imageInfo)
         {
             PendingCount = pending.Count;
-            EndOfJob = pending.EndOfJob;
+            EndOfJob = pending.EndOfJob == 0;
             _imageCompression = currentCompression;
             SupportedCompressions = supportedCompressions;
             _imageFormat = currentFormat;

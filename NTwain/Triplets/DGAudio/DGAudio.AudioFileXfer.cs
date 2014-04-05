@@ -3,6 +3,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.AudioFileXfer"/>.
+    /// </summary>
 	sealed class AudioFileXfer : OpBase
 	{
         internal AudioFileXfer(ITwainSessionInternal session) : base(session) { }

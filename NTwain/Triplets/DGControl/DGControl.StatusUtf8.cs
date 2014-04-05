@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.StatusUtf8"/>.
+    /// </summary>
 	public sealed class StatusUtf8 : OpBase
 	{
 		internal StatusUtf8(ITwainSessionInternal session) : base(session) { }

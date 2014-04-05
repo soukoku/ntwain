@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.JpegCompression"/>.
+    /// </summary>
 	public sealed class JpegCompression : OpBase
 	{
 		internal JpegCompression(ITwainSessionInternal session) : base(session) { }

@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.Capability"/>.
+    /// </summary>
 	public sealed class Capability : OpBase
 	{
 		internal Capability(ITwainSessionInternal session) : base(session) { }

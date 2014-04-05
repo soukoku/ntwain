@@ -114,7 +114,6 @@ namespace NTwain.Data
         CallbackDelegate _callBackProc;
         TW_UINT32 _refCon;
         TW_INT16 _message;
-
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -538,7 +537,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial struct TWFilterDescriptor
+    partial class TWFilterDescriptor
     {
         TW_UINT32 _size;
         TW_UINT32 _hueStart;

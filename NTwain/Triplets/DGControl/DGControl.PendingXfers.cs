@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.PendingXfers"/>.
+    /// </summary>
 	sealed class PendingXfers : OpBase
 	{
 		internal PendingXfers(ITwainSessionInternal session) : base(session) { }

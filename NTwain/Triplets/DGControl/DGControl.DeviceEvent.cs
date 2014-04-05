@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.DeviceEvent"/>.
+    /// </summary>
 	public sealed class DeviceEvent : OpBase
 	{
 		internal DeviceEvent(ITwainSessionInternal session) : base(session) { }

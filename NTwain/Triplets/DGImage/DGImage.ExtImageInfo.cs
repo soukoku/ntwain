@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.ExtImageInfo"/>.
+    /// </summary>
 	public sealed class ExtImageInfo : OpBase
 	{
 		internal ExtImageInfo(ITwainSessionInternal session) : base(session) { }

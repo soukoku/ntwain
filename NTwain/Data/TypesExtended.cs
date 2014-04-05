@@ -468,13 +468,15 @@ namespace NTwain.Data
         /// </summary>
         public TWDecodeFunction[] Decode { get { return _decode; } set { _decode = value; } }
         /// <summary>
-        /// 3x3 matrix that specifies how channels are mixed in
+        /// 3x3 matrix that specifies how channels are mixed in.
         /// </summary>
         public TWFix32[][] Mix { get { return _mix; } set { _mix = value; } }
     }
 
     /// <summary>
-    /// Container for a collection of values.
+    /// Stores a group of associated individual values for a capability.
+    /// The values need have no relationship to one another aside from 
+    /// being used to describe the same "value" of the capability
     /// </summary>
     public partial class TWArray
     {
@@ -514,21 +516,67 @@ namespace NTwain.Data
         public string Name { get { return _name; } }
     }
 
+    /// <summary>
+    /// Used in Callback mechanism for sending messages from the Source to the Application.
+    /// Applications version 2.2 or higher must use <see cref="TWCallback2"/>.
+    /// </summary>
     partial class TWCallback
     {
-        public TWCallback() { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWCallback"/> class.
+        /// </summary>
+        /// <param name="callback">The callback function’s entry point.</param>
         public TWCallback(CallbackDelegate callback)
         {
             _callBackProc = callback;
         }
+
+        /// <summary>
+        /// An application defined reference constant.
+        /// </summary>
+        /// <value>
+        /// The reference constant.
+        /// </value>
+        public uint RefCon { get { return _refCon; } set { _refCon = value; } }
+
+        /// <summary>
+        /// Initialized to any valid DG_CONTROL / DAT_NULL message.
+        /// </summary>
+        /// <value>
+        /// The message.
+        /// </value>
+        public short Message { get { return _message; } set { _message = value; } }
     }
+    /// <summary>
+    /// Used in the Callback mechanism for sending messages from the Source to the Application.
+    /// </summary>
     partial class TWCallback2
     {
-        public TWCallback2() { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWCallback2"/> class.
+        /// </summary>
+        /// <param name="callback">The callback function’s entry point.</param>
         public TWCallback2(CallbackDelegate callback)
         {
             _callBackProc = callback;
         }
+
+        /// <summary>
+        /// An application defined reference constant. It has a different size on different
+        /// platforms.
+        /// </summary>
+        /// <value>
+        /// The reference constant.
+        /// </value>
+        public UIntPtr RefCon { get { return _refCon; } set { _refCon = value; } }
+
+        /// <summary>
+        /// Initialized to any valid DG_CONTROL / DAT_NULL message.
+        /// </summary>
+        /// <value>
+        /// The message.
+        /// </value>
+        public short Message { get { return _message; } set { _message = value; } }
     }
 
     /// <summary>
@@ -592,16 +640,12 @@ namespace NTwain.Data
         /// </summary>
         public CapabilityId Capability { get { return (CapabilityId)_cap; } set { _cap = (ushort)value; } }
         /// <summary>
-        /// The type of the container structure referenced by hContainer. The container
+        /// The type of the container structure referenced by the pointer internally. The container
         /// will be one of four types: <see cref="TWArray"/>, <see cref="TWEnumeration"/>,
         /// <see cref="TWOneValue"/>, or <see cref="TWRange"/>.
         /// </summary>
         public ContainerType ContainerType { get { return (Values.ContainerType)_conType; } set { _conType = (ushort)value; } }
-        ///// <summary>
-        ///// References the container structure where detailed information about the
-        ///// capability is stored.
-        ///// </summary>
-        //IntPtr hContainer;
+
 
         #endregion
 
@@ -1072,6 +1116,9 @@ namespace NTwain.Data
 
         #region IDisposable Members
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             if (_hContainer != IntPtr.Zero)
@@ -1082,6 +1129,9 @@ namespace NTwain.Data
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="TWCapability"/> class.
+        /// </summary>
         ~TWCapability()
         {
             if (_hContainer != IntPtr.Zero)
@@ -1234,7 +1284,7 @@ namespace NTwain.Data
         /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of solid
         /// black ink on the "paper" from which the image was acquired.
         /// </summary>
-        public TWCiePoint WhiteInk { get { return _blackInk; } set { _blackInk = value; } }
+        public TWCiePoint BlackInk { get { return _blackInk; } set { _blackInk = value; } }
         /// <summary>
         /// Optional table look-up values used by the decode function. Samples
         /// are ordered sequentially and end-to-end as A, B, C, L, M, and N.
@@ -1402,10 +1452,8 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// Container for a collection of values. The values are ordered from lowest
-    /// to highest values, but the step size between each value is probably not uniform. Such a list
-    /// would be useful to describe the discreet resolutions of a capture device supporting, say, 75, 150,
-    /// 300, 400, and 800 dots per inch.
+    /// An enumeration stores a list of individual values, with one of the items designated as the current
+    /// value. There is no required order to the values in the list.
     /// </summary>
     public partial class TWEnumeration
     {
@@ -1418,12 +1466,12 @@ namespace NTwain.Data
         ///// </summary>
         //public int Count { get { return (int)_numItems; } set { _numItems = (uint)value; } }
         /// <summary>
-        /// The item number, or index (zero-based) into ItemList[], of the "current"
+        /// The item number, or index (zero-based) into <see cref="ItemList"/>, of the "current"
         /// value for the capability.
         /// </summary>
         public int CurrentIndex { get { return (int)_currentIndex; } set { _currentIndex = (uint)value; } }
         /// <summary>
-        /// The item number, or index (zero-based) into ItemList[], of the "power-on"
+        /// The item number, or index (zero-based) into <see cref="ItemList"/>, of the "power-on"
         /// value for the capability.
         /// </summary>
         public int DefaultIndex { get { return (int)_defaultIndex; } set { _defaultIndex = (uint)value; } }
@@ -1449,9 +1497,8 @@ namespace NTwain.Data
 
 
     /// <summary>
-    /// Used to pass application events/messages from the application to the Source. The Source is
-    /// responsible for examining the event/message, deciding if it belongs to the Source, and
-    /// returning an appropriate return code to indicate whether or not the Source owns the event/message.
+    /// Used on Windows and Macintosh pre OS X to pass application events/messages from the
+    /// application to the Source.
     /// </summary>
     public partial class TWEvent
     {
@@ -1464,13 +1511,16 @@ namespace NTwain.Data
         public IntPtr pEvent { get { return _pEvent; } set { _pEvent = value; } }
         /// <summary>
         /// Any message the Source needs to send to the application in
-        /// response to processing the event/message.
+        /// response to processing the event/message. The messages currently defined for
+        /// this purpose are <see cref="Message.Null"/>, <see cref="Message.XferReady"/> 
+        /// and <see cref="Message.CloseDSReq"/>.
         /// </summary>
         public Message TWMessage { get { return (Message)_tWMessage; } }
     }
 
     /// <summary>
-    /// This structure is used to pass specific information between the data source and the application.
+    /// This structure is used to pass specific information between the data source and the application
+    /// through <see cref="TWExtImageInfo"/>.
     /// </summary>
     public partial struct TWInfo
     {
@@ -1483,14 +1533,20 @@ namespace NTwain.Data
         /// </summary>
         public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
         /// <summary>
-        /// Number of items for this field.
+        /// Number of items.
         /// </summary>
         public ushort NumItems { get { return _numItems; } set { _numItems = value; } }
 
+        /// <summary>
+        /// This is the return code of availability of data for extended image attribute requested.
+        /// </summary>
+        /// <value>
+        /// The return code.
+        /// </value>
         public ReturnCode ReturnCode { get { return (ReturnCode)_returnCode; } set { _returnCode = (ushort)value; } }
 
         /// <summary>
-        /// The TW_Info.Item field contains either data or a handle to data. The field
+        /// Contains either data or a handle to data. The field
         /// contains data if the total amount of data is less than or equal to four bytes. The
         /// field contains a handle of the total amount of data is more than four bytes.
         /// The amount of data is determined by multiplying NumItems times
@@ -1529,7 +1585,6 @@ namespace NTwain.Data
     /// </summary>
     public partial class TWFileSystem
     {
-        /* DG_CONTROL / DAT_FILESYSTEM / MSG_xxxx fields     */
         /// <summary>
         /// The name of the input or source file.
         /// </summary>
@@ -1543,19 +1598,31 @@ namespace NTwain.Data
         /// information, such as the current directory.
         /// </summary>
         public IntPtr Context { get { return _context; } set { _context = value; } }
-        
+
         /// <summary>
         /// When set to TRUE recursively apply the operation. (ex: deletes
         /// all subdirectories in the directory being deleted; or copies all
         /// sub-directories in the directory being copied.
         /// </summary>
         public short Recursive { get { return _recursive; } set { _recursive = value; } }
-        public ushort Subdirectories { get { return _subdirectories; } set { _subdirectories = value; } }
+        public bool Subdirectories { get { return _subdirectories == TwainConst.True; } }
 
-        /* DG_CONTROL / DAT_FILESYSTEM / MSG_GETInfo fields  */
+        /// <summary>
+        /// Gets the type of the file.
+        /// </summary>
+        /// <value>
+        /// The type of the file.
+        /// </value>
         public FileType FileType { get { return (FileType)_fileType; } set { _fileType = (int)value; } }
         public uint FileSystemType { get { return _fileSystemType; } set { _fileSystemType = value; } }
 
+        /// <summary>
+        /// If <see cref="NTwain.Values.FileType.Directory"/>, total size of media in bytes.
+        /// If <see cref="NTwain.Values.FileType.Image"/>, size of image in bytes.
+        /// </summary>
+        /// <value>
+        /// The size.
+        /// </value>
         public uint Size { get { return _size; } set { _size = value; } }
         /// <summary>
         /// The create date of the file, in the form "YYYY/MM/DD
@@ -1565,7 +1632,7 @@ namespace NTwain.Data
         /// </summary>
         public string CreateTimeDate { get { return _createTimeDate; } set { _createTimeDate = value; } }
         /// <summary>
-        /// Last date the file was modified. Same format as CreateTimeDate.
+        /// Last date the file was modified. Same format as <see cref="CreateTimeDate"/>.
         /// </summary>
         public string ModifiedTimeDate { get { return _modifiedTimeDate; } set { _modifiedTimeDate = value; } }
         /// <summary>
@@ -1579,7 +1646,19 @@ namespace NTwain.Data
         /// approximate number of images that the Device has room for.
         /// </summary>
         public int NewImageSize { get { return _newImageSize; } set { _newImageSize = value; } }
+        /// <summary>
+        /// If applicable, return the number of <see cref="NTwain.Values.FileType.Image"/> files on the file system including those in all sub-directories.
+        /// </summary>
+        /// <value>
+        /// The number of files.
+        /// </value>
         public uint NumberOfFiles { get { return _numberOfFiles; } set { _numberOfFiles = value; } }
+        /// <summary>
+        /// The number of audio snippets associated with a file of type <see cref="NTwain.Values.FileType.Image"/>.
+        /// </summary>
+        /// <value>
+        /// The number of snippets.
+        /// </value>
         public uint NumberOfSnippets { get { return _numberOfSnippets; } set { _numberOfSnippets = value; } }
         /// <summary>
         /// Used to group cameras (ex: front/rear bitonal, front/rear grayscale...).
@@ -1782,6 +1861,16 @@ namespace NTwain.Data
         //{
         //	return Create(supportedGroups);
         //}
+        /// <summary>
+        /// Creates a <see cref="TWIdentity"/> specified values.
+        /// </summary>
+        /// <param name="supportedGroups">The supported groups.</param>
+        /// <param name="version">The version.</param>
+        /// <param name="manufacturer">The manufacturer.</param>
+        /// <param name="productFamily">The product family.</param>
+        /// <param name="productName">Name of the product.</param>
+        /// <param name="productDescription">The product description.</param>
+        /// <returns></returns>
         public static TWIdentity Create(DataGroups supportedGroups, Version version,
             string manufacturer, string productFamily, string productName, string productDescription)
         {
@@ -1997,7 +2086,7 @@ namespace NTwain.Data
         /// </summary>
         public uint BytesWritten { get { return _bytesWritten; } set { _bytesWritten = value; } }
         /// <summary>
-        /// A structure of type TW_MEMORY describing who must dispose of the
+        /// A structure of type <see cref="TWMemory"/> describing who must dispose of the
         /// buffer, the actual size of the buffer, in bytes, and where the buffer is
         /// located in memory.
         /// </summary>
@@ -2140,6 +2229,9 @@ namespace NTwain.Data
     /// </summary>
     partial class TWPendingXfers
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWPendingXfers"/> class.
+        /// </summary>
         public TWPendingXfers()
         {
             _count = TwainConst.DontCare16;
@@ -2153,10 +2245,10 @@ namespace NTwain.Data
         public int Count { get { return _count == TwainConst.DontCare16 ? -1 : (int)_count; } }
         /// <summary>
         /// The application should check this field if the CapJobControl is set to other
-        /// than None. If this is not false, the application should expect more data
+        /// than None. If this is not 0, the application should expect more data
         /// from the driver according to CapJobControl settings.
         /// </summary>
-        public bool EndOfJob { get { return _eOJ == 0; } }
+        public uint EndOfJob { get { return _eOJ; } }
     }
 
 
@@ -2198,8 +2290,8 @@ namespace NTwain.Data
     /// <summary>
     /// This structure is used by the application to specify a set of mapping values to be applied to RGB
     /// color data. Use this structure for RGB data whose bit depth is up to, and including, 8-bits.
-    /// The number of elements in the array is determined by <see cref="TWImageInfo.BItsPerPixel"/>—the number of
-    /// elements is 2 raised to the power of <see cref="TWImageInfo.BItsPerPixel"/>.
+    /// The number of elements in the array is determined by <see cref="TWImageInfo.BitsPerPixel"/>—the number of
+    /// elements is 2 raised to the power of <see cref="TWImageInfo.BitsPerPixel"/>.
     /// </summary>
     public partial class TWRgbResponse
     {
@@ -2225,11 +2317,11 @@ namespace NTwain.Data
         /// </summary>
         public FileFormat Format { get { return (FileFormat)_format; } set { _format = (ushort)value; } }
 
-        ///// <summary>
-        ///// The volume reference number for the file. This applies to Macintosh only. On
-        ///// Windows, fill the field with -1.
-        ///// </summary>
-        //public short VRefNum { get { return _vRefNum; } set { _vRefNum = value; } }
+        /// <summary>
+        /// The volume reference number for the file. This applies to Macintosh only. On
+        /// Windows, fill the field with -1.
+        /// </summary>
+        public short VRefNum { get { return _vRefNum; } set { _vRefNum = value; } }
     }
 
 
@@ -2344,6 +2436,9 @@ namespace NTwain.Data
     /// </summary>
     partial class TWEntryPoint
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWEntryPoint"/> class.
+        /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         public TWEntryPoint()
         {
@@ -2370,23 +2465,101 @@ namespace NTwain.Data
     }
 
 
-    public partial struct TWFilterDescriptor
+    /// <summary>
+    /// The range of colors specified by this structure is replaced with Replacement grayscale value in the
+    /// binary image. The color is specified in HSV color space.
+    /// </summary>
+    public partial class TWFilterDescriptor
     {
-        public UInt32 Size { get { return _size; } set { _size = value; } }
-        public UInt32 HueStart { get { return _hueStart; } set { _hueStart = value; } }
-        public UInt32 HueEnd { get { return _hueEnd; } set { _hueEnd = value; } }
-        public UInt32 SaturationStart { get { return _saturationStart; } set { _saturationStart = value; } }
-        public UInt32 SaturationEnd { get { return _saturationEnd; } set { _saturationEnd = value; } }
-        public UInt32 ValueStart { get { return _valueStart; } set { _valueStart = value; } }
-        public UInt32 ValueEnd { get { return _valueEnd; } set { _valueEnd = value; } }
-        public UInt32 Replacement { get { return _replacement; } set { _replacement = value; } }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWFilterDescriptor"/> struct.
+        /// </summary>
+        public TWFilterDescriptor()
+        {
+            _size = (uint)Marshal.SizeOf(this);
+        }
+
+        /// <summary>
+        /// Size of this structure in bytes.
+        /// </summary>
+        /// <value>
+        /// The size.
+        /// </value>
+        public uint Size { get { return _size; } set { _size = value; } }
+        /// <summary>
+        /// Hue starting number. Valid values 0 to 3600 (0° to 360°).
+        /// </summary>
+        public uint HueStart { get { return _hueStart; } set { _hueStart = value; } }
+        /// <summary>
+        /// Hue ending number. Valid values 0 to 3600 (0° to 360°).
+        /// </summary>
+        public uint HueEnd { get { return _hueEnd; } set { _hueEnd = value; } }
+        /// <summary>
+        /// Saturation starting number. Valid values 0 to 1000 (0% to 100%).
+        /// </summary>
+        public uint SaturationStart { get { return _saturationStart; } set { _saturationStart = value; } }
+        /// <summary>
+        /// Saturation ending number. Valid values 0 to 1000 (0% to 100%).
+        /// </summary>
+        public uint SaturationEnd { get { return _saturationEnd; } set { _saturationEnd = value; } }
+        /// <summary>
+        /// Luminosity starting number. Valid values 0 to 1000 (0% to 100%).
+        /// </summary>
+        public uint ValueStart { get { return _valueStart; } set { _valueStart = value; } }
+        /// <summary>
+        /// Luminosity ending number. Valid values 0 to 1000 (0% to 100%).
+        /// </summary>
+        public uint ValueEnd { get { return _valueEnd; } set { _valueEnd = value; } }
+        /// <summary>
+        /// Replacement grayscale value. Valid values 0 to (2^32)–1 (Maximum value
+        /// depends on grayscale bit depth).
+        /// </summary>
+        public uint Replacement { get { return _replacement; } set { _replacement = value; } }
     }
+
+    /// <summary>
+    /// Specifies the filter to be applied during image acquisition. More than one descriptor can be
+    /// specified. All descriptors are applied with an OR statement.
+    /// </summary>
     public partial class TWFilter
     {
-        public UInt32 Size { get { return _size; } set { _size = value; } }
-        public UInt32 DescriptorCount { get { return _descriptorCount; } set { _descriptorCount = value; } }
-        public UInt32 MaxDescriptorCount { get { return _maxDescriptorCount; } set { _maxDescriptorCount = value; } }
-        public UInt32 Condition { get { return _condition; } set { _condition = value; } }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWFilter"/> class.
+        /// </summary>
+        public TWFilter()
+        {
+            _size = (uint)Marshal.SizeOf(this);
+        }
+
+        /// <summary>
+        /// Number of descriptors in hDescriptors array.
+        /// </summary>
+        /// <value>
+        /// The descriptor count.
+        /// </value>
+        public uint DescriptorCount { get { return _descriptorCount; } set { _descriptorCount = value; } }
+        /// <summary>
+        /// Maximum possible descriptors. Valid only for GET and GETDEFAULT operations.
+        /// </summary>
+        /// <value>
+        /// The maximum descriptor count.
+        /// </value>
+        public uint MaxDescriptorCount { get { return _maxDescriptorCount; } set { _maxDescriptorCount = value; } }
+        /// <summary>
+        /// If the value is 0 filter will check if current pixel color is inside the area
+        /// specified by the descriptor. If the value is 1 it will check if it is outside
+        /// of this area.
+        /// </summary>
+        /// <value>
+        /// The condition.
+        /// </value>
+        public uint Condition { get { return _condition; } set { _condition = value; } }
+        /// <summary>
+        /// Handle to array of <see cref="TWFilterDescriptor"/>.
+        /// </summary>
+        /// <value>
+        /// The descriptors.
+        /// </value>
         public IntPtr hDescriptors { get { return _hDescriptors; } set { _hDescriptors = value; } }
     }
 

@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.FileSystem"/>.
+    /// </summary>
 	public sealed class FileSystem : OpBase
 	{
 		internal FileSystem(ITwainSessionInternal session) : base(session) { }

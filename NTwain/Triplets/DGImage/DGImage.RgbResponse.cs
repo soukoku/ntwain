@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.RgbResponse"/>.
+    /// </summary>
 	public sealed class RgbResponse : OpBase
 	{
 		internal RgbResponse(ITwainSessionInternal session) : base(session) { }

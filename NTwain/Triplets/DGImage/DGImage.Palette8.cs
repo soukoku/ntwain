@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.Palette8"/>.
+    /// </summary>
 	public sealed class Palette8 : OpBase
 	{
 		internal Palette8(ITwainSessionInternal session) : base(session) { }

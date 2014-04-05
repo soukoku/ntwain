@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.CieColor"/>.
+    /// </summary>
 	public sealed class CieColor : OpBase
 	{
 		internal CieColor(ITwainSessionInternal session) : base(session) { }

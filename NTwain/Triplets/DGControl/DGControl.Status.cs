@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.Status"/>.
+    /// </summary>
 	public sealed class Status : OpBase
 	{
 		internal Status(ITwainSessionInternal session) : base(session) { }

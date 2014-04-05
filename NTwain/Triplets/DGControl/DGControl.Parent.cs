@@ -5,6 +5,9 @@ using System.Runtime.InteropServices;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.Parent"/>.
+    /// </summary>
     sealed class Parent : OpBase
     {
         internal Parent(ITwainSessionInternal session) : base(session) { }

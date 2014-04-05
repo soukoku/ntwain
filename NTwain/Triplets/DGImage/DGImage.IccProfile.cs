@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.IccProfile"/>.
+    /// </summary>
 	public sealed class IccProfile : OpBase
 	{
 		internal IccProfile(ITwainSessionInternal session) : base(session) { }

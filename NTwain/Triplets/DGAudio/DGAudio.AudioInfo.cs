@@ -3,6 +3,9 @@ using NTwain.Values;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.AudioInfo"/>.
+    /// </summary>
 	public sealed class AudioInfo : OpBase
 	{
 		internal AudioInfo(ITwainSessionInternal session) : base(session) { }

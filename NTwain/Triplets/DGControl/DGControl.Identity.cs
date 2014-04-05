@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.Identity"/>.
+    /// </summary>
 	public sealed class Identity : OpBase
 	{
 		internal Identity(ITwainSessionInternal session) : base(session) { }

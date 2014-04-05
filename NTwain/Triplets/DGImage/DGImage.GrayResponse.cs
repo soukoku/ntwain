@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.GrayResponse"/>.
+    /// </summary>
 	public sealed class GrayResponse : OpBase
 	{
 		internal GrayResponse(ITwainSessionInternal session) : base(session) { }

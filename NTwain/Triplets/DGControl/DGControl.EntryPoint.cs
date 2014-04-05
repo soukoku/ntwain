@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.EntryPoint"/>.
+    /// </summary>
 	sealed class EntryPoint : OpBase
 	{
 		internal EntryPoint(ITwainSessionInternal session) : base(session) { }

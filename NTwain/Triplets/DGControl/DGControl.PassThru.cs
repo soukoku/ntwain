@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.PassThru"/>.
+    /// </summary>
 	public sealed class PassThru : OpBase
 	{
 		internal PassThru(ITwainSessionInternal session) : base(session) { }

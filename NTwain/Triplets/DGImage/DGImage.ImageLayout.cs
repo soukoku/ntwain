@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.ImageLayout"/>.
+    /// </summary>
 	public sealed class ImageLayout : OpBase
 	{
 		internal ImageLayout(ITwainSessionInternal session) : base(session) { }

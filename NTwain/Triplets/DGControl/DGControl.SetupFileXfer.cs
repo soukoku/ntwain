@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.SetupFileXfer"/>.
+    /// </summary>
 	public sealed class SetupFileXfer : OpBase
 	{
 		internal SetupFileXfer(ITwainSessionInternal session) : base(session) { }

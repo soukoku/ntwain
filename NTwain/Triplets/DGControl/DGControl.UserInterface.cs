@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.UserInterface"/>.
+    /// </summary>
     sealed class UserInterface : OpBase
     {
         internal UserInterface(ITwainSessionInternal session) : base(session) { }

@@ -4,6 +4,9 @@ using NTwain.Values;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.XferGroup"/>.
+    /// </summary>
 	public sealed class XferGroup : OpBase
 	{
 		internal XferGroup(ITwainSessionInternal session) : base(session) { }

@@ -4,6 +4,9 @@ using System;
 
 namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Represents <see cref="DataArgumentType.CustomDSData"/>.
+    /// </summary>
 	public sealed class CustomDSData : OpBase
 	{
 		internal CustomDSData(ITwainSessionInternal session) : base(session) { }
