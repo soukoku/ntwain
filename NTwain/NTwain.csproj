@@ -76,6 +76,8 @@
     <Compile Include="Triplets\PInvokes.64bit.cs" />
     <Compile Include="TwainSessionExtensions.cs" />
     <Compile Include="TwainSessionBase.cs" />
+    <Compile Include="TwainSessionWPF.cs" />
+    <Compile Include="TwainSessionWinform.cs" />
     <Compile Include="TwainStateException.cs" />
     <Compile Include="Data\Types.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

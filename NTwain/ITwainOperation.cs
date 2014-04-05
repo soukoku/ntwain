@@ -27,11 +27,4 @@ namespace NTwain
         /// </summary>
         DGImage DGImage { get; }
     }
-
-    /// <summary>
-    /// Internal interface for operations use.
-    /// </summary>
-    interface ITwainOperationInternal : ITwainOperation
-    {
-    }
 }

@@ -9,13 +9,14 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Windows.Interop;
 
 namespace NTwain
 {
     /// <summary>
-    /// Base working class for interfacing with TWAIN.
+    /// Base class for interfacing with TWAIN.
     /// </summary>
-    public class TwainSessionBase : ITwainStateInternal, ITwainOperationInternal
+    public class TwainSessionBase : ITwainStateInternal, ITwainOperation
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSession" /> class.
@@ -276,7 +277,7 @@ namespace NTwain
             // app v2.2 or higher uses callback2
             if (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2)
             {
-                var cb = new TWCallback2(CallbackHandler);
+                var cb = new TWCallback2(HandleCallback);
                 var rc2 = DGControl.Callback2.RegisterCallback(cb);
 
                 if (rc2 == ReturnCode.Success)
@@ -287,7 +288,7 @@ namespace NTwain
             }
             else
             {
-                var cb = new TWCallback(CallbackHandler);
+                var cb = new TWCallback(HandleCallback);
 
                 var rc2 = DGControl.Callback.RegisterCallback(cb);
 
@@ -385,35 +386,142 @@ namespace NTwain
         #region custom events and overridables
 
         /// <summary>
+        /// Occurs when <see cref="State"/> has changed.
+        /// </summary>
+        public event EventHandler StateChanged;
+        /// <summary>
+        /// Occurs when <see cref="SourceId"/> has changed.
+        /// </summary>
+        public event EventHandler SourceChanged;
+        /// <summary>
+        /// Occurs when source has been disabled (back to state 4).
+        /// </summary>
+        public event EventHandler SourceDisabled;
+        /// <summary>
+        /// Occurs when the source has generated an event.
+        /// </summary>
+        public event EventHandler<DeviceEventArgs> DeviceEvent;
+        /// <summary>
+        /// Occurs when a data transfer is ready.
+        /// </summary>
+        public event EventHandler<TransferReadyEventArgs> TransferReady;
+        /// <summary>
+        /// Occurs when data has been transferred.
+        /// </summary>
+        public event EventHandler<DataTransferredEventArgs> DataTransferred;
+
+        /// <summary>
         /// Called when <see cref="State"/> changed.
         /// </summary>
-        protected virtual void OnStateChanged() { }
+        protected virtual void OnStateChanged()
+        {
+            var hand = StateChanged;
+            if (hand != null)
+            {
+                hand(this, EventArgs.Empty);
+            }
+        }
 
         /// <summary>
         /// Called when <see cref="SourceId"/> changed.
         /// </summary>
-        protected virtual void OnSourceIdChanged() { }
+        protected virtual void OnSourceChanged()
+        {
+            var hand = SourceChanged;
+            if (hand != null)
+            {
+                hand(this, EventArgs.Empty);
+            }
+        }
 
         /// <summary>
         /// Called when source has been disabled (back to state 4).
         /// </summary>
-        protected virtual void OnSourceDisabled() { }
+        protected virtual void OnSourceDisabled()
+        {
+            var hand = SourceDisabled;
+            if (hand != null)
+            {
+                hand(this, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:DeviceEvent" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="DeviceEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnDeviceEvent(DeviceEventArgs e)
+        {
+            var hand = DeviceEvent;
+            if (hand != null)
+            {
+                hand(this, e);
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:TransferReady" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="TransferReadyEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnTransferReady(TransferReadyEventArgs e)
+        {
+            var hand = TransferReady;
+            if (hand != null)
+            {
+                hand(this, e);
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:DataTransferred" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="DataTransferredEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnDataTransferred(DataTransferredEventArgs e)
+        {
+            var hand = DataTransferred;
+            if (hand != null)
+            {
+                hand(this, e);
+            }
+        }
 
         #endregion
 
         #region real TWAIN logic during xfer
 
-        void HandleSourceMsg(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
+        /// <summary>
+        /// Handles the message from a typical WndProc message loop and check if it's from the TWAIN source.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <returns>True if handled by TWAIN.</returns>
+        protected bool HandleWndProcMessage(ref MSG message)
         {
-            if (msg != Message.Null)
+            if (State >= 4) // technically we should only handle on state >= 5 but there might be missed msgs if we wait until state changes after enabling ds
             {
-                Debug.WriteLine(string.Format("Thread {0}: HandleSourceMsg at state {1} with DG={2} DAT={3} MSG={4}.", Thread.CurrentThread.ManagedThreadId, State, dg, dat, msg));
+                // transform it into a pointer for twain
+                IntPtr msgPtr = IntPtr.Zero;
+                try
+                {
+                    // no need to do another lock call when using marshal alloc
+                    msgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(message));
+                    Marshal.StructureToPtr(message, msgPtr, false);
+
+                    TWEvent evt = new TWEvent();
+                    evt.pEvent = msgPtr;
+                    var rc = DGControl.Event.ProcessEvent(evt);
+                    // TODO: not sure what to DAT to pass 
+                    HandleSourceMsg(null, null, DataGroups.Control, DataArgumentType.Null, evt.TWMessage, IntPtr.Zero);
+                    return rc == ReturnCode.DSEvent;
+                }
+                finally
+                {
+                    if (msgPtr != IntPtr.Zero) { Marshal.FreeHGlobal(msgPtr); }
+                }
             }
-
-
+            return false;
         }
 
-        ReturnCode CallbackHandler(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
+        ReturnCode HandleCallback(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
         {
             if (origin != null && SourceId != null && origin.Id == SourceId.Id)
             {
@@ -444,6 +552,16 @@ namespace NTwain
             return ReturnCode.Failure;
         }
 
+        // final method that handles stuff from the source, whether it's from wndproc or callbacks
+        void HandleSourceMsg(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
+        {
+            if (msg != Message.Null)
+            {
+                Debug.WriteLine(string.Format("Thread {0}: HandleSourceMsg at state {1} with DG={2} DAT={3} MSG={4}.", Thread.CurrentThread.ManagedThreadId, State, dg, dat, msg));
+            }
+
+
+        }
 
         #endregion
     }

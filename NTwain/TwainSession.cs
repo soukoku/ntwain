@@ -715,14 +715,16 @@ namespace NTwain
                 try
                 {
                     // no need to lock for marshal alloc
-                    msgPtr = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(winmsg));
+                    //msgPtr = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(winmsg));
+                    msgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(winmsg));
                     Marshal.StructureToPtr(winmsg, msgPtr, false);
                     return HandleLoopMsgEvent(ref msgPtr);
                 }
                 finally
                 {
                     if (msgPtr != IntPtr.Zero)
-                        MemoryManager.Instance.Free(msgPtr);
+                        Marshal.FreeHGlobal(msgPtr);
+                        //MemoryManager.Instance.Free(msgPtr);
                 }
             }
             return false;
@@ -754,14 +756,16 @@ namespace NTwain
                 try
                 {
                     // no need to lock for marshal alloc
-                    msgPtr = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(winmsg));
+                    //msgPtr = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(winmsg));
+                    msgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(winmsg));
                     Marshal.StructureToPtr(winmsg, msgPtr, false);
                     handled = HandleLoopMsgEvent(ref msgPtr);
                 }
                 finally
                 {
                     if (msgPtr != IntPtr.Zero)
-                        MemoryManager.Instance.Free(msgPtr);
+                        Marshal.FreeHGlobal(msgPtr);
+                    //MemoryManager.Instance.Free(msgPtr);
                 }
             }
             return IntPtr.Zero;
