@@ -665,7 +665,7 @@ namespace NTwain.Data
             var value = new TWOneValue();
             if (_hContainer != IntPtr.Zero)
             {
-                IntPtr baseAddr = MemoryManager.Instance.MemLock(_hContainer);
+                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
                 try
                 {
                     int offset = 0;
@@ -674,7 +674,7 @@ namespace NTwain.Data
                     value.Item = (uint)ReadValue(baseAddr, ref offset, ItemType.UInt32);
                 }
                 catch { }
-                MemoryManager.Instance.MemUnlock(_hContainer);
+                MemoryManager.Instance.Unlock(_hContainer);
             }
             return value;
         }
@@ -688,7 +688,7 @@ namespace NTwain.Data
             // since one value can only house UInt32 we will not allow type size > 4
             if (GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid one value type"); }
 
-            _hContainer = MemoryManager.Instance.MemAllocate((uint)Marshal.SizeOf(value));
+            _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
             {
                 Marshal.StructureToPtr(value, _hContainer, false);
@@ -707,7 +707,7 @@ namespace NTwain.Data
             var value = new TWArray();
             if (_hContainer != IntPtr.Zero)
             {
-                IntPtr baseAddr = MemoryManager.Instance.MemLock(_hContainer);
+                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
                 int offset = 0;
                 value.ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
                 offset += 2;
@@ -721,7 +721,7 @@ namespace NTwain.Data
                         value.ItemList[i] = ReadValue(baseAddr, ref offset, value.ItemType);
                     }
                 }
-                MemoryManager.Instance.MemUnlock(_hContainer);
+                MemoryManager.Instance.Unlock(_hContainer);
             }
             return value;
         }
@@ -738,7 +738,7 @@ namespace NTwain.Data
             var value = new TWEnumeration();
             if (_hContainer != IntPtr.Zero)
             {
-                IntPtr baseAddr = MemoryManager.Instance.MemLock(_hContainer);
+                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
                 int offset = 0;
                 value.ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
                 offset += 2;
@@ -756,7 +756,7 @@ namespace NTwain.Data
                         value.ItemList[i] = ReadValue(baseAddr, ref offset, value.ItemType);
                     }
                 }
-                MemoryManager.Instance.MemUnlock(_hContainer);
+                MemoryManager.Instance.Unlock(_hContainer);
             }
             return value;
         }
@@ -770,8 +770,8 @@ namespace NTwain.Data
             Int32 valueSize = value.ItemOffset + value.ItemList.Length * GetItemTypeSize(value.ItemType);
 
             int offset = 0;
-            _hContainer = MemoryManager.Instance.MemAllocate((uint)valueSize);
-            IntPtr baseAddr = MemoryManager.Instance.MemLock(_hContainer);
+            _hContainer = MemoryManager.Instance.Allocate((uint)valueSize);
+            IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
 
             // can't safely use StructureToPtr here so write it our own
             WriteValue(baseAddr, ref offset, ItemType.UInt16, value.ItemType);
@@ -782,7 +782,7 @@ namespace NTwain.Data
             {
                 WriteValue(baseAddr, ref offset, value.ItemType, item);
             }
-            MemoryManager.Instance.MemUnlock(_hContainer);
+            MemoryManager.Instance.Unlock(_hContainer);
         }
 
         /// <summary>
@@ -797,7 +797,7 @@ namespace NTwain.Data
             var value = new TWRange();
             if (_hContainer != IntPtr.Zero)
             {
-                IntPtr baseAddr = MemoryManager.Instance.MemLock(_hContainer);
+                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
 
                 int offset = 0;
                 value.ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
@@ -812,7 +812,7 @@ namespace NTwain.Data
                 offset += 4;
                 value.CurrentValue = (uint)Marshal.ReadInt32(baseAddr, offset);
 
-                MemoryManager.Instance.MemUnlock(_hContainer);
+                MemoryManager.Instance.Unlock(_hContainer);
             }
             return value;
         }
@@ -825,7 +825,7 @@ namespace NTwain.Data
             // since range value can only house UInt32 we will not allow type size > 4
             if (GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid range value type"); }
 
-            _hContainer = MemoryManager.Instance.MemAllocate((uint)Marshal.SizeOf(value));
+            _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
             {
                 Marshal.StructureToPtr(value, _hContainer, false);
@@ -1125,7 +1125,7 @@ namespace NTwain.Data
         {
             if (_hContainer != IntPtr.Zero)
             {
-                MemoryManager.Instance.MemFree(_hContainer);
+                MemoryManager.Instance.Free(_hContainer);
                 _hContainer = IntPtr.Zero;
             }
             GC.SuppressFinalize(this);
@@ -1138,7 +1138,7 @@ namespace NTwain.Data
         {
             if (_hContainer != IntPtr.Zero)
             {
-                MemoryManager.Instance.MemFree(_hContainer);
+                MemoryManager.Instance.Free(_hContainer);
                 _hContainer = IntPtr.Zero;
             }
         }

@@ -15,27 +15,27 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.ImageLayout, Message.Get);
 			layout = new TWImageLayout();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, layout);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, layout);
 		}
 
 		public ReturnCode GetDefault(out TWImageLayout layout)
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.ImageLayout, Message.GetDefault);
 			layout = new TWImageLayout();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.GetDefault, layout);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.GetDefault, layout);
 		}
 
 		public ReturnCode Reset(out TWImageLayout layout)
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.ImageLayout, Message.Reset);
 			layout = new TWImageLayout();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Reset, layout);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Reset, layout);
 		}
 
 		public ReturnCode Set(TWImageLayout layout)
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.ImageLayout, Message.Set);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Set, layout);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Set, layout);
 		}
 	}
 }

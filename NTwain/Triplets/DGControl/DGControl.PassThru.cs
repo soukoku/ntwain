@@ -19,7 +19,7 @@ namespace NTwain.Triplets
 		public ReturnCode PassThrough(TWPassThru sourcePassThru)
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.PassThru, Message.PassThru);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.PassThru, sourcePassThru);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.PassThru, sourcePassThru);
 		}
 	}
 }

@@ -8,13 +8,7 @@ namespace NTwain
     /// Interface for keeping track of current TWAIN state with current app and source ids.
     /// </summary>
     public interface ITwainState : INotifyPropertyChanged
-    {
-        /// <summary>
-        /// Gets the app id used for the session.
-        /// </summary>
-        /// <value>The app id.</value>
-        TWIdentity AppId { get; }
-        
+    {   
         /// <summary>
         /// Gets the source id used for the session.
         /// </summary>
@@ -34,6 +28,12 @@ namespace NTwain
     /// </summary>
     interface ITwainStateInternal : ITwainState
     {
+        /// <summary>
+        /// Gets the app id used for the session.
+        /// </summary>
+        /// <returns></returns>
+        TWIdentity GetAppId();
+
         /// <summary>
         /// Gets or sets a value indicating whether calls to triplets will verify the current twain session state.
         /// </summary>

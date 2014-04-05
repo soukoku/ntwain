@@ -15,7 +15,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(6, 7, DataGroups.Image, DataArgumentType.ImageInfo, Message.Get);
 			info = new TWImageInfo();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, info);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, info);
 		}
 	}
 }

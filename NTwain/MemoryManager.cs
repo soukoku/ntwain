@@ -32,11 +32,11 @@ namespace NTwain
         TWEntryPoint _twain2Entry;
 
         /// <summary>
-        /// Function to allocate memory. Calls to this must be coupled with <see cref="MemFree"/> later.
+        /// Function to allocate memory. Calls to this must be coupled with <see cref="Free"/> later.
         /// </summary>
         /// <param name="size">The size in bytes.</param>
         /// <returns>Handle to the allocated memory.</returns>
-        public IntPtr MemAllocate(uint size)
+        public IntPtr Allocate(uint size)
         {
             if (_twain2Entry != null && _twain2Entry.AllocateFunction != null)
             {
@@ -52,8 +52,8 @@ namespace NTwain
         /// <summary>
         /// Function to free memory. 
         /// </summary>
-        /// <param name="handle">The handle from <see cref="MemAllocate"/>.</param>
-        public void MemFree(IntPtr handle)
+        /// <param name="handle">The handle from <see cref="Allocate"/>.</param>
+        public void Free(IntPtr handle)
         {
             if (_twain2Entry != null && _twain2Entry.FreeFunction != null)
             {
@@ -66,11 +66,11 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Function to lock some memory. Calls to this must be coupled with <see cref="MemUnlock"/> later.
+        /// Function to lock some memory. Calls to this must be coupled with <see cref="Unlock"/> later.
         /// </summary>
         /// <param name="handle">The handle to allocated memory.</param>
         /// <returns>Handle to the lock.</returns>
-        public IntPtr MemLock(IntPtr handle)
+        public IntPtr Lock(IntPtr handle)
         {
             if (_twain2Entry != null && _twain2Entry.LockFunction != null)
             {
@@ -85,8 +85,8 @@ namespace NTwain
         /// <summary>
         /// Function to unlock a previously locked memory region.
         /// </summary>
-        /// <param name="handle">The handle from <see cref="MemLock"/>.</param>
-        public void MemUnlock(IntPtr handle)
+        /// <param name="handle">The handle from <see cref="Lock"/>.</param>
+        public void Unlock(IntPtr handle)
         {
             if (_twain2Entry != null && _twain2Entry.UnlockFunction != null)
             {

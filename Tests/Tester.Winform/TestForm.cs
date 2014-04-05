@@ -149,7 +149,7 @@ namespace Tester.Winform
 
             var curBtn = (sender as ToolStripMenuItem);
             var src = curBtn.Tag as TWIdentity;
-            if (_twain.OpenSource(src) == ReturnCode.Success)
+            if (_twain.OpenSource(src.ProductName) == ReturnCode.Success)
             {
                 curBtn.Checked = true;
                 btnStartCapture.Enabled = true;

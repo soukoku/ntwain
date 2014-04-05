@@ -22,7 +22,7 @@ namespace NTwain.Triplets
 		public ReturnCode AutomaticCaptureDirectory(TWFileSystem fileSystem)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.FileSystem, Message.AutomaticCaptureDirectory);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.AutomaticCaptureDirectory, fileSystem);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.AutomaticCaptureDirectory, fileSystem);
 		}
 
 		/// <summary>
@@ -37,7 +37,7 @@ namespace NTwain.Triplets
 		public ReturnCode ChangeDirectory(TWFileSystem fileSystem)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.FileSystem, Message.ChangeDirectory);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.ChangeDirectory, fileSystem);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.ChangeDirectory, fileSystem);
 		}
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace NTwain.Triplets
 		public ReturnCode Copy(TWFileSystem fileSystem)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.FileSystem, Message.Copy);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Copy, fileSystem);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Copy, fileSystem);
 		}
 
 		/// <summary>
@@ -65,7 +65,7 @@ namespace NTwain.Triplets
 		public ReturnCode CreateDirectory(TWFileSystem fileSystem)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.FileSystem, Message.CreateDirectory);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.CreateDirectory, fileSystem);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.CreateDirectory, fileSystem);
 		}
 
 		/// <summary>
@@ -78,7 +78,7 @@ namespace NTwain.Triplets
 		public ReturnCode Delete(TWFileSystem fileSystem)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.FileSystem, Message.Delete);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Delete, fileSystem);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Delete, fileSystem);
 		}
 
 		/// <summary>
@@ -90,7 +90,7 @@ namespace NTwain.Triplets
 		public ReturnCode FormatMedia(TWFileSystem fileSystem)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.FileSystem, Message.FormatMedia);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.FormatMedia, fileSystem);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.FormatMedia, fileSystem);
 		}
 
 		/// <summary>
@@ -103,7 +103,7 @@ namespace NTwain.Triplets
 		public ReturnCode GetClose(TWFileSystem fileSystem)
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.FileSystem, Message.GetClose);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.GetClose, fileSystem);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.GetClose, fileSystem);
 		}
 
 		/// <summary>
@@ -115,7 +115,7 @@ namespace NTwain.Triplets
 		public ReturnCode GetFirstFile(TWFileSystem fileSystem)
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.FileSystem, Message.GetFirstFile);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.GetFirstFile, fileSystem);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.GetFirstFile, fileSystem);
 		}
 
 		/// <summary>
@@ -128,7 +128,7 @@ namespace NTwain.Triplets
 		public ReturnCode GetInfo(TWFileSystem fileSystem)
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.FileSystem, Message.GetInfo);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.GetInfo, fileSystem);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.GetInfo, fileSystem);
 		}
 
 		/// <summary>
@@ -140,7 +140,7 @@ namespace NTwain.Triplets
 		public ReturnCode GetNextFile(TWFileSystem fileSystem)
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.FileSystem, Message.GetNextFile);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.GetNextFile, fileSystem);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.GetNextFile, fileSystem);
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace NTwain.Triplets
 		public ReturnCode Rename(TWFileSystem fileSystem)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.FileSystem, Message.Rename);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Rename, fileSystem);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Rename, fileSystem);
 		}
 	}
 }

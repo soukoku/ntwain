@@ -19,7 +19,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.EntryPoint, Message.Get);
 			entryPoint = new TWEntryPoint();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, entryPoint);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, entryPoint);
 		}
 	}
 }

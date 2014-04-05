@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.GrayResponse, Message.Reset);
 			response = new TWGrayResponse();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Reset, response);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Reset, response);
 		}
 
 		/// <summary>
@@ -33,7 +33,7 @@ namespace NTwain.Triplets
 		public ReturnCode Set(TWGrayResponse response)
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.GrayResponse, Message.Set);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Set, response);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Set, response);
 		}
 	}
 }

@@ -29,7 +29,7 @@ namespace NTwain
         public TwainSession(TWIdentity appId)
         {
             if (appId == null) { throw new ArgumentNullException("appId"); }
-            AppId = appId;
+            _appId = appId;
             State = 1;
             EnforceState = true;
         }
@@ -38,13 +38,14 @@ namespace NTwain
 
         object _callbackObj;
         SynchronizationContext _syncer;
+        TWIdentity _appId;
 
 
         /// <summary>
         /// Gets the app id used for the session.
         /// </summary>
         /// <value>The app id.</value>
-        public TWIdentity AppId { get; private set; }
+        TWIdentity ITwainStateInternal.GetAppId() { return _appId; }
 
         /// <summary>
         /// Gets the source id used for the session.
@@ -177,12 +178,11 @@ namespace NTwain
             Debug.WriteLine(string.Format("Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
 
             _parentHandle = handle;
-            var hand = handle.Handle;
-            var rc = DGControl.Parent.OpenDsm(ref hand);
+            var rc = DGControl.Parent.OpenDsm(handle.Handle);
             if (rc == ReturnCode.Success)
             {
                 // if twain2 then get mem management stuff
-                if ((AppId.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
+                if ((_appId.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
                 {
                     TWEntryPoint entry;
                     rc = DGControl.EntryPoint.Get(out entry);
@@ -208,8 +208,7 @@ namespace NTwain
         {
             Debug.WriteLine(string.Format("Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
 
-            var hand = _parentHandle.Handle;
-            var rc = DGControl.Parent.CloseDsm(ref hand);
+            var rc = DGControl.Parent.CloseDsm(_parentHandle.Handle);
             if (rc == ReturnCode.Success)
             {
                 _parentHandle = default(HandleRef);
@@ -244,7 +243,6 @@ namespace NTwain
             var rc = DGControl.Identity.OpenDS(sourceId);
             if (rc == ReturnCode.Success)
             {
-                SourceId = sourceId;
                 SupportedCaps = this.GetCapabilities();
 
                 // TODO: does it work?
@@ -253,9 +251,9 @@ namespace NTwain
                 if (!DisableCallback)
                 {
                     // app v2.2 or higher uses callback2
-                    if (AppId.ProtocolMajor >= 2 && AppId.ProtocolMinor >= 2)
+                    if (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2)
                     {
-                        var cb = new TWCallback2(new CallbackDelegate(CallbackHandler));
+                        var cb = new TWCallback2(CallbackHandler);
                         var rc2 = DGControl.Callback2.RegisterCallback(cb);
 
                         if (rc2 == ReturnCode.Success)
@@ -266,7 +264,7 @@ namespace NTwain
                     }
                     else
                     {
-                        var cb = new TWCallback(new CallbackDelegate(CallbackHandler));
+                        var cb = new TWCallback(CallbackHandler);
 
                         var rc2 = DGControl.Callback.RegisterCallback(cb);
 
@@ -319,7 +317,6 @@ namespace NTwain
             var rc = DGControl.Identity.CloseDS();
             if (rc == ReturnCode.Success)
             {
-                SourceId = null;
                 _callbackObj = null;
                 SupportedCaps = null;
             }
@@ -504,7 +501,7 @@ namespace NTwain
                                 {
                                     if (dataPtr != IntPtr.Zero)
                                     {
-                                        lockedPtr = MemoryManager.Instance.MemLock(dataPtr);
+                                        lockedPtr = MemoryManager.Instance.Lock(dataPtr);
                                     }
                                     dtHand(this, new DataTransferredEventArgs(lockedPtr, file));
                                 }
@@ -537,12 +534,12 @@ namespace NTwain
                         // data here is allocated by source so needs to use shared mem calls
                         if (lockedPtr != IntPtr.Zero)
                         {
-                            MemoryManager.Instance.MemUnlock(lockedPtr);
+                            MemoryManager.Instance.Unlock(lockedPtr);
                             lockedPtr = IntPtr.Zero;
                         }
                         if (dataPtr != IntPtr.Zero)
                         {
-                            MemoryManager.Instance.MemFree(dataPtr);
+                            MemoryManager.Instance.Free(dataPtr);
                             dataPtr = IntPtr.Zero;
                         }
                     }
@@ -718,14 +715,14 @@ namespace NTwain
                 try
                 {
                     // no need to lock for marshal alloc
-                    msgPtr = MemoryManager.Instance.MemAllocate((uint)Marshal.SizeOf(winmsg));
+                    msgPtr = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(winmsg));
                     Marshal.StructureToPtr(winmsg, msgPtr, false);
                     return HandleLoopMsgEvent(ref msgPtr);
                 }
                 finally
                 {
                     if (msgPtr != IntPtr.Zero)
-                        MemoryManager.Instance.MemFree(msgPtr);
+                        MemoryManager.Instance.Free(msgPtr);
                 }
             }
             return false;
@@ -757,14 +754,14 @@ namespace NTwain
                 try
                 {
                     // no need to lock for marshal alloc
-                    msgPtr = MemoryManager.Instance.MemAllocate((uint)Marshal.SizeOf(winmsg));
+                    msgPtr = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(winmsg));
                     Marshal.StructureToPtr(winmsg, msgPtr, false);
                     handled = HandleLoopMsgEvent(ref msgPtr);
                 }
                 finally
                 {
                     if (msgPtr != IntPtr.Zero)
-                        MemoryManager.Instance.MemFree(msgPtr);
+                        MemoryManager.Instance.Free(msgPtr);
                 }
             }
             return IntPtr.Zero;

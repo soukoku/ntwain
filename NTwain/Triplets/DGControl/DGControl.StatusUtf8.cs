@@ -19,7 +19,7 @@ namespace NTwain.Triplets
 		public ReturnCode Get(TWStatusUtf8 status)
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get);
-			return PInvoke.DsmEntry(Session.AppId, null, Message.Get, status);
+			return PInvoke.DsmEntry(Session.GetAppId(), null, Message.Get, status);
 		}
 	}
 }

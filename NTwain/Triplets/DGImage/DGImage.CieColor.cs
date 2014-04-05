@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.CieColor, Message.Get);
 			cieColor = new TWCieColor();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, cieColor);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, cieColor);
 		}
 	}
 }
