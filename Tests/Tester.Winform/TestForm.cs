@@ -13,13 +13,14 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Reflection;
 using CommonWin32;
+using System.Threading;
 
 namespace Tester.Winform
 {
     sealed partial class TestForm : Form
     {
         ImageCodecInfo _tiffCodecInfo;
-        TwainSession _twain;
+        TwainSessionOld _twain;
         bool _stopScan;
         bool _loadingCaps;
 
@@ -63,7 +64,7 @@ namespace Tester.Winform
 
             TWIdentity appId = TWIdentity.Create(DataGroups.Image, new Version(appVer.ProductMajorPart, appVer.ProductMinorPart),
                 "My Company", "Test Family", "Tester", "A TWAIN testing app.");
-            _twain = new TwainSession(appId);
+            _twain = new TwainSessionOld(appId);
             _twain.DataTransferred += (s, e) =>
             {
                 if (pictureBox1.Image != null)
@@ -167,7 +168,7 @@ namespace Tester.Winform
                 if (_twain.SupportedCaps.Contains(CapabilityId.CapUIControllable))
                 {
                     // hide scanner ui if possible
-                    if (_twain.EnableSource(SourceEnableMode.NoUI, false, hand) == ReturnCode.Success)
+                    if (_twain.EnableSource(SourceEnableMode.NoUI, false, hand, SynchronizationContext.Current) == ReturnCode.Success)
                     {
                         btnStopScan.Enabled = true;
                         btnStartCapture.Enabled = false;
@@ -176,7 +177,7 @@ namespace Tester.Winform
                 }
                 else
                 {
-                    if (_twain.EnableSource(SourceEnableMode.ShowUI, false, hand) == ReturnCode.Success)
+                    if (_twain.EnableSource(SourceEnableMode.ShowUI, false, hand, SynchronizationContext.Current) == ReturnCode.Success)
                     {
                         btnStopScan.Enabled = true;
                         btnStartCapture.Enabled = false;
@@ -360,7 +361,7 @@ namespace Tester.Winform
         private void btnAllSettings_Click(object sender, EventArgs e)
         {
             var hand = new HandleRef(this, this.Handle);
-            _twain.EnableSource(SourceEnableMode.ShowUIOnly, true, hand);
+            _twain.EnableSource(SourceEnableMode.ShowUIOnly, true, hand, SynchronizationContext.Current);
         }
 
         #endregion

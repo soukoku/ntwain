@@ -19,7 +19,7 @@ namespace NTwain
     public class TwainSessionBase : ITwainStateInternal, ITwainOperation
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TwainSession" /> class.
+        /// Initializes a new instance of the <see cref="TwainSessionOld" /> class.
         /// </summary>
         /// <param name="appId">The app id.</param>
         /// <exception cref="System.ArgumentNullException"></exception>
@@ -36,6 +36,32 @@ namespace NTwain
         SynchronizationContext _syncer;
         object _callbackObj; // kept around so it doesn't get gc'ed
         TWUserInterface _twui;
+
+
+        private IList<CapabilityId> _supportedCaps;
+        /// <summary>
+        /// Gets the supported caps for the current source.
+        /// </summary>
+        /// <value>
+        /// The supported caps.
+        /// </value>
+        public IList<CapabilityId> SupportedCaps
+        {
+            get
+            {
+                if (_supportedCaps == null && State > 3)
+                {
+                    _supportedCaps = this.GetCapabilities();
+                }
+                return _supportedCaps ?? new CapabilityId[0];
+            }
+            private set
+            {
+                _supportedCaps = value;
+                RaisePropertyChanged("SupportedCaps");
+            }
+        }
+
 
         #region ITwainStateInternal Members
 
@@ -55,7 +81,7 @@ namespace NTwain
 
         void ITwainStateInternal.ChangeState(int newState, bool notifyChange)
         {
-            State = newState;
+            _state = newState;
             if (notifyChange)
             {
                 RaisePropertyChanged("State");
@@ -72,7 +98,7 @@ namespace NTwain
         {
             SourceId = sourceId;
             RaisePropertyChanged("SourceId");
-            OnSourceIdChanged();
+            OnSourceChanged();
         }
 
         #endregion
@@ -87,13 +113,26 @@ namespace NTwain
         /// </value>
         public TWIdentity SourceId { get; private set; }
 
+        int _state;
         /// <summary>
         /// Gets the current state number as defined by the TWAIN spec.
         /// </summary>
         /// <value>
         /// The state.
         /// </value>
-        public int State { get; private set; }
+        public int State
+        {
+            get { return _state; }
+            protected set
+            {
+                if (value > 0 && value < 8)
+                {
+                    _state = value;
+                    RaisePropertyChanged("State");
+                    OnStateChanged();
+                }
+            }
+        }
 
         #endregion
 
@@ -262,7 +301,7 @@ namespace NTwain
         /// <param name="windowHandle">The window handle if modal.</param>
         /// <param name="context">The
         /// <see cref="SynchronizationContext" /> that is required for certain operations.
-        /// It is recommended you call this method in a UI thread and pass in
+        /// It is recommended you call this method in an UI thread and pass in
         /// <see cref="SynchronizationContext.Current" />
         /// if you do not have a custom one setup.</param>
         /// <returns></returns>
@@ -319,7 +358,7 @@ namespace NTwain
         /// Disables the source to end data acquisition.
         /// </summary>
         /// <returns></returns>
-        ReturnCode DisableSource()
+        protected ReturnCode DisableSource()
         {
             Debug.WriteLine(string.Format("Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
 
@@ -553,13 +592,14 @@ namespace NTwain
         }
 
         // final method that handles stuff from the source, whether it's from wndproc or callbacks
-        void HandleSourceMsg(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
+        protected virtual void HandleSourceMsg(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
         {
             if (msg != Message.Null)
             {
                 Debug.WriteLine(string.Format("Thread {0}: HandleSourceMsg at state {1} with DG={2} DAT={3} MSG={4}.", Thread.CurrentThread.ManagedThreadId, State, dg, dat, msg));
             }
 
+            throw new NotImplementedException();
 
         }
 

@@ -17,6 +17,7 @@ using NTwain.Values;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using CommonWin32;
+using System.Threading;
 
 namespace Tester.WPF
 {
@@ -25,7 +26,7 @@ namespace Tester.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        TwainSession twain;
+        TwainSessionOld twain;
         public MainWindow()
         {
             InitializeComponent();
@@ -58,7 +59,7 @@ namespace Tester.WPF
         private void SetupTwain()
         {
             TWIdentity appId = TWIdentity.Create(DataGroups.Image, new Version(1, 0), "My Company", "Test Family", "Tester", null);
-            twain = new TwainSession(appId);
+            twain = new TwainSessionOld(appId);
             twain.DataTransferred += (s, e) =>
             {
                 if (e.Data != IntPtr.Zero)
@@ -117,7 +118,7 @@ namespace Tester.WPF
                 if (rc == ReturnCode.Success)
                 {
                     step = "Open DS";
-                    rc = twain.OpenSource(dsId);
+                    rc = twain.OpenSource(dsId.ProductName);
                     //rc = DGControl.Status.Get(dsId, ref stat);
                     if (rc == ReturnCode.Success)
                     {
@@ -137,7 +138,7 @@ namespace Tester.WPF
                         }
 
                         step = "Enable DS";
-                        rc = twain.EnableSource(SourceEnableMode.NoUI, false, hand);
+                        rc = twain.EnableSource(SourceEnableMode.NoUI, false, hand, SynchronizationContext.Current);
                         return;
                     }
                     else

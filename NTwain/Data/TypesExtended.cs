@@ -972,42 +972,42 @@ namespace NTwain.Data
                 Marshal.WriteByte(baseAddr, offset, 0);
             }
         }
-        /// <summary>
-        /// Writes unicode string value.
-        /// </summary>
-        /// <param name="baseAddr"></param>
-        /// <param name="offset"></param>
-        /// <param name="item"></param>
-        /// <param name="maxLength"></param>
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
-        private void WriteUString(IntPtr baseAddr, int offset, string item, int maxLength)
-        {
-            if (string.IsNullOrEmpty(item))
-            {
-                // write zero
-                Marshal.WriteInt16(baseAddr, offset, (char)0);
-            }
-            else
-            {
-                // use 2 bytes per char
-                for (int i = 0; i < maxLength; i++)
-                {
-                    if (i == item.Length)
-                    {
-                        // string end reached, so write \0 and quit
-                        Marshal.WriteInt16(baseAddr, offset, (char)0);
-                        return;
-                    }
-                    else
-                    {
-                        Marshal.WriteInt16(baseAddr, offset, item[i]);
-                        offset += 2;
-                    }
-                }
-                // when ended normally also write \0
-                Marshal.WriteByte(baseAddr, offset, 0);
-            }
-        }
+        ///// <summary>
+        ///// Writes unicode string value.
+        ///// </summary>
+        ///// <param name="baseAddr"></param>
+        ///// <param name="offset"></param>
+        ///// <param name="item"></param>
+        ///// <param name="maxLength"></param>
+        //[EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
+        //private void WriteUString(IntPtr baseAddr, int offset, string item, int maxLength)
+        //{
+        //    if (string.IsNullOrEmpty(item))
+        //    {
+        //        // write zero
+        //        Marshal.WriteInt16(baseAddr, offset, (char)0);
+        //    }
+        //    else
+        //    {
+        //        // use 2 bytes per char
+        //        for (int i = 0; i < maxLength; i++)
+        //        {
+        //            if (i == item.Length)
+        //            {
+        //                // string end reached, so write \0 and quit
+        //                Marshal.WriteInt16(baseAddr, offset, (char)0);
+        //                return;
+        //            }
+        //            else
+        //            {
+        //                Marshal.WriteInt16(baseAddr, offset, item[i]);
+        //                offset += 2;
+        //            }
+        //        }
+        //        // when ended normally also write \0
+        //        Marshal.WriteByte(baseAddr, offset, 0);
+        //    }
+        //}
         /// <summary>
         /// Entry call for reading values.
         /// </summary>

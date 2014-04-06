@@ -35,8 +35,8 @@ namespace NTwain.Triplets
             Message msg,
             ref IntPtr data)
         {
-            if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, dg, dat, msg, ref data); }
-            else { return NativeMethods.DsmEntry32(origin, destination, dg, dat, msg, ref data); }
+            if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, dg, dat, msg, ref data); }
+            else { return WinNativeMethods.DsmEntry32(origin, destination, dg, dat, msg, ref data); }
         }
 
         public static ReturnCode DsmEntry(
@@ -47,8 +47,8 @@ namespace NTwain.Triplets
             Message msg,
             ref uint data)
         {
-            if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, dg, dat, msg, ref data); }
-            else { return NativeMethods.DsmEntry32(origin, destination, dg, dat, msg, ref data); }
+            if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, dg, dat, msg, ref data); }
+            else { return WinNativeMethods.DsmEntry32(origin, destination, dg, dat, msg, ref data); }
         }
 
 		public static ReturnCode DsmEntry(
@@ -57,8 +57,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWAudioInfo data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Audio, DataArgumentType.AudioInfo, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Audio, DataArgumentType.AudioInfo, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Audio, DataArgumentType.AudioInfo, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Audio, DataArgumentType.AudioInfo, msg, data); }
 		}
 
 
@@ -68,8 +68,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWCapability data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Capability, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Capability, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Capability, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Capability, msg, data); }
 		}
 
 
@@ -79,8 +79,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWCustomDSData data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.CustomDSData, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.CustomDSData, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.CustomDSData, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.CustomDSData, msg, data); }
 		}
 
 
@@ -90,8 +90,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWDeviceEvent data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.DeviceEvent, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.DeviceEvent, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.DeviceEvent, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.DeviceEvent, msg, data); }
 		}
 
 
@@ -101,8 +101,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWCallback data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
 		}
 
 
@@ -112,8 +112,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWCallback2 data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
 		}
 
 
@@ -123,8 +123,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWEntryPoint data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
 		}
 
 
@@ -134,8 +134,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWEvent data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Event, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Event, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Event, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Event, msg, data); }
 		}
 
 
@@ -145,8 +145,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWFileSystem data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.FileSystem, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.FileSystem, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.FileSystem, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.FileSystem, msg, data); }
 		}
 
 		public static ReturnCode DsmEntry(
@@ -154,8 +154,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWIdentity data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, IntPtr.Zero, DataGroups.Control, DataArgumentType.Identity, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, IntPtr.Zero, DataGroups.Control, DataArgumentType.Identity, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, IntPtr.Zero, DataGroups.Control, DataArgumentType.Identity, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, IntPtr.Zero, DataGroups.Control, DataArgumentType.Identity, msg, data); }
 		}
 
 
@@ -165,8 +165,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWPassThru data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.PassThru, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.PassThru, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.PassThru, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.PassThru, msg, data); }
 		}
 
 
@@ -176,8 +176,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWPendingXfers data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.PendingXfers, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.PendingXfers, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.PendingXfers, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.PendingXfers, msg, data); }
 		}
 
 
@@ -187,8 +187,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWSetupFileXfer data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.SetupFileXfer, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.SetupFileXfer, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.SetupFileXfer, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.SetupFileXfer, msg, data); }
 		}
 
 
@@ -198,8 +198,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWSetupMemXfer data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.SetupMemXfer, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.SetupMemXfer, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.SetupMemXfer, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.SetupMemXfer, msg, data); }
 		}
 
 
@@ -209,8 +209,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWStatusUtf8 data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.StatusUtf8, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.StatusUtf8, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.StatusUtf8, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.StatusUtf8, msg, data); }
 		}
 
 
@@ -220,8 +220,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWUserInterface data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.UserInterface, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.UserInterface, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.UserInterface, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.UserInterface, msg, data); }
 		}
 
 
@@ -231,8 +231,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWCieColor data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.CieColor, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.CieColor, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.CieColor, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.CieColor, msg, data); }
 		}
 
 
@@ -242,8 +242,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWExtImageInfo data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
 		}
 
         public static ReturnCode DsmEntry(
@@ -252,8 +252,8 @@ namespace NTwain.Triplets
             Message msg,
             TWFilter data)
         {
-            if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
-            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
+            if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
+            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
         }
 
 		public static ReturnCode DsmEntry(
@@ -262,8 +262,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWGrayResponse data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.GrayResponse, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.GrayResponse, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.GrayResponse, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.GrayResponse, msg, data); }
 		}
 
 
@@ -273,8 +273,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWImageInfo data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageInfo, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageInfo, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageInfo, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageInfo, msg, data); }
 		}
 
 
@@ -284,8 +284,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWImageLayout data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageLayout, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageLayout, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageLayout, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageLayout, msg, data); }
 		}
 
 
@@ -295,8 +295,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWImageMemXfer data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageMemXfer, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageMemXfer, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageMemXfer, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageMemXfer, msg, data); }
 		}
 
 
@@ -306,8 +306,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWJpegCompression data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.JpegCompression, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.JpegCompression, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.JpegCompression, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.JpegCompression, msg, data); }
 		}
 
 
@@ -317,8 +317,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWPalette8 data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.Palette8, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.Palette8, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.Palette8, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.Palette8, msg, data); }
 		}
 
 
@@ -328,8 +328,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWRgbResponse data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.RgbResponse, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.RgbResponse, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.RgbResponse, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.RgbResponse, msg, data); }
 		}
 
 
@@ -339,8 +339,8 @@ namespace NTwain.Triplets
 			Message msg,
 			TWStatus data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Status, msg, data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Status, msg, data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Status, msg, data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Status, msg, data); }
 		}
 
 
@@ -351,8 +351,8 @@ namespace NTwain.Triplets
 			Message msg,
 			ref TWMemory data)
 		{
-			if (Is64Bit) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, dat, msg, ref data); }
-			else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, dat, msg, ref data); }
+			if (Is64Bit) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, dat, msg, ref data); }
+			else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, dat, msg, ref data); }
 		}
 
 

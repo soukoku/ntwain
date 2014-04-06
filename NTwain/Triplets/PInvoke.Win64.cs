@@ -7,7 +7,7 @@ namespace NTwain.Triplets
 {
 	static partial class PInvoke
 	{
-		static partial class NativeMethods
+		static partial class WinNativeMethods
         {
             [DllImport("twaindsm", EntryPoint = "#1")]
             public static extern ReturnCode DsmEntry64(
