@@ -53,7 +53,7 @@ namespace NTwain.Triplets
             DataGroups dg,
             DataArgumentType dat,
             Message msg,
-            ref uint data)
+            ref DataGroups data)
         {
             if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, dg, dat, msg, ref data); }
             else { return NativeMethods.DsmEntry32(origin, destination, dg, dat, msg, ref data); }

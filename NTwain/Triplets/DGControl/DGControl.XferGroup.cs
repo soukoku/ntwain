@@ -17,7 +17,7 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="value">The value.</param>
 		/// <returns></returns>
-		public ReturnCode Get(ref uint value)
+        public ReturnCode Get(ref DataGroups value)
 		{
             Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.XferGroup, Message.Get);
             return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, DataGroups.Control, DataArgumentType.XferGroup, Message.Get, ref value);
@@ -30,7 +30,7 @@ namespace NTwain.Triplets
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public ReturnCode Set(uint value)
+        public ReturnCode Set(DataGroups value)
 		{
 			Session.VerifyState(6, 6, DataGroups.Control, DataArgumentType.XferGroup, Message.Set);
             return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, DataGroups.Control, DataArgumentType.XferGroup, Message.Set, ref value);

@@ -603,7 +603,7 @@ namespace NTwain
                 // My guess is the DS needs to see the Success return code first before letting transfer happen
                 // so this is an hack to make it happen.
 
-                // TODO: find a better method.
+                // TODO: find a better method without needing a SynchronizationContext.
                 ThreadPool.QueueUserWorkItem(o =>
                 {
                     var ctx = o as SynchronizationContext;
@@ -669,12 +669,19 @@ namespace NTwain
         /// </summary>
         protected virtual void DoTransferRoutine()
         {
-            // TODO: better way to determine what's being xfered?
-            if ((SourceId.DataGroup & DataGroups.Image) == DataGroups.Image)
+            DataGroups xferGroup = DataGroups.None;
+
+            if (DGControl.XferGroup.Get(ref xferGroup) != ReturnCode.Success)
+            {
+                xferGroup = DataGroups.None;
+            }
+
+            // support one or the other or both?
+            if ((xferGroup & DataGroups.Image) == DataGroups.Image)
             {
                 DoImageXfer();
             }
-            else if ((SourceId.DataGroup & DataGroups.Audio) == DataGroups.Audio)
+            else if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
             {
                 DoAudioXfer();
             }
@@ -725,8 +732,7 @@ namespace NTwain
                     rc = DGControl.PendingXfers.Reset(pending);
                     if (rc == ReturnCode.Success)
                     {
-                        // TODO: verify if audio exit directly?
-                        return;
+                        break;
                     }
                 }
                 else if (!preXferArgs.CancelCurrent)

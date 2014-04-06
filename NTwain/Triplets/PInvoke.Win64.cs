@@ -25,7 +25,7 @@ namespace NTwain.Triplets
                 DataGroups dg,
                 DataArgumentType dat,
                 Message msg,
-                ref uint data);
+                ref DataGroups data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
 			public static extern ReturnCode DsmEntry64(

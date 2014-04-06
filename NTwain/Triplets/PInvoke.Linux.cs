@@ -28,7 +28,7 @@ namespace NTwain.Triplets
         //        DataGroups dg,
         //        DataArgumentType dat,
         //        Message msg,
-        //        ref uint data);
+        //        ref DataGroups data);
 
         //    [DllImport("/usr/local/lib/libtwaindsm.so", EntryPoint = "#1")]
         //    public static extern ReturnCode DsmEntryLinux(

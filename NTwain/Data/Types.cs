@@ -83,10 +83,8 @@ namespace NTwain.Data
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         TWDecodeFunction[] _decode;
-        // TODO: research jagged aray mapping (3x3). 
-        // maybe can only have 1-D
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
-        TWFix32[][] _mix;
+        TWFix32[] _mix;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -230,61 +228,58 @@ namespace NTwain.Data
         TWInfo[] _info;
     }
 
-    [StructLayout(LayoutKind.Explicit, Pack = 2),
+    [StructLayout(LayoutKind.Sequential, Pack = 2),
     BestFitMapping(false, ThrowOnUnmappableChar = true)]
     partial class TWFileSystem
     {
-        // TODO: verify all field offset #s
-
-        [FieldOffset(0)]
+        //[FieldOffset(0)]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _inputName;
 
-        [FieldOffset(TwainConst.String255)]
+        //[FieldOffset(TwainConst.String255)]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _outputName;
 
-        [FieldOffset(512)]
+        //[FieldOffset(512)]
         TW_MEMREF _context;
 
-        //TODO: verify this field offset in 64bit due to previous pointer
-        [FieldOffset(520)]
-        short _recursive;
-        [FieldOffset(520)]
+        //[FieldOffset(520)]
+        //short _recursive;
+        //[FieldOffset(520)]
         TW_BOOL _subdirectories;
 
-        [FieldOffset(524)]
+        //[FieldOffset(524)]
         TW_INT32 _fileType;
-        [FieldOffset(524)]
-        TW_UINT32 _fileSystemType;
+        //[FieldOffset(524)]
+        //TW_UINT32 _fileSystemType;
 
-        [FieldOffset(528)]
+        //[FieldOffset(528)]
         TW_UINT32 _size;
 
-        [FieldOffset(532)]
+        //[FieldOffset(532)]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
         string _createTimeDate;
 
-        [FieldOffset(566)]
+        //[FieldOffset(566)]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
         string _modifiedTimeDate;
 
-        [FieldOffset(600)]
+        //[FieldOffset(600)]
         TW_UINT32 _freeSpace;
 
-        [FieldOffset(604)]
+        //[FieldOffset(604)]
         TW_INT32 _newImageSize;
 
-        [FieldOffset(608)]
+        //[FieldOffset(608)]
         TW_UINT32 _numberOfFiles;
 
-        [FieldOffset(612)]
+        //[FieldOffset(612)]
         TW_UINT32 _numberOfSnippets;
 
-        [FieldOffset(616)]
+        //[FieldOffset(616)]
         TW_UINT32 _deviceGroupMask;
 
-        [FieldOffset(620)]
+        //[FieldOffset(620)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 508)]
         TW_INT8[] _reserved;
     }

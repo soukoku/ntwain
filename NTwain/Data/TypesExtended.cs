@@ -470,9 +470,21 @@ namespace NTwain.Data
         /// </summary>
         public TWDecodeFunction[] Decode { get { return _decode; } set { _decode = value; } }
         /// <summary>
-        /// 3x3 matrix that specifies how channels are mixed in.
+        /// Flattened 3x3 matrix that specifies how channels are mixed in.
         /// </summary>
-        public TWFix32[][] Mix { get { return _mix; } set { _mix = value; } }
+        public TWFix32[] Mix { get { return _mix; } set { _mix = value; } }
+
+        /// <summary>
+        /// Gets the <see cref="Mix"/> value as matrix.
+        /// </summary>
+        /// <returns></returns>
+        public TWFix32[,] GetMixMatrix()
+        {
+            // from http://stackoverflow.com/questions/3845235/convert-array-to-matrix, haven't tested it
+            TWFix32[,] mat = new TWFix32[3, 3];
+            Buffer.BlockCopy(_mix, 0, mat, 0, _mix.Length * 4);
+            return mat;
+        }
     }
 
     /// <summary>
@@ -1606,9 +1618,8 @@ namespace NTwain.Data
         /// all subdirectories in the directory being deleted; or copies all
         /// sub-directories in the directory being copied.
         /// </summary>
-        public short Recursive { get { return _recursive; } set { _recursive = value; } }
-        public bool Subdirectories { get { return _subdirectories == TwainConst.True; } }
-
+        public bool Recursive { get { return _subdirectories == TwainConst.True; } set { _subdirectories = value ? TwainConst.True : TwainConst.False; } }
+        
         /// <summary>
         /// Gets the type of the file.
         /// </summary>
@@ -1616,8 +1627,7 @@ namespace NTwain.Data
         /// The type of the file.
         /// </value>
         public FileType FileType { get { return (FileType)_fileType; } set { _fileType = (int)value; } }
-        public uint FileSystemType { get { return _fileSystemType; } set { _fileSystemType = value; } }
-
+        
         /// <summary>
         /// If <see cref="NTwain.Values.FileType.Directory"/>, total size of media in bytes.
         /// If <see cref="NTwain.Values.FileType.Image"/>, size of image in bytes.

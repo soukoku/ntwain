@@ -97,8 +97,6 @@ namespace NTwain
 
                     #region do xfer
 
-                    // TODO: expose all swallowed exceptions somehow later
-
                     IntPtr dataPtr = IntPtr.Zero;
                     IntPtr lockedPtr = IntPtr.Zero;
                     string file = null;
