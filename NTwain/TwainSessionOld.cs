@@ -29,7 +29,7 @@ namespace NTwain
         /// <exception cref="System.ArgumentNullException"></exception>
         public TwainSessionOld(TWIdentity appId) : base(appId) { }
 
-        private void DoTransferRoutine()
+        protected override void DoTransferRoutine()
         {
             TWPendingXfers pending = new TWPendingXfers();
             var rc = ReturnCode.Success;
@@ -190,48 +190,6 @@ namespace NTwain
         }
 
         #region messaging use
-
-        protected override void HandleSourceMsg(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Values.Message msg, IntPtr data)
-        {
-            if (msg != Values.Message.Null)
-            {
-                Debug.WriteLine(string.Format("Thread {0}: HandleSourceMsg at state {1} with DG={2} DAT={3} MSG={4}.", Thread.CurrentThread.ManagedThreadId, State, dg, dat, msg));
-            }
-            switch (msg)
-            {
-                case Values.Message.XferReady:
-                    if (State < 6)
-                        State = 6;
-                    // this is the meat of all twain stuff
-                    DoTransferRoutine();
-                    break;
-                case Values.Message.DeviceEvent:
-                    TWDeviceEvent de;
-                    var rc = DGControl.DeviceEvent.Get(out de);
-                    if (rc == ReturnCode.Success)
-                    {
-                        OnDeviceEvent(new DeviceEventArgs(de));
-                    }
-                    break;
-                case Values.Message.CloseDSReq:
-                case Values.Message.CloseDSOK:
-                    // even though it says closeDS it's really disable.
-                    // dsok is sent if source is enabled with uionly
-
-                    // some sources send this at other states so do a step down
-                    if (State > 5)
-                    {
-                        ForceStepDown(4);
-                    }
-                    else if (State == 5)
-                    {
-                        // needs this state check since some source sends this more than once
-                        DisableSource();
-                    }
-                    break;
-            }
-        }
-
 
         /// <summary>
         /// Message loop processor for winform. 

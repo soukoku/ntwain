@@ -299,6 +299,7 @@ namespace NTwain
         /// <param name="modal">if set to <c>true</c> any driver UI will display as modal.</param>
         /// <param name="windowHandle">The window handle if modal.</param>
         /// <param name="context">The
+        /// Windows only. 
         /// <see cref="SynchronizationContext" /> that is required for certain operations.
         /// It is recommended you call this method in an UI thread and pass in
         /// <see cref="SynchronizationContext.Current" />
@@ -307,7 +308,11 @@ namespace NTwain
         /// <exception cref="ArgumentNullException">context</exception>
         public ReturnCode EnableSource(SourceEnableMode mode, bool modal, HandleRef windowHandle, SynchronizationContext context)
         {
-            if (context == null) { throw new ArgumentNullException("context"); }
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                if (context == null) { throw new ArgumentNullException("context"); }
+            }
+
             Debug.WriteLine(string.Format("Thread {0}: EnableSource.", Thread.CurrentThread.ManagedThreadId));
 
             _syncer = context;
@@ -456,7 +461,11 @@ namespace NTwain
             var hand = StateChanged;
             if (hand != null)
             {
-                hand(this, EventArgs.Empty);
+                try
+                {
+                    hand(this, EventArgs.Empty);
+                }
+                catch { }
             }
         }
 
@@ -468,7 +477,11 @@ namespace NTwain
             var hand = SourceChanged;
             if (hand != null)
             {
-                hand(this, EventArgs.Empty);
+                try
+                {
+                    hand(this, EventArgs.Empty);
+                }
+                catch { }
             }
         }
 
@@ -480,7 +493,11 @@ namespace NTwain
             var hand = SourceDisabled;
             if (hand != null)
             {
-                hand(this, EventArgs.Empty);
+                try
+                {
+                    hand(this, EventArgs.Empty);
+                }
+                catch { }
             }
         }
 
@@ -493,7 +510,11 @@ namespace NTwain
             var hand = DeviceEvent;
             if (hand != null)
             {
-                hand(this, e);
+                try
+                {
+                    hand(this, e);
+                }
+                catch { }
             }
         }
 
@@ -506,7 +527,11 @@ namespace NTwain
             var hand = TransferReady;
             if (hand != null)
             {
-                hand(this, e);
+                try
+                {
+                    hand(this, e);
+                }
+                catch { }
             }
         }
 
@@ -519,7 +544,11 @@ namespace NTwain
             var hand = DataTransferred;
             if (hand != null)
             {
-                hand(this, e);
+                try
+                {
+                    hand(this, e);
+                }
+                catch { }
             }
         }
 
@@ -534,6 +563,7 @@ namespace NTwain
         /// <returns>True if handled by TWAIN.</returns>
         protected bool HandleWndProcMessage(ref MESSAGE message)
         {
+            var handled = false;
             if (State >= 4) // technically we should only handle on state >= 5 but there might be missed msgs if we wait until state changes after enabling ds
             {
                 // transform it into a pointer for twain
@@ -546,17 +576,16 @@ namespace NTwain
 
                     TWEvent evt = new TWEvent();
                     evt.pEvent = msgPtr;
-                    var rc = DGControl.Event.ProcessEvent(evt);
-                    // TODO: not sure what to DAT to pass 
-                    HandleSourceMsg(null, null, DataGroups.Control, DataArgumentType.Null, evt.TWMessage, IntPtr.Zero);
-                    return rc == ReturnCode.DSEvent;
+                    handled = DGControl.Event.ProcessEvent(evt) == ReturnCode.DSEvent;
+                    
+                    HandleSourceMsg(evt.TWMessage);
                 }
                 finally
                 {
                     if (msgPtr != IntPtr.Zero) { Marshal.FreeHGlobal(msgPtr); }
                 }
             }
-            return false;
+            return handled;
         }
 
         ReturnCode HandleCallback(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
@@ -568,6 +597,7 @@ namespace NTwain
                 // but it's usually already the same thread and doesn't work (failure + seqError) w/o jumping to another thread and back.
                 // My guess is the DS needs to see the Success return code first before letting transfer happen
                 // so this is an hack to make it happen.
+
                 // TODO: find a better method.
                 ThreadPool.QueueUserWorkItem(o =>
                 {
@@ -576,13 +606,13 @@ namespace NTwain
                     {
                         _syncer.Send(blah =>
                         {
-                            HandleSourceMsg(origin, destination, dg, dat, msg, data);
+                            HandleSourceMsg(msg);
                         }, null);
                     }
                     else
                     {
                         // no context? better hope for the best!
-                        HandleSourceMsg(origin, destination, dg, dat, msg, data);
+                        HandleSourceMsg(msg);
                     }
                 }, _syncer);
                 return ReturnCode.Success;
@@ -590,16 +620,57 @@ namespace NTwain
             return ReturnCode.Failure;
         }
 
-        // final method that handles stuff from the source, whether it's from wndproc or callbacks
-        protected virtual void HandleSourceMsg(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
+        // method that handles msg from the source, whether it's from wndproc or callbacks
+        void HandleSourceMsg(Message msg)
         {
             if (msg != Message.Null)
             {
-                Debug.WriteLine(string.Format("Thread {0}: HandleSourceMsg at state {1} with DG={2} DAT={3} MSG={4}.", Thread.CurrentThread.ManagedThreadId, State, dg, dat, msg));
+                Debug.WriteLine(string.Format("Thread {0}: HandleSourceMsg at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg));
             }
 
-            throw new NotImplementedException();
+            switch (msg)
+            {
+                case Message.XferReady:
+                    if (State < 6)
+                    {
+                        State = 6;
+                    }
+                    DoTransferRoutine();
+                    break;
+                case Message.DeviceEvent:
+                    TWDeviceEvent de;
+                    var rc = DGControl.DeviceEvent.Get(out de);
+                    if (rc == ReturnCode.Success)
+                    {
+                        OnDeviceEvent(new DeviceEventArgs(de));
+                    }
+                    break;
+                case Message.CloseDSReq:
+                case Message.CloseDSOK:
+                    // even though it says closeDS it's really disable.
+                    // dsok is sent if source is enabled with uionly
 
+                    // some sources send this at other states so do a step down
+                    if (State > 5)
+                    {
+                        ForceStepDown(4);
+                    }
+                    else if (State == 5)
+                    {
+                        // needs this state check since some source sends this more than once
+                        DisableSource();
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Does the TWAIN transfer routine at state 6. 
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        protected virtual void DoTransferRoutine()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
