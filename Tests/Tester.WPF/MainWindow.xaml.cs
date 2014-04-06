@@ -18,6 +18,7 @@ using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using CommonWin32;
 using System.Threading;
+using ModernWPF.Controls;
 
 namespace Tester.WPF
 {
@@ -79,7 +80,7 @@ namespace Tester.WPF
                 var rc2 = twain.CloseSource();
                 rc2 = twain.CloseManager();
 
-                MessageBox.Show("Success!");
+                ModernMessageBox.Show(this, "Success!");
             };
             twain.TransferReady += (s, te) =>
             {
@@ -92,7 +93,7 @@ namespace Tester.WPF
                 //}
                 //else
                 //{
-                    //te.OutputFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.bmp");
+                //te.OutputFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.bmp");
                 //}
             };
         }
@@ -157,7 +158,7 @@ namespace Tester.WPF
                 twain.DGControl.Status.GetManager(out status);
             }
 
-            MessageBox.Show(string.Format("Step {0}: RC={1}, CC={2}", step, rc, status.ConditionCode));
+            ModernMessageBox.Show(this, string.Format("Step {0}: RC={1}, CC={2}", step, rc, status.ConditionCode));
         }
     }
 }

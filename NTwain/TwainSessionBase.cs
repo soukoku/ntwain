@@ -576,9 +576,10 @@ namespace NTwain
 
                     TWEvent evt = new TWEvent();
                     evt.pEvent = msgPtr;
-                    handled = DGControl.Event.ProcessEvent(evt) == ReturnCode.DSEvent;
-                    
-                    HandleSourceMsg(evt.TWMessage);
+                    if (handled = DGControl.Event.ProcessEvent(evt) == ReturnCode.DSEvent)
+                    {
+                        HandleSourceMsg(evt.TWMessage);
+                    }
                 }
                 finally
                 {
@@ -604,7 +605,7 @@ namespace NTwain
                     var ctx = o as SynchronizationContext;
                     if (ctx != null)
                     {
-                        _syncer.Send(blah =>
+                        _syncer.Post(blah =>
                         {
                             HandleSourceMsg(msg);
                         }, null);
@@ -623,10 +624,7 @@ namespace NTwain
         // method that handles msg from the source, whether it's from wndproc or callbacks
         void HandleSourceMsg(Message msg)
         {
-            if (msg != Message.Null)
-            {
-                Debug.WriteLine(string.Format("Thread {0}: HandleSourceMsg at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg));
-            }
+            Debug.WriteLine(string.Format("Thread {0}: HandleSourceMsg at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg));
 
             switch (msg)
             {
