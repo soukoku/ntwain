@@ -455,7 +455,8 @@ namespace NTwain
         public event EventHandler<DataTransferredEventArgs> DataTransferred;
 
         /// <summary>
-        /// Called when <see cref="State"/> changed.
+        /// Called when <see cref="State"/> changed
+        /// and raises the <see cref="StateChanged" /> event.
         /// </summary>
         protected virtual void OnStateChanged()
         {
@@ -471,7 +472,8 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Called when <see cref="SourceId"/> changed.
+        /// Called when <see cref="SourceId"/> changed
+        /// and raises the <see cref="SourceChanged" /> event.
         /// </summary>
         protected virtual void OnSourceChanged()
         {
@@ -487,7 +489,8 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Called when source has been disabled (back to state 4).
+        /// Called when source has been disabled (back to state 4)
+        /// and raises the <see cref="SourceDisabled" /> event.
         /// </summary>
         protected virtual void OnSourceDisabled()
         {
@@ -555,7 +558,7 @@ namespace NTwain
 
         #endregion
 
-        #region real TWAIN logic during xfer
+        #region TWAIN logic during xfer work
 
         /// <summary>
         /// Handles the message from a typical WndProc message loop and check if it's from the TWAIN source.
@@ -702,6 +705,7 @@ namespace NTwain
             do
             {
                 #region build pre xfer info
+
                 TWAudioInfo audInfo;
                 DGAudio.AudioInfo.Get(out audInfo);
 
@@ -784,7 +788,18 @@ namespace NTwain
 
         private void DoAudioFileXfer()
         {
-            throw new NotImplementedException();
+            string filePath = null;
+            TWSetupFileXfer setupInfo;
+            if (DGControl.SetupFileXfer.Get(out setupInfo) == ReturnCode.Success)
+            {
+                filePath = setupInfo.FileName;
+            }
+
+            var xrc = DGAudio.AudioFileXfer.Get();
+            if (xrc == ReturnCode.XferDone)
+            {
+                OnDataTransferred(new DataTransferredEventArgs(IntPtr.Zero, filePath));
+            }
         }
 
         #endregion
@@ -799,23 +814,9 @@ namespace NTwain
             do
             {
                 #region build pre xfer info
+
                 TWImageInfo imgInfo;
                 DGImage.ImageInfo.Get(out imgInfo);
-
-                //IList<FileFormat> formats = Enumerable.Empty<FileFormat>().ToList();
-                //IList<Compression> compressions = Enumerable.Empty<Compression>().ToList();
-                //var curFormat = this.GetCurrentCap<FileFormat>(CapabilityId.ICapImageFileFormat);
-                //var curComp = this.GetCurrentCap<Compression>(CapabilityId.ICapCompression);
-                //try
-                //{
-                //    formats = this.CapGetImageFileFormat();
-                //}
-                //catch { }
-                //try
-                //{
-                //    compressions = this.CapGetCompression();
-                //}
-                //catch { }
 
                 // ask consumer for xfer details
                 var preXferArgs = new TransferReadyEventArgs
@@ -867,7 +868,7 @@ namespace NTwain
             IntPtr lockedPtr = IntPtr.Zero;
             try
             {
-                ReturnCode xrc = DGImage.ImageNativeXfer.Get(ref dataPtr);
+                var xrc = DGImage.ImageNativeXfer.Get(ref dataPtr);
                 if (xrc == ReturnCode.XferDone)
                 {
                     State = 7;
@@ -895,32 +896,25 @@ namespace NTwain
             }
         }
 
+        private void DoImageFileXfer()
+        {
+            string filePath = null;
+            TWSetupFileXfer setupInfo;
+            if (DGControl.SetupFileXfer.Get(out setupInfo) == ReturnCode.Success)
+            {
+                filePath = setupInfo.FileName;
+            }
+
+            var xrc = DGImage.ImageFileXfer.Get();
+            if (xrc == ReturnCode.XferDone)
+            {
+                OnDataTransferred(new DataTransferredEventArgs(IntPtr.Zero, filePath));
+            }
+        }
+
         private void DoImageMemoryFileXfer()
         {
             throw new NotImplementedException();
-        }
-
-        private void DoImageFileXfer()
-        {
-            throw new NotImplementedException();
-
-            //if (preXferArgs.CanDoFileXfer && !string.IsNullOrEmpty(preXferArgs.OutputFile))
-            //{
-            //    var setXferRC = DGControl.SetupFileXfer.Set(new TWSetupFileXfer
-            //    {
-            //        FileName = preXferArgs.OutputFile,
-            //        Format = preXferArgs.ImageFormat
-            //    });
-            //    if (setXferRC == ReturnCode.Success)
-            //    {
-            //        mech = XferMech.File;
-            //    }
-            //}
-            //xrc = DGImage.ImageFileXfer.Get();
-            //if (File.Exists(preXferArgs.OutputFile))
-            //{
-            //    file = preXferArgs.OutputFile;
-            //}
         }
 
         private void DoImageMemoryXfer()
@@ -931,8 +925,6 @@ namespace NTwain
         #endregion
 
         #endregion
-
-
 
         /// <summary>
         /// The MSG structure in Windows for TWAIN use.
