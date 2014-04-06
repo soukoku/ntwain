@@ -397,7 +397,7 @@ namespace NTwain.Values
     /// TWEI_DESKEWSTATUS values.
     /// Corresponds to TWDSK_* values.
     /// </summary>
-    public enum DeskewStatus // TODO: test ushort
+    public enum DeskewStatus : uint
     {
         Success = 0,
         ReportOnly = 1,
