@@ -12,8 +12,8 @@ namespace NTwain
     class _NTwainVersionInfo
     {
         // keep this same in majors releases
-        public const string Release = "0.8.0.0";
+        public const string Release = "0.9.0.0";
         // change this for each nuget release
-        public const string Build = "0.8.2";
+        public const string Build = "0.9.0";
     }
 }

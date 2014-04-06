@@ -11,7 +11,7 @@
     <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>V0.8 release is updated for TWAIN 2.3 and contains some renamed types.</releaseNotes>
+    <releaseNotes>V0.9 release is updated for TWAIN 2.3 and contains some refactoring that may require updating existing code.</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>twain scan</tags>
   </metadata>
