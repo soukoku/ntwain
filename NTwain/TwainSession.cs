@@ -1,28 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using NTwain.Data;
 using NTwain.Triplets;
-using NTwain.Data;
 using NTwain.Values;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using System.Windows.Interop;
-using System.Diagnostics;
-using System.Security.Permissions;
-using System.IO;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 
 namespace NTwain
 {
     /// <summary>
-    /// Provides a session for working with TWAIN api in an application.
+    /// Basic class for interfacing with TWAIN.
     /// </summary>
-    public class TwainSession : ITwainSessionInternal, IMessageFilter, INotifyPropertyChanged
+    public class TwainSession : ITwainStateInternal, ITwainOperation
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TwainSession" /> class.
+        /// Initializes a new instance of the <see cref="TwainSessionOld" /> class.
         /// </summary>
         /// <param name="appId">The app id.</param>
         /// <exception cref="System.ArgumentNullException"></exception>
@@ -30,103 +27,16 @@ namespace NTwain
         {
             if (appId == null) { throw new ArgumentNullException("appId"); }
             _appId = appId;
-            State = 1;
+            ((ITwainStateInternal)this).ChangeState(1, false);
             EnforceState = true;
         }
 
-        #region properties
-
-        object _callbackObj;
-        SynchronizationContext _syncer;
-
-
         TWIdentity _appId;
-        /// <summary>
-        /// Gets the app id used for the session.
-        /// </summary>
-        /// <value>The app id.</value>
-        public TWIdentity AppId { get { return _appId; } }
+        HandleRef _appHandle;
+        SynchronizationContext _syncer;
+        object _callbackObj; // kept around so it doesn't get gc'ed
+        TWUserInterface _twui;
 
-        TWIdentity _sourceId;
-        /// <summary>
-        /// Gets the source id used for the session.
-        /// </summary>
-        /// <value>The source id.</value>
-        public TWIdentity SourceId
-        {
-            get { return _sourceId; }
-            private set
-            {
-                _sourceId = value;
-                RaisePropertyChanged("SourceId");
-            }
-        }
-
-        /// <summary>
-        /// Gets the current state number as defined by the TWAIN spec.
-        /// </summary>
-        /// <value>The state.</value>
-        public int State { get; private set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether callback is used parts of source communication
-        /// if supported. May be required if things don't work. This does not take effect if
-        /// the source is already open.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> to disable callback; otherwise, <c>false</c>.
-        /// </value>
-        public bool DisableCallback { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether calls to triplets will verify the current twain session state.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if state value is enforced; otherwise, <c>false</c>.
-        /// </value>
-        public bool EnforceState { get; set; }
-
-        DGAudio _dgAudio;
-        /// <summary>
-        /// Gets the triplet operations defined for audio data group.
-        /// </summary>
-        /// <value>The DG audio.</value>
-        public DGAudio DGAudio
-        {
-            get
-            {
-                if (_dgAudio == null) { _dgAudio = new DGAudio(this); }
-                return _dgAudio;
-            }
-        }
-
-        DGControl _dgControl;
-        /// <summary>
-        /// Gets the triplet operations defined for control data group.
-        /// </summary>
-        /// <value>The DG control.</value>
-        public DGControl DGControl
-        {
-            get
-            {
-                if (_dgControl == null) { _dgControl = new DGControl(this); }
-                return _dgControl;
-            }
-        }
-
-        DGImage _dgImage;
-        /// <summary>
-        /// Gets the triplet operations defined for image data group.
-        /// </summary>
-        /// <value>The DG image.</value>
-        public DGImage DGImage
-        {
-            get
-            {
-                if (_dgImage == null) { _dgImage = new DGImage(this); }
-                return _dgImage;
-            }
-        }
 
         private IList<CapabilityId> _supportedCaps;
         /// <summary>
@@ -153,47 +63,166 @@ namespace NTwain
         }
 
 
-        #endregion
-
-        #region state transition calls
-
-        void ITwainSessionInternal.ChangeState(int newState, bool notifyChange)
-        {
-            Debug.WriteLine("TWAIN State = " + newState);
-            State = newState;
-            if (notifyChange) { RaisePropertyChanged("State"); }
-        }
-        ICommitable ITwainSessionInternal.GetPendingStateChanger(int newState)
-        {
-            return new TentativeStateChanger(this, newState);
-        }
-
-
-        HandleRef _parentHandle;
+        #region ITwainStateInternal Members
 
         /// <summary>
-        /// Opens the data source manager.
+        /// Gets the app id used for the session.
         /// </summary>
-        /// <param name="handle">The handle. On Windows = points to the window handle (hWnd) that will act as the Source’s
+        /// <value>The app id.</value>
+        TWIdentity ITwainStateInternal.GetAppId() { return _appId; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether calls to triplets will verify the current twain session state.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if state value is enforced; otherwise, <c>false</c>.
+        /// </value>
+        public bool EnforceState { get; set; }
+
+        void ITwainStateInternal.ChangeState(int newState, bool notifyChange)
+        {
+            _state = newState;
+            if (notifyChange)
+            {
+                RaisePropertyChanged("State");
+                OnStateChanged();
+            }
+        }
+
+        ICommitable ITwainStateInternal.GetPendingStateChanger(int newState)
+        {
+            return new TentativeStateCommitable(this, newState);
+        }
+
+        void ITwainStateInternal.ChangeSourceId(TWIdentity sourceId)
+        {
+            SourceId = sourceId;
+            RaisePropertyChanged("SourceId");
+            OnSourceChanged();
+        }
+
+        #endregion
+
+        #region ITwainState Members
+
+        /// <summary>
+        /// Gets the source id used for the session.
+        /// </summary>
+        /// <value>
+        /// The source id.
+        /// </value>
+        public TWIdentity SourceId { get; private set; }
+
+        int _state;
+        /// <summary>
+        /// Gets the current state number as defined by the TWAIN spec.
+        /// </summary>
+        /// <value>
+        /// The state.
+        /// </value>
+        public int State
+        {
+            get { return _state; }
+            protected set
+            {
+                if (value > 0 && value < 8)
+                {
+                    _state = value;
+                    RaisePropertyChanged("State");
+                    OnStateChanged();
+                }
+            }
+        }
+
+        #endregion
+
+        #region ITwainOperation Members
+
+        DGAudio _dgAudio;
+        /// <summary>
+        /// Gets the triplet operations defined for audio data group.
+        /// </summary>
+        public DGAudio DGAudio
+        {
+            get
+            {
+                if (_dgAudio == null) { _dgAudio = new DGAudio(this); }
+                return _dgAudio;
+            }
+        }
+
+        DGControl _dgControl;
+        /// <summary>
+        /// Gets the triplet operations defined for control data group.
+        /// </summary>
+        public DGControl DGControl
+        {
+            get
+            {
+                if (_dgControl == null) { _dgControl = new DGControl(this); }
+                return _dgControl;
+            }
+        }
+
+        DGImage _dgImage;
+        /// <summary>
+        /// Gets the triplet operations defined for image data group.
+        /// </summary>
+        public DGImage DGImage
+        {
+            get
+            {
+                if (_dgImage == null) { _dgImage = new DGImage(this); }
+                return _dgImage;
+            }
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged Members
+
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            var hand = PropertyChanged;
+            if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+        }
+
+        #endregion
+
+        #region privileged calls that causes state change in TWAIN
+
+        /// <summary>
+        /// Opens the data source manager. This must be the first method used
+        /// before using other TWAIN functions. Calls to this must be followed by <see cref="CloseManager"/> when done.
+        /// </summary>
+        /// <param name="appHandle">On Windows = points to the window handle (hWnd) that will act as the Source’s
         /// "parent". On Macintosh = should be a NULL value.</param>
         /// <returns></returns>
-        public ReturnCode OpenManager(HandleRef handle)
+        public ReturnCode OpenManager(HandleRef appHandle)
         {
             Debug.WriteLine(string.Format("Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
 
-            _parentHandle = handle;
-            var hand = handle.Handle;
-            var rc = DGControl.Parent.OpenDsm(ref hand);
+            var rc = DGControl.Parent.OpenDsm(appHandle.Handle);
             if (rc == ReturnCode.Success)
             {
-                // if twain2 then get mem management stuff
-                if ((AppId.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
+                _appHandle = appHandle;
+                // if twain2 then get memory management functions
+                if ((_appId.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
                 {
                     TWEntryPoint entry;
                     rc = DGControl.EntryPoint.Get(out entry);
                     if (rc == ReturnCode.Success)
                     {
-                        MemoryManager.Global.UpdateEntryPoint(entry);
+                        MemoryManager.Instance.UpdateEntryPoint(entry);
                         Debug.WriteLine("Using TWAIN2 memory functions.");
                     }
                     else
@@ -213,102 +242,37 @@ namespace NTwain
         {
             Debug.WriteLine(string.Format("Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
 
-            var hand = _parentHandle.Handle;
-            var rc = DGControl.Parent.CloseDsm(ref hand);
+            var rc = DGControl.Parent.CloseDsm(_appHandle.Handle);
             if (rc == ReturnCode.Success)
             {
-                _parentHandle = default(HandleRef);
-                MemoryManager.Global.UpdateEntryPoint(null);
+                _appHandle = default(HandleRef);
             }
             return rc;
         }
 
         /// <summary>
         /// Loads the specified source into main memory and causes its initialization.
+        /// Calls to this must be followed by 
+        /// <see cref="CloseSource" /> when done.
         /// </summary>
         /// <param name="sourceProductName">Name of the source.</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentException">Source name is required.;sourceProductName</exception>
         public ReturnCode OpenSource(string sourceProductName)
         {
-            var source = new TWIdentity();
-            source.ProductName = sourceProductName;
-            return OpenSource(source);
-        }
-
-        /// <summary>
-        /// Loads the specified Source into main memory and causes its initialization.
-        /// </summary>
-        /// <param name="sourceId">The source id.</param>
-        /// <returns></returns>
-        public ReturnCode OpenSource(TWIdentity sourceId)
-        {
-            if (sourceId == null) { throw new ArgumentNullException("sourceId"); }
+            if (string.IsNullOrEmpty(sourceProductName)) { throw new ArgumentException("Source name is required.", "sourceProductName"); }
 
             Debug.WriteLine(string.Format("Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
 
-            var rc = DGControl.Identity.OpenDS(sourceId);
+            var source = new TWIdentity();
+            source.ProductName = sourceProductName;
+
+            var rc = DGControl.Identity.OpenDS(source);
             if (rc == ReturnCode.Success)
             {
-                SourceId = sourceId;
-                SupportedCaps = this.GetCapabilities();
-
-                // TODO: does it work?
-                _syncer = SynchronizationContext.Current ?? new SynchronizationContext();
-
-                if (!DisableCallback)
-                {
-                    // app v2.2 or higher uses callback2
-                    if (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2)
-                    {
-                        var cb = new TWCallback2(new CallbackDelegate(CallbackHandler));
-                        var rc2 = DGControl.Callback2.RegisterCallback(cb);
-
-                        if (rc2 == ReturnCode.Success)
-                        {
-                            Debug.WriteLine("Registered callback2.");
-                            _callbackObj = cb;
-                        }
-                    }
-                    else
-                    {
-                        var cb = new TWCallback(new CallbackDelegate(CallbackHandler));
-
-                        var rc2 = DGControl.Callback.RegisterCallback(cb);
-
-                        if (rc2 == ReturnCode.Success)
-                        {
-                            Debug.WriteLine("Registered callback.");
-                            _callbackObj = cb;
-                        }
-                    }
-                }
             }
             return rc;
         }
-
-        ReturnCode CallbackHandler(TWIdentity origin, TWIdentity dest,
-            DataGroups dg, DataArgumentType dat, Values.Message msg, IntPtr data)
-        {
-            if (origin != null && _sourceId != null && origin.Id == _sourceId.Id)
-            {
-                Debug.WriteLine(string.Format("Thread {0}: GOT TWAIN callback for msg {1}.", Thread.CurrentThread.ManagedThreadId, msg));
-                // spec says should handle this on the thread that enabled the DS, 
-                // but it's already the same and doesn't work (failure + seqError) w/o jumping to another thread and back.
-                // My guess is the DS needs to see the Success first before letting transfer happen
-                // so this is an artificial delay to make it happen.
-                // TODO: find a better method.
-                ThreadPool.QueueUserWorkItem(o =>
-                {
-                    _syncer.Send(blah =>
-                    {
-                        HandleSourceMsg(origin, dest, dg, dat, msg, data);
-                    }, null);
-                }, null);
-                return ReturnCode.Success;
-            }
-            return ReturnCode.Failure;
-        }
-
 
         /// <summary>
         /// When an application is finished with a Source, it must formally close the session between them
@@ -324,24 +288,60 @@ namespace NTwain
             var rc = DGControl.Identity.CloseDS();
             if (rc == ReturnCode.Success)
             {
-                SourceId = null;
                 _callbackObj = null;
-                SupportedCaps = null;
             }
             return rc;
         }
 
-        TWUserInterface _twui;
         /// <summary>
-        /// Enables the source for data acquisition.
+        /// Enables the source.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="modal">if set to <c>true</c> any driver UI will display as modal.</param>
         /// <param name="windowHandle">The window handle if modal.</param>
+        /// <param name="context">The
+        /// Windows only. 
+        /// <see cref="SynchronizationContext" /> that is required for certain operations.
+        /// It is recommended you call this method in an UI thread and pass in
+        /// <see cref="SynchronizationContext.Current" />
+        /// if you do not have a custom one setup.</param>
         /// <returns></returns>
-        public ReturnCode EnableSource(SourceEnableMode mode, bool modal, HandleRef windowHandle)
+        /// <exception cref="ArgumentNullException">context</exception>
+        public ReturnCode EnableSource(SourceEnableMode mode, bool modal, HandleRef windowHandle, SynchronizationContext context)
         {
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                if (context == null) { throw new ArgumentNullException("context"); }
+            }
+
             Debug.WriteLine(string.Format("Thread {0}: EnableSource.", Thread.CurrentThread.ManagedThreadId));
+
+            _syncer = context;
+
+            // app v2.2 or higher uses callback2
+            if (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2)
+            {
+                var cb = new TWCallback2(HandleCallback);
+                var rc2 = DGControl.Callback2.RegisterCallback(cb);
+
+                if (rc2 == ReturnCode.Success)
+                {
+                    Debug.WriteLine("Registered callback2 OK.");
+                    _callbackObj = cb;
+                }
+            }
+            else
+            {
+                var cb = new TWCallback(HandleCallback);
+
+                var rc2 = DGControl.Callback.RegisterCallback(cb);
+
+                if (rc2 == ReturnCode.Success)
+                {
+                    Debug.WriteLine("Registered callback OK.");
+                    _callbackObj = cb;
+                }
+            }
 
             _twui = new TWUserInterface();
             _twui.ShowUI = mode == SourceEnableMode.ShowUI;
@@ -356,287 +356,27 @@ namespace NTwain
             {
                 return DGControl.UserInterface.EnableDS(_twui);
             }
+
         }
 
         /// <summary>
         /// Disables the source to end data acquisition.
         /// </summary>
         /// <returns></returns>
-        ReturnCode DisableSource()
+        protected ReturnCode DisableSource()
         {
             Debug.WriteLine(string.Format("Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
 
             var rc = DGControl.UserInterface.DisableDS(_twui);
             if (rc == ReturnCode.Success)
             {
-                var hand = SourceDisabled;
-                if (hand != null)
-                {
-                    try
-                    {
-                        hand(this, EventArgs.Empty);
-                    }
-                    catch { }
-                }
+                OnSourceDisabled();
             }
             return rc;
         }
 
-        #endregion
-
-        #region consumer to handle
-
         /// <summary>
-        /// Occurs when source has been disabled (back to state 4).
-        /// </summary>
-        public event EventHandler SourceDisabled;
-        /// <summary>
-        /// Occurs when a data transfer is ready.
-        /// </summary>
-        public event EventHandler<TransferReadyEventArgs> TransferReady;
-        /// <summary>
-        /// Occurs when the source has generated an event.
-        /// </summary>
-        public event EventHandler<DeviceEventArgs> DeviceEvent;
-        /// <summary>
-        /// Occurs when data has been transferred.
-        /// </summary>
-        public event EventHandler<DataTransferredEventArgs> DataTransferred;
-
-
-        private void DoTransferRoutine()
-        {
-            TWPendingXfers pending = new TWPendingXfers();
-            var rc = ReturnCode.Success;
-
-            do
-            {
-                IList<FileFormat> formats = Enumerable.Empty<FileFormat>().ToList();
-                IList<Compression> compressions = Enumerable.Empty<Compression>().ToList();
-                bool canDoFileXfer = this.CapGetImageXferMech().Contains(XferMech.File);
-                var curFormat = this.GetCurrentCap<FileFormat>(CapabilityId.ICapImageFileFormat);
-                var curComp = this.GetCurrentCap<Compression>(CapabilityId.ICapCompression);
-                TWImageInfo imgInfo;
-                bool skip = false;
-                if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
-                {
-                    // bad!
-                    skip = true;
-                }
-
-                try
-                {
-                    formats = this.CapGetImageFileFormat();
-                }
-                catch { }
-                try
-                {
-                    compressions = this.CapGetCompression();
-                }
-                catch { }
-
-                // ask consumer for cancel in case of non-ui multi-page transfers
-                TransferReadyEventArgs args = new TransferReadyEventArgs(pending, formats, curFormat, compressions,
-                    curComp, canDoFileXfer, imgInfo);
-                args.CancelCurrent = skip;
-
-                var hand = TransferReady;
-                if (hand != null)
-                {
-                    try
-                    {
-                        hand(this, args);
-                    }
-                    catch { }
-                }
-
-                if (!args.CancelAll && !args.CancelCurrent)
-                {
-                    Values.XferMech mech = this.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech);
-
-                    if (args.CanDoFileXfer && !string.IsNullOrEmpty(args.OutputFile))
-                    {
-                        var setXferRC = DGControl.SetupFileXfer.Set(new TWSetupFileXfer
-                        {
-                            FileName = args.OutputFile,
-                            Format = args.ImageFormat
-                        });
-                        if (setXferRC == ReturnCode.Success)
-                        {
-                            mech = XferMech.File;
-                        }
-                    }
-
-                    // I don't know how this is supposed to work so it probably doesn't
-                    //this.CapSetImageFormat(args.ImageFormat);
-                    //this.CapSetImageCompression(args.ImageCompression);
-
-                    #region do xfer
-
-                    // TODO: expose all swallowed exceptions somehow later
-
-                    IntPtr dataPtr = IntPtr.Zero;
-                    IntPtr lockedPtr = IntPtr.Zero;
-                    string file = null;
-                    try
-                    {
-                        ReturnCode xrc = ReturnCode.Cancel;
-                        switch (mech)
-                        {
-                            case Values.XferMech.Native:
-                                xrc = DGImage.ImageNativeXfer.Get(ref dataPtr);
-                                break;
-                            case Values.XferMech.File:
-                                xrc = DGImage.ImageFileXfer.Get();
-                                if (File.Exists(args.OutputFile))
-                                {
-                                    file = args.OutputFile;
-                                }
-                                break;
-                            case Values.XferMech.MemFile:
-                                // not supported yet
-                                //TWImageMemXfer memxfer = new TWImageMemXfer();
-                                //xrc = DGImage.ImageMemXfer.Get(memxfer);
-                                break;
-                        }
-                        if (xrc == ReturnCode.XferDone)
-                        {
-                            State = 7;
-                            try
-                            {
-                                var dtHand = DataTransferred;
-                                if (dtHand != null)
-                                {
-                                    if (dataPtr != IntPtr.Zero)
-                                    {
-                                        lockedPtr = MemoryManager.Global.MemLock(dataPtr);
-                                    }
-                                    dtHand(this, new DataTransferredEventArgs(lockedPtr, file));
-                                }
-                            }
-                            catch { }
-                        }
-                        //}
-                        //else if (group == DataGroups.Audio)
-                        //{
-                        //	var xrc = DGAudio.AudioNativeXfer.Get(ref dataPtr);
-                        //	if (xrc == ReturnCode.XferDone)
-                        //	{
-                        //		State = 7;
-                        //		try
-                        //		{
-                        //			var dtHand = DataTransferred;
-                        //			if (dtHand != null)
-                        //			{
-                        //				lockedPtr = MemoryManager.Global.MemLock(dataPtr);
-                        //				dtHand(this, new DataTransferredEventArgs(lockedPtr));
-                        //			}
-                        //		}
-                        //		catch { }
-                        //	}
-                        //}
-                    }
-                    finally
-                    {
-                        State = 6;
-                        // data here is allocated by source so needs to use shared mem calls
-                        if (lockedPtr != IntPtr.Zero)
-                        {
-                            MemoryManager.Global.MemUnlock(lockedPtr);
-                            lockedPtr = IntPtr.Zero;
-                        }
-                        if (dataPtr != IntPtr.Zero)
-                        {
-                            MemoryManager.Global.MemFree(dataPtr);
-                            dataPtr = IntPtr.Zero;
-                        }
-                    }
-                    #endregion
-                }
-
-                if (args.CancelAll)
-                {
-                    rc = DGControl.PendingXfers.Reset(pending);
-                    if (rc == ReturnCode.Success)
-                    {
-                        // if audio exit here
-                        //if (group == DataGroups.Audio)
-                        //{
-                        //	//???
-                        //	return;
-                        //}
-
-                    }
-                }
-                else
-                {
-                    rc = DGControl.PendingXfers.EndXfer(pending);
-                }
-            } while (rc == ReturnCode.Success && pending.Count != 0);
-
-            State = 5;
-            DisableSource();
-
-        }
-
-        #endregion
-
-        #region messaging use
-
-        ReturnCode HandleSourceMsg(TWIdentity origin, TWIdentity destination,
-            DataGroups dg, DataArgumentType dat, NTwain.Values.Message msg, IntPtr data)
-        {
-            Debug.WriteLine(string.Format("Thread {0}: HandleSourceMsg at state {1} with DG={2} DAT={3} MSG={4}.", Thread.CurrentThread.ManagedThreadId, State, dg, dat, msg));
-
-            ReturnCode rc = ReturnCode.Success;
-
-            switch (msg)
-            {
-                case Values.Message.XferReady:
-                    if (State < 6)
-                        State = 6;
-                    // this is the meat of all twain stuff
-                    DoTransferRoutine();
-                    break;
-                case Values.Message.DeviceEvent:
-                    TWDeviceEvent de;
-                    rc = DGControl.DeviceEvent.Get(out de);
-                    if (rc == ReturnCode.Success)
-                    {
-                        var hand = this.DeviceEvent;
-                        if (hand != null)
-                        {
-                            try
-                            {
-                                hand(this, new DeviceEventArgs(de));
-                            }
-                            catch { }
-                        }
-                    }
-                    break;
-                case Values.Message.CloseDSReq:
-                case Values.Message.CloseDSOK:
-                    // even though it says closeDS it's really disable.
-                    // dsok is sent if source is enabled with uionly
-
-                    // some sources send this at other states so do a step down
-                    if (State > 5)
-                    {
-                        ForceStepDown(4);
-                    }
-                    else if (State == 5)
-                    {
-                        // needs this state check since some source sends this more than once
-                        DisableSource();
-                    }
-                    break;
-            }
-
-            return rc;
-        }
-
-        /// <summary>
-        /// Forces the stepping down of an opened source ignoring return values.
+        /// Forces the stepping down of an opened source when things gets out of control.
         /// Used when session state and source state become out of sync.
         /// </summary>
         /// <param name="targetState">State of the target.</param>
@@ -685,150 +425,573 @@ namespace NTwain
             EnforceState = origFlag;
         }
 
+        #endregion
+
+        #region custom events and overridables
+
         /// <summary>
-        /// Handles the message from a message loop.
+        /// Occurs when <see cref="State"/> has changed.
         /// </summary>
-        /// <param name="msgPtr">Pointer to message structure.</param>
+        public event EventHandler StateChanged;
+        /// <summary>
+        /// Occurs when <see cref="SourceId"/> has changed.
+        /// </summary>
+        public event EventHandler SourceChanged;
+        /// <summary>
+        /// Occurs when source has been disabled (back to state 4).
+        /// </summary>
+        public event EventHandler SourceDisabled;
+        /// <summary>
+        /// Occurs when the source has generated an event.
+        /// </summary>
+        public event EventHandler<DeviceEventArgs> DeviceEvent;
+        /// <summary>
+        /// Occurs when a data transfer is ready.
+        /// </summary>
+        public event EventHandler<TransferReadyEventArgs> TransferReady;
+        /// <summary>
+        /// Occurs when data has been transferred.
+        /// </summary>
+        public event EventHandler<DataTransferredEventArgs> DataTransferred;
+
+        /// <summary>
+        /// Called when <see cref="State"/> changed
+        /// and raises the <see cref="StateChanged" /> event.
+        /// </summary>
+        protected virtual void OnStateChanged()
+        {
+            var hand = StateChanged;
+            if (hand != null)
+            {
+                try
+                {
+                    hand(this, EventArgs.Empty);
+                }
+                catch { }
+            }
+        }
+
+        /// <summary>
+        /// Called when <see cref="SourceId"/> changed
+        /// and raises the <see cref="SourceChanged" /> event.
+        /// </summary>
+        protected virtual void OnSourceChanged()
+        {
+            var hand = SourceChanged;
+            if (hand != null)
+            {
+                try
+                {
+                    hand(this, EventArgs.Empty);
+                }
+                catch { }
+            }
+        }
+
+        /// <summary>
+        /// Called when source has been disabled (back to state 4)
+        /// and raises the <see cref="SourceDisabled" /> event.
+        /// </summary>
+        protected virtual void OnSourceDisabled()
+        {
+            var hand = SourceDisabled;
+            if (hand != null)
+            {
+                try
+                {
+                    hand(this, EventArgs.Empty);
+                }
+                catch { }
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:DeviceEvent" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="DeviceEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnDeviceEvent(DeviceEventArgs e)
+        {
+            var hand = DeviceEvent;
+            if (hand != null)
+            {
+                try
+                {
+                    hand(this, e);
+                }
+                catch { }
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:TransferReady" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="TransferReadyEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnTransferReady(TransferReadyEventArgs e)
+        {
+            var hand = TransferReady;
+            if (hand != null)
+            {
+                try
+                {
+                    hand(this, e);
+                }
+                catch { }
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:DataTransferred" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="DataTransferredEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnDataTransferred(DataTransferredEventArgs e)
+        {
+            var hand = DataTransferred;
+            if (hand != null)
+            {
+                try
+                {
+                    hand(this, e);
+                }
+                catch { }
+            }
+        }
+
+        #endregion
+
+        #region TWAIN logic during xfer work
+
+        /// <summary>
+        /// Handles the message from a typical WndProc message loop and check if it's from the TWAIN source.
+        /// </summary>
+        /// <param name="message">The message.</param>
         /// <returns>True if handled by TWAIN.</returns>
-        bool HandleLoopMsgEvent(ref IntPtr msgPtr)
+        protected bool HandleWndProcMessage(ref MESSAGE message)
         {
-            TWEvent evt = new TWEvent();
-            evt.pEvent = msgPtr;
-            var rc = DGControl.Event.ProcessEvent(evt);
-            HandleSourceMsg(null, null, DataGroups.Control, DataArgumentType.Null, evt.TWMessage, IntPtr.Zero);
-            return rc == ReturnCode.DSEvent;
-        }
-
-        /// <summary>
-        /// Message loop processor for winform. 
-        /// Use this by adding the <see cref="TwainSession"/> as an <see cref="IMessageFilter "/>.
-        /// </summary>
-        /// <param name="m">The message to be dispatched. You cannot modify this message.</param>
-        /// <returns>
-        /// true to filter the message and stop it from being dispatched; false to allow the message to continue to the next filter or control.
-        /// </returns>
-        //[EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-        bool IMessageFilter.PreFilterMessage(ref System.Windows.Forms.Message m)
-        {
-            if (State > 3)
+            var handled = false;
+            if (State >= 4) // technically we should only handle on state >= 5 but there might be missed msgs if we wait until state changes after enabling ds
             {
-                MSG winmsg = default(MSG);
-                winmsg.hwnd = m.HWnd;
-                winmsg.lParam = m.LParam;
-                winmsg.message = m.Msg;
-                winmsg.wParam = m.WParam;
-
+                // transform it into a pointer for twain
                 IntPtr msgPtr = IntPtr.Zero;
                 try
                 {
-                    // no need to lock for marshal alloc
-                    msgPtr = MemoryManager.Global.MemAllocate((uint)Marshal.SizeOf(winmsg));
-                    Marshal.StructureToPtr(winmsg, msgPtr, false);
-                    return HandleLoopMsgEvent(ref msgPtr);
+                    // no need to do another lock call when using marshal alloc
+                    msgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(message));
+                    Marshal.StructureToPtr(message, msgPtr, false);
+
+                    TWEvent evt = new TWEvent();
+                    evt.pEvent = msgPtr;
+                    if (handled = DGControl.Event.ProcessEvent(evt) == ReturnCode.DSEvent)
+                    {
+                        Debug.WriteLine(string.Format("Thread {0}: HandleWndProcMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, evt.TWMessage));
+                        HandleSourceMsg(evt.TWMessage);
+                    }
                 }
                 finally
                 {
-                    if (msgPtr != IntPtr.Zero)
-                        MemoryManager.Global.MemFree(msgPtr);
+                    if (msgPtr != IntPtr.Zero) { Marshal.FreeHGlobal(msgPtr); }
                 }
             }
-            return false;
+            return handled;
+        }
+
+        ReturnCode HandleCallback(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
+        {
+            if (origin != null && SourceId != null && origin.Id == SourceId.Id)
+            {
+                Debug.WriteLine(string.Format("Thread {0}: CallbackHandler at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg));
+                // spec says we must handle this on the thread that enabled the DS, 
+                // but it's usually already the same thread and doesn't work (failure + seqError) w/o jumping to another thread and back.
+                // My guess is the DS needs to see the Success return code first before letting transfer happen
+                // so this is an hack to make it happen.
+
+                // TODO: find a better method.
+                ThreadPool.QueueUserWorkItem(o =>
+                {
+                    var ctx = o as SynchronizationContext;
+                    if (ctx != null)
+                    {
+                        _syncer.Post(blah =>
+                        {
+                            HandleSourceMsg(msg);
+                        }, null);
+                    }
+                    else
+                    {
+                        // no context? better hope for the best!
+                        HandleSourceMsg(msg);
+                    }
+                }, _syncer);
+                return ReturnCode.Success;
+            }
+            return ReturnCode.Failure;
+        }
+
+        // method that handles msg from the source, whether it's from wndproc or callbacks
+        void HandleSourceMsg(Message msg)
+        {
+            switch (msg)
+            {
+                case Message.XferReady:
+                    if (State < 6)
+                    {
+                        State = 6;
+                    }
+                    DoTransferRoutine();
+                    break;
+                case Message.DeviceEvent:
+                    TWDeviceEvent de;
+                    var rc = DGControl.DeviceEvent.Get(out de);
+                    if (rc == ReturnCode.Success)
+                    {
+                        OnDeviceEvent(new DeviceEventArgs(de));
+                    }
+                    break;
+                case Message.CloseDSReq:
+                case Message.CloseDSOK:
+                    // even though it says closeDS it's really disable.
+                    // dsok is sent if source is enabled with uionly
+
+                    // some sources send this at other states so do a step down
+                    if (State > 5)
+                    {
+                        ForceStepDown(4);
+                    }
+                    else if (State == 5)
+                    {
+                        // needs this state check since some source sends this more than once
+                        DisableSource();
+                    }
+                    break;
+            }
         }
 
         /// <summary>
-        /// Message loop processor for wpf.
-        /// Use this as the target of <see cref="HwndSourceHook"/> delegate.
+        /// Performs the TWAIN transfer routine at state 6. 
         /// </summary>
-        /// <param name="hwnd">The window handle.</param>
-        /// <param name="msg">The message ID.</param>
-        /// <param name="wParam">The message's wParam value.</param>
-        /// <param name="lParam">The message's lParam value.</param>
-        /// <param name="handled">A value that indicates whether the message was handled. Set the value to true if the message was handled; otherwise, false.</param>
-        /// <returns></returns>
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
-        public IntPtr PreFilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        protected virtual void DoTransferRoutine()
         {
-            // always pass message since it works whether there's a callback or not?
-            if (State > 3)// && _callbackObj == null)
+            // TODO: better way to determine what's being xfered?
+            if ((SourceId.DataGroup & DataGroups.Image) == DataGroups.Image)
             {
-                MSG winmsg = default(MSG);
-                winmsg.hwnd = hwnd;
-                winmsg.lParam = lParam;
-                winmsg.message = msg;
-                winmsg.wParam = wParam;
+                DoImageXfer();
+            }
+            else if ((SourceId.DataGroup & DataGroups.Audio) == DataGroups.Audio)
+            {
+                DoAudioXfer();
+            }
+            else
+            {
+                // ??? just cancel it
+                var pending = new TWPendingXfers();
+                var rc = ReturnCode.Success;
+                do
+                {
+                    rc = DGControl.PendingXfers.Reset(pending);
+                } while (rc == ReturnCode.Success && pending.Count != 0);
 
-                IntPtr msgPtr = IntPtr.Zero;
+                State = 5;
+                DisableSource();
+            }
+
+        }
+
+        #region audio xfers
+
+        private void DoAudioXfer()
+        {
+            var pending = new TWPendingXfers();
+            var rc = ReturnCode.Success;
+
+            do
+            {
+                #region build pre xfer info
+
+                TWAudioInfo audInfo;
+                DGAudio.AudioInfo.Get(out audInfo);
+
+                // ask consumer for xfer details
+                var preXferArgs = new TransferReadyEventArgs
+                {
+                    AudioInfo = audInfo,
+                    PendingTransferCount = pending.Count,
+                    EndOfJob = pending.EndOfJob == 0
+                };
+
+                OnTransferReady(preXferArgs);
+
+                #endregion
+
+                if (preXferArgs.CancelAll)
+                {
+                    rc = DGControl.PendingXfers.Reset(pending);
+                    if (rc == ReturnCode.Success)
+                    {
+                        // TODO: verify if audio exit directly?
+                        return;
+                    }
+                }
+                else if (!preXferArgs.CancelCurrent)
+                {
+                    var mech = this.GetCurrentCap<XferMech>(CapabilityId.ACapXferMech);
+                    switch (mech)
+                    {
+                        case XferMech.Native:
+                            DoAudioNativeXfer();
+                            break;
+                        case XferMech.File:
+                            DoAudioFileXfer();
+                            break;
+                    }
+                }
+
+                rc = DGControl.PendingXfers.EndXfer(pending);
+
+            } while (rc == ReturnCode.Success && pending.Count != 0);
+
+            State = 5;
+            DisableSource();
+        }
+
+        private void DoAudioNativeXfer()
+        {
+            IntPtr dataPtr = IntPtr.Zero;
+            IntPtr lockedPtr = IntPtr.Zero;
+            try
+            {
+                var xrc = DGAudio.AudioNativeXfer.Get(ref dataPtr);
+                if (xrc == ReturnCode.XferDone)
+                {
+                    State = 7;
+                    if (dataPtr != IntPtr.Zero)
+                    {
+                        lockedPtr = MemoryManager.Instance.Lock(dataPtr);
+                    }
+                    OnDataTransferred(new DataTransferredEventArgs(lockedPtr, null));
+                }
+            }
+            finally
+            {
+                State = 6;
+                // data here is allocated by source so needs to use shared mem calls
+                if (lockedPtr != IntPtr.Zero)
+                {
+                    MemoryManager.Instance.Unlock(lockedPtr);
+                    lockedPtr = IntPtr.Zero;
+                }
+                if (dataPtr != IntPtr.Zero)
+                {
+                    MemoryManager.Instance.Free(dataPtr);
+                    dataPtr = IntPtr.Zero;
+                }
+            }
+        }
+
+        private void DoAudioFileXfer()
+        {
+            string filePath = null;
+            TWSetupFileXfer setupInfo;
+            if (DGControl.SetupFileXfer.Get(out setupInfo) == ReturnCode.Success)
+            {
+                filePath = setupInfo.FileName;
+            }
+
+            var xrc = DGAudio.AudioFileXfer.Get();
+            if (xrc == ReturnCode.XferDone)
+            {
+                OnDataTransferred(new DataTransferredEventArgs(IntPtr.Zero, filePath));
+            }
+        }
+
+        #endregion
+
+        #region image xfers
+
+        private void DoImageXfer()
+        {
+            var pending = new TWPendingXfers();
+            var rc = ReturnCode.Success;
+
+            do
+            {
+                #region build pre xfer info
+
+                TWImageInfo imgInfo;
+                DGImage.ImageInfo.Get(out imgInfo);
+
+                // ask consumer for xfer details
+                var preXferArgs = new TransferReadyEventArgs
+                {
+                    PendingImageInfo = imgInfo,
+                    PendingTransferCount = pending.Count,
+                    EndOfJob = pending.EndOfJob == 0
+                };
+
+                OnTransferReady(preXferArgs);
+
+                #endregion
+
+                if (preXferArgs.CancelAll)
+                {
+                    rc = DGControl.PendingXfers.Reset(pending);
+                }
+                else if (!preXferArgs.CancelCurrent)
+                {
+                    var mech = this.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech);
+                    switch (mech)
+                    {
+                        case XferMech.Native:
+                            DoImageNativeXfer();
+                            break;
+                        case XferMech.Memory:
+                            DoImageMemoryXfer();
+                            break;
+                        case XferMech.File:
+                            DoImageFileXfer();
+                            break;
+                        case XferMech.MemFile:
+                            DoImageMemoryFileXfer();
+                            break;
+                    }
+                }
+
+                rc = DGControl.PendingXfers.EndXfer(pending);
+
+            } while (rc == ReturnCode.Success && pending.Count != 0);
+
+            State = 5;
+            DisableSource();
+        }
+
+        private void DoImageNativeXfer()
+        {
+            IntPtr dataPtr = IntPtr.Zero;
+            IntPtr lockedPtr = IntPtr.Zero;
+            try
+            {
+                var xrc = DGImage.ImageNativeXfer.Get(ref dataPtr);
+                if (xrc == ReturnCode.XferDone)
+                {
+                    State = 7;
+                    if (dataPtr != IntPtr.Zero)
+                    {
+                        lockedPtr = MemoryManager.Instance.Lock(dataPtr);
+                    }
+                    OnDataTransferred(new DataTransferredEventArgs(lockedPtr, null));
+                }
+            }
+            finally
+            {
+                State = 6;
+                // data here is allocated by source so needs to use shared mem calls
+                if (lockedPtr != IntPtr.Zero)
+                {
+                    MemoryManager.Instance.Unlock(lockedPtr);
+                    lockedPtr = IntPtr.Zero;
+                }
+                if (dataPtr != IntPtr.Zero)
+                {
+                    MemoryManager.Instance.Free(dataPtr);
+                    dataPtr = IntPtr.Zero;
+                }
+            }
+        }
+
+        private void DoImageFileXfer()
+        {
+            string filePath = null;
+            TWSetupFileXfer setupInfo;
+            if (DGControl.SetupFileXfer.Get(out setupInfo) == ReturnCode.Success)
+            {
+                filePath = setupInfo.FileName;
+            }
+
+            var xrc = DGImage.ImageFileXfer.Get();
+            if (xrc == ReturnCode.XferDone)
+            {
+                OnDataTransferred(new DataTransferredEventArgs(IntPtr.Zero, filePath));
+            }
+        }
+
+        private void DoImageMemoryXfer()
+        {
+            throw new NotImplementedException();
+
+            TWSetupMemXfer memInfo;
+            if (DGControl.SetupMemXfer.Get(out memInfo) == ReturnCode.Success)
+            {
+                TWImageMemXfer xferInfo = new TWImageMemXfer();
                 try
                 {
-                    // no need to lock for marshal alloc
-                    msgPtr = MemoryManager.Global.MemAllocate((uint)Marshal.SizeOf(winmsg));
-                    Marshal.StructureToPtr(winmsg, msgPtr, false);
-                    handled = HandleLoopMsgEvent(ref msgPtr);
+                    xferInfo.Memory = new TWMemory
+                    {
+                        Length = memInfo.Preferred,
+                        TheMem = MemoryManager.Instance.Allocate(memInfo.Preferred)
+                    };
+
+
+                    var xrc = ReturnCode.Success;
+                    do
+                    {
+                        xrc = DGImage.ImageMemXfer.Get(xferInfo);
+
+                        if (xrc == ReturnCode.XferDone)
+                        {
+
+                        }
+                    } while (xrc == ReturnCode.Success);
+
                 }
                 finally
                 {
-                    if (msgPtr != IntPtr.Zero)
-                        MemoryManager.Global.MemFree(msgPtr);
+                    if (xferInfo.Memory.TheMem != IntPtr.Zero)
+                    {
+                        MemoryManager.Instance.Free(xferInfo.Memory.TheMem);
+                    }
                 }
             }
-            return IntPtr.Zero;
         }
+
+        private void DoImageMemoryFileXfer()
+        {
+            // no way to test, not supported by sample source
+            throw new NotImplementedException();
+        }
+
         #endregion
 
-        #region INotifyPropertyChanged Members
+        #endregion
 
         /// <summary>
-        /// Occurs when a property value changes.
+        /// The MSG structure in Windows for TWAIN use.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        void RaisePropertyChanged(string property)
+        [StructLayout(LayoutKind.Sequential)]
+        protected struct MESSAGE
         {
-            var hand = PropertyChanged;
-            if (hand != null) { hand(this, new PropertyChangedEventArgs(property)); }
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MESSAGE"/> struct.
+            /// </summary>
+            /// <param name="hwnd">The HWND.</param>
+            /// <param name="message">The message.</param>
+            /// <param name="wParam">The w parameter.</param>
+            /// <param name="lParam">The l parameter.</param>
+            public MESSAGE(IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam)
+            {
+                _hwnd = hwnd;
+                _message = (uint)message;
+                _wParam = wParam;
+                _lParam = lParam;
+                _time = 0;
+                _x = 0;
+                _y = 0;
+            }
+
+            IntPtr _hwnd;
+            uint _message;
+            IntPtr _wParam;
+            IntPtr _lParam;
+            uint _time;
+            int _x;
+            int _y;
         }
-
-        #endregion
-
-        #region nested stuff
-
-        class TentativeStateChanger : ICommitable
-        {
-            bool _commit;
-            ITwainSessionInternal _session;
-            int _origState;
-            int _newState;
-            public TentativeStateChanger(ITwainSessionInternal session, int newState)
-            {
-                _session = session;
-                _origState = session.State;
-                _newState = newState;
-                _session.ChangeState(newState, false);
-            }
-
-            public void Commit()
-            {
-                if (_session.State == _newState)
-                {
-                    _session.ChangeState(_newState, true);
-                }
-                _commit = true;
-            }
-
-            #region IDisposable Members
-
-            public void Dispose()
-            {
-                if (!_commit && _session.State == _newState)
-                {
-                    _session.ChangeState(_origState, false);
-                }
-            }
-
-            #endregion
-        }
-
-        #endregion
     }
 }

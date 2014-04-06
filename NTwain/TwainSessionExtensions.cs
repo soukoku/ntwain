@@ -8,7 +8,7 @@ using System.Text;
 namespace NTwain
 {
     /// <summary>
-    /// Defines common methods on <see cref="TwainSession"/> using the raw
+    /// Defines common methods on <see cref="TwainSessionOld"/> using the raw
     /// TWAIN triplet api.
     /// </summary>
     public static class TwainSessionExtensions
@@ -73,7 +73,7 @@ namespace NTwain
         /// <param name="dataArgumentType">The triplet data argument type.</param>
         /// <param name="message">The triplet message.</param>
         /// <exception cref="TwainStateException"></exception>
-        internal static void VerifyState(this ITwainSessionInternal session, int allowedMinimum, int allowedMaximum, DataGroups group, DataArgumentType dataArgumentType, NTwain.Values.Message message)
+        internal static void VerifyState(this ITwainStateInternal session, int allowedMinimum, int allowedMaximum, DataGroups group, DataArgumentType dataArgumentType, NTwain.Values.Message message)
         {
             if (session.EnforceState && (session.State < allowedMinimum || session.State > allowedMaximum))
             {
@@ -230,7 +230,7 @@ namespace NTwain
         }
 
         /// <summary>
-        /// A generic method that tries to get capability values from current <see cref="TwainSession" />.
+        /// A generic method that tries to get capability values from current <see cref="TwainSessionOld" />.
         /// </summary>
         /// <typeparam name="TCapVal">The expected capability value type.</typeparam>
         /// <param name="session">The session.</param>

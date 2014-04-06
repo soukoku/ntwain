@@ -9,12 +9,12 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class DeviceEvent : OpBase
 	{
-		internal DeviceEvent(ITwainSessionInternal session) : base(session) { }
+		internal DeviceEvent(ITwainStateInternal session) : base(session) { }
 		public ReturnCode Get(out TWDeviceEvent sourceDeviceEvent)
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.DeviceEvent, Message.Get);
 			sourceDeviceEvent = new TWDeviceEvent();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, sourceDeviceEvent);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, sourceDeviceEvent);
 		}
 	}
 }

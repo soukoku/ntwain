@@ -6,7 +6,7 @@ namespace NTwain.Triplets
 {
 	sealed class Event : OpBase
 	{
-		internal Event(ITwainSessionInternal session) : base(session) { }
+		internal Event(ITwainStateInternal session) : base(session) { }
 
 		/// <summary>
 		/// This operation supports the distribution of events from the application to Sources so that the
@@ -23,7 +23,7 @@ namespace NTwain.Triplets
 		public ReturnCode ProcessEvent(TWEvent theEvent)
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.Event, Message.ProcessEvent);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.ProcessEvent, theEvent);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.ProcessEvent, theEvent);
 		}
 	}
 }

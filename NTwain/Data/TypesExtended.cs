@@ -1,7 +1,9 @@
 ﻿using NTwain.Properties;
 using NTwain.Values;
 using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
@@ -663,7 +665,7 @@ namespace NTwain.Data
             var value = new TWOneValue();
             if (_hContainer != IntPtr.Zero)
             {
-                IntPtr baseAddr = MemoryManager.Global.MemLock(_hContainer);
+                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
                 try
                 {
                     int offset = 0;
@@ -672,7 +674,7 @@ namespace NTwain.Data
                     value.Item = (uint)ReadValue(baseAddr, ref offset, ItemType.UInt32);
                 }
                 catch { }
-                MemoryManager.Global.MemUnlock(_hContainer);
+                MemoryManager.Instance.Unlock(_hContainer);
             }
             return value;
         }
@@ -686,7 +688,7 @@ namespace NTwain.Data
             // since one value can only house UInt32 we will not allow type size > 4
             if (GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid one value type"); }
 
-            _hContainer = MemoryManager.Global.MemAllocate((uint)Marshal.SizeOf(value));
+            _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
             {
                 Marshal.StructureToPtr(value, _hContainer, false);
@@ -705,7 +707,7 @@ namespace NTwain.Data
             var value = new TWArray();
             if (_hContainer != IntPtr.Zero)
             {
-                IntPtr baseAddr = MemoryManager.Global.MemLock(_hContainer);
+                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
                 int offset = 0;
                 value.ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
                 offset += 2;
@@ -719,7 +721,7 @@ namespace NTwain.Data
                         value.ItemList[i] = ReadValue(baseAddr, ref offset, value.ItemType);
                     }
                 }
-                MemoryManager.Global.MemUnlock(_hContainer);
+                MemoryManager.Instance.Unlock(_hContainer);
             }
             return value;
         }
@@ -736,7 +738,7 @@ namespace NTwain.Data
             var value = new TWEnumeration();
             if (_hContainer != IntPtr.Zero)
             {
-                IntPtr baseAddr = MemoryManager.Global.MemLock(_hContainer);
+                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
                 int offset = 0;
                 value.ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
                 offset += 2;
@@ -754,7 +756,7 @@ namespace NTwain.Data
                         value.ItemList[i] = ReadValue(baseAddr, ref offset, value.ItemType);
                     }
                 }
-                MemoryManager.Global.MemUnlock(_hContainer);
+                MemoryManager.Instance.Unlock(_hContainer);
             }
             return value;
         }
@@ -768,8 +770,8 @@ namespace NTwain.Data
             Int32 valueSize = value.ItemOffset + value.ItemList.Length * GetItemTypeSize(value.ItemType);
 
             int offset = 0;
-            _hContainer = MemoryManager.Global.MemAllocate((uint)valueSize);
-            IntPtr baseAddr = MemoryManager.Global.MemLock(_hContainer);
+            _hContainer = MemoryManager.Instance.Allocate((uint)valueSize);
+            IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
 
             // can't safely use StructureToPtr here so write it our own
             WriteValue(baseAddr, ref offset, ItemType.UInt16, value.ItemType);
@@ -780,7 +782,7 @@ namespace NTwain.Data
             {
                 WriteValue(baseAddr, ref offset, value.ItemType, item);
             }
-            MemoryManager.Global.MemUnlock(_hContainer);
+            MemoryManager.Instance.Unlock(_hContainer);
         }
 
         /// <summary>
@@ -795,7 +797,7 @@ namespace NTwain.Data
             var value = new TWRange();
             if (_hContainer != IntPtr.Zero)
             {
-                IntPtr baseAddr = MemoryManager.Global.MemLock(_hContainer);
+                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
 
                 int offset = 0;
                 value.ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
@@ -810,7 +812,7 @@ namespace NTwain.Data
                 offset += 4;
                 value.CurrentValue = (uint)Marshal.ReadInt32(baseAddr, offset);
 
-                MemoryManager.Global.MemUnlock(_hContainer);
+                MemoryManager.Instance.Unlock(_hContainer);
             }
             return value;
         }
@@ -823,7 +825,7 @@ namespace NTwain.Data
             // since range value can only house UInt32 we will not allow type size > 4
             if (GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid range value type"); }
 
-            _hContainer = MemoryManager.Global.MemAllocate((uint)Marshal.SizeOf(value));
+            _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
             {
                 Marshal.StructureToPtr(value, _hContainer, false);
@@ -970,42 +972,42 @@ namespace NTwain.Data
                 Marshal.WriteByte(baseAddr, offset, 0);
             }
         }
-        /// <summary>
-        /// Writes unicode string value.
-        /// </summary>
-        /// <param name="baseAddr"></param>
-        /// <param name="offset"></param>
-        /// <param name="item"></param>
-        /// <param name="maxLength"></param>
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
-        private void WriteUString(IntPtr baseAddr, int offset, string item, int maxLength)
-        {
-            if (string.IsNullOrEmpty(item))
-            {
-                // write zero
-                Marshal.WriteInt16(baseAddr, offset, (char)0);
-            }
-            else
-            {
-                // use 2 bytes per char
-                for (int i = 0; i < maxLength; i++)
-                {
-                    if (i == item.Length)
-                    {
-                        // string end reached, so write \0 and quit
-                        Marshal.WriteInt16(baseAddr, offset, (char)0);
-                        return;
-                    }
-                    else
-                    {
-                        Marshal.WriteInt16(baseAddr, offset, item[i]);
-                        offset += 2;
-                    }
-                }
-                // when ended normally also write \0
-                Marshal.WriteByte(baseAddr, offset, 0);
-            }
-        }
+        ///// <summary>
+        ///// Writes unicode string value.
+        ///// </summary>
+        ///// <param name="baseAddr"></param>
+        ///// <param name="offset"></param>
+        ///// <param name="item"></param>
+        ///// <param name="maxLength"></param>
+        //[EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
+        //private void WriteUString(IntPtr baseAddr, int offset, string item, int maxLength)
+        //{
+        //    if (string.IsNullOrEmpty(item))
+        //    {
+        //        // write zero
+        //        Marshal.WriteInt16(baseAddr, offset, (char)0);
+        //    }
+        //    else
+        //    {
+        //        // use 2 bytes per char
+        //        for (int i = 0; i < maxLength; i++)
+        //        {
+        //            if (i == item.Length)
+        //            {
+        //                // string end reached, so write \0 and quit
+        //                Marshal.WriteInt16(baseAddr, offset, (char)0);
+        //                return;
+        //            }
+        //            else
+        //            {
+        //                Marshal.WriteInt16(baseAddr, offset, item[i]);
+        //                offset += 2;
+        //            }
+        //        }
+        //        // when ended normally also write \0
+        //        Marshal.WriteByte(baseAddr, offset, 0);
+        //    }
+        //}
         /// <summary>
         /// Entry call for reading values.
         /// </summary>
@@ -1123,7 +1125,7 @@ namespace NTwain.Data
         {
             if (_hContainer != IntPtr.Zero)
             {
-                MemoryManager.Global.MemFree(_hContainer);
+                MemoryManager.Instance.Free(_hContainer);
                 _hContainer = IntPtr.Zero;
             }
             GC.SuppressFinalize(this);
@@ -1136,7 +1138,7 @@ namespace NTwain.Data
         {
             if (_hContainer != IntPtr.Zero)
             {
-                MemoryManager.Global.MemFree(_hContainer);
+                MemoryManager.Instance.Free(_hContainer);
                 _hContainer = IntPtr.Zero;
             }
         }
@@ -1857,12 +1859,24 @@ namespace NTwain.Data
         /// </summary>
         public string ProductName { get { return _productName; } set { value.VerifyLengthUnder(TwainConst.String32 - 1); _productName = value; } }
 
-        //public static TWIdentity CreateFromAssembly(DataGroups supportedGroups)
-        //{
-        //	return Create(supportedGroups);
-        //}
         /// <summary>
-        /// Creates a <see cref="TWIdentity"/> specified values.
+        /// Creates a <see cref="TWIdentity"/> from assembly values.
+        /// </summary>
+        /// <param name="supportedGroups">The supported groups.</param>
+        /// <param name="assembly">The assembly.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">assembly</exception>
+        public static TWIdentity CreateFromAssembly(DataGroups supportedGroups, Assembly assembly)
+        {
+            if (assembly == null) { throw new ArgumentNullException("assembly"); }
+
+            var info = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+            return Create(supportedGroups, assembly.GetName().Version, info.CompanyName, info.ProductName, info.ProductName, info.FileDescription);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="TWIdentity"/> from specified values.
         /// </summary>
         /// <param name="supportedGroups">The supported groups.</param>
         /// <param name="version">The version.</param>
@@ -2337,7 +2351,7 @@ namespace NTwain.Data
         /// uncompressed row in the block to be transferred. An application should
         /// never allocate a buffer smaller than this.
         /// </summary>
-        public int MinBufferSize { get { return (int)_minBufSize; } }
+        public uint MinBufferSize { get { return _minBufSize; } }
         /// <summary>
         /// The size of the largest transfer buffer, in bytes, that a Source can fill. If a
         /// Source can fill an arbitrarily large buffer, it might set this field to negative 1 to
@@ -2345,7 +2359,7 @@ namespace NTwain.Data
         /// cord is). Other Sources, such as frame grabbers, cannot fill a buffer larger than
         /// a certain size. Allocation of a transfer buffer larger than this value is wasteful.
         /// </summary>
-        public int MaxBufferSize { get { return (int)_maxBufSize; } }
+        public uint MaxBufferSize { get { return _maxBufSize; } }
         /// <summary>
         /// The size of the optimum transfer buffer, in bytes. A smart application will
         /// allocate transfer buffers of this size, if possible. Buffers of this size will
@@ -2353,7 +2367,7 @@ namespace NTwain.Data
         /// reasonable values in this field. Buffers that are 10’s of kbytes will be easier for
         /// applications to allocate than buffers that are 100’s or 1000’s of kbytes.
         /// </summary>
-        public int Preferred { get { return (int)_preferred; } }
+        public uint Preferred { get { return _preferred; } }
     }
 
     /// <summary>

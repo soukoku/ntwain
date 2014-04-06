@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class StatusUtf8 : OpBase
 	{
-		internal StatusUtf8(ITwainSessionInternal session) : base(session) { }
+		internal StatusUtf8(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// Translate the contents of a TW_STATUS structure received from a Source into a localized UTF-8
 		/// encoded string.
@@ -19,7 +19,7 @@ namespace NTwain.Triplets
 		public ReturnCode Get(TWStatusUtf8 status)
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get);
-			return PInvoke.DsmEntry(Session.AppId, null, Message.Get, status);
+			return PInvoke.DsmEntry(Session.GetAppId(), null, Message.Get, status);
 		}
 	}
 }

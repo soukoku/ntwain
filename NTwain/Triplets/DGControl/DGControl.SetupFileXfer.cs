@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class SetupFileXfer : OpBase
 	{
-		internal SetupFileXfer(ITwainSessionInternal session) : base(session) { }
+		internal SetupFileXfer(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// Returns information about the file into which the Source has or will put the acquired image
 		/// or audio data.
@@ -20,7 +20,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.Get);
 			setupFileXfer = new TWSetupFileXfer();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, setupFileXfer);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, setupFileXfer);
 		}
 
 		/// <summary>
@@ -32,7 +32,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.GetDefault);
 			setupFileXfer = new TWSetupFileXfer();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.GetDefault, setupFileXfer);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.GetDefault, setupFileXfer);
 		}
 
 		/// <summary>
@@ -45,7 +45,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.Reset);
 			setupFileXfer = new TWSetupFileXfer();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Reset, setupFileXfer);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Reset, setupFileXfer);
 		}
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace NTwain.Triplets
 		public ReturnCode Set(TWSetupFileXfer setupFileXfer)
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.Set);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Set, setupFileXfer);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Set, setupFileXfer);
 		}
 
 	}

@@ -10,7 +10,7 @@ namespace NTwain.Triplets
     /// </summary>
     sealed class Parent : OpBase
     {
-        internal Parent(ITwainSessionInternal session) : base(session) { }
+        internal Parent(ITwainStateInternal session) : base(session) { }
 
         /// <summary>
         /// When the application has closed all the Sources it had previously opened, and is finished with
@@ -20,10 +20,10 @@ namespace NTwain.Triplets
         /// <param name="handle">The handle. On Windows = points to the window handle (hWnd) that will act as the Source’s
         /// "parent". On Macintosh = should be a NULL value.</param>
         /// <returns></returns>
-        public ReturnCode CloseDsm(ref IntPtr handle)
+        public ReturnCode CloseDsm(IntPtr handle)
         {
             Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.Parent, Message.CloseDsm);
-            var rc = PInvoke.DsmEntry(Session.AppId, null, DataGroups.Control, DataArgumentType.Parent, Message.CloseDsm, ref handle);
+            var rc = PInvoke.DsmEntry(Session.GetAppId(), null, DataGroups.Control, DataArgumentType.Parent, Message.CloseDsm, ref handle);
             if (rc == ReturnCode.Success)
             {
                 Session.ChangeState(2, true);
@@ -38,10 +38,10 @@ namespace NTwain.Triplets
         /// <param name="handle">The handle. On Windows = points to the window handle (hWnd) that will act as the Source’s
         /// "parent". On Macintosh = should be a NULL value.</param>
         /// <returns></returns>
-        public ReturnCode OpenDsm(ref IntPtr handle)
+        public ReturnCode OpenDsm(IntPtr handle)
         {
             Session.VerifyState(1, 2, DataGroups.Control, DataArgumentType.Parent, Message.OpenDsm);
-            var rc = PInvoke.DsmEntry(Session.AppId, null, DataGroups.Control, DataArgumentType.Parent, Message.OpenDsm, ref handle);
+            var rc = PInvoke.DsmEntry(Session.GetAppId(), null, DataGroups.Control, DataArgumentType.Parent, Message.OpenDsm, ref handle);
             if (rc == ReturnCode.Success)
             {
                 Session.ChangeState(3, true);

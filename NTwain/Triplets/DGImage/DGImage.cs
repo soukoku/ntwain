@@ -7,8 +7,8 @@ namespace NTwain.Triplets
 	/// </summary>
 	public sealed class DGImage
 	{
-        ITwainSessionInternal _session;
-        internal DGImage(ITwainSessionInternal session)
+        ITwainStateInternal _session;
+        internal DGImage(ITwainStateInternal session)
 		{
 			if (session == null) { throw new ArgumentNullException("session"); }
 			_session = session;

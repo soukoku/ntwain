@@ -346,7 +346,7 @@ namespace NTwain.Values
     /// CapClearBuffers values.
     /// Corresponds to TWCB_* values.
     /// </summary>
-    public enum ClearBuffers : ushort
+    public enum ClearBuffer : ushort
     {
         Auto = 0,
         Clear = 1,
@@ -397,7 +397,7 @@ namespace NTwain.Values
     /// TWEI_DESKEWSTATUS values.
     /// Corresponds to TWDSK_* values.
     /// </summary>
-    public enum DeskewStatus // TODO: test ushort
+    public enum DeskewStatus : uint
     {
         Success = 0,
         ReportOnly = 1,
@@ -1487,7 +1487,7 @@ namespace NTwain.Values
         None = 0,
         Dsm2 = 0x10000000,
         App2 = 0x20000000,
-        DS2 = 0x40000000,
+        Ds2 = 0x40000000,
     }
 
     /// <summary>

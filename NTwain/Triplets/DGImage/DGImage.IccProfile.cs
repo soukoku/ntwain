@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class IccProfile : OpBase
 	{
-		internal IccProfile(ITwainSessionInternal session) : base(session) { }
+		internal IccProfile(ITwainStateInternal session) : base(session) { }
 
 		/// <summary>
 		/// This operation provides the application with the ICC profile associated with the image which is
@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(6, 7, DataGroups.Image, DataArgumentType.IccProfile, Message.Get);
 			profile = new TWMemory();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, DataArgumentType.IccProfile, Message.Get, ref profile);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, DataArgumentType.IccProfile, Message.Get, ref profile);
 		}
 	}
 }

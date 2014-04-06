@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
 	sealed class AudioNativeXfer : OpBase
 	{
-		internal AudioNativeXfer(ITwainSessionInternal session) : base(session) { }
+		internal AudioNativeXfer(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// Causes the transfer of an audio data from the Source to the application, via the Native
 		/// transfer mechanism, to begin. The resulting data is stored in main memory in a single block.
@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		public ReturnCode Get(ref IntPtr handle)
 		{
 			Session.VerifyState(6, 6, DataGroups.Audio, DataArgumentType.AudioNativeXfer, Message.Get);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, DataGroups.Audio, DataArgumentType.AudioNativeXfer, Message.Get, ref handle);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, DataGroups.Audio, DataArgumentType.AudioNativeXfer, Message.Get, ref handle);
 		}
 	}
 }

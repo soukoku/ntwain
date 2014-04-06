@@ -17,6 +17,9 @@ using NTwain.Values;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using CommonWin32;
+using System.Threading;
+using ModernWPF.Controls;
+using System.Reflection;
 
 namespace Tester.WPF
 {
@@ -25,7 +28,7 @@ namespace Tester.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        TwainSession twain;
+        TwainSessionWPF twain;
         public MainWindow()
         {
             InitializeComponent();
@@ -46,19 +49,13 @@ namespace Tester.WPF
             base.OnSourceInitialized(e);
 
             var hwnd = new WindowInteropHelper(this).Handle;
-            HwndSource.FromHwnd(hwnd).AddHook(WndProc);
-        }
-
-        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            var res = twain.PreFilterMessage(hwnd, msg, wParam, lParam, ref handled);
-            return res;
+            HwndSource.FromHwnd(hwnd).AddHook(twain.PreFilterMessage);
         }
 
         private void SetupTwain()
         {
-            TWIdentity appId = TWIdentity.Create(DataGroups.Image, new Version(1, 0), "My Company", "Test Family", "Tester", null);
-            twain = new TwainSession(appId);
+            TWIdentity appId = TWIdentity.CreateFromAssembly(DataGroups.Image, Assembly.GetEntryAssembly());
+            twain = new TwainSessionWPF(appId);
             twain.DataTransferred += (s, e) =>
             {
                 if (e.Data != IntPtr.Zero)
@@ -78,7 +75,7 @@ namespace Tester.WPF
                 var rc2 = twain.CloseSource();
                 rc2 = twain.CloseManager();
 
-                MessageBox.Show("Success!");
+                ModernMessageBox.Show(this, "Success!");
             };
             twain.TransferReady += (s, te) =>
             {
@@ -91,7 +88,7 @@ namespace Tester.WPF
                 //}
                 //else
                 //{
-                    //te.OutputFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.bmp");
+                //te.OutputFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.bmp");
                 //}
             };
         }
@@ -117,7 +114,7 @@ namespace Tester.WPF
                 if (rc == ReturnCode.Success)
                 {
                     step = "Open DS";
-                    rc = twain.OpenSource(dsId);
+                    rc = twain.OpenSource(dsId.ProductName);
                     //rc = DGControl.Status.Get(dsId, ref stat);
                     if (rc == ReturnCode.Success)
                     {
@@ -137,7 +134,7 @@ namespace Tester.WPF
                         }
 
                         step = "Enable DS";
-                        rc = twain.EnableSource(SourceEnableMode.NoUI, false, hand);
+                        rc = twain.EnableSource(SourceEnableMode.NoUI, false, hand, SynchronizationContext.Current);
                         return;
                     }
                     else
@@ -156,7 +153,7 @@ namespace Tester.WPF
                 twain.DGControl.Status.GetManager(out status);
             }
 
-            MessageBox.Show(string.Format("Step {0}: RC={1}, CC={2}", step, rc, status.ConditionCode));
+            ModernMessageBox.Show(this, string.Format("Step {0}: RC={1}, CC={2}", step, rc, status.ConditionCode));
         }
     }
 }

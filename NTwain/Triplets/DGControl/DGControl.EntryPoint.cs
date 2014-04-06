@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	sealed class EntryPoint : OpBase
 	{
-		internal EntryPoint(ITwainSessionInternal session) : base(session) { }
+		internal EntryPoint(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// Gets the function entry points for twain 2.0 or higher.
 		/// </summary>
@@ -19,7 +19,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.EntryPoint, Message.Get);
 			entryPoint = new TWEntryPoint();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, entryPoint);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, entryPoint);
 		}
 	}
 }

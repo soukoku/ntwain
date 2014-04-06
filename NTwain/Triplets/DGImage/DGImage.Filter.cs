@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class Filter : OpBase
 	{
-        internal Filter(ITwainSessionInternal session) : base(session) { }
+        internal Filter(ITwainStateInternal session) : base(session) { }
 
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace NTwain.Triplets
         {
             Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.Filter, Message.Get);
             filter = new TWFilter();
-            return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, filter);
+            return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, filter);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace NTwain.Triplets
         {
             Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.Filter, Message.GetDefault);
             filter = new TWFilter();
-            return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.GetDefault, filter);
+            return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.GetDefault, filter);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace NTwain.Triplets
         public ReturnCode Set(TWFilter filter)
         {
             Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.Filter, Message.Set);
-            return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Set, filter);
+            return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Set, filter);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace NTwain.Triplets
         {
             Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.Filter, Message.Reset);
             filter = new TWFilter();
-            return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Reset, filter);
+            return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Reset, filter);
         }
 	}
 }

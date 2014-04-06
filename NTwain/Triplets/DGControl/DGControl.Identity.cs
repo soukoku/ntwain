@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class Identity : OpBase
 	{
-		internal Identity(ITwainSessionInternal session) : base(session) { }
+		internal Identity(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// When an application is finished with a Source, it must formally close the session between them
 		/// using this operation. This is necessary in case the Source only supports connection with a single
@@ -20,9 +20,10 @@ namespace NTwain.Triplets
 		internal ReturnCode CloseDS()
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.Identity, Message.CloseDS);
-			var rc = PInvoke.DsmEntry(Session.AppId, Message.CloseDS, Session.SourceId);
+			var rc = PInvoke.DsmEntry(Session.GetAppId(), Message.CloseDS, Session.SourceId);
 			if (rc == ReturnCode.Success)
             {
+                Session.ChangeSourceId(null);
                 Session.ChangeState(3, true);
 			}
 			return rc;
@@ -37,7 +38,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetDefault);
 			source = new TWIdentity();
-			return PInvoke.DsmEntry(Session.AppId, Message.GetDefault, source);
+			return PInvoke.DsmEntry(Session.GetAppId(), Message.GetDefault, source);
 		}
 
 
@@ -51,7 +52,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetFirst);
 			source = new TWIdentity();
-			return PInvoke.DsmEntry(Session.AppId, Message.GetFirst, source);
+			return PInvoke.DsmEntry(Session.GetAppId(), Message.GetFirst, source);
 		}
 
 		/// <summary>
@@ -64,7 +65,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetNext);
 			source = new TWIdentity();
-			return PInvoke.DsmEntry(Session.AppId, Message.GetNext, source);
+			return PInvoke.DsmEntry(Session.GetAppId(), Message.GetNext, source);
 		}
 
 		/// <summary>
@@ -75,9 +76,10 @@ namespace NTwain.Triplets
 		internal ReturnCode OpenDS(TWIdentity source)
 		{
 			Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.Identity, Message.OpenDS);
-			var rc = PInvoke.DsmEntry(Session.AppId, Message.OpenDS, source);
+			var rc = PInvoke.DsmEntry(Session.GetAppId(), Message.OpenDS, source);
 			if (rc == ReturnCode.Success)
             {
+                Session.ChangeSourceId(source);
                 Session.ChangeState(4, true);
 			}
 			return rc;
@@ -93,7 +95,7 @@ namespace NTwain.Triplets
 		public ReturnCode Set(TWIdentity source)
 		{
 			Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.Identity, Message.Set);
-			return PInvoke.DsmEntry(Session.AppId, Message.Set, source);
+			return PInvoke.DsmEntry(Session.GetAppId(), Message.Set, source);
 		}
 
 		/// <summary>
@@ -106,7 +108,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.UserSelect);
 			source = new TWIdentity();
-			return PInvoke.DsmEntry(Session.AppId, Message.UserSelect, source);
+			return PInvoke.DsmEntry(Session.GetAppId(), Message.UserSelect, source);
 		}
 	}
 }

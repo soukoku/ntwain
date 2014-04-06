@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class SetupMemXfer : OpBase
 	{
-		internal SetupMemXfer(ITwainSessionInternal session) : base(session) { }
+		internal SetupMemXfer(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// Returns the Source’s preferred, minimum, and maximum allocation sizes for transfer memory
 		/// buffers.
@@ -20,7 +20,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupMemXfer, Message.Get);
 			setupMemXfer = new TWSetupMemXfer();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, setupMemXfer);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, setupMemXfer);
 		}
 	}
 }

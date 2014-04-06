@@ -12,7 +12,7 @@ namespace NTwain.Tests
         [ExpectedException(typeof(TwainStateException), "State check failed to throw.")]
         public void VerifyState_Throws_When_State_Is_Enforced()
         {
-            ITwainSessionInternal session = new TwainSession(TWIdentity.Create(DataGroups.Image, new Version(1, 0), "test", "test", "test", "test"));
+            ITwainStateInternal session = new TwainSessionOld(TWIdentity.Create(DataGroups.Image, new Version(1, 0), "test", "test", "test", "test"));
             session.EnforceState = true;
             session.ChangeState(4, false);
 
@@ -22,7 +22,7 @@ namespace NTwain.Tests
         [TestMethod]
         public void VerifyState_No_Throws_When_State_Is_Not_Enforced()
         {
-            ITwainSessionInternal session = new TwainSession(TWIdentity.Create(DataGroups.Image, new Version(1, 0), "test", "test", "test", "test"));
+            ITwainStateInternal session = new TwainSessionOld(TWIdentity.Create(DataGroups.Image, new Version(1, 0), "test", "test", "test", "test"));
             session.EnforceState = false;
             session.ChangeState(4, false);
 

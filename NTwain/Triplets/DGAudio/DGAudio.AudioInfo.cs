@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class AudioInfo : OpBase
 	{
-		internal AudioInfo(ITwainSessionInternal session) : base(session) { }
+		internal AudioInfo(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// Used to get the information of the current audio data ready to transfer.
 		/// </summary>
@@ -18,7 +18,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(6, 7, DataGroups.Audio, DataArgumentType.AudioInfo, Message.Get);
 			info = new TWAudioInfo();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, info);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, info);
 		}
 	}
 }

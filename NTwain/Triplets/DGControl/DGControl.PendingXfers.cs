@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	sealed class PendingXfers : OpBase
 	{
-		internal PendingXfers(ITwainSessionInternal session) : base(session) { }
+		internal PendingXfers(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// This triplet is used to cancel or terminate a transfer. Issued in state 6, this triplet cancels the next
 		/// pending transfer, discards the transfer data, and decrements the pending transfers count. In
@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		internal ReturnCode EndXfer(TWPendingXfers pendingXfers)
 		{
 			Session.VerifyState(6, 7, DataGroups.Control, DataArgumentType.PendingXfers, Message.EndXfer);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.EndXfer, pendingXfers);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.EndXfer, pendingXfers);
 		}
 
 		/// <summary>
@@ -35,7 +35,7 @@ namespace NTwain.Triplets
 		public ReturnCode Get(TWPendingXfers pendingXfers)
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.PendingXfers, Message.Get);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, pendingXfers);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, pendingXfers);
 		}
 
 		/// <summary>
@@ -46,7 +46,7 @@ namespace NTwain.Triplets
 		internal ReturnCode Reset(TWPendingXfers pendingXfers)
 		{
 			Session.VerifyState(6, 6, DataGroups.Control, DataArgumentType.PendingXfers, Message.Reset);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Reset, pendingXfers);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Reset, pendingXfers);
 		}
 
 		/// <summary>
@@ -58,7 +58,7 @@ namespace NTwain.Triplets
 		public ReturnCode StopFeeder(TWPendingXfers pendingXfers)
 		{
 			Session.VerifyState(6, 6, DataGroups.Control, DataArgumentType.PendingXfers, Message.StopFeeder);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.StopFeeder, pendingXfers);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.StopFeeder, pendingXfers);
 		}
 	}
 }

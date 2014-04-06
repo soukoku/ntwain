@@ -48,9 +48,6 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
@@ -60,21 +57,28 @@
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="DataTransferredEventArgs.cs" />
-    <Compile Include="ITwainSession.cs" />
+    <Compile Include="IMemoryManager.cs" />
+    <Compile Include="ITwainOperation.cs" />
+    <Compile Include="ITwainState.cs" />
     <Compile Include="MemoryManager.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\VersionInfo.cs" />
+    <Compile Include="TentativeStateCommitable.cs" />
     <Compile Include="TransferReadyEventArgs.cs" />
     <Compile Include="Triplets\DGControl\DGControl.Callback2.cs" />
     <Compile Include="Triplets\DGImage\DGImage.Filter.cs" />
     <Compile Include="Triplets\OpBase.cs" />
-    <Compile Include="Triplets\PInvokes.32bit.cs" />
-    <Compile Include="Triplets\PInvokes.64bit.cs" />
+    <Compile Include="Triplets\PInvoke.Win32.cs" />
+    <Compile Include="Triplets\PInvoke.Win64.cs" />
     <Compile Include="TwainSessionExtensions.cs" />
+    <Compile Include="TwainSession.cs" />
+    <Compile Include="TwainSessionWPF.cs" />
+    <Compile Include="TwainSessionWinform.cs" />
     <Compile Include="TwainStateException.cs" />
     <Compile Include="Data\Types.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -116,7 +120,7 @@
     <Compile Include="Triplets\DGImage\DGImage.RgbResponse.cs" />
     <Compile Include="Triplets\PInvoke.cs" />
     <Compile Include="TwainException.cs" />
-    <Compile Include="TwainSession.cs" />
+    <Compile Include="TwainSessionOld.cs" />
     <Compile Include="Values\DataValues.cs" />
     <Compile Include="Values\SourceEnableMode.cs" />
     <Compile Include="Values\TwainConst.cs" />

@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class XferGroup : OpBase
 	{
-		internal XferGroup(ITwainSessionInternal session) : base(session) { }
+		internal XferGroup(ITwainStateInternal session) : base(session) { }
 
 		/// <summary>
 		/// Returns the Data Group (the type of data) for the upcoming transfer. The Source is required to
@@ -20,7 +20,7 @@ namespace NTwain.Triplets
 		public ReturnCode Get(ref uint value)
 		{
             Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.XferGroup, Message.Get);
-            return PInvoke.DsmEntry(Session.AppId, Session.SourceId, DataGroups.Control, DataArgumentType.XferGroup, Message.Get, ref value);
+            return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, DataGroups.Control, DataArgumentType.XferGroup, Message.Get, ref value);
 		}
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace NTwain.Triplets
         public ReturnCode Set(uint value)
 		{
 			Session.VerifyState(6, 6, DataGroups.Control, DataArgumentType.XferGroup, Message.Set);
-            return PInvoke.DsmEntry(Session.AppId, Session.SourceId, DataGroups.Control, DataArgumentType.XferGroup, Message.Set, ref value);
+            return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, DataGroups.Control, DataArgumentType.XferGroup, Message.Set, ref value);
 		}
 	}
 }

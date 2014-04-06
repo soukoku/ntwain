@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class CustomDSData : OpBase
 	{
-		internal CustomDSData(ITwainSessionInternal session) : base(session) { }
+		internal CustomDSData(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// This operation is used by the application to query the data source for its current settings, e.g.
         /// DPI, paper size, color format. The actual format of the data is data source dependent and not
@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.CustomDSData, Message.Get);
 			customData = new TWCustomDSData();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, customData);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, customData);
 		}
 
 		/// <summary>
@@ -34,7 +34,7 @@ namespace NTwain.Triplets
 		public ReturnCode Set(TWCustomDSData customData)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.CustomDSData, Message.Set);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Set, customData);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Set, customData);
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class CieColor : OpBase
 	{
-		internal CieColor(ITwainSessionInternal session) : base(session) { }
+		internal CieColor(ITwainStateInternal session) : base(session) { }
 
 		/// <summary>
 		/// This operation causes the Source to report the currently active parameters to be used in
@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.CieColor, Message.Get);
 			cieColor = new TWCieColor();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, cieColor);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, cieColor);
 		}
 	}
 }

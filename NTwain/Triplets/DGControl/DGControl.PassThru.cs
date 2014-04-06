@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class PassThru : OpBase
 	{
-		internal PassThru(ITwainSessionInternal session) : base(session) { }
+		internal PassThru(ITwainStateInternal session) : base(session) { }
 		/// <summary>
 		/// PASSTHRU is intended for the use of Source writers writing diagnostic applications. It allows
 		/// raw communication with the currently selected device in the Source.
@@ -19,7 +19,7 @@ namespace NTwain.Triplets
 		public ReturnCode PassThrough(TWPassThru sourcePassThru)
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.PassThru, Message.PassThru);
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.PassThru, sourcePassThru);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.PassThru, sourcePassThru);
 		}
 	}
 }

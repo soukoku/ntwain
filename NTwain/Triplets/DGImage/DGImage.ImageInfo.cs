@@ -9,13 +9,13 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class ImageInfo : OpBase
 	{
-		internal ImageInfo(ITwainSessionInternal session) : base(session) { }
+		internal ImageInfo(ITwainStateInternal session) : base(session) { }
 
 		public ReturnCode Get(out TWImageInfo info)
 		{
 			Session.VerifyState(6, 7, DataGroups.Image, DataArgumentType.ImageInfo, Message.Get);
 			info = new TWImageInfo();
-			return PInvoke.DsmEntry(Session.AppId, Session.SourceId, Message.Get, info);
+			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, info);
 		}
 	}
 }
