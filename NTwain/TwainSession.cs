@@ -663,167 +663,272 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Does the TWAIN transfer routine at state 6. 
+        /// Performs the TWAIN transfer routine at state 6. 
         /// </summary>
         protected virtual void DoTransferRoutine()
         {
-            TWPendingXfers pending = new TWPendingXfers();
+            // TODO: better way to determine what's being xfered?
+            if ((SourceId.DataGroup & DataGroups.Image) == DataGroups.Image)
+            {
+                DoImageXfer();
+            }
+            else if ((SourceId.DataGroup & DataGroups.Audio) == DataGroups.Audio)
+            {
+                DoAudioXfer();
+            }
+            else
+            {
+                // ??? just cancel it
+                var pending = new TWPendingXfers();
+                var rc = ReturnCode.Success;
+                do
+                {
+                    rc = DGControl.PendingXfers.Reset(pending);
+                } while (rc == ReturnCode.Success && pending.Count != 0);
+
+                State = 5;
+                DisableSource();
+            }
+
+        }
+
+        #region audio xfers
+
+        private void DoAudioXfer()
+        {
+            var pending = new TWPendingXfers();
             var rc = ReturnCode.Success;
 
             do
             {
-                IList<FileFormat> formats = Enumerable.Empty<FileFormat>().ToList();
-                IList<Compression> compressions = Enumerable.Empty<Compression>().ToList();
-                bool canDoFileXfer = this.CapGetImageXferMech().Contains(XferMech.File);
-                var curFormat = this.GetCurrentCap<FileFormat>(CapabilityId.ICapImageFileFormat);
-                var curComp = this.GetCurrentCap<Compression>(CapabilityId.ICapCompression);
-                TWImageInfo imgInfo;
-                bool skip = false;
-                if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
+                #region build pre xfer info
+                TWAudioInfo audInfo;
+                DGAudio.AudioInfo.Get(out audInfo);
+
+                // ask consumer for xfer details
+                var preXferArgs = new TransferReadyEventArgs
                 {
-                    // bad!
-                    skip = true;
-                }
+                    AudioInfo = audInfo,
+                    PendingTransferCount = pending.Count,
+                    EndOfJob = pending.EndOfJob == 0
+                };
 
-                try
-                {
-                    formats = this.CapGetImageFileFormat();
-                }
-                catch { }
-                try
-                {
-                    compressions = this.CapGetCompression();
-                }
-                catch { }
+                OnTransferReady(preXferArgs);
 
-                // ask consumer for cancel in case of non-ui multi-page transfers
-                TransferReadyEventArgs args = new TransferReadyEventArgs(pending, formats, curFormat, compressions,
-                    curComp, canDoFileXfer, imgInfo);
-                args.CancelCurrent = skip;
+                #endregion
 
-                OnTransferReady(args);
-
-
-                if (!args.CancelAll && !args.CancelCurrent)
-                {
-                    Values.XferMech mech = this.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech);
-
-                    if (args.CanDoFileXfer && !string.IsNullOrEmpty(args.OutputFile))
-                    {
-                        var setXferRC = DGControl.SetupFileXfer.Set(new TWSetupFileXfer
-                        {
-                            FileName = args.OutputFile,
-                            Format = args.ImageFormat
-                        });
-                        if (setXferRC == ReturnCode.Success)
-                        {
-                            mech = XferMech.File;
-                        }
-                    }
-
-                    // I don't know how this is supposed to work so it probably doesn't
-                    //this.CapSetImageFormat(args.ImageFormat);
-                    //this.CapSetImageCompression(args.ImageCompression);
-
-                    #region do xfer
-
-                    // TODO: expose all swallowed exceptions somehow later
-
-                    IntPtr dataPtr = IntPtr.Zero;
-                    IntPtr lockedPtr = IntPtr.Zero;
-                    string file = null;
-                    try
-                    {
-                        ReturnCode xrc = ReturnCode.Cancel;
-                        switch (mech)
-                        {
-                            case Values.XferMech.Native:
-                                xrc = DGImage.ImageNativeXfer.Get(ref dataPtr);
-                                break;
-                            case Values.XferMech.File:
-                                xrc = DGImage.ImageFileXfer.Get();
-                                if (File.Exists(args.OutputFile))
-                                {
-                                    file = args.OutputFile;
-                                }
-                                break;
-                            case Values.XferMech.MemFile:
-                                // not supported yet
-                                //TWImageMemXfer memxfer = new TWImageMemXfer();
-                                //xrc = DGImage.ImageMemXfer.Get(memxfer);
-                                break;
-                        }
-                        if (xrc == ReturnCode.XferDone)
-                        {
-                            State = 7;
-                            if (dataPtr != IntPtr.Zero)
-                            {
-                                lockedPtr = MemoryManager.Instance.Lock(dataPtr);
-                            }
-                            OnDataTransferred(new DataTransferredEventArgs(lockedPtr, file));
-                        }
-                        //}
-                        //else if (group == DataGroups.Audio)
-                        //{
-                        //	var xrc = DGAudio.AudioNativeXfer.Get(ref dataPtr);
-                        //	if (xrc == ReturnCode.XferDone)
-                        //	{
-                        //		State = 7;
-                        //		try
-                        //		{
-                        //			var dtHand = DataTransferred;
-                        //			if (dtHand != null)
-                        //			{
-                        //				lockedPtr = MemoryManager.Instance.MemLock(dataPtr);
-                        //				dtHand(this, new DataTransferredEventArgs(lockedPtr));
-                        //			}
-                        //		}
-                        //		catch { }
-                        //	}
-                        //}
-                    }
-                    finally
-                    {
-                        State = 6;
-                        // data here is allocated by source so needs to use shared mem calls
-                        if (lockedPtr != IntPtr.Zero)
-                        {
-                            MemoryManager.Instance.Unlock(lockedPtr);
-                            lockedPtr = IntPtr.Zero;
-                        }
-                        if (dataPtr != IntPtr.Zero)
-                        {
-                            MemoryManager.Instance.Free(dataPtr);
-                            dataPtr = IntPtr.Zero;
-                        }
-                    }
-                    #endregion
-                }
-
-                if (args.CancelAll)
+                if (preXferArgs.CancelAll)
                 {
                     rc = DGControl.PendingXfers.Reset(pending);
                     if (rc == ReturnCode.Success)
                     {
-                        // if audio exit here
-                        //if (group == DataGroups.Audio)
-                        //{
-                        //	//???
-                        //	return;
-                        //}
-
+                        // TODO: verify if audio exit directly?
+                        return;
                     }
                 }
-                else
+                else if (!preXferArgs.CancelCurrent)
                 {
-                    rc = DGControl.PendingXfers.EndXfer(pending);
+                    var mech = this.GetCurrentCap<XferMech>(CapabilityId.ACapXferMech);
+                    switch (mech)
+                    {
+                        case XferMech.Native:
+                            DoAudioNativeXfer();
+                            break;
+                        case XferMech.File:
+                            DoAudioFileXfer();
+                            break;
+                    }
                 }
+
+                rc = DGControl.PendingXfers.EndXfer(pending);
+
             } while (rc == ReturnCode.Success && pending.Count != 0);
 
             State = 5;
             DisableSource();
-
         }
+
+        private void DoAudioNativeXfer()
+        {
+            IntPtr dataPtr = IntPtr.Zero;
+            IntPtr lockedPtr = IntPtr.Zero;
+            try
+            {
+                var xrc = DGAudio.AudioNativeXfer.Get(ref dataPtr);
+                if (xrc == ReturnCode.XferDone)
+                {
+                    State = 7;
+                    if (dataPtr != IntPtr.Zero)
+                    {
+                        lockedPtr = MemoryManager.Instance.Lock(dataPtr);
+                    }
+                    OnDataTransferred(new DataTransferredEventArgs(lockedPtr, null));
+                }
+            }
+            finally
+            {
+                State = 6;
+                // data here is allocated by source so needs to use shared mem calls
+                if (lockedPtr != IntPtr.Zero)
+                {
+                    MemoryManager.Instance.Unlock(lockedPtr);
+                    lockedPtr = IntPtr.Zero;
+                }
+                if (dataPtr != IntPtr.Zero)
+                {
+                    MemoryManager.Instance.Free(dataPtr);
+                    dataPtr = IntPtr.Zero;
+                }
+            }
+        }
+
+        private void DoAudioFileXfer()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region image xfers
+
+        private void DoImageXfer()
+        {
+            var pending = new TWPendingXfers();
+            var rc = ReturnCode.Success;
+
+            do
+            {
+                #region build pre xfer info
+                TWImageInfo imgInfo;
+                DGImage.ImageInfo.Get(out imgInfo);
+
+                //IList<FileFormat> formats = Enumerable.Empty<FileFormat>().ToList();
+                //IList<Compression> compressions = Enumerable.Empty<Compression>().ToList();
+                //var curFormat = this.GetCurrentCap<FileFormat>(CapabilityId.ICapImageFileFormat);
+                //var curComp = this.GetCurrentCap<Compression>(CapabilityId.ICapCompression);
+                //try
+                //{
+                //    formats = this.CapGetImageFileFormat();
+                //}
+                //catch { }
+                //try
+                //{
+                //    compressions = this.CapGetCompression();
+                //}
+                //catch { }
+
+                // ask consumer for xfer details
+                var preXferArgs = new TransferReadyEventArgs
+                {
+                    PendingImageInfo = imgInfo,
+                    PendingTransferCount = pending.Count,
+                    EndOfJob = pending.EndOfJob == 0
+                };
+
+                OnTransferReady(preXferArgs);
+
+                #endregion
+
+                if (preXferArgs.CancelAll)
+                {
+                    rc = DGControl.PendingXfers.Reset(pending);
+                }
+                else if (!preXferArgs.CancelCurrent)
+                {
+                    var mech = this.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech);
+                    switch (mech)
+                    {
+                        case XferMech.Native:
+                            DoImageNativeXfer();
+                            break;
+                        case XferMech.Memory:
+                            DoImageMemoryXfer();
+                            break;
+                        case XferMech.File:
+                            DoImageFileXfer();
+                            break;
+                        case XferMech.MemFile:
+                            DoImageMemoryFileXfer();
+                            break;
+                    }
+                }
+
+                rc = DGControl.PendingXfers.EndXfer(pending);
+
+            } while (rc == ReturnCode.Success && pending.Count != 0);
+
+            State = 5;
+            DisableSource();
+        }
+
+        private void DoImageNativeXfer()
+        {
+            IntPtr dataPtr = IntPtr.Zero;
+            IntPtr lockedPtr = IntPtr.Zero;
+            try
+            {
+                ReturnCode xrc = DGImage.ImageNativeXfer.Get(ref dataPtr);
+                if (xrc == ReturnCode.XferDone)
+                {
+                    State = 7;
+                    if (dataPtr != IntPtr.Zero)
+                    {
+                        lockedPtr = MemoryManager.Instance.Lock(dataPtr);
+                    }
+                    OnDataTransferred(new DataTransferredEventArgs(lockedPtr, null));
+                }
+            }
+            finally
+            {
+                State = 6;
+                // data here is allocated by source so needs to use shared mem calls
+                if (lockedPtr != IntPtr.Zero)
+                {
+                    MemoryManager.Instance.Unlock(lockedPtr);
+                    lockedPtr = IntPtr.Zero;
+                }
+                if (dataPtr != IntPtr.Zero)
+                {
+                    MemoryManager.Instance.Free(dataPtr);
+                    dataPtr = IntPtr.Zero;
+                }
+            }
+        }
+
+        private void DoImageMemoryFileXfer()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DoImageFileXfer()
+        {
+            throw new NotImplementedException();
+
+            //if (preXferArgs.CanDoFileXfer && !string.IsNullOrEmpty(preXferArgs.OutputFile))
+            //{
+            //    var setXferRC = DGControl.SetupFileXfer.Set(new TWSetupFileXfer
+            //    {
+            //        FileName = preXferArgs.OutputFile,
+            //        Format = preXferArgs.ImageFormat
+            //    });
+            //    if (setXferRC == ReturnCode.Success)
+            //    {
+            //        mech = XferMech.File;
+            //    }
+            //}
+            //xrc = DGImage.ImageFileXfer.Get();
+            //if (File.Exists(preXferArgs.OutputFile))
+            //{
+            //    file = preXferArgs.OutputFile;
+            //}
+        }
+
+        private void DoImageMemoryXfer()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
 
         #endregion
 

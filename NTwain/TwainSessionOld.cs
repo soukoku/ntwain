@@ -36,11 +36,11 @@ namespace NTwain
 
             do
             {
-                IList<FileFormat> formats = Enumerable.Empty<FileFormat>().ToList();
-                IList<Compression> compressions = Enumerable.Empty<Compression>().ToList();
-                bool canDoFileXfer = this.CapGetImageXferMech().Contains(XferMech.File);
-                var curFormat = this.GetCurrentCap<FileFormat>(CapabilityId.ICapImageFileFormat);
-                var curComp = this.GetCurrentCap<Compression>(CapabilityId.ICapCompression);
+                //IList<FileFormat> formats = Enumerable.Empty<FileFormat>().ToList();
+                //IList<Compression> compressions = Enumerable.Empty<Compression>().ToList();
+                //bool canDoFileXfer = this.CapGetImageXferMech().Contains(XferMech.File);
+                //var curFormat = this.GetCurrentCap<FileFormat>(CapabilityId.ICapImageFileFormat);
+                //var curComp = this.GetCurrentCap<Compression>(CapabilityId.ICapCompression);
                 TWImageInfo imgInfo;
                 bool skip = false;
                 if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
@@ -49,20 +49,26 @@ namespace NTwain
                     skip = true;
                 }
 
-                try
-                {
-                    formats = this.CapGetImageFileFormat();
-                }
-                catch { }
-                try
-                {
-                    compressions = this.CapGetCompression();
-                }
-                catch { }
+                //try
+                //{
+                //    formats = this.CapGetImageFileFormat();
+                //}
+                //catch { }
+                //try
+                //{
+                //    compressions = this.CapGetCompression();
+                //}
+                //catch { }
 
                 // ask consumer for cancel in case of non-ui multi-page transfers
-                TransferReadyEventArgs args = new TransferReadyEventArgs(pending, formats, curFormat, compressions,
-                    curComp, canDoFileXfer, imgInfo);
+                //TransferReadyEventArgs args = new TransferReadyEventArgs(pending, formats, curFormat, compressions,
+                //    curComp, canDoFileXfer, imgInfo);
+                var args = new TransferReadyEventArgs
+                {
+                    PendingImageInfo = imgInfo,
+                    PendingTransferCount = pending.Count,
+                    EndOfJob = pending.EndOfJob == 0
+                };
                 args.CancelCurrent = skip;
 
                 OnTransferReady(args);
@@ -72,18 +78,18 @@ namespace NTwain
                 {
                     Values.XferMech mech = this.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech);
 
-                    if (args.CanDoFileXfer && !string.IsNullOrEmpty(args.OutputFile))
-                    {
-                        var setXferRC = DGControl.SetupFileXfer.Set(new TWSetupFileXfer
-                        {
-                            FileName = args.OutputFile,
-                            Format = args.ImageFormat
-                        });
-                        if (setXferRC == ReturnCode.Success)
-                        {
-                            mech = XferMech.File;
-                        }
-                    }
+                    //if (args.CanDoFileXfer && !string.IsNullOrEmpty(args.OutputFile))
+                    //{
+                    //    var setXferRC = DGControl.SetupFileXfer.Set(new TWSetupFileXfer
+                    //    {
+                    //        FileName = args.OutputFile,
+                    //        Format = args.ImageFormat
+                    //    });
+                    //    if (setXferRC == ReturnCode.Success)
+                    //    {
+                    //        mech = XferMech.File;
+                    //    }
+                    //}
 
                     // I don't know how this is supposed to work so it probably doesn't
                     //this.CapSetImageFormat(args.ImageFormat);
@@ -105,11 +111,11 @@ namespace NTwain
                                 xrc = DGImage.ImageNativeXfer.Get(ref dataPtr);
                                 break;
                             case Values.XferMech.File:
-                                xrc = DGImage.ImageFileXfer.Get();
-                                if (File.Exists(args.OutputFile))
-                                {
-                                    file = args.OutputFile;
-                                }
+                                //xrc = DGImage.ImageFileXfer.Get();
+                                //if (File.Exists(args.OutputFile))
+                                //{
+                                //    file = args.OutputFile;
+                                //}
                                 break;
                             case Values.XferMech.MemFile:
                                 // not supported yet
