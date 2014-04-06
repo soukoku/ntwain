@@ -11,7 +11,7 @@ namespace NTwain
     /// A customized TWAIN session for use in winform environment.
     /// Use this by adding this as an <see cref="IMessageFilter "/> via <see cref="Application.AddMessageFilter"/>.
     /// </summary>
-    public class TwainSessionWinform : TwainSessionBase, IMessageFilter
+    public class TwainSessionWinform : TwainSession, IMessageFilter
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSessionWinform" /> class.

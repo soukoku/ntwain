@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 using CommonWin32;
 using System.Threading;
 using ModernWPF.Controls;
+using System.Reflection;
 
 namespace Tester.WPF
 {
@@ -27,7 +28,7 @@ namespace Tester.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        TwainSessionOld twain;
+        TwainSessionWPF twain;
         public MainWindow()
         {
             InitializeComponent();
@@ -48,19 +49,13 @@ namespace Tester.WPF
             base.OnSourceInitialized(e);
 
             var hwnd = new WindowInteropHelper(this).Handle;
-            HwndSource.FromHwnd(hwnd).AddHook(WndProc);
-        }
-
-        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            var res = twain.PreFilterMessage(hwnd, msg, wParam, lParam, ref handled);
-            return res;
+            HwndSource.FromHwnd(hwnd).AddHook(twain.PreFilterMessage);
         }
 
         private void SetupTwain()
         {
-            TWIdentity appId = TWIdentity.Create(DataGroups.Image, new Version(1, 0), "My Company", "Test Family", "Tester", null);
-            twain = new TwainSessionOld(appId);
+            TWIdentity appId = TWIdentity.CreateFromAssembly(DataGroups.Image, Assembly.GetEntryAssembly());
+            twain = new TwainSessionWPF(appId);
             twain.DataTransferred += (s, e) =>
             {
                 if (e.Data != IntPtr.Zero)

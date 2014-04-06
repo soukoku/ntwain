@@ -20,7 +20,7 @@ namespace Tester.Winform
     sealed partial class TestForm : Form
     {
         ImageCodecInfo _tiffCodecInfo;
-        TwainSessionOld _twain;
+        TwainSessionWinform _twain;
         bool _stopScan;
         bool _loadingCaps;
 
@@ -60,11 +60,8 @@ namespace Tester.Winform
 
         private void SetupTwain()
         {
-            var appVer = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
-
-            TWIdentity appId = TWIdentity.Create(DataGroups.Image, new Version(appVer.ProductMajorPart, appVer.ProductMinorPart),
-                "My Company", "Test Family", "Tester", "A TWAIN testing app.");
-            _twain = new TwainSessionOld(appId);
+            var appId = TWIdentity.CreateFromAssembly(DataGroups.Image, Assembly.GetEntryAssembly());
+            _twain = new TwainSessionWinform(appId);
             _twain.DataTransferred += (s, e) =>
             {
                 if (pictureBox1.Image != null)

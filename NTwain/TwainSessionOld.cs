@@ -20,7 +20,7 @@ namespace NTwain
     /// This is the old implementation for reference purposes only.
     /// </summary>
     [Obsolete("For reference purposes only.")]
-    public class TwainSessionOld : TwainSessionBase, IMessageFilter
+    public class TwainSessionOld : TwainSession, IMessageFilter
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSessionOld" /> class.

@@ -12,7 +12,7 @@ namespace NTwain
     /// A customized TWAIN session for use in WPF environment.
     /// Use this by using <see cref="PreFilterMessage"/> method as the target of <see cref="HwndSource.AddHook"/> delegate.
     /// </summary>
-    public class TwainSessionWPF : TwainSessionBase
+    public class TwainSessionWPF : TwainSession
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSessionWPF" /> class.
