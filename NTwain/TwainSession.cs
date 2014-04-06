@@ -27,7 +27,7 @@ namespace NTwain
         {
             if (appId == null) { throw new ArgumentNullException("appId"); }
             _appId = appId;
-            State = 1;
+            ((ITwainStateInternal)this).ChangeState(1, false);
             EnforceState = true;
         }
 
@@ -912,13 +912,48 @@ namespace NTwain
             }
         }
 
-        private void DoImageMemoryFileXfer()
-        {
-            throw new NotImplementedException();
-        }
-
         private void DoImageMemoryXfer()
         {
+            throw new NotImplementedException();
+
+            TWSetupMemXfer memInfo;
+            if (DGControl.SetupMemXfer.Get(out memInfo) == ReturnCode.Success)
+            {
+                TWImageMemXfer xferInfo = new TWImageMemXfer();
+                try
+                {
+                    xferInfo.Memory = new TWMemory
+                    {
+                        Length = memInfo.Preferred,
+                        TheMem = MemoryManager.Instance.Allocate(memInfo.Preferred)
+                    };
+
+
+                    var xrc = ReturnCode.Success;
+                    do
+                    {
+                        xrc = DGImage.ImageMemXfer.Get(xferInfo);
+
+                        if (xrc == ReturnCode.XferDone)
+                        {
+
+                        }
+                    } while (xrc == ReturnCode.Success);
+
+                }
+                finally
+                {
+                    if (xferInfo.Memory.TheMem != IntPtr.Zero)
+                    {
+                        MemoryManager.Instance.Free(xferInfo.Memory.TheMem);
+                    }
+                }
+            }
+        }
+
+        private void DoImageMemoryFileXfer()
+        {
+            // no way to test, not supported by sample source
             throw new NotImplementedException();
         }
 
@@ -932,13 +967,31 @@ namespace NTwain
         [StructLayout(LayoutKind.Sequential)]
         protected struct MESSAGE
         {
-            public IntPtr hwnd;
-            public uint message;
-            public IntPtr wParam;
-            public IntPtr lParam;
-            public uint time;
-            public int x;
-            public int y;
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MESSAGE"/> struct.
+            /// </summary>
+            /// <param name="hwnd">The HWND.</param>
+            /// <param name="message">The message.</param>
+            /// <param name="wParam">The w parameter.</param>
+            /// <param name="lParam">The l parameter.</param>
+            public MESSAGE(IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam)
+            {
+                _hwnd = hwnd;
+                _message = (uint)message;
+                _wParam = wParam;
+                _lParam = lParam;
+                _time = 0;
+                _x = 0;
+                _y = 0;
+            }
+
+            IntPtr _hwnd;
+            uint _message;
+            IntPtr _wParam;
+            IntPtr _lParam;
+            uint _time;
+            int _x;
+            int _y;
         }
     }
 }

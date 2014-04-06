@@ -38,15 +38,23 @@ namespace NTwain
         /// <returns>Handle to the allocated memory.</returns>
         public IntPtr Allocate(uint size)
         {
+            IntPtr retVal = IntPtr.Zero;
+
             if (_twain2Entry != null && _twain2Entry.AllocateFunction != null)
             {
-                return _twain2Entry.AllocateFunction(size);
+                retVal = _twain2Entry.AllocateFunction(size);
             }
             else
             {
                 // 0x0040 is GPTR
-                return WinGlobalAlloc(0x0040, new UIntPtr(size));
+                retVal = NativeMethods.WinGlobalAlloc(0x0040, new UIntPtr(size));
             }
+
+            if (retVal == IntPtr.Zero)
+            {
+                throw new OutOfMemoryException("Failed to allocate requested memory.");
+            }
+            return retVal;
         }
 
         /// <summary>
@@ -61,7 +69,7 @@ namespace NTwain
             }
             else
             {
-                WinGlobalFree(handle);
+                NativeMethods.WinGlobalFree(handle);
             }
         }
 
@@ -78,7 +86,7 @@ namespace NTwain
             }
             else
             {
-                return WinGlobalLock(handle);
+                return NativeMethods.WinGlobalLock(handle);
             }
         }
 
@@ -94,26 +102,8 @@ namespace NTwain
             }
             else
             {
-                WinGlobalUnlock(handle);
+                NativeMethods.WinGlobalUnlock(handle);
             }
         }
-
-        #region old mem stuff for twain 1.x
-
-
-        [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalAlloc")]
-        static extern IntPtr WinGlobalAlloc(uint uFlags, UIntPtr dwBytes);
-
-        [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalFree")]
-        static extern IntPtr WinGlobalFree(IntPtr hMem);
-
-        [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalLock")]
-        static extern IntPtr WinGlobalLock(IntPtr handle);
-
-        [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalUnlock")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool WinGlobalUnlock(IntPtr handle);
-
-        #endregion
     }
 }

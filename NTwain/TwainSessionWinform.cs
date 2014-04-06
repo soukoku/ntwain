@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Windows.Forms;
 
@@ -22,13 +23,10 @@ namespace NTwain
 
         #region IMessageFilter Members
 
-        bool IMessageFilter.PreFilterMessage(ref Message m)
+        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        public bool PreFilterMessage(ref Message m)
         {
-            MESSAGE winmsg = default(MESSAGE);
-            winmsg.hwnd = m.HWnd;
-            winmsg.lParam = m.LParam;
-            winmsg.message = (uint)m.Msg;
-            winmsg.wParam = m.WParam;
+            var winmsg = new MESSAGE(m.HWnd, m.Msg, m.WParam, m.LParam);
 
             return HandleWndProcMessage(ref winmsg);
         }

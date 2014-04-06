@@ -43,8 +43,8 @@ namespace NTwain.Triplets
             Message msg,
             ref IntPtr data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, dg, dat, msg, ref data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, dg, dat, msg, ref data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, dg, dat, msg, ref data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, dg, dat, msg, ref data); }
         }
 
         public static ReturnCode DsmEntry(
@@ -55,8 +55,8 @@ namespace NTwain.Triplets
             Message msg,
             ref uint data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, dg, dat, msg, ref data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, dg, dat, msg, ref data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, dg, dat, msg, ref data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, dg, dat, msg, ref data); }
         }
 
         public static ReturnCode DsmEntry(
@@ -65,8 +65,8 @@ namespace NTwain.Triplets
             Message msg,
             TWAudioInfo data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Audio, DataArgumentType.AudioInfo, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Audio, DataArgumentType.AudioInfo, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Audio, DataArgumentType.AudioInfo, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Audio, DataArgumentType.AudioInfo, msg, data); }
         }
 
 
@@ -76,8 +76,8 @@ namespace NTwain.Triplets
             Message msg,
             TWCapability data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Capability, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Capability, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Capability, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Capability, msg, data); }
         }
 
 
@@ -87,8 +87,8 @@ namespace NTwain.Triplets
             Message msg,
             TWCustomDSData data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.CustomDSData, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.CustomDSData, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.CustomDSData, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.CustomDSData, msg, data); }
         }
 
 
@@ -98,8 +98,8 @@ namespace NTwain.Triplets
             Message msg,
             TWDeviceEvent data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.DeviceEvent, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.DeviceEvent, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.DeviceEvent, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.DeviceEvent, msg, data); }
         }
 
 
@@ -109,8 +109,8 @@ namespace NTwain.Triplets
             Message msg,
             TWCallback data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
         }
 
 
@@ -120,8 +120,8 @@ namespace NTwain.Triplets
             Message msg,
             TWCallback2 data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
         }
 
 
@@ -131,8 +131,8 @@ namespace NTwain.Triplets
             Message msg,
             TWEntryPoint data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
         }
 
 
@@ -142,8 +142,8 @@ namespace NTwain.Triplets
             Message msg,
             TWEvent data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Event, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Event, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Event, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Event, msg, data); }
         }
 
 
@@ -153,8 +153,8 @@ namespace NTwain.Triplets
             Message msg,
             TWFileSystem data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.FileSystem, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.FileSystem, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.FileSystem, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.FileSystem, msg, data); }
         }
 
         public static ReturnCode DsmEntry(
@@ -162,8 +162,8 @@ namespace NTwain.Triplets
             Message msg,
             TWIdentity data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, IntPtr.Zero, DataGroups.Control, DataArgumentType.Identity, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, IntPtr.Zero, DataGroups.Control, DataArgumentType.Identity, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, IntPtr.Zero, DataGroups.Control, DataArgumentType.Identity, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, IntPtr.Zero, DataGroups.Control, DataArgumentType.Identity, msg, data); }
         }
 
 
@@ -173,8 +173,8 @@ namespace NTwain.Triplets
             Message msg,
             TWPassThru data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.PassThru, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.PassThru, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.PassThru, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.PassThru, msg, data); }
         }
 
 
@@ -184,8 +184,8 @@ namespace NTwain.Triplets
             Message msg,
             TWPendingXfers data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.PendingXfers, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.PendingXfers, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.PendingXfers, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.PendingXfers, msg, data); }
         }
 
 
@@ -195,8 +195,8 @@ namespace NTwain.Triplets
             Message msg,
             TWSetupFileXfer data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.SetupFileXfer, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.SetupFileXfer, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.SetupFileXfer, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.SetupFileXfer, msg, data); }
         }
 
 
@@ -206,8 +206,8 @@ namespace NTwain.Triplets
             Message msg,
             TWSetupMemXfer data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.SetupMemXfer, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.SetupMemXfer, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.SetupMemXfer, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.SetupMemXfer, msg, data); }
         }
 
 
@@ -217,8 +217,8 @@ namespace NTwain.Triplets
             Message msg,
             TWStatusUtf8 data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.StatusUtf8, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.StatusUtf8, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.StatusUtf8, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.StatusUtf8, msg, data); }
         }
 
 
@@ -228,8 +228,8 @@ namespace NTwain.Triplets
             Message msg,
             TWUserInterface data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.UserInterface, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.UserInterface, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.UserInterface, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.UserInterface, msg, data); }
         }
 
 
@@ -239,8 +239,8 @@ namespace NTwain.Triplets
             Message msg,
             TWCieColor data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.CieColor, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.CieColor, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.CieColor, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.CieColor, msg, data); }
         }
 
 
@@ -250,8 +250,8 @@ namespace NTwain.Triplets
             Message msg,
             TWExtImageInfo data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
         }
 
         public static ReturnCode DsmEntry(
@@ -260,8 +260,8 @@ namespace NTwain.Triplets
             Message msg,
             TWFilter data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
         }
 
         public static ReturnCode DsmEntry(
@@ -270,8 +270,8 @@ namespace NTwain.Triplets
             Message msg,
             TWGrayResponse data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.GrayResponse, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.GrayResponse, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.GrayResponse, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.GrayResponse, msg, data); }
         }
 
 
@@ -281,8 +281,8 @@ namespace NTwain.Triplets
             Message msg,
             TWImageInfo data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageInfo, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageInfo, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageInfo, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageInfo, msg, data); }
         }
 
 
@@ -292,8 +292,8 @@ namespace NTwain.Triplets
             Message msg,
             TWImageLayout data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageLayout, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageLayout, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageLayout, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageLayout, msg, data); }
         }
 
 
@@ -303,8 +303,8 @@ namespace NTwain.Triplets
             Message msg,
             TWImageMemXfer data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageMemXfer, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageMemXfer, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.ImageMemXfer, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.ImageMemXfer, msg, data); }
         }
 
 
@@ -314,8 +314,8 @@ namespace NTwain.Triplets
             Message msg,
             TWJpegCompression data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.JpegCompression, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.JpegCompression, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.JpegCompression, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.JpegCompression, msg, data); }
         }
 
 
@@ -325,8 +325,8 @@ namespace NTwain.Triplets
             Message msg,
             TWPalette8 data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.Palette8, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.Palette8, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.Palette8, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.Palette8, msg, data); }
         }
 
 
@@ -336,8 +336,8 @@ namespace NTwain.Triplets
             Message msg,
             TWRgbResponse data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.RgbResponse, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.RgbResponse, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Image, DataArgumentType.RgbResponse, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Image, DataArgumentType.RgbResponse, msg, data); }
         }
 
 
@@ -347,8 +347,8 @@ namespace NTwain.Triplets
             Message msg,
             TWStatus data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Status, msg, data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Status, msg, data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, DataArgumentType.Status, msg, data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, DataArgumentType.Status, msg, data); }
         }
 
 
@@ -359,8 +359,8 @@ namespace NTwain.Triplets
             Message msg,
             ref TWMemory data)
         {
-            if (CanUseTwainDSM) { return WinNativeMethods.DsmEntry64(origin, destination, DataGroups.Control, dat, msg, ref data); }
-            else { return WinNativeMethods.DsmEntry32(origin, destination, DataGroups.Control, dat, msg, ref data); }
+            if (CanUseTwainDSM) { return NativeMethods.DsmEntry64(origin, destination, DataGroups.Control, dat, msg, ref data); }
+            else { return NativeMethods.DsmEntry32(origin, destination, DataGroups.Control, dat, msg, ref data); }
         }
 
 

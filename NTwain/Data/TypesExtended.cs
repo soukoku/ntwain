@@ -2351,7 +2351,7 @@ namespace NTwain.Data
         /// uncompressed row in the block to be transferred. An application should
         /// never allocate a buffer smaller than this.
         /// </summary>
-        public int MinBufferSize { get { return (int)_minBufSize; } }
+        public uint MinBufferSize { get { return _minBufSize; } }
         /// <summary>
         /// The size of the largest transfer buffer, in bytes, that a Source can fill. If a
         /// Source can fill an arbitrarily large buffer, it might set this field to negative 1 to
@@ -2359,7 +2359,7 @@ namespace NTwain.Data
         /// cord is). Other Sources, such as frame grabbers, cannot fill a buffer larger than
         /// a certain size. Allocation of a transfer buffer larger than this value is wasteful.
         /// </summary>
-        public int MaxBufferSize { get { return (int)_maxBufSize; } }
+        public uint MaxBufferSize { get { return _maxBufSize; } }
         /// <summary>
         /// The size of the optimum transfer buffer, in bytes. A smart application will
         /// allocate transfer buffers of this size, if possible. Buffers of this size will
@@ -2367,7 +2367,7 @@ namespace NTwain.Data
         /// reasonable values in this field. Buffers that are 10’s of kbytes will be easier for
         /// applications to allocate than buffers that are 100’s or 1000’s of kbytes.
         /// </summary>
-        public int Preferred { get { return (int)_preferred; } }
+        public uint Preferred { get { return _preferred; } }
     }
 
     /// <summary>

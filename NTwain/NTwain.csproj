@@ -61,6 +61,7 @@
     <Compile Include="ITwainOperation.cs" />
     <Compile Include="ITwainState.cs" />
     <Compile Include="MemoryManager.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

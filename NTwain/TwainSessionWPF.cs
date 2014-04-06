@@ -33,11 +33,7 @@ namespace NTwain
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         public IntPtr PreFilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            MESSAGE winmsg = default(MESSAGE);
-            winmsg.hwnd = hwnd;
-            winmsg.lParam = lParam;
-            winmsg.message = (uint)msg;
-            winmsg.wParam = wParam;
+            var winmsg = new MESSAGE(hwnd, msg, wParam, lParam);
 
             handled = base.HandleWndProcMessage(ref winmsg);
 
