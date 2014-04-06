@@ -9,7 +9,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Windows.Interop;
 
 namespace NTwain
 {
@@ -533,7 +532,7 @@ namespace NTwain
         /// </summary>
         /// <param name="message">The message.</param>
         /// <returns>True if handled by TWAIN.</returns>
-        protected bool HandleWndProcMessage(ref MSG message)
+        protected bool HandleWndProcMessage(ref MESSAGE message)
         {
             if (State >= 4) // technically we should only handle on state >= 5 but there might be missed msgs if we wait until state changes after enabling ds
             {
@@ -604,5 +603,22 @@ namespace NTwain
         }
 
         #endregion
+
+
+
+        /// <summary>
+        /// The MSG structure in Windows for TWAIN use.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        protected struct MESSAGE
+        {
+            public IntPtr hwnd;
+            public uint message;
+            public IntPtr wParam;
+            public IntPtr lParam;
+            public uint time;
+            public int x;
+            public int y;
+        }
     }
 }

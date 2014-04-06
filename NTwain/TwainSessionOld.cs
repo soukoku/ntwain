@@ -7,7 +7,6 @@ using NTwain.Data;
 using NTwain.Values;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Windows.Interop;
 using System.Diagnostics;
 using System.Security.Permissions;
 using System.IO;
@@ -246,10 +245,10 @@ namespace NTwain
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         bool IMessageFilter.PreFilterMessage(ref System.Windows.Forms.Message m)
         {
-            MSG winmsg = default(MSG);
+            MESSAGE winmsg = default(MESSAGE);
             winmsg.hwnd = m.HWnd;
             winmsg.lParam = m.LParam;
-            winmsg.message = m.Msg;
+            winmsg.message = (uint)m.Msg;
             winmsg.wParam = m.WParam;
 
             return HandleWndProcMessage(ref winmsg);
@@ -267,10 +266,10 @@ namespace NTwain
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         public IntPtr PreFilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            MSG winmsg = default(MSG);
+            MESSAGE winmsg = default(MESSAGE);
             winmsg.hwnd = hwnd;
             winmsg.lParam = lParam;
-            winmsg.message = msg;
+            winmsg.message = (uint)msg;
             winmsg.wParam = wParam;
 
             handled = base.HandleWndProcMessage(ref winmsg);

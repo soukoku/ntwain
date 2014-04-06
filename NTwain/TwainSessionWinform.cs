@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Windows.Interop;
 
 namespace NTwain
 {
@@ -25,10 +24,10 @@ namespace NTwain
 
         bool IMessageFilter.PreFilterMessage(ref Message m)
         {
-            MSG winmsg = default(MSG);
+            MESSAGE winmsg = default(MESSAGE);
             winmsg.hwnd = m.HWnd;
             winmsg.lParam = m.LParam;
-            winmsg.message = m.Msg;
+            winmsg.message = (uint)m.Msg;
             winmsg.wParam = m.WParam;
 
             return HandleWndProcMessage(ref winmsg);

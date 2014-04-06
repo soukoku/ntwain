@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.Windows.Forms;
-using System.Windows.Interop;
 
 namespace NTwain
 {
@@ -34,10 +33,10 @@ namespace NTwain
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         public IntPtr PreFilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            MSG winmsg = default(MSG);
+            MESSAGE winmsg = default(MESSAGE);
             winmsg.hwnd = hwnd;
             winmsg.lParam = lParam;
-            winmsg.message = msg;
+            winmsg.message = (uint)msg;
             winmsg.wParam = wParam;
 
             handled = base.HandleWndProcMessage(ref winmsg);
