@@ -32,7 +32,7 @@ namespace NTwain
         }
 
         TWIdentity _appId;
-        HandleRef _appHandle;
+        IntPtr _appHandle;
         SynchronizationContext _syncer;
         object _callbackObj; // kept around so it doesn't get gc'ed
         TWUserInterface _twui;
@@ -207,11 +207,11 @@ namespace NTwain
         /// <param name="appHandle">On Windows = points to the window handle (hWnd) that will act as the Source’s
         /// "parent". On Macintosh = should be a NULL value.</param>
         /// <returns></returns>
-        public ReturnCode OpenManager(HandleRef appHandle)
+        public ReturnCode OpenManager(IntPtr appHandle)
         {
             Debug.WriteLine(string.Format("Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
 
-            var rc = DGControl.Parent.OpenDsm(appHandle.Handle);
+            var rc = DGControl.Parent.OpenDsm(appHandle);
             if (rc == ReturnCode.Success)
             {
                 _appHandle = appHandle;
@@ -242,10 +242,10 @@ namespace NTwain
         {
             Debug.WriteLine(string.Format("Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
 
-            var rc = DGControl.Parent.CloseDsm(_appHandle.Handle);
+            var rc = DGControl.Parent.CloseDsm(_appHandle);
             if (rc == ReturnCode.Success)
             {
-                _appHandle = default(HandleRef);
+                _appHandle = IntPtr.Zero;
             }
             return rc;
         }
@@ -307,7 +307,7 @@ namespace NTwain
         /// if you do not have a custom one setup.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">context</exception>
-        public ReturnCode EnableSource(SourceEnableMode mode, bool modal, HandleRef windowHandle, SynchronizationContext context)
+        public ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle, SynchronizationContext context)
         {
             if (context == null) { throw new ArgumentNullException("context"); }
 
@@ -343,7 +343,7 @@ namespace NTwain
             _twui = new TWUserInterface();
             _twui.ShowUI = mode == SourceEnableMode.ShowUI;
             _twui.ModalUI = modal;
-            _twui.hParent = windowHandle.Handle;
+            _twui.hParent = windowHandle;
 
             if (mode == SourceEnableMode.ShowUIOnly)
             {

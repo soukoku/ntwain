@@ -159,13 +159,12 @@ namespace Tester.Winform
         {
             if (_twain.State == 4)
             {
-                var hand = new HandleRef(this, this.Handle);
                 _stopScan = false;
 
                 if (_twain.SupportedCaps.Contains(CapabilityId.CapUIControllable))
                 {
                     // hide scanner ui if possible
-                    if (_twain.EnableSource(SourceEnableMode.NoUI, false, hand, SynchronizationContext.Current) == ReturnCode.Success)
+                    if (_twain.EnableSource(SourceEnableMode.NoUI, false, this.Handle, SynchronizationContext.Current) == ReturnCode.Success)
                     {
                         btnStopScan.Enabled = true;
                         btnStartCapture.Enabled = false;
@@ -174,7 +173,7 @@ namespace Tester.Winform
                 }
                 else
                 {
-                    if (_twain.EnableSource(SourceEnableMode.ShowUI, false, hand, SynchronizationContext.Current) == ReturnCode.Success)
+                    if (_twain.EnableSource(SourceEnableMode.ShowUI, true, this.Handle, SynchronizationContext.Current) == ReturnCode.Success)
                     {
                         btnStopScan.Enabled = true;
                         btnStartCapture.Enabled = false;
@@ -230,7 +229,7 @@ namespace Tester.Winform
         {
             if (_twain.State < 3)
             {
-                _twain.OpenManager(new HandleRef(this, this.Handle));
+                _twain.OpenManager(this.Handle);
             }
 
             if (_twain.State >= 3)
@@ -357,8 +356,7 @@ namespace Tester.Winform
 
         private void btnAllSettings_Click(object sender, EventArgs e)
         {
-            var hand = new HandleRef(this, this.Handle);
-            _twain.EnableSource(SourceEnableMode.ShowUIOnly, true, hand, SynchronizationContext.Current);
+            _twain.EnableSource(SourceEnableMode.ShowUIOnly, true, this.Handle, SynchronizationContext.Current);
         }
 
         #endregion

@@ -53,7 +53,7 @@ namespace Tester
                 mySyncer = new DispatcherSynchronizationContext(obj as Dispatcher);
             }
 
-            var rc = twain.OpenManager(default(HandleRef));
+            var rc = twain.OpenManager(IntPtr.Zero);
 
             if (rc == ReturnCode.Success)
             {
@@ -64,7 +64,7 @@ namespace Tester
                     // enablesource must be on the thread the sync context works on
                     mySyncer.Post(blah =>
                     {
-                        rc = twain.EnableSource(SourceEnableMode.NoUI, false, default(HandleRef), blah as SynchronizationContext);
+                        rc = twain.EnableSource(SourceEnableMode.NoUI, false, IntPtr.Zero, blah as SynchronizationContext);
                     }, mySyncer);
                     return;
                 }

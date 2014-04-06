@@ -100,7 +100,7 @@ namespace Tester.WPF
 
             string step = "Open DSM";
 
-            HandleRef hand = new HandleRef(this, new WindowInteropHelper(Application.Current.MainWindow).Handle);
+            var hand = new WindowInteropHelper(Application.Current.MainWindow).Handle;
 
             var rc = twain.OpenManager(hand);
             if (rc == ReturnCode.Success)
