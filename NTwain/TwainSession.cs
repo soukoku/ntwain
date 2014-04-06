@@ -669,56 +669,30 @@ namespace NTwain
         /// </summary>
         protected virtual void DoTransferRoutine()
         {
-            DataGroups xferGroup = DataGroups.None;
-
-            if (DGControl.XferGroup.Get(ref xferGroup) != ReturnCode.Success)
-            {
-                xferGroup = DataGroups.None;
-            }
-
-            // support one or the other or both?
-            if ((xferGroup & DataGroups.Image) == DataGroups.Image)
-            {
-                DoImageXfer();
-            }
-            else if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
-            {
-                DoAudioXfer();
-            }
-            else
-            {
-                // ??? just cancel it
-                var pending = new TWPendingXfers();
-                var rc = ReturnCode.Success;
-                do
-                {
-                    rc = DGControl.PendingXfers.Reset(pending);
-                } while (rc == ReturnCode.Success && pending.Count != 0);
-
-                State = 5;
-                DisableSource();
-            }
-
-        }
-
-        #region audio xfers
-
-        private void DoAudioXfer()
-        {
             var pending = new TWPendingXfers();
             var rc = ReturnCode.Success;
 
             do
             {
-                #region build pre xfer info
+                #region build and raise xfer ready
 
                 TWAudioInfo audInfo;
-                DGAudio.AudioInfo.Get(out audInfo);
+                if (DGAudio.AudioInfo.Get(out audInfo) != ReturnCode.Success)
+                {
+                    audInfo = null;
+                }
+
+                TWImageInfo imgInfo;
+                if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
+                {
+                    imgInfo = null;
+                }
 
                 // ask consumer for xfer details
                 var preXferArgs = new TransferReadyEventArgs
                 {
                     AudioInfo = audInfo,
+                    PendingImageInfo = imgInfo,
                     PendingTransferCount = pending.Count,
                     EndOfJob = pending.EndOfJob == 0
                 };
@@ -727,35 +701,66 @@ namespace NTwain
 
                 #endregion
 
+                #region actually handle xfer
+
                 if (preXferArgs.CancelAll)
                 {
                     rc = DGControl.PendingXfers.Reset(pending);
-                    if (rc == ReturnCode.Success)
-                    {
-                        break;
-                    }
                 }
                 else if (!preXferArgs.CancelCurrent)
                 {
-                    var mech = this.GetCurrentCap<XferMech>(CapabilityId.ACapXferMech);
-                    switch (mech)
+                    DataGroups xferGroup = DataGroups.None;
+
+                    if (DGControl.XferGroup.Get(ref xferGroup) != ReturnCode.Success)
                     {
-                        case XferMech.Native:
-                            DoAudioNativeXfer();
-                            break;
-                        case XferMech.File:
-                            DoAudioFileXfer();
-                            break;
+                        xferGroup = DataGroups.None;
+                    }
+
+                    if ((xferGroup & DataGroups.Image) == DataGroups.Image)
+                    {
+                        var mech = this.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech);
+                        switch (mech)
+                        {
+                            case XferMech.Native:
+                                DoImageNativeXfer();
+                                break;
+                            case XferMech.Memory:
+                                DoImageMemoryXfer();
+                                break;
+                            case XferMech.File:
+                                DoImageFileXfer();
+                                break;
+                            case XferMech.MemFile:
+                                DoImageMemoryFileXfer();
+                                break;
+                        }
+                    }
+                    if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
+                    {
+                        var mech = this.GetCurrentCap<XferMech>(CapabilityId.ACapXferMech);
+                        switch (mech)
+                        {
+                            case XferMech.Native:
+                                DoAudioNativeXfer();
+                                break;
+                            case XferMech.File:
+                                DoAudioFileXfer();
+                                break;
+                        }
                     }
                 }
-
                 rc = DGControl.PendingXfers.EndXfer(pending);
+
+                #endregion
 
             } while (rc == ReturnCode.Success && pending.Count != 0);
 
             State = 5;
             DisableSource();
+
         }
+
+        #region audio xfers
 
         private void DoAudioNativeXfer()
         {
@@ -810,62 +815,6 @@ namespace NTwain
         #endregion
 
         #region image xfers
-
-        private void DoImageXfer()
-        {
-            var pending = new TWPendingXfers();
-            var rc = ReturnCode.Success;
-
-            do
-            {
-                #region build pre xfer info
-
-                TWImageInfo imgInfo;
-                DGImage.ImageInfo.Get(out imgInfo);
-
-                // ask consumer for xfer details
-                var preXferArgs = new TransferReadyEventArgs
-                {
-                    PendingImageInfo = imgInfo,
-                    PendingTransferCount = pending.Count,
-                    EndOfJob = pending.EndOfJob == 0
-                };
-
-                OnTransferReady(preXferArgs);
-
-                #endregion
-
-                if (preXferArgs.CancelAll)
-                {
-                    rc = DGControl.PendingXfers.Reset(pending);
-                }
-                else if (!preXferArgs.CancelCurrent)
-                {
-                    var mech = this.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech);
-                    switch (mech)
-                    {
-                        case XferMech.Native:
-                            DoImageNativeXfer();
-                            break;
-                        case XferMech.Memory:
-                            DoImageMemoryXfer();
-                            break;
-                        case XferMech.File:
-                            DoImageFileXfer();
-                            break;
-                        case XferMech.MemFile:
-                            DoImageMemoryFileXfer();
-                            break;
-                    }
-                }
-
-                rc = DGControl.PendingXfers.EndXfer(pending);
-
-            } while (rc == ReturnCode.Success && pending.Count != 0);
-
-            State = 5;
-            DisableSource();
-        }
 
         private void DoImageNativeXfer()
         {
