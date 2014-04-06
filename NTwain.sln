@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30324.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTwain", "NTwain\NTwain.csproj", "{0C5A6FB1-0282-4D61-8354-68DEB1515001}"
 EndProject
@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Others", "Others", "{4CE0B9
 		LICENSE.txt = LICENSE.txt
 		README.markdown = README.markdown
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester.Console", "Tests\Tester.Console\Tester.Console.csproj", "{12D761EF-68DF-41CE-92EF-0C7AE81857A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +70,16 @@ Global
 		{1715C2B7-5C35-4F8B-9D9B-8D68A3D5284D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{1715C2B7-5C35-4F8B-9D9B-8D68A3D5284D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{1715C2B7-5C35-4F8B-9D9B-8D68A3D5284D}.Release|x86.ActiveCfg = Release|Any CPU
+		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +88,7 @@ Global
 		{6B034C50-A397-435F-8DDF-677B403FEBAA} = {2F906640-1664-4960-93D2-A054AC6E66A3}
 		{4FC243F1-318E-4FA9-9EBD-2CA3A8F35425} = {2F906640-1664-4960-93D2-A054AC6E66A3}
 		{1715C2B7-5C35-4F8B-9D9B-8D68A3D5284D} = {2F906640-1664-4960-93D2-A054AC6E66A3}
+		{12D761EF-68DF-41CE-92EF-0C7AE81857A3} = {2F906640-1664-4960-93D2-A054AC6E66A3}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = NTwain.vsmdi

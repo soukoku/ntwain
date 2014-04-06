@@ -53,6 +53,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncPump.cs" />
     <Compile Include="Data\TypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="Extensions.cs" />

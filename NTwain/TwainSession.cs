@@ -309,10 +309,7 @@ namespace NTwain
         /// <exception cref="ArgumentNullException">context</exception>
         public ReturnCode EnableSource(SourceEnableMode mode, bool modal, HandleRef windowHandle, SynchronizationContext context)
         {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                if (context == null) { throw new ArgumentNullException("context"); }
-            }
+            if (context == null) { throw new ArgumentNullException("context"); }
 
             Debug.WriteLine(string.Format("Thread {0}: EnableSource.", Thread.CurrentThread.ManagedThreadId));
 
@@ -378,6 +375,8 @@ namespace NTwain
         /// <summary>
         /// Forces the stepping down of an opened source when things gets out of control.
         /// Used when session state and source state become out of sync.
+        /// This should be called on the Thread that originally called the <see cref="EnableSource"/>
+        /// method, if applicable.
         /// </summary>
         /// <param name="targetState">State of the target.</param>
         public void ForceStepDown(int targetState)
