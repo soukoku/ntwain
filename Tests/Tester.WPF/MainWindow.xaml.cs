@@ -79,17 +79,18 @@ namespace Tester.WPF
             };
             twain.TransferReady += (s, te) =>
             {
-                //var type = twain.GetCurrentCap<PixelType>(CapabilityId.ICapPixelType);
-                //if (type == PixelType.BlackWhite)
-                //{
-                //    te.ImageFormat = ImageFileFormat.Tiff;
-                //    te.ImageCompression = Compression.Group31D;
-                //    te.OutputFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.tif");
-                //}
-                //else
-                //{
-                //te.OutputFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.bmp");
-                //}
+                if (twain.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech) == XferMech.File)
+                {
+                    var formats = twain.CapGetImageFileFormat();
+                    var wantFormat = formats.Contains(FileFormat.Tiff) ? FileFormat.Tiff : FileFormat.Bmp;
+
+                    var fileSetup = new TWSetupFileXfer
+                    {
+                        Format = wantFormat,
+                        FileName = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.tif")
+                    };
+                    var rc = twain.DGControl.SetupFileXfer.Set(fileSetup);
+                }
             };
         }
 
@@ -131,6 +132,11 @@ namespace Tester.WPF
                         if (twain.CapGetPixelTypes().Contains(PixelType.BlackWhite))
                         {
                             twain.CapSetPixelType(PixelType.BlackWhite);
+                        }
+
+                        if (twain.CapGetImageXferMechs().Contains(XferMech.File))
+                        {
+                            twain.CapSetImageXferMech(XferMech.File);
                         }
 
                         step = "Enable DS";

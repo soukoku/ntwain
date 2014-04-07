@@ -367,6 +367,66 @@ namespace NTwain
 
         #endregion
 
+        #region xfer mech
+
+        /// <summary>
+        /// Gets the supported image <see cref="XferMech"/> for the current source.
+        /// Only call this at state 4 or higher.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <returns></returns>
+        public static IList<XferMech> CapGetImageXferMechs(this TwainSession session)
+        {
+            return session.GetCapabilityValues<XferMech>(CapabilityId.ICapXferMech, true);
+        }
+
+        /// <summary>
+        /// Gets the supported audio <see cref="XferMech"/> for the current source.
+        /// Only call this at state 4 or higher.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <returns></returns>
+        public static IList<XferMech> CapGetAudioXferMechs(this TwainSession session)
+        {
+            return session.GetCapabilityValues<XferMech>(CapabilityId.ACapXferMech, true);
+        }
+
+        /// <summary>
+        /// Change the image xfer type for the current source.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
+        public static ReturnCode CapSetImageXferMech(this TwainSession session, XferMech type)
+        {
+            var one = new TWOneValue();
+            one.Item = (uint)type;
+            one.ItemType = ItemType.UInt16;
+            using (TWCapability dx = new TWCapability(CapabilityId.ICapXferMech, one))
+            {
+                return session.DGControl.Capability.Set(dx);
+            }
+        }
+
+        /// <summary>
+        /// Change the audio xfer type for the current source.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
+        public static ReturnCode CapSetAudioXferMech(this TwainSession session, XferMech type)
+        {
+            var one = new TWOneValue();
+            one.Item = (uint)type;
+            one.ItemType = ItemType.UInt16;
+            using (TWCapability dx = new TWCapability(CapabilityId.ACapXferMech, one))
+            {
+                return session.DGControl.Capability.Set(dx);
+            }
+        }
+
+        #endregion
+
         #region dpi
 
         /// <summary>
