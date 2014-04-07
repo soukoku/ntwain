@@ -869,11 +869,19 @@ namespace NTwain
         private void DoImageMemoryXfer()
         {
             throw new NotImplementedException();
+        }
 
+        private void DoImageMemoryFileXfer()
+        {
+            // since it's memory-file xfer need info from both (maybe)
             TWSetupMemXfer memInfo;
-            if (DGControl.SetupMemXfer.Get(out memInfo) == ReturnCode.Success)
+            TWSetupFileXfer fileInfo;
+            if (DGControl.SetupMemXfer.Get(out memInfo) == ReturnCode.Success &&
+                DGControl.SetupFileXfer.Get(out fileInfo) == ReturnCode.Success)
             {
                 TWImageMemXfer xferInfo = new TWImageMemXfer();
+                var tempFile = Path.GetTempFileName();
+                string finalFile = null;
                 try
                 {
                     xferInfo.Memory = new TWMemory
@@ -882,18 +890,75 @@ namespace NTwain
                         TheMem = MemoryManager.Instance.Allocate(memInfo.Preferred)
                     };
 
-
                     var xrc = ReturnCode.Success;
-                    do
+                    using (var outStream = File.OpenWrite(tempFile))
                     {
-                        xrc = DGImage.ImageMemXfer.Get(xferInfo);
-
-                        if (xrc == ReturnCode.XferDone)
+                        do
                         {
+                            xrc = DGImage.ImageMemFileXfer.Get(xferInfo);
 
+                            if (xrc == ReturnCode.Success ||
+                                xrc == ReturnCode.XferDone)
+                            {
+                                byte[] buffer = new byte[(int)xferInfo.BytesWritten];
+                                Marshal.Copy(xferInfo.Memory.TheMem, buffer, 0, buffer.Length);
+                                outStream.Write(buffer, 0, buffer.Length);
+                            }
+                        } while (xrc == ReturnCode.Success);
+                    }
+
+                    if (xrc == ReturnCode.XferDone)
+                    {
+                        switch (fileInfo.Format)
+                        {
+                            case FileFormat.Bmp:
+                                finalFile = Path.ChangeExtension(tempFile, ".bmp");
+                                break;
+                            case FileFormat.Dejavu:
+                                finalFile = Path.ChangeExtension(tempFile, ".dejavu");
+                                break;
+                            case FileFormat.Exif:
+                                finalFile = Path.ChangeExtension(tempFile, ".exit");
+                                break;
+                            case FileFormat.Fpx:
+                                finalFile = Path.ChangeExtension(tempFile, ".fpx");
+                                break;
+                            case FileFormat.Jfif:
+                                finalFile = Path.ChangeExtension(tempFile, ".jpg");
+                                break;
+                            case FileFormat.Jp2:
+                                finalFile = Path.ChangeExtension(tempFile, ".jp2");
+                                break;
+                            case FileFormat.Jpx:
+                                finalFile = Path.ChangeExtension(tempFile, ".jpx");
+                                break;
+                            case FileFormat.Pdf:
+                            case FileFormat.PdfA:
+                            case FileFormat.PdfA2:
+                                finalFile = Path.ChangeExtension(tempFile, ".pdf");
+                                break;
+                            case FileFormat.Pict:
+                                finalFile = Path.ChangeExtension(tempFile, ".pict");
+                                break;
+                            case FileFormat.Png:
+                                finalFile = Path.ChangeExtension(tempFile, ".png");
+                                break;
+                            case FileFormat.Spiff:
+                                finalFile = Path.ChangeExtension(tempFile, ".spiff");
+                                break;
+                            case FileFormat.Tiff:
+                            case FileFormat.TiffMulti:
+                                finalFile = Path.ChangeExtension(tempFile, ".tif");
+                                break;
+                            case FileFormat.Xbm:
+                                finalFile = Path.ChangeExtension(tempFile, ".xbm");
+                                break;
+                            default:
+                                finalFile = Path.ChangeExtension(tempFile, ".unknown");
+                                break;
                         }
-                    } while (xrc == ReturnCode.Success);
-
+                        File.Move(tempFile, finalFile);
+                    }
                 }
                 finally
                 {
@@ -901,14 +966,17 @@ namespace NTwain
                     {
                         MemoryManager.Instance.Free(xferInfo.Memory.TheMem);
                     }
+                    if (File.Exists(tempFile))
+                    {
+                        File.Delete(tempFile);
+                    }
+                }
+
+                if (File.Exists(finalFile))
+                {
+                    OnDataTransferred(new DataTransferredEventArgs(IntPtr.Zero, finalFile));
                 }
             }
-        }
-
-        private void DoImageMemoryFileXfer()
-        {
-            // no way to test, not supported by sample source
-            throw new NotImplementedException();
         }
 
         #endregion

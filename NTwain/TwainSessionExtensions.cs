@@ -146,8 +146,8 @@ namespace NTwain
             {
                 if (tryUpperWord)
                 {
-                    // small routine to see if works with bad sources that put
-                    // 16bit value in the upper word instead of lower word.
+                    // small routine to work with bad sources that put
+                    // 16bit value in the upper word instead of lower word as per the twain spec.
                     var rawType = Enum.GetUnderlyingType(returnType);
                     if (typeof(ushort).IsAssignableFrom(rawType))
                     {

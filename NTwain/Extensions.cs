@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security;
-using System.Security.Permissions;
-using System.Text;
-using System.Windows.Media.Imaging;
-using NTwain.Properties;
-using NTwain.Values;
-using Microsoft.Win32.SafeHandles;
+﻿using NTwain.Properties;
+using System;
 
 namespace NTwain
 {

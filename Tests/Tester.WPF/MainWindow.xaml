@@ -17,7 +17,7 @@
 			<Button Content="Test Acquire" Click="Button_Click_1"></Button>
 		</StackPanel>
 
-		<ListBox x:Name="CapList" Grid.Row="1" BorderThickness="0"></ListBox>
+		<ListBox x:Name="CapList" Grid.Row="1" BorderThickness="0" ScrollViewer.CanContentScroll="False"></ListBox>
 
 		<modern:AnimatedScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Auto"
 				HorizontalScrollBarVisibility="Auto">
