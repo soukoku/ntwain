@@ -1688,8 +1688,8 @@ namespace NTwain.Values
         CapFeederPocket = 0x103a,   /* Added 2.0 */
         CapAutomaticSenseMedium = 0x103b,   /* Added 2.1 */
         CapCustomInterfaceGuid = 0x103c,   /* Added 2.1 */
-        CapSUPPORTEDCAPSSEGMENTUNIQUE = 0x103d,
-        CapSUPPORTEDDATS = 0x103e,
+        CapSupportedCapsSegmentUnique = 0x103d,
+        CapSupportedDATs = 0x103e,
         CapDoubleFeedDetection = 0x103f,
         CapDoubleFeedDetectionLength = 0x1040,
         CapDoubleFeedDetectionSensitivity = 0x1041,
@@ -1757,7 +1757,7 @@ namespace NTwain.Values
         ICapAutoDiscardBlankPages = 0x1134,  /* Added 2.0 */
         ICapFlipRotation = 0x1136,  /* Added 1.8 */
         ICapBarcodeDetectionEnabled = 0x1137,  /* Added 1.8 */
-        ICapSupportedBARCODETYPES = 0x1138,  /* Added 1.8 */
+        ICapSupportedBarcodeTypes = 0x1138,  /* Added 1.8 */
         ICapBarcodeMaxSearchPriorities = 0x1139,  /* Added 1.8 */
         ICapBarcodeSearchPriorities = 0x113a,  /* Added 1.8 */
         ICapBarcodeSearchMode = 0x113b,  /* Added 1.8 */
@@ -1774,12 +1774,12 @@ namespace NTwain.Values
         ICapFlashUsed2 = 0x1146,  /* Added 1.8 */
         ICapImageFilter = 0x1147,  /* Added 1.8 */
         ICapNoiseFilter = 0x1148,  /* Added 1.8 */
-        ICapOverscan = 0x1149,  /* Added 1.8 */
+        ICapOverScan = 0x1149,  /* Added 1.8 */
         ICapAutomaticBorderDetection = 0x1150,  /* Added 1.8 */
         ICapAutomaticDeskew = 0x1151,  /* Added 1.8 */
         ICapAutomaticRotate = 0x1152,  /* Added 1.8 */
         ICapJpegQuality = 0x1153,  /* Added 1.9 */
-        ICapFeederTYPE = 0x1154,  /* Added 1.91 */
+        ICapFeederType = 0x1154,  /* Added 1.91 */
         ICapICCProfile = 0x1155,  /* Added 1.91 */
         ICapAutoSize = 0x1156,  /* Added 2.0 */
         ICapAutomaticCropUsesFrame = 0x1157,  /* Added 2.1 */
