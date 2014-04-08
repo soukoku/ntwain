@@ -2,7 +2,8 @@
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
         xmlns:modern="http://modernwpf"
-		Title="TWAIN Tester" Height="600" Width="900" ResizeMode="CanResizeWithGrip"
+		Title="TWAIN DS Tester" Height="600" Width="900" ResizeMode="CanResizeWithGrip"
+        modern:Chrome.ShowCaptionIcon="False"
         Style="{StaticResource AppWindow}">
     <Grid>
         <Grid.RowDefinitions>
@@ -17,22 +18,29 @@
         </Grid.ColumnDefinitions>
 
         <Label Content="Sources"></Label>
-        <ListBox x:Name="SrcList" Grid.Row="1" BorderThickness="0 1 1 0" ScrollViewer.CanContentScroll="False" Width="150"
-                 SelectionChanged="SrcList_SelectionChanged">
+        <ListBox x:Name="SrcList" Grid.Row="1" Width="150"
+                 SelectionChanged="SrcList_SelectionChanged"
+                 Style="{StaticResource AppListBox}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding ProductName}" TextWrapping="Wrap"></TextBlock>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="{Binding Version, StringFormat='Version {0}'}" TextWrapping="Wrap" Foreground="{DynamicResource ModernForeground2}"/>
+                        <TextBlock Text="{Binding Protocol, StringFormat='TWAIN {0}'}" Foreground="{DynamicResource ModernForeground2}"/>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
         <Label Content="Caps" Grid.Column="1"></Label>
-        <ListBox x:Name="CapList" Grid.Row="1" Grid.Column="1" BorderThickness="0 1 1 0" ScrollViewer.CanContentScroll="False" MinWidth="100"
-                 SelectionChanged="CapList_SelectionChanged"></ListBox>
+        <ListBox x:Name="CapList" Grid.Row="1" Grid.Column="1" MinWidth="100"
+                 SelectionChanged="CapList_SelectionChanged"
+                 Style="{StaticResource AppListBox}"></ListBox>
 
         <Label Content="Cap values" Grid.Column="2"></Label>
-        <ListBox x:Name="CapDetailList" Grid.Row="1" Grid.Column="2" BorderThickness="0 1 1 0" ScrollViewer.CanContentScroll="False" MinWidth="100"
-                 SelectionChanged="CapDetailList_SelectionChanged"></ListBox>
+        <ListBox x:Name="CapDetailList" Grid.Row="1" Grid.Column="2" MinWidth="100"
+                 SelectionChanged="CapDetailList_SelectionChanged"
+                 Style="{StaticResource AppListBox}"></ListBox>
 
         <StackPanel Orientation="Horizontal" Grid.Column="3" >
             <Label Content="State:"></Label>
@@ -41,8 +49,9 @@
         </StackPanel>
         <modern:AnimatedScrollViewer Grid.Row="1" Grid.Column="3" VerticalScrollBarVisibility="Auto"
 				HorizontalScrollBarVisibility="Auto">
-            <Image x:Name="ImageDisplay" Stretch="Uniform" MaxWidth="1000"
-					RenderOptions.BitmapScalingMode="HighQuality"></Image>
+            <Image Stretch="Uniform" MaxWidth="1000"
+                   RenderOptions.BitmapScalingMode="HighQuality"
+                   Source="{Binding Image}"></Image>
         </modern:AnimatedScrollViewer>
     </Grid>
 </Window>
