@@ -126,6 +126,24 @@ namespace NTwain.Data
             return new TWFix32(value);
         }
         /// <summary>
+        /// Performs an implicit conversion from <see cref="NTwain.Data.TWFix32"/> to <see cref="System.Double"/>.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The result of the conversion.</returns>
+        public static implicit operator double(TWFix32 value)
+        {
+            return value.ToFloat();
+        }
+        /// <summary>
+        /// Performs an implicit conversion from <see cref="System.Double"/> to <see cref="NTwain.Data.TWFix32"/>.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The result of the conversion.</returns>
+        public static implicit operator TWFix32(double value)
+        {
+            return new TWFix32((float)value);
+        }
+        /// <summary>
         /// Implements the operator ==.
         /// </summary>
         /// <param name="value1">The value1.</param>
