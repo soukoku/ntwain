@@ -718,7 +718,7 @@ namespace NTwain
 
                     if ((xferGroup & DataGroups.Image) == DataGroups.Image)
                     {
-                        var mech = this.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech);
+                        var mech = this.GetCurrentCap(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>();
                         switch (mech)
                         {
                             case XferMech.Native:
@@ -737,7 +737,7 @@ namespace NTwain
                     }
                     if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
                     {
-                        var mech = this.GetCurrentCap<XferMech>(CapabilityId.ACapXferMech);
+                        var mech = this.GetCurrentCap(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
                         switch (mech)
                         {
                             case XferMech.Native:

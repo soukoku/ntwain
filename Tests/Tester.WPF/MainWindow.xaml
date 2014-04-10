@@ -40,6 +40,7 @@
         <Label Content="Cap values" Grid.Column="2"></Label>
         <ListBox x:Name="CapDetailList" Grid.Row="1" Grid.Column="2" MinWidth="100"
                  SelectionChanged="CapDetailList_SelectionChanged"
+                 ScrollViewer.CanContentScroll="True"
                  Style="{StaticResource AppListBox}"></ListBox>
 
         <StackPanel Orientation="Horizontal" Grid.Column="3" >

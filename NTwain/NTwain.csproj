@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsyncPump.cs" />
+    <Compile Include="Data\CapReadOut.cs" />
     <Compile Include="Data\TypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="Extensions.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Values\DataValues.cs" />
     <Compile Include="Values\SourceEnableMode.cs" />
     <Compile Include="Values\TwainConst.cs" />
+    <Compile Include="Values\ValueConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NTwain.nuspec" />

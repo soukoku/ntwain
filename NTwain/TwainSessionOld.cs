@@ -68,7 +68,7 @@ namespace NTwain
 
                 if (!args.CancelAll && !args.CancelCurrent)
                 {
-                    Values.XferMech mech = this.GetCurrentCap<XferMech>(CapabilityId.ICapXferMech);
+                    Values.XferMech mech = this.GetCurrentCap(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>();
 
                     //if (args.CanDoFileXfer && !string.IsNullOrEmpty(args.OutputFile))
                     //{

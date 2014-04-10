@@ -8,7 +8,7 @@ using System.Text;
 namespace NTwain
 {
     /// <summary>
-    /// Defines common methods on <see cref="TwainSessionOld"/> using the raw
+    /// Defines common methods on <see cref="TwainSession"/> using the raw
     /// TWAIN triplet api.
     /// </summary>
     public static class TwainSessionExtensions
@@ -87,142 +87,79 @@ namespace NTwain
         #region common caps
 
         /// <summary>
-        /// Gets the current value for a general capability. This only works for types that are under 32bit.
+        /// Gets the current value for a capability.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="session">The session.</param>
         /// <param name="capId">The cap id.</param>
         /// <returns></returns>
-        public static T GetCurrentCap<T>(this TwainSession session, CapabilityId capId) where T : struct,IConvertible
+        public static object GetCurrentCap(this TwainSession session, CapabilityId capId)
         {
             using (TWCapability cap = new TWCapability(capId))
             {
                 var rc = session.DGControl.Capability.GetCurrent(cap);
                 if (rc == ReturnCode.Success)
                 {
-                    switch (cap.ContainerType)
+                    var read = CapReadOut.ReadValue(cap);
+
+                    switch (read.ContainerType)
                     {
                         case ContainerType.Enum:
-                            var enu = cap.GetEnumValue();
-                            if (enu.ItemType < ItemType.Frame)
+                            if (read.CollectionValues != null)
                             {
-                                // does this work?
-                                return ConvertValueToType<T>(enu.ItemList[enu.CurrentIndex].ToString(), true);
+                                return read.CollectionValues[read.EnumCurrentIndex];
                             }
                             break;
                         case ContainerType.OneValue:
-                            var one = cap.GetOneValue();
-                            if (one.ItemType < ItemType.Frame)
-                            {
-                                return ConvertValueToType<T>(one.Item, true);
-                            }
-                            break;
+                            return read.OneValue;
                         case ContainerType.Range:
-                            var range = cap.GetRangeValue();
-                            if (range.ItemType < ItemType.Frame)
+                            return read.RangeCurrentValue;
+                        case ContainerType.Array:
+                            // no source should ever return an array but anyway
+                            if (read.CollectionValues != null)
                             {
-                                return ConvertValueToType<T>(range.CurrentValue, true);
+                                return read.CollectionValues.FirstOrDefault();
                             }
                             break;
                     }
                 }
             }
-            return default(T);
-        }
-
-        static ushort GetLowerWord(uint value)
-        {
-            return (ushort)(value & 0xffff);
-        }
-        static uint GetUpperWord(uint value)
-        {
-            return (ushort)(value >> 16);
-        }
-
-        static T ConvertValueToType<T>(object value, bool tryUpperWord) where T : struct,IConvertible
-        {
-            var returnType = typeof(T);
-            if (returnType.IsEnum)
-            {
-                if (tryUpperWord)
-                {
-                    // small routine to work with bad sources that put
-                    // 16bit value in the upper word instead of lower word as per the twain spec.
-                    var rawType = Enum.GetUnderlyingType(returnType);
-                    if (typeof(ushort).IsAssignableFrom(rawType))
-                    {
-                        var intVal = Convert.ToUInt32(value);
-                        var enumVal = GetLowerWord(intVal);
-                        if (!Enum.IsDefined(returnType, enumVal))
-                        {
-                            return (T)Enum.ToObject(returnType, GetUpperWord(intVal));
-                        }
-                    }
-                }
-                // this may work better?
-                return (T)Enum.ToObject(returnType, value);
-                //// cast to underlying type first then to the enum
-                //return (T)Convert.ChangeType(value, rawType);
-            }
-            return (T)Convert.ChangeType(value, returnType);
+            return null;
         }
 
         /// <summary>
-        /// A generic method that returns the data in a <see cref="TWCapability" />.
+        /// A general method that returns the data in a <see cref="TWCapability" />.
         /// </summary>
-        /// <typeparam name="TCapVal">The expected capability value type.</typeparam>
         /// <param name="capability">The capability returned from the source.</param>
         /// <param name="toPopulate">The list to populate if necessary.</param>
         /// <returns></returns>
-        public static IList<TCapVal> ReadMultiCapValues<TCapVal>(this TWCapability capability, IList<TCapVal> toPopulate) where TCapVal : struct,IConvertible
+        public static IList<object> ReadMultiCapValues(this TWCapability capability, IList<object> toPopulate)
         {
-            return ReadMultiCapValues<TCapVal>(capability, toPopulate, true);
-        }
-        static IList<TCapVal> ReadMultiCapValues<TCapVal>(this TWCapability capability, IList<TCapVal> toPopulate, bool tryUpperWord) where TCapVal : struct,IConvertible
-        {
-            if (toPopulate == null) { toPopulate = new List<TCapVal>(); }
+            if (toPopulate == null) { toPopulate = new List<object>(); }
 
-            switch (capability.ContainerType)
+            var read = CapReadOut.ReadValue(capability);
+
+            switch (read.ContainerType)
             {
                 case ContainerType.OneValue:
-                    var value = capability.GetOneValue();
-                    if (value != null)
+                    if (read.OneValue != null)
                     {
-                        var val = ConvertValueToType<TCapVal>(value.Item, tryUpperWord);// (T)Convert.ToUInt16(value.Item);
-                        toPopulate.Add(val);
+                        toPopulate.Add(read.OneValue);
                     }
                     break;
                 case ContainerType.Array:
-                    var arr = capability.GetArrayValue();
-                    if (arr != null && arr.ItemList != null)
-                    {
-                        for (int i = 0; i < arr.ItemList.Length; i++)
-                        {
-                            var val = ConvertValueToType<TCapVal>(arr.ItemList[i], tryUpperWord);// (T)Convert.ToUInt16(enumr.ItemList[i]);
-                            toPopulate.Add(val);
-                        }
-                    }
-                    break;
                 case ContainerType.Enum:
-                    var enumr = capability.GetEnumValue();
-                    if (enumr != null && enumr.ItemList != null)
+                    if (read.CollectionValues != null)
                     {
-                        for (int i = 0; i < enumr.ItemList.Length; i++)
+                        foreach (var o in read.CollectionValues)
                         {
-                            var val = ConvertValueToType<TCapVal>(enumr.ItemList[i], tryUpperWord);// (T)Convert.ToUInt16(enumr.ItemList[i]);
-                            toPopulate.Add(val);
+                            toPopulate.Add(o);
                         }
                     }
                     break;
                 case ContainerType.Range:
-                    var range = capability.GetRangeValue();
-                    if (range != null)
+                    for (var i = read.RangeMinValue; i <= read.RangeMaxValue; i += read.RangeStepSize)
                     {
-                        for (uint i = range.MinValue; i < range.MaxValue; i += range.StepSize)
-                        {
-                            var val = ConvertValueToType<TCapVal>(i, tryUpperWord);
-                            toPopulate.Add(val);
-                        }
+                        toPopulate.Add(i);
                     }
                     break;
             }
@@ -230,22 +167,21 @@ namespace NTwain
         }
 
         /// <summary>
-        /// A generic method that tries to get capability values from current <see cref="TwainSessionOld" />.
+        /// A general method that tries to get capability values from current <see cref="TwainSession" />.
         /// </summary>
-        /// <typeparam name="TCapVal">The expected capability value type.</typeparam>
         /// <param name="session">The session.</param>
         /// <param name="capabilityId">The capability unique identifier.</param>
         /// <param name="tryUpperWord">if set to <c>true</c> then apply to workaround for certain bad sources.</param>
         /// <returns></returns>
-        public static IList<TCapVal> GetCapabilityValues<TCapVal>(this TwainSession session, CapabilityId capabilityId, bool tryUpperWord) where TCapVal : struct,IConvertible
+        public static IList<object> GetCapabilityValues(this TwainSession session, CapabilityId capabilityId)
         {
-            var list = new List<TCapVal>();
+            var list = new List<object>();
             using (TWCapability cap = new TWCapability(capabilityId))
             {
                 var rc = session.DGControl.Capability.Get(cap);
                 if (rc == ReturnCode.Success)
                 {
-                    cap.ReadMultiCapValues<TCapVal>(list, tryUpperWord);
+                    cap.ReadMultiCapValues(list);
                 }
             }
             return list;
@@ -259,7 +195,7 @@ namespace NTwain
         /// <returns></returns>
         internal static IList<CapabilityId> GetCapabilities(this TwainSession session)
         {
-            return session.GetCapabilityValues<CapabilityId>(CapabilityId.CapSupportedCaps, false);
+            return session.GetCapabilityValues(CapabilityId.CapSupportedCaps).CastToEnum<CapabilityId>(false);
         }
 
         #region xfer mech
@@ -272,7 +208,7 @@ namespace NTwain
         /// <returns></returns>
         public static IList<XferMech> CapGetImageXferMech(this TwainSession session)
         {
-            return session.GetCapabilityValues<XferMech>(CapabilityId.ICapXferMech, true);
+            return session.GetCapabilityValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
         }
 
         #endregion
@@ -287,7 +223,7 @@ namespace NTwain
         /// <returns></returns>
         public static IList<Compression> CapGetCompression(this TwainSession session)
         {
-            return session.GetCapabilityValues<Compression>(CapabilityId.ICapCompression, true);
+            return session.GetCapabilityValues(CapabilityId.ICapCompression).CastToEnum<Compression>(true);
         }
 
         /// <summary>
@@ -316,7 +252,7 @@ namespace NTwain
         /// <returns></returns>
         public static IList<FileFormat> CapGetImageFileFormat(this TwainSession session)
         {
-            return session.GetCapabilityValues<FileFormat>(CapabilityId.ICapImageFileFormat, true);
+            return session.GetCapabilityValues(CapabilityId.ICapImageFileFormat).CastToEnum<FileFormat>(true);
         }
 
         /// <summary>
@@ -345,7 +281,7 @@ namespace NTwain
         /// <returns></returns>
         public static IList<PixelType> CapGetPixelTypes(this TwainSession session)
         {
-            return session.GetCapabilityValues<PixelType>(CapabilityId.ICapPixelType, true);
+            return session.GetCapabilityValues(CapabilityId.ICapPixelType).CastToEnum<PixelType>(true);
         }
 
         /// <summary>
@@ -377,7 +313,7 @@ namespace NTwain
         /// <returns></returns>
         public static IList<XferMech> CapGetImageXferMechs(this TwainSession session)
         {
-            return session.GetCapabilityValues<XferMech>(CapabilityId.ICapXferMech, true);
+            return session.GetCapabilityValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
         }
 
         /// <summary>
@@ -388,7 +324,7 @@ namespace NTwain
         /// <returns></returns>
         public static IList<XferMech> CapGetAudioXferMechs(this TwainSession session)
         {
-            return session.GetCapabilityValues<XferMech>(CapabilityId.ACapXferMech, true);
+            return session.GetCapabilityValues(CapabilityId.ACapXferMech).CastToEnum<XferMech>(true);
         }
 
         /// <summary>
@@ -435,9 +371,9 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<int> CapGetDPIs(this TwainSession session)
+        public static IList<TWFix32> CapGetDPIs(this TwainSession session)
         {
-            return session.GetCapabilityValues<int>(CapabilityId.ICapXResolution, true);
+            return session.GetCapabilityValues(CapabilityId.ICapXResolution).Cast<TWFix32>().ToList();
         }
 
         /// <summary>
@@ -446,7 +382,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="dpi">The DPI.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetDPI(this TwainSession session, int dpi)
+        public static ReturnCode CapSetDPI(this TwainSession session, TWFix32 dpi)
         {
             return CapSetDPI(session, dpi, dpi);
         }
@@ -458,7 +394,7 @@ namespace NTwain
         /// <param name="xDPI">The x DPI.</param>
         /// <param name="yDPI">The y DPI.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetDPI(this TwainSession session, int xDPI, int yDPI)
+        public static ReturnCode CapSetDPI(this TwainSession session, TWFix32 xDPI, TWFix32 yDPI)
         {
             TWOneValue one = new TWOneValue();
             one.Item = (uint)xDPI;// ((uint)dpi) << 16;
@@ -491,7 +427,7 @@ namespace NTwain
         /// <returns></returns>
         public static IList<SupportedSize> CapGetSupportedSizes(this TwainSession session)
         {
-            return session.GetCapabilityValues<SupportedSize>(CapabilityId.ICapSupportedSizes, true);
+            return session.GetCapabilityValues(CapabilityId.ICapSupportedSizes).CastToEnum<SupportedSize>(true);
         }
 
         /// <summary>

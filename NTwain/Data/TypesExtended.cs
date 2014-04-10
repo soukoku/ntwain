@@ -660,36 +660,11 @@ namespace NTwain.Data
         /// </summary>
         public ContainerType ContainerType { get { return (Values.ContainerType)_conType; } set { _conType = (ushort)value; } }
 
+        internal IntPtr Container { get { return _hContainer; } }
 
         #endregion
 
         #region value functions
-
-        /// <summary>
-        /// Gets the <see cref="TWOneValue"/> stored in this capability.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="System.ArgumentException"></exception>
-        public TWOneValue GetOneValue()
-        {
-            if (ContainerType != Values.ContainerType.OneValue) { throw new ArgumentException(Resources.BadContainerType, "value"); }
-
-            var value = new TWOneValue();
-            if (_hContainer != IntPtr.Zero)
-            {
-                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
-                try
-                {
-                    int offset = 0;
-                    value.ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
-                    offset += 2;
-                    value.Item = (uint)ReadValue(baseAddr, ref offset, ItemType.UInt32);
-                }
-                catch { }
-                MemoryManager.Instance.Unlock(_hContainer);
-            }
-            return value;
-        }
 
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         void SetOneValue(TWOneValue value)
@@ -698,7 +673,7 @@ namespace NTwain.Data
             if (ContainerType != Values.ContainerType.OneValue) { throw new ArgumentException(Resources.BadContainerType, "value"); }
 
             // since one value can only house UInt32 we will not allow type size > 4
-            if (GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid one value type"); }
+            if (CapReadOut.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid one value type"); }
 
             _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
@@ -707,71 +682,6 @@ namespace NTwain.Data
             }
         }
 
-        /// <summary>
-        /// Gets the <see cref="TWArray"/> stored in this capability.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="System.ArgumentException"></exception>
-        public TWArray GetArrayValue()
-        {
-            if (ContainerType != Values.ContainerType.Array) { throw new ArgumentException(Resources.BadContainerType, "value"); }
-
-            var value = new TWArray();
-            if (_hContainer != IntPtr.Zero)
-            {
-                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
-                int offset = 0;
-                value.ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
-                offset += 2;
-                var count = Marshal.ReadInt32(baseAddr, offset);
-                offset += 4;
-                if (count > 0)
-                {
-                    value.ItemList = new object[count];
-                    for (int i = 0; i < count; i++)
-                    {
-                        value.ItemList[i] = ReadValue(baseAddr, ref offset, value.ItemType);
-                    }
-                }
-                MemoryManager.Instance.Unlock(_hContainer);
-            }
-            return value;
-        }
-
-        /// <summary>
-        /// Gets the <see cref="TWEnumeration"/> stored in this capability.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="System.ArgumentException"></exception>
-        public TWEnumeration GetEnumValue()
-        {
-            if (ContainerType != Values.ContainerType.Enum) { throw new ArgumentException(Resources.BadContainerType, "value"); }
-
-            var value = new TWEnumeration();
-            if (_hContainer != IntPtr.Zero)
-            {
-                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
-                int offset = 0;
-                value.ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
-                offset += 2;
-                int count = Marshal.ReadInt32(baseAddr, offset);
-                offset += 4;
-                value.CurrentIndex = Marshal.ReadInt32(baseAddr, offset);
-                offset += 4;
-                value.DefaultIndex = Marshal.ReadInt32(baseAddr, offset);
-                offset += 4;
-                if (count > 0)
-                {
-                    value.ItemList = new object[count];
-                    for (int i = 0; i < count; i++)
-                    {
-                        value.ItemList[i] = ReadValue(baseAddr, ref offset, value.ItemType);
-                    }
-                }
-                MemoryManager.Instance.Unlock(_hContainer);
-            }
-            return value;
-        }
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         void SetEnumValue(TWEnumeration value)
         {
@@ -779,7 +689,7 @@ namespace NTwain.Data
             if (ContainerType != Values.ContainerType.Enum) { throw new ArgumentException(Resources.BadContainerType, "value"); }
 
 
-            Int32 valueSize = value.ItemOffset + value.ItemList.Length * GetItemTypeSize(value.ItemType);
+            Int32 valueSize = value.ItemOffset + value.ItemList.Length * CapReadOut.GetItemTypeSize(value.ItemType);
 
             int offset = 0;
             _hContainer = MemoryManager.Instance.Allocate((uint)valueSize);
@@ -794,40 +704,10 @@ namespace NTwain.Data
             {
                 WriteValue(baseAddr, ref offset, value.ItemType, item);
             }
-            MemoryManager.Instance.Unlock(_hContainer);
+            MemoryManager.Instance.Unlock(baseAddr);
         }
 
-        /// <summary>
-        /// Gets the <see cref="TWRange"/> stored in this capability.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="System.ArgumentException"></exception>
-        public TWRange GetRangeValue()
-        {
-            if (ContainerType != Values.ContainerType.Range) { throw new ArgumentException(Resources.BadContainerType, "value"); }
 
-            var value = new TWRange();
-            if (_hContainer != IntPtr.Zero)
-            {
-                IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
-
-                int offset = 0;
-                value.ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
-                offset += 2;
-                value.MinValue = (uint)Marshal.ReadInt32(baseAddr, offset);
-                offset += 4;
-                value.MaxValue = (uint)Marshal.ReadInt32(baseAddr, offset);
-                offset += 4;
-                value.StepSize = (uint)Marshal.ReadInt32(baseAddr, offset);
-                offset += 4;
-                value.DefaultValue = (uint)Marshal.ReadInt32(baseAddr, offset);
-                offset += 4;
-                value.CurrentValue = (uint)Marshal.ReadInt32(baseAddr, offset);
-
-                MemoryManager.Instance.Unlock(_hContainer);
-            }
-            return value;
-        }
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         void SetRangeValue(TWRange value)
         {
@@ -835,7 +715,7 @@ namespace NTwain.Data
             if (ContainerType != Values.ContainerType.Range) { throw new ArgumentException(Resources.BadContainerType, "value"); }
 
             // since range value can only house UInt32 we will not allow type size > 4
-            if (GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid range value type"); }
+            if (CapReadOut.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid range value type"); }
 
             _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
@@ -845,46 +725,8 @@ namespace NTwain.Data
         }
         #endregion
 
-        #region readwrites
+        #region writes
 
-        /// <summary>
-        /// Gets the byte size of the item type.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        private int GetItemTypeSize(ItemType type)
-        {
-            switch (type)
-            {
-                case ItemType.Int8:
-                case ItemType.UInt8:
-                    return 1;
-                case ItemType.UInt16:
-                case ItemType.Int16:
-                case ItemType.Bool:
-                    return 2;
-                case ItemType.Int32:
-                case ItemType.UInt32:
-                case ItemType.Fix32:
-                    return 4;
-                case ItemType.Frame:
-                    return 16;
-                case ItemType.String32:
-                    return TwainConst.String32;
-                case ItemType.String64:
-                    return TwainConst.String64;
-                case ItemType.String128:
-                    return TwainConst.String128;
-                case ItemType.String255:
-                    return TwainConst.String255;
-                // deprecated 
-                //case ItemType.String1024:
-                //    return TwainConst.String1024;
-                //case ItemType.Unicode512:
-                //    return TwainConst.String1024;
-            }
-            return 0;
-        }
         /// <summary>
         /// Entry call for writing values to a pointer.
         /// </summary>
@@ -948,7 +790,7 @@ namespace NTwain.Data
                 //    WriteUString(baseAddr, offset, value as string, 512);
                 //    break;
             }
-            offset += GetItemTypeSize(type);
+            offset += CapReadOut.GetItemTypeSize(type);
         }
         /// <summary>
         /// Writes string value.
@@ -1020,112 +862,7 @@ namespace NTwain.Data
         //        Marshal.WriteByte(baseAddr, offset, 0);
         //    }
         //}
-        /// <summary>
-        /// Entry call for reading values.
-        /// </summary>
-        /// <param name="baseAddr"></param>
-        /// <param name="offset"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        private object ReadValue(IntPtr baseAddr, ref int offset, ItemType type)
-        {
-            object val = null;
-            switch (type)
-            {
-                case ItemType.Int8:
-                case ItemType.UInt8:
-                    val = Marshal.ReadByte(baseAddr, offset);
-                    break;
-                case ItemType.Bool:
-                case ItemType.UInt16:
-                    val = (ushort)Marshal.ReadInt16(baseAddr, offset);
-                    break;
-                case ItemType.Int16:
-                    val = Marshal.ReadInt16(baseAddr, offset);
-                    break;
-                case ItemType.UInt32:
-                    val = (uint)Marshal.ReadInt32(baseAddr, offset);
-                    break;
-                case ItemType.Int32:
-                    val = Marshal.ReadInt32(baseAddr, offset);
-                    break;
-                case ItemType.Fix32:
-                    TWFix32 f32 = new TWFix32();
-                    f32.Whole = Marshal.ReadInt16(baseAddr, offset);
-                    f32.Fraction = (ushort)Marshal.ReadInt16(baseAddr, offset + 2);
-                    val = f32;
-                    break;
-                case ItemType.Frame:
-                    TWFrame frame = new TWFrame();
-                    frame.Left = (TWFix32)ReadValue(baseAddr, ref offset, ItemType.Fix32);
-                    frame.Top = (TWFix32)ReadValue(baseAddr, ref offset, ItemType.Fix32);
-                    frame.Right = (TWFix32)ReadValue(baseAddr, ref offset, ItemType.Fix32);
-                    frame.Bottom = (TWFix32)ReadValue(baseAddr, ref offset, ItemType.Fix32);
-                    return frame; // no need to update offset for this
-                //case ItemType.String1024:
-                //    val = ReadString(baseAddr, offset, 1024);
-                //    break;
-                case ItemType.String128:
-                    val = ReadString(baseAddr, offset, 128);
-                    break;
-                case ItemType.String255:
-                    val = ReadString(baseAddr, offset, 255);
-                    break;
-                case ItemType.String32:
-                    val = ReadString(baseAddr, offset, 32);
-                    break;
-                case ItemType.String64:
-                    val = ReadString(baseAddr, offset, 64);
-                    break;
-                //case ItemType.Unicode512:
-                //    val = ReadUString(baseAddr, offset, 512);
-                //    break;
-            }
-            offset += GetItemTypeSize(type);
-            return val;
-        }
-        /// <summary>
-        /// Read string value.
-        /// </summary>
-        /// <param name="baseAddr"></param>
-        /// <param name="offset"></param>
-        /// <param name="maxLength"></param>
-        /// <returns></returns>
-        private object ReadString(IntPtr baseAddr, int offset, int maxLength)
-        {
-            StringBuilder sb = new StringBuilder(maxLength);
-            for (int i = 0; i < maxLength; i++)
-            {
-                byte b;
-                while ((b = Marshal.ReadByte(baseAddr, offset)) != 0)
-                {
-                    sb.Append((char)b);
-                    offset++;
-                }
-            }
-            return sb.ToString();
-        }
-        /// <summary>
-        /// Read unicode string value.
-        /// </summary>
-        /// <param name="baseAddr"></param>
-        /// <param name="offset"></param>
-        /// <param name="maxLength"></param>
-        /// <returns></returns>
-        private object ReadUString(IntPtr baseAddr, int offset, int maxLength)
-        {
-            StringBuilder sb = new StringBuilder(maxLength);
-            for (int i = 0; i < maxLength; i++)
-            {
-                char c;
-                while ((c = (char)Marshal.ReadInt16(baseAddr, offset)) != 0)
-                {
-                    sb.Append(c);
-                    offset += 2;
-                }
-            }
-            return sb.ToString();
-        }
+
         #endregion
 
         #region IDisposable Members
