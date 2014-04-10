@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Data;
+using System;
 
 namespace NTwain
 {
@@ -8,30 +9,36 @@ namespace NTwain
 	public class DataTransferredEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DataTransferredEventArgs" /> class.
-		/// </summary>
-		/// <param name="data">The data pointer.</param>
-		/// <param name="filePath">The file.</param>
-		internal DataTransferredEventArgs(IntPtr data, string filePath)
-		{
-			Data = data;
-			FilePath = filePath;
-		}
-		/// <summary>
-		/// Gets pointer to the image data if applicable.
+		/// Gets pointer to the complete data if the transfer was native.
 		/// The data will be freed once the event handler ends
-		/// so consumers must complete whatever processing
-		/// required by then.
+		/// so consumers must complete whatever processing before then.
+        /// For image type this data is DIB (Windows), PICT (old Mac), and TIFF (Linux/OSX).
 		/// </summary>
 		/// <value>The data pointer.</value>
-		public IntPtr Data { get; private set; }
+		public IntPtr NativeData { get; internal set; }
 
 		/// <summary>
-		/// Gets the filepath to the transferrerd data if applicable.
+		/// Gets the file path to the complete data if the transfer was file or memory-file.
 		/// </summary>
 		/// <value>
 		/// The file.
 		/// </value>
-		public string FilePath { get; private set; }
+        public string FilePath { get; internal set; }
+
+        /// <summary>
+        /// Gets the memory data if the transfer was memory.
+        /// </summary>
+        /// <value>
+        /// The memory data.
+        /// </value>
+        public byte[] MemData { get; internal set; }
+
+        /// <summary>
+        /// Gets the final image information if applicable.
+        /// </summary>
+        /// <value>
+        /// The final image information.
+        /// </value>
+        public TWImageInfo FinalImageInfo { get; internal set; }
 	}
 }

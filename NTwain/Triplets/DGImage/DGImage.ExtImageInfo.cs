@@ -11,10 +11,11 @@ namespace NTwain.Triplets
 	{
 		internal ExtImageInfo(ITwainStateInternal session) : base(session) { }
 
-		public ReturnCode Get(TWExtImageInfo info)
+		public ReturnCode Get(out TWExtImageInfo info)
 		{
 			Session.VerifyState(7, 7, DataGroups.Image, DataArgumentType.ExtImageInfo, Message.Get);
-			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, info);
+            info = new TWExtImageInfo();
+            return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, info);
 		}
 	}
 }

@@ -63,9 +63,9 @@ namespace Tester.WPF
 
         protected override void OnDataTransferred(DataTransferredEventArgs e)
         {
-            if (e.Data != IntPtr.Zero)
+            if (e.NativeData != IntPtr.Zero)
             {
-                Image = e.Data.GetWPFBitmap();
+                Image = e.NativeData.GetWPFBitmap();
             }
             else if (!string.IsNullOrEmpty(e.FilePath))
             {

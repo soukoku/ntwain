@@ -31,6 +31,10 @@ namespace NTwain.Triplets
                 File.Exists(path);
         }
 
+        static readonly bool IsWin = Environment.OSVersion.Platform == PlatformID.Win32NT;
+        static readonly bool IsOSX = Environment.OSVersion.Platform == PlatformID.MacOSX;
+        static readonly bool IsLinux = Environment.OSVersion.Platform == PlatformID.Unix;
+
         // define sig for each different data type since "object" doesn't work
 
         #region wrapped calls

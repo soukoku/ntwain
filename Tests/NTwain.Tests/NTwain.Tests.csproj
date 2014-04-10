@@ -54,9 +54,6 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataTransferredEventArgsTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Data\TWIdentityTest.cs">
       <SubType>Code</SubType>
     </Compile>

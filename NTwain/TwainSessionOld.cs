@@ -120,7 +120,7 @@ namespace NTwain
                             {
                                 lockedPtr = MemoryManager.Instance.Lock(dataPtr);
                             }
-                            OnDataTransferred(new DataTransferredEventArgs(lockedPtr, file));
+                            OnDataTransferred(new DataTransferredEventArgs { NativeData = lockedPtr, FilePath = file });
                         }
                         //}
                         //else if (group == DataGroups.Audio)

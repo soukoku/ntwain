@@ -266,16 +266,16 @@ namespace NTwain.Data
                     frame.Bottom = (TWFix32)ReadValue(baseAddr, ref offset, ItemType.Fix32);
                     return frame; // no need to update offset again after reading fix32
                 case ItemType.String128:
-                    val = ReadString(baseAddr, offset, 128);
+                    val = ReadString(baseAddr, offset, TwainConst.String128 - 2);
                     break;
                 case ItemType.String255:
-                    val = ReadString(baseAddr, offset, 255);
+                    val = ReadString(baseAddr, offset, TwainConst.String255 - 1);
                     break;
                 case ItemType.String32:
-                    val = ReadString(baseAddr, offset, 32);
+                    val = ReadString(baseAddr, offset, TwainConst.String32 - 2);
                     break;
                 case ItemType.String64:
-                    val = ReadString(baseAddr, offset, 64);
+                    val = ReadString(baseAddr, offset, TwainConst.String64 - 2);
                     break;
                 case ItemType.Handle:
                     val = new IntPtr(baseAddr.ToInt64() + offset);
@@ -294,16 +294,21 @@ namespace NTwain.Data
         /// <returns></returns>
         static string ReadString(IntPtr baseAddr, int offset, int maxLength)
         {
-            // todo: add support for other platform
-
-            var sb = new StringBuilder(maxLength);
-            byte bt;
-            while (sb.Length < maxLength &&
-                (bt = Marshal.ReadByte(baseAddr, offset++)) != 0)
+            // does this work cross-platform?
+            var val = Marshal.PtrToStringAnsi(new IntPtr(baseAddr.ToInt64() + offset));
+            if (val.Length > maxLength)
             {
-                sb.Append((char)bt);
+                // bad source, whatever
             }
-            return sb.ToString();
+            return val;
+            //var sb = new StringBuilder(maxLength);
+            //byte bt;
+            //while (sb.Length < maxLength &&
+            //    (bt = Marshal.ReadByte(baseAddr, offset++)) != 0)
+            //{
+            //    sb.Append((char)bt);
+            //}
+            //return sb.ToString();
         }
 
 

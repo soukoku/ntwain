@@ -39,7 +39,7 @@ namespace NTwain
 
         /// <summary>
         /// Gets the tentative image information for the current transfer if applicable.
-        /// This may differ from the final image depending on the transfer mode used.
+        /// This may differ from the final image depending on the transfer mode used (mostly when doing mem xfer).
         /// </summary>
         /// <value>
         /// The image info.

@@ -37,6 +37,7 @@ namespace NTwain
         object _callbackObj; // kept around so it doesn't get gc'ed
         TWUserInterface _twui;
 
+        static readonly CapabilityId[] _emptyCapList = new CapabilityId[0];
 
         private IList<CapabilityId> _supportedCaps;
         /// <summary>
@@ -53,7 +54,7 @@ namespace NTwain
                 {
                     _supportedCaps = this.GetCapabilities();
                 }
-                return _supportedCaps ?? new CapabilityId[0];
+                return _supportedCaps ?? _emptyCapList;
             }
             private set
             {
@@ -289,6 +290,7 @@ namespace NTwain
             if (rc == ReturnCode.Success)
             {
                 _callbackObj = null;
+                SupportedCaps = null;
             }
             return rc;
         }
@@ -776,7 +778,7 @@ namespace NTwain
                     {
                         lockedPtr = MemoryManager.Instance.Lock(dataPtr);
                     }
-                    OnDataTransferred(new DataTransferredEventArgs(lockedPtr, null));
+                    OnDataTransferred(new DataTransferredEventArgs { NativeData = lockedPtr });
                 }
             }
             finally
@@ -808,7 +810,7 @@ namespace NTwain
             var xrc = DGAudio.AudioFileXfer.Get();
             if (xrc == ReturnCode.XferDone)
             {
-                OnDataTransferred(new DataTransferredEventArgs(IntPtr.Zero, filePath));
+                OnDataTransferred(new DataTransferredEventArgs { FilePath = filePath });
             }
         }
 
@@ -826,11 +828,16 @@ namespace NTwain
                 if (xrc == ReturnCode.XferDone)
                 {
                     State = 7;
+                    TWImageInfo imgInfo;
+                    if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
+                    {
+                        imgInfo = null;
+                    }
                     if (dataPtr != IntPtr.Zero)
                     {
                         lockedPtr = MemoryManager.Instance.Lock(dataPtr);
                     }
-                    OnDataTransferred(new DataTransferredEventArgs(lockedPtr, null));
+                    OnDataTransferred(new DataTransferredEventArgs { NativeData = lockedPtr, FinalImageInfo = imgInfo });
                 }
             }
             finally
@@ -862,13 +869,93 @@ namespace NTwain
             var xrc = DGImage.ImageFileXfer.Get();
             if (xrc == ReturnCode.XferDone)
             {
-                OnDataTransferred(new DataTransferredEventArgs(IntPtr.Zero, filePath));
+                TWImageInfo imgInfo;
+                if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
+                {
+                    imgInfo = null;
+                }
+                OnDataTransferred(new DataTransferredEventArgs { FilePath = filePath, FinalImageInfo = imgInfo });
             }
         }
 
         private void DoImageMemoryXfer()
         {
             throw new NotImplementedException();
+
+            TWSetupMemXfer memInfo;
+            if (DGControl.SetupMemXfer.Get(out memInfo) == ReturnCode.Success)
+            {
+                TWImageMemXfer xferInfo = new TWImageMemXfer();
+                try
+                {
+                    xferInfo.Memory = new TWMemory
+                    {
+                        Flags = MemoryFlags.AppOwns | MemoryFlags.Pointer,
+                        Length = memInfo.Preferred,
+                        TheMem = MemoryManager.Instance.Allocate(memInfo.Preferred)
+                    };
+
+                    var xrc = ReturnCode.Success;
+                    do
+                    {
+                        xrc = DGImage.ImageMemFileXfer.Get(xferInfo);
+
+                        if (xrc == ReturnCode.Success ||
+                            xrc == ReturnCode.XferDone)
+                        {
+                            State = 7;
+                            byte[] buffer = new byte[(int)xferInfo.BytesWritten];
+                            // todo: need lock before use?
+                            IntPtr lockPtr = IntPtr.Zero;
+                            try
+                            {
+                                lockPtr = MemoryManager.Instance.Lock(xferInfo.Memory.TheMem);
+                                Marshal.Copy(lockPtr, buffer, 0, buffer.Length);
+                            }
+                            finally
+                            {
+                                if (lockPtr != IntPtr.Zero)
+                                {
+                                    MemoryManager.Instance.Unlock(lockPtr);
+                                }
+                            }
+                            // now what?
+
+                        }
+                    } while (xrc == ReturnCode.Success);
+
+                    if (xrc == ReturnCode.XferDone)
+                    {
+                        TWImageInfo imgInfo;
+                        //TWExtImageInfo extInfo;
+                        //if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
+                        //{
+                        //    if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
+                        //    {
+                        //        extInfo = null;
+                        //    }
+                        //}
+                        if (DGImage.ImageInfo.Get(out imgInfo) == ReturnCode.Success)
+                        {
+                            //OnDataTransferred(new DataTransferredEventArgs(IntPtr.Zero, null));
+                        }
+                        else
+                        {
+                            Trace.TraceError("Failed to get image info after ImageMemXfer.");
+                            imgInfo = null;
+                        }
+                    }
+                }
+                finally
+                {
+                    State = 6;
+                    if (xferInfo.Memory.TheMem != IntPtr.Zero)
+                    {
+                        MemoryManager.Instance.Free(xferInfo.Memory.TheMem);
+                    }
+                }
+
+            }
         }
 
         private void DoImageMemoryFileXfer()
@@ -886,6 +973,7 @@ namespace NTwain
                 {
                     xferInfo.Memory = new TWMemory
                     {
+                        Flags = MemoryFlags.AppOwns | MemoryFlags.Pointer,
                         Length = memInfo.Preferred,
                         TheMem = MemoryManager.Instance.Allocate(memInfo.Preferred)
                     };
@@ -900,8 +988,22 @@ namespace NTwain
                             if (xrc == ReturnCode.Success ||
                                 xrc == ReturnCode.XferDone)
                             {
+                                State = 7;
                                 byte[] buffer = new byte[(int)xferInfo.BytesWritten];
-                                Marshal.Copy(xferInfo.Memory.TheMem, buffer, 0, buffer.Length);
+                                // todo: need lock before use?
+                                IntPtr lockPtr = IntPtr.Zero;
+                                try
+                                {
+                                    lockPtr = MemoryManager.Instance.Lock(xferInfo.Memory.TheMem);
+                                    Marshal.Copy(lockPtr, buffer, 0, buffer.Length);
+                                }
+                                finally
+                                {
+                                    if (lockPtr != IntPtr.Zero)
+                                    {
+                                        MemoryManager.Instance.Unlock(lockPtr);
+                                    }
+                                }
                                 outStream.Write(buffer, 0, buffer.Length);
                             }
                         } while (xrc == ReturnCode.Success);
@@ -962,6 +1064,7 @@ namespace NTwain
                 }
                 finally
                 {
+                    State = 6;
                     if (xferInfo.Memory.TheMem != IntPtr.Zero)
                     {
                         MemoryManager.Instance.Free(xferInfo.Memory.TheMem);
@@ -974,7 +1077,12 @@ namespace NTwain
 
                 if (File.Exists(finalFile))
                 {
-                    OnDataTransferred(new DataTransferredEventArgs(IntPtr.Zero, finalFile));
+                    TWImageInfo imgInfo;
+                    if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
+                    {
+                        imgInfo = null;
+                    }
+                    OnDataTransferred(new DataTransferredEventArgs { FilePath = finalFile, FinalImageInfo = imgInfo });
                 }
             }
         }

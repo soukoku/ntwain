@@ -93,7 +93,7 @@ namespace Tester
 
         static void twain_DataTransferred(object sender, DataTransferredEventArgs e)
         {
-            if (e.Data != IntPtr.Zero)
+            if (e.NativeData != IntPtr.Zero)
             {
                 Console.WriteLine("Got twain data on thread {0}", Thread.CurrentThread.ManagedThreadId);
             }
