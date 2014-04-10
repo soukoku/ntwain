@@ -198,9 +198,9 @@ namespace Tester.WPF
                     case CapabilityId.CapEnableDSUIOnly:
                         CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap);
                         break;
-                    //case CapabilityId.CapEndorser:
-                    //    CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap);
-                    //    break;
+                    case CapabilityId.CapEndorser:
+                        CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap);
+                        break;
                     case CapabilityId.CapExtendedCaps:
                         CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap);
                         break;

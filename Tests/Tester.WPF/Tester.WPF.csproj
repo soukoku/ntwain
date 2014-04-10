@@ -46,7 +46,7 @@
     </Reference>
     <Reference Include="ModernWPF, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c99d0cfbea7491ef, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ModernWPF.1.1.41.1\lib\net40-Client\ModernWPF.dll</HintPath>
+      <HintPath>..\..\packages\ModernWPF.1.1.41.2\lib\net40-Client\ModernWPF.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

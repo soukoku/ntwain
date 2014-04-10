@@ -10,11 +10,11 @@ namespace NTwain.Values
     /// </summary>
     public static class ValueConverter
     {
-        public static IList<T> CastToEnum<T>(this IList<object> list) where T : struct,IConvertible
+        public static IList<T> CastToEnum<T>(this IEnumerable<object> list) where T : struct,IConvertible
         {
             return list.CastToEnum<T>(true);
         }
-        public static IList<T> CastToEnum<T>(this IList<object> list, bool tryUpperWord) where T : struct,IConvertible
+        public static IList<T> CastToEnum<T>(this IEnumerable<object> list, bool tryUpperWord) where T : struct,IConvertible
         {
             return list.Select(o => o.ConvertToEnum<T>(tryUpperWord)).ToList();
         }
