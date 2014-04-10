@@ -888,6 +888,9 @@ namespace NTwain
                 TWImageMemXfer xferInfo = new TWImageMemXfer();
                 try
                 {
+                    // how to tell if going to xfer in strip vs tile?
+                    // if tile don't allocate memory in app?
+                    
                     xferInfo.Memory = new TWMemory
                     {
                         Flags = MemoryFlags.AppOwns | MemoryFlags.Pointer,
@@ -971,6 +974,7 @@ namespace NTwain
                 string finalFile = null;
                 try
                 {
+                    // no strip or tile here, just chunks
                     xferInfo.Memory = new TWMemory
                     {
                         Flags = MemoryFlags.AppOwns | MemoryFlags.Pointer,

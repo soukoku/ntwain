@@ -6,7 +6,7 @@ namespace NTwain
 {
     /// <summary>
     /// A customized TWAIN session for use in WPF environment.
-    /// Use this by using <see cref="PreFilterMessage"/> method as the target of <see cref="HwndSource.AddHook"/> delegate.
+    /// Use this by using <see cref="PreFilterMessage"/> method as the target of <see cref="System.Windows.Interop.HwndSource.AddHook"/> delegate.
     /// </summary>
     public class TwainSessionWPF : TwainSession
     {
@@ -30,7 +30,7 @@ namespace NTwain
         public IntPtr PreFilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             var winmsg = new MESSAGE(hwnd, msg, wParam, lParam);
-
+            
             handled = base.HandleWndProcMessage(ref winmsg);
 
             return IntPtr.Zero;

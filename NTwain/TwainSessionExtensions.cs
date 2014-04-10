@@ -171,7 +171,6 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="capabilityId">The capability unique identifier.</param>
-        /// <param name="tryUpperWord">if set to <c>true</c> then apply to workaround for certain bad sources.</param>
         /// <returns></returns>
         public static IList<object> GetCapabilityValues(this TwainSession session, CapabilityId capabilityId)
         {
