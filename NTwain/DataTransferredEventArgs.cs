@@ -3,9 +3,9 @@ using System;
 
 namespace NTwain
 {
-	/// <summary>
-	/// Contains event data after whatever data from the source has been transferred.
-	/// </summary>
+    /// <summary>
+    /// Contains event data after whatever data from the source has been transferred.
+    /// </summary>
 	public class DataTransferredEventArgs : EventArgs
 	{
 		/// <summary>
@@ -17,16 +17,18 @@ namespace NTwain
 		/// <value>The data pointer.</value>
 		public IntPtr NativeData { get; internal set; }
 
-		/// <summary>
-		/// Gets the file path to the complete data if the transfer was file or memory-file.
-		/// </summary>
-		/// <value>
-		/// The file.
-		/// </value>
-        public string FilePath { get; internal set; }
+        /// <summary>
+        /// Gets the file path to the complete data if the transfer was file or memory-file.
+        /// </summary>
+        /// <value>
+        /// The file path.
+        /// </value>
+        public string FileDataPath { get; internal set; }
 
         /// <summary>
-        /// Gets the memory data if the transfer was memory.
+        /// Gets the raw memory data if the transfer was memory.
+        /// Consumer application will need to do the parsing based on the values
+        /// from <see cref="ImageInfo"/>.
         /// </summary>
         /// <value>
         /// The memory data.
@@ -39,6 +41,6 @@ namespace NTwain
         /// <value>
         /// The final image information.
         /// </value>
-        public TWImageInfo FinalImageInfo { get; internal set; }
+        public TWImageInfo ImageInfo { get; internal set; }
 	}
 }

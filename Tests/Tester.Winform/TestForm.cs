@@ -76,9 +76,9 @@ namespace Tester.Winform
                     if (img != null)
                         pictureBox1.Image = img;
                 }
-                else if (!string.IsNullOrEmpty(e.FilePath))
+                else if (!string.IsNullOrEmpty(e.FileDataPath))
                 {
-                    var img = new Bitmap(e.FilePath);
+                    var img = new Bitmap(e.FileDataPath);
                     pictureBox1.Image = img;
                 }
             };

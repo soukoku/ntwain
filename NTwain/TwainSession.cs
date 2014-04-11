@@ -810,7 +810,7 @@ namespace NTwain
             var xrc = DGAudio.AudioFileXfer.Get();
             if (xrc == ReturnCode.XferDone)
             {
-                OnDataTransferred(new DataTransferredEventArgs { FilePath = filePath });
+                OnDataTransferred(new DataTransferredEventArgs { FileDataPath = filePath });
             }
         }
 
@@ -837,7 +837,7 @@ namespace NTwain
                     {
                         lockedPtr = MemoryManager.Instance.Lock(dataPtr);
                     }
-                    OnDataTransferred(new DataTransferredEventArgs { NativeData = lockedPtr, FinalImageInfo = imgInfo });
+                    OnDataTransferred(new DataTransferredEventArgs { NativeData = lockedPtr, ImageInfo = imgInfo });
                 }
             }
             finally
@@ -874,14 +874,12 @@ namespace NTwain
                 {
                     imgInfo = null;
                 }
-                OnDataTransferred(new DataTransferredEventArgs { FilePath = filePath, FinalImageInfo = imgInfo });
+                OnDataTransferred(new DataTransferredEventArgs { FileDataPath = filePath, ImageInfo = imgInfo });
             }
         }
 
         private void DoImageMemoryXfer()
         {
-            throw new NotImplementedException();
-
             TWSetupMemXfer memInfo;
             if (DGControl.SetupMemXfer.Get(out memInfo) == ReturnCode.Success)
             {
@@ -890,7 +888,7 @@ namespace NTwain
                 {
                     // how to tell if going to xfer in strip vs tile?
                     // if tile don't allocate memory in app?
-                    
+
                     xferInfo.Memory = new TWMemory
                     {
                         Flags = MemoryFlags.AppOwns | MemoryFlags.Pointer,
@@ -898,54 +896,65 @@ namespace NTwain
                         TheMem = MemoryManager.Instance.Allocate(memInfo.Preferred)
                     };
 
-                    var xrc = ReturnCode.Success;
-                    do
+                    // do the unthinkable and keep all xferred batches in memory, 
+                    // possibly defeating the purpose of mem xfer
+                    // unless compression is used.
+                    // todo: use array instead of memory stream?
+                    using (MemoryStream xferredData = new MemoryStream())
                     {
-                        xrc = DGImage.ImageMemFileXfer.Get(xferInfo);
-
-                        if (xrc == ReturnCode.Success ||
-                            xrc == ReturnCode.XferDone)
+                        var xrc = ReturnCode.Success;
+                        do
                         {
-                            State = 7;
-                            byte[] buffer = new byte[(int)xferInfo.BytesWritten];
-                            // todo: need lock before use?
-                            IntPtr lockPtr = IntPtr.Zero;
-                            try
+                            xrc = DGImage.ImageMemFileXfer.Get(xferInfo);
+
+                            if (xrc == ReturnCode.Success ||
+                                xrc == ReturnCode.XferDone)
                             {
-                                lockPtr = MemoryManager.Instance.Lock(xferInfo.Memory.TheMem);
-                                Marshal.Copy(lockPtr, buffer, 0, buffer.Length);
-                            }
-                            finally
-                            {
-                                if (lockPtr != IntPtr.Zero)
+                                State = 7;
+                                // optimize and allocate buffer only once instead of inside the loop?
+                                byte[] buffer = new byte[(int)xferInfo.BytesWritten];
+
+                                IntPtr lockPtr = IntPtr.Zero;
+                                try
                                 {
-                                    MemoryManager.Instance.Unlock(lockPtr);
+                                    lockPtr = MemoryManager.Instance.Lock(xferInfo.Memory.TheMem);
+                                    Marshal.Copy(lockPtr, buffer, 0, buffer.Length);
+                                    xferredData.Write(buffer, 0, buffer.Length);
+                                }
+                                finally
+                                {
+                                    if (lockPtr != IntPtr.Zero)
+                                    {
+                                        MemoryManager.Instance.Unlock(lockPtr);
+                                    }
                                 }
                             }
-                            // now what?
+                        } while (xrc == ReturnCode.Success);
 
-                        }
-                    } while (xrc == ReturnCode.Success);
-
-                    if (xrc == ReturnCode.XferDone)
-                    {
-                        TWImageInfo imgInfo;
-                        //TWExtImageInfo extInfo;
-                        //if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
-                        //{
-                        //    if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
-                        //    {
-                        //        extInfo = null;
-                        //    }
-                        //}
-                        if (DGImage.ImageInfo.Get(out imgInfo) == ReturnCode.Success)
+                        if (xrc == ReturnCode.XferDone)
                         {
-                            //OnDataTransferred(new DataTransferredEventArgs(IntPtr.Zero, null));
+                            TWImageInfo imgInfo;
+                            //TWExtImageInfo extInfo;
+                            //if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
+                            //{
+                            //    if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
+                            //    {
+                            //        extInfo = null;
+                            //    }
+                            //}
+                            if (DGImage.ImageInfo.Get(out imgInfo) == ReturnCode.Success)
+                            {
+                                OnDataTransferred(new DataTransferredEventArgs { MemData = xferredData.ToArray(), ImageInfo = imgInfo });
+                            }
+                            else
+                            {
+                                throw new TwainException("Failed to get image info after ImageMemXfer.");
+                            }
                         }
                         else
                         {
-                            Trace.TraceError("Failed to get image info after ImageMemXfer.");
-                            imgInfo = null;
+                            // todo: provide better mechanism for failed xfer, like event handler
+                            throw new TwainException("Failed to transfer data.");
                         }
                     }
                 }
@@ -994,7 +1003,7 @@ namespace NTwain
                             {
                                 State = 7;
                                 byte[] buffer = new byte[(int)xferInfo.BytesWritten];
-                                // todo: need lock before use?
+
                                 IntPtr lockPtr = IntPtr.Zero;
                                 try
                                 {
@@ -1086,7 +1095,7 @@ namespace NTwain
                     {
                         imgInfo = null;
                     }
-                    OnDataTransferred(new DataTransferredEventArgs { FilePath = finalFile, FinalImageInfo = imgInfo });
+                    OnDataTransferred(new DataTransferredEventArgs { FileDataPath = finalFile, ImageInfo = imgInfo });
                 }
             }
         }

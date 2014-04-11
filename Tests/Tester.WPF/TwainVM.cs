@@ -67,9 +67,9 @@ namespace Tester.WPF
             {
                 Image = e.NativeData.GetWPFBitmap();
             }
-            else if (!string.IsNullOrEmpty(e.FilePath))
+            else if (!string.IsNullOrEmpty(e.FileDataPath))
             {
-                var img = new BitmapImage(new Uri(e.FilePath));
+                var img = new BitmapImage(new Uri(e.FileDataPath));
                 Image = img;
             }
             base.OnDataTransferred(e);
