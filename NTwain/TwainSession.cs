@@ -456,6 +456,11 @@ namespace NTwain
         public event EventHandler<DataTransferredEventArgs> DataTransferred;
 
         /// <summary>
+        /// Occurs when an error has been encountered during transfer.
+        /// </summary>
+        public event EventHandler<TransferErrorEventArgs> TransferError;
+
+        /// <summary>
         /// Called when <see cref="State"/> changed
         /// and raises the <see cref="StateChanged" /> event.
         /// </summary>
@@ -557,6 +562,22 @@ namespace NTwain
             }
         }
 
+        /// <summary>
+        /// Raises the <see cref="E:TransferError" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="TransferErrorEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnTransferError(TransferErrorEventArgs e)
+        {
+            var hand = TransferError;
+            if (hand != null)
+            {
+                try
+                {
+                    hand(this, e);
+                }
+                catch { }
+            }
+        }
         #endregion
 
         #region TWAIN logic during xfer work
@@ -780,6 +801,14 @@ namespace NTwain
                     }
                     OnDataTransferred(new DataTransferredEventArgs { NativeData = lockedPtr });
                 }
+                else
+                {
+                    OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
+                }
+            }
+            catch (Exception ex)
+            {
+                OnTransferError(new TransferErrorEventArgs { Exception = ex });
             }
             finally
             {
@@ -812,6 +841,10 @@ namespace NTwain
             {
                 OnDataTransferred(new DataTransferredEventArgs { FileDataPath = filePath });
             }
+            else
+            {
+                OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
+            }
         }
 
         #endregion
@@ -839,6 +872,14 @@ namespace NTwain
                     }
                     OnDataTransferred(new DataTransferredEventArgs { NativeData = lockedPtr, ImageInfo = imgInfo });
                 }
+                else
+                {
+                    OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
+                }
+            }
+            catch (Exception ex)
+            {
+                OnTransferError(new TransferErrorEventArgs { Exception = ex });
             }
             finally
             {
@@ -875,6 +916,10 @@ namespace NTwain
                     imgInfo = null;
                 }
                 OnDataTransferred(new DataTransferredEventArgs { FileDataPath = filePath, ImageInfo = imgInfo });
+            }
+            else
+            {
+                OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
             }
         }
 
@@ -953,10 +998,13 @@ namespace NTwain
                         }
                         else
                         {
-                            // todo: provide better mechanism for failed xfer, like event handler
-                            throw new TwainException("Failed to transfer data.");
+                            OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    OnTransferError(new TransferErrorEventArgs { Exception = ex });
                 }
                 finally
                 {
@@ -1074,6 +1122,14 @@ namespace NTwain
                         }
                         File.Move(tempFile, finalFile);
                     }
+                    else
+                    {
+                        OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    OnTransferError(new TransferErrorEventArgs { Exception = ex });
                 }
                 finally
                 {

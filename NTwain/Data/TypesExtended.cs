@@ -2189,12 +2189,12 @@ namespace NTwain.Data
         /// <summary>
         /// Condition Code describing the status.
         /// </summary>
-        public ConditionCode ConditionCode { get { return (ConditionCode)_conditionCode; } set { _conditionCode = (ushort)value; } }
+        public ConditionCode ConditionCode { get { return (ConditionCode)_conditionCode; } internal set { _conditionCode = (ushort)value; } }
         /// <summary>
         /// Valid for TWAIN 2.1 and later. This field contains additional
         /// scanner-specific data. If there is no data, then this value must be zero.
         /// </summary>
-        public ushort Data { get { return _data; } set { _data = Data; } }
+        public ushort Data { get { return _data; } internal set { _data = Data; } }
     }
 
     /// <summary>
