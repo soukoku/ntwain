@@ -20,6 +20,8 @@ using CommonWin32;
 using System.Threading;
 using ModernWPF.Controls;
 using System.Reflection;
+using System.ComponentModel;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Tester.WPF
 {
@@ -44,6 +46,13 @@ namespace Tester.WPF
 
             _twainVM = new TwainVM();
             this.DataContext = _twainVM;
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                Messenger.Default.Register<DialogMessage>(this, msg =>
+                {
+                    ModernMessageBox.Show(this, msg.Content, msg.Caption, msg.Button, msg.Icon, msg.DefaultResult);
+                });
+            }
         }
 
         protected override void OnClosed(EventArgs e)

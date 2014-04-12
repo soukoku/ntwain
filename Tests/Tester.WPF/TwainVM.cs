@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommonWin32;
 using System.Threading;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Tester.WPF
 {
@@ -40,6 +41,29 @@ namespace Tester.WPF
                 _image = value;
                 RaisePropertyChanged("Image");
             }
+        }
+
+        protected override void OnTransferError(TransferErrorEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                Messenger.Default.Send(new DialogMessage(e.Exception.Message, null)
+                {
+                    Caption = "Transfer Error Exception",
+                    Icon = System.Windows.MessageBoxImage.Error,
+                    Button = System.Windows.MessageBoxButton.OK
+                });
+            }
+            else
+            {
+                Messenger.Default.Send(new DialogMessage(string.Format("Return Code: {0}\nCondition Code: {1}", e.ReturnCode, e.SourceStatus.ConditionCode), null)
+                {
+                    Caption = "Transfer Error",
+                    Icon = System.Windows.MessageBoxImage.Error,
+                    Button = System.Windows.MessageBoxButton.OK
+                });
+            }
+            base.OnTransferError(e);
         }
 
         protected override void OnTransferReady(TransferReadyEventArgs e)
