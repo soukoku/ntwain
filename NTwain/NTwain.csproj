@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="AsyncPump.cs" />
     <Compile Include="Data\CapReadOut.cs" />
+    <Compile Include="Data\TypeReader.cs" />
     <Compile Include="Data\TypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="Extensions.cs" />

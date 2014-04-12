@@ -691,7 +691,7 @@ namespace NTwain.Data
             if (ContainerType != Values.ContainerType.OneValue) { throw new ArgumentException(Resources.BadContainerType, "value"); }
 
             // since one value can only house UInt32 we will not allow type size > 4
-            if (CapReadOut.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid one value type"); }
+            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid one value type"); }
 
             _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
@@ -707,7 +707,7 @@ namespace NTwain.Data
             if (ContainerType != Values.ContainerType.Enum) { throw new ArgumentException(Resources.BadContainerType, "value"); }
 
 
-            Int32 valueSize = value.ItemOffset + value.ItemList.Length * CapReadOut.GetItemTypeSize(value.ItemType);
+            Int32 valueSize = value.ItemOffset + value.ItemList.Length * TypeReader.GetItemTypeSize(value.ItemType);
 
             int offset = 0;
             _hContainer = MemoryManager.Instance.Allocate((uint)valueSize);
@@ -733,7 +733,7 @@ namespace NTwain.Data
             if (ContainerType != Values.ContainerType.Range) { throw new ArgumentException(Resources.BadContainerType, "value"); }
 
             // since range value can only house UInt32 we will not allow type size > 4
-            if (CapReadOut.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid range value type"); }
+            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid range value type"); }
 
             _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
@@ -808,7 +808,7 @@ namespace NTwain.Data
                 //    WriteUString(baseAddr, offset, value as string, 512);
                 //    break;
             }
-            offset += CapReadOut.GetItemTypeSize(type);
+            offset += TypeReader.GetItemTypeSize(type);
         }
         /// <summary>
         /// Writes string value.
@@ -1325,7 +1325,7 @@ namespace NTwain.Data
         /// If the Item field contains a handle to data, then the Application is
         /// responsible for freeing that memory.
         /// </summary>
-        public UIntPtr Item { get { return _item; } }
+        public UIntPtr Item { get { return _item; } internal set { _item = value; } }
     }
 
     /// <summary>
@@ -1352,6 +1352,9 @@ namespace NTwain.Data
 
         #region IDisposable Members
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -1364,22 +1367,27 @@ namespace NTwain.Data
             // this is iffy & may have to flatten info array as individual fields in this class to work
             if (_info != null)
             {
-                foreach (var i in _info)
+                for (int i = 0; i < _info.Length; i++)
                 {
-                    if (i.Item != UIntPtr.Zero)
+                    var it = _info[i];
+                    if (it.Item != UIntPtr.Zero)
                     {
-                        var sz = i.NumItems * CapReadOut.GetItemTypeSize(i.ItemType);
-                        if (sz > UIntPtr.Size || i.ItemType == ItemType.Handle)
+                        var sz = it.NumItems * TypeReader.GetItemTypeSize(it.ItemType);
+                        if (sz > UIntPtr.Size || it.ItemType == ItemType.Handle)
                         {
                             // uintptr to intptr could be bad
-                            var ptr = new IntPtr(BitConverter.ToInt64(BitConverter.GetBytes(i.Item.ToUInt64()), 0));
+                            var ptr = new IntPtr(BitConverter.ToInt64(BitConverter.GetBytes(it.Item.ToUInt64()), 0));
                             MemoryManager.Instance.Free(ptr);
                         }
                     }
+                    it.Item = UIntPtr.Zero;
                 }
             }
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="TWExtImageInfo"/> class.
+        /// </summary>
         ~TWExtImageInfo()
         {
             Dispose(false);
@@ -2239,6 +2247,9 @@ namespace NTwain.Data
 
         #region IDisposable Members
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -2258,6 +2269,9 @@ namespace NTwain.Data
             }
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="TWStatusUtf8"/> class.
+        /// </summary>
         ~TWStatusUtf8()
         {
             Dispose(false);
