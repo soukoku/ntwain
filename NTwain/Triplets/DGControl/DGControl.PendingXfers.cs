@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		internal ReturnCode EndXfer(TWPendingXfers pendingXfers)
 		{
 			Session.VerifyState(6, 7, DataGroups.Control, DataArgumentType.PendingXfers, Message.EndXfer);
-			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.EndXfer, pendingXfers);
+			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, Message.EndXfer, pendingXfers);
 		}
 
 		/// <summary>
@@ -35,7 +35,7 @@ namespace NTwain.Triplets
 		public ReturnCode Get(TWPendingXfers pendingXfers)
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.PendingXfers, Message.Get);
-			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, pendingXfers);
+			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, pendingXfers);
 		}
 
 		/// <summary>
@@ -46,7 +46,7 @@ namespace NTwain.Triplets
 		internal ReturnCode Reset(TWPendingXfers pendingXfers)
 		{
 			Session.VerifyState(6, 6, DataGroups.Control, DataArgumentType.PendingXfers, Message.Reset);
-			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Reset, pendingXfers);
+			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Reset, pendingXfers);
 		}
 
 		/// <summary>
@@ -58,7 +58,7 @@ namespace NTwain.Triplets
 		public ReturnCode StopFeeder(TWPendingXfers pendingXfers)
 		{
 			Session.VerifyState(6, 6, DataGroups.Control, DataArgumentType.PendingXfers, Message.StopFeeder);
-			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.StopFeeder, pendingXfers);
+			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, Message.StopFeeder, pendingXfers);
 		}
 	}
 }

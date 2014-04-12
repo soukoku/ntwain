@@ -20,7 +20,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupMemXfer, Message.Get);
 			setupMemXfer = new TWSetupMemXfer();
-			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, setupMemXfer);
+			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, setupMemXfer);
 		}
 	}
 }

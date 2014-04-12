@@ -18,7 +18,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(6, 6, DataGroups.Audio, DataArgumentType.AudioFileXfer, Message.Get);
 			IntPtr z = IntPtr.Zero;
-			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, DataGroups.Audio, DataArgumentType.AudioFileXfer, Message.Get, ref z);
+			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, DataGroups.Audio, DataArgumentType.AudioFileXfer, Message.Get, ref z);
 		}
 	}
 }

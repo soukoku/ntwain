@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		public ReturnCode Get(ref IntPtr handle)
 		{
 			Session.VerifyState(6, 6, DataGroups.Audio, DataArgumentType.AudioNativeXfer, Message.Get);
-			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, DataGroups.Audio, DataArgumentType.AudioNativeXfer, Message.Get, ref handle);
+			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, DataGroups.Audio, DataArgumentType.AudioNativeXfer, Message.Get, ref handle);
 		}
 	}
 }

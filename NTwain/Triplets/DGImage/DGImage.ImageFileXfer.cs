@@ -20,7 +20,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(6, 6, DataGroups.Image, DataArgumentType.ImageFileXfer, Message.Get);
 			IntPtr z = IntPtr.Zero;
-			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, DataGroups.Image, DataArgumentType.ImageFileXfer, Message.Get, ref z);
+			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, DataGroups.Image, DataArgumentType.ImageFileXfer, Message.Get, ref z);
 		}
 	}
 }

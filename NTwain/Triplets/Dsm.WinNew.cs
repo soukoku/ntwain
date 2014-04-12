@@ -5,12 +5,12 @@ using NTwain.Values;
 
 namespace NTwain.Triplets
 {
-	static partial class PInvoke
+	static partial class Dsm
 	{
 		static partial class NativeMethods
         {
             [DllImport("twaindsm", EntryPoint = "#1")]
-            public static extern ReturnCode DsmEntry64(
+            public static extern ReturnCode DsmWinNew(
                 [In, Out]TWIdentity origin,
                 [In, Out]TWIdentity destination,
                 DataGroups dg,
@@ -19,7 +19,7 @@ namespace NTwain.Triplets
                 ref IntPtr data);
 
             [DllImport("twaindsm", EntryPoint = "#1")]
-            public static extern ReturnCode DsmEntry64(
+            public static extern ReturnCode DsmWinNew(
                 [In, Out]TWIdentity origin,
                 [In, Out]TWIdentity destination,
                 DataGroups dg,
@@ -28,7 +28,7 @@ namespace NTwain.Triplets
                 ref DataGroups data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -37,7 +37,7 @@ namespace NTwain.Triplets
 				[In, Out]TWAudioInfo data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -46,7 +46,7 @@ namespace NTwain.Triplets
 				[In, Out]TWCapability data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -55,7 +55,7 @@ namespace NTwain.Triplets
 				[In, Out]TWCustomDSData data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -64,7 +64,7 @@ namespace NTwain.Triplets
 				[In, Out]TWDeviceEvent data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -73,7 +73,7 @@ namespace NTwain.Triplets
 				[In, Out]TWCallback data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -82,7 +82,7 @@ namespace NTwain.Triplets
 				[In, Out]TWCallback2 data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -91,7 +91,7 @@ namespace NTwain.Triplets
 				[In, Out]TWEntryPoint data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -100,7 +100,7 @@ namespace NTwain.Triplets
 				[In, Out]TWEvent data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -109,7 +109,7 @@ namespace NTwain.Triplets
 				[In, Out]TWFileSystem data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				IntPtr zero,
 				DataGroups dg,
@@ -118,7 +118,7 @@ namespace NTwain.Triplets
 				[In, Out]TWIdentity data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -127,7 +127,7 @@ namespace NTwain.Triplets
 				[In, Out]TWPassThru data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -136,7 +136,7 @@ namespace NTwain.Triplets
 				[In, Out]TWPendingXfers data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -145,7 +145,7 @@ namespace NTwain.Triplets
 				[In, Out]TWSetupFileXfer data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -154,7 +154,7 @@ namespace NTwain.Triplets
 				[In, Out]TWSetupMemXfer data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -163,7 +163,7 @@ namespace NTwain.Triplets
 				[In, Out]TWStatusUtf8 data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -172,7 +172,7 @@ namespace NTwain.Triplets
 				[In, Out]TWUserInterface data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -181,7 +181,7 @@ namespace NTwain.Triplets
 				[In, Out]TWCieColor data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -190,7 +190,7 @@ namespace NTwain.Triplets
 				[In, Out]TWExtImageInfo data);
 
             [DllImport("twaindsm", EntryPoint = "#1")]
-            public static extern ReturnCode DsmEntry64(
+            public static extern ReturnCode DsmWinNew(
                 [In, Out]TWIdentity origin,
                 [In, Out]TWIdentity destination,
                 DataGroups dg,
@@ -199,7 +199,7 @@ namespace NTwain.Triplets
                 [In, Out]TWFilter data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -208,7 +208,7 @@ namespace NTwain.Triplets
 				[In, Out]TWGrayResponse data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -217,7 +217,7 @@ namespace NTwain.Triplets
 				[In, Out]TWImageInfo data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -226,7 +226,7 @@ namespace NTwain.Triplets
 				[In, Out]TWImageLayout data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -235,7 +235,7 @@ namespace NTwain.Triplets
 				[In, Out]TWImageMemXfer data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -244,7 +244,7 @@ namespace NTwain.Triplets
 				[In, Out]TWJpegCompression data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -253,7 +253,7 @@ namespace NTwain.Triplets
 				[In, Out]TWPalette8 data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -262,7 +262,7 @@ namespace NTwain.Triplets
 				[In, Out]TWRgbResponse data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,
@@ -271,7 +271,7 @@ namespace NTwain.Triplets
 				[In, Out]TWStatus data);
 
 			[DllImport("twaindsm", EntryPoint = "#1")]
-			public static extern ReturnCode DsmEntry64(
+			public static extern ReturnCode DsmWinNew(
 				[In, Out]TWIdentity origin,
 				[In, Out]TWIdentity destination,
 				DataGroups dg,

@@ -75,9 +75,9 @@
     <Compile Include="Triplets\DGControl\DGControl.Callback2.cs" />
     <Compile Include="Triplets\DGImage\DGImage.Filter.cs" />
     <Compile Include="Triplets\OpBase.cs" />
-    <Compile Include="Triplets\PInvoke.Linux.cs" />
-    <Compile Include="Triplets\PInvoke.Win32.cs" />
-    <Compile Include="Triplets\PInvoke.Win64.cs" />
+    <Compile Include="Triplets\Dsm.Linux.cs" />
+    <Compile Include="Triplets\Dsm.WinOld.cs" />
+    <Compile Include="Triplets\Dsm.WinNew.cs" />
     <Compile Include="TwainSessionExtensions.cs" />
     <Compile Include="TwainSession.cs" />
     <Compile Include="TwainSessionWPF.cs" />
@@ -121,7 +121,7 @@
     <Compile Include="Triplets\DGImage\DGImage.JpegCompression.cs" />
     <Compile Include="Triplets\DGImage\DGImage.Palette8.cs" />
     <Compile Include="Triplets\DGImage\DGImage.RgbResponse.cs" />
-    <Compile Include="Triplets\PInvoke.cs" />
+    <Compile Include="Triplets\Dsm.cs" />
     <Compile Include="TwainException.cs" />
     <Compile Include="TwainSessionOld.cs" />
     <Compile Include="Values\DataValues.cs" />

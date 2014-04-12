@@ -23,7 +23,7 @@ namespace NTwain.Triplets
 		public ReturnCode ProcessEvent(TWEvent theEvent)
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.Event, Message.ProcessEvent);
-			return PInvoke.DsmEntry(Session.GetAppId(), Session.SourceId, Message.ProcessEvent, theEvent);
+			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, Message.ProcessEvent, theEvent);
 		}
 	}
 }
