@@ -8,10 +8,9 @@ using NTwain.Values;
 // to aid in mapping against the twain.h file using copy-paste.
 // Consumers will not see those names.
 
-#if WIN32
 
 // use HandleRef instead?
-using TW_HANDLE = System.IntPtr; // HANDLE
+using TW_HANDLE = System.IntPtr; // HANDLE, todo: should really be uintptr?
 using TW_MEMREF = System.IntPtr; // LPVOID
 // iffy
 using TW_UINTPTR = System.UIntPtr; // UINT_PTR
@@ -25,12 +24,6 @@ using TW_UINT16 = System.UInt16; // unsigned short
 using TW_UINT32 = System.UInt32; // unsigned long
 
 using TW_BOOL = System.UInt16; // unsigned short
-
-#elif GNUC
-
-#elif APPLE
-
-#endif
 
 
 
@@ -101,6 +94,7 @@ namespace NTwain.Data
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _name;
+
         TW_UINT32 _reserved;
     }
 
@@ -152,6 +146,7 @@ namespace NTwain.Data
         TWCiePoint _blackPoint;
         TWCiePoint _whitePaper;
         TWCiePoint _blackInk;
+
         // TODO: may be totally wrong
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
         TWFix32[] _samples;
@@ -169,8 +164,10 @@ namespace NTwain.Data
     partial class TWDeviceEvent
     {
         TW_UINT32 _event;
+
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _deviceName;
+        
         TW_UINT32 _batteryMinutes;
         TW_INT16 _batteryPercentage;
         TW_INT32 _powerSupply;
@@ -214,9 +211,7 @@ namespace NTwain.Data
         TW_UINT16 _infoID;
         TW_UINT16 _itemType;
         TW_UINT16 _numItems;
-
         TW_UINT16 _returnCode;
-
         TW_UINTPTR _item;
     }
 
@@ -224,6 +219,7 @@ namespace NTwain.Data
     partial class TWExtImageInfo
     {
         TW_UINT32 _numInfos;
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 200)]
         TWInfo[] _info;
     }
@@ -232,54 +228,29 @@ namespace NTwain.Data
     BestFitMapping(false, ThrowOnUnmappableChar = true)]
     partial class TWFileSystem
     {
-        //[FieldOffset(0)]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _inputName;
-
-        //[FieldOffset(TwainConst.String255)]
+        
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _outputName;
 
-        //[FieldOffset(512)]
         TW_MEMREF _context;
-
-        //[FieldOffset(520)]
-        //short _recursive;
-        //[FieldOffset(520)]
         TW_BOOL _subdirectories;
-
-        //[FieldOffset(524)]
         TW_INT32 _fileType;
-        //[FieldOffset(524)]
-        //TW_UINT32 _fileSystemType;
-
-        //[FieldOffset(528)]
         TW_UINT32 _size;
 
-        //[FieldOffset(532)]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
         string _createTimeDate;
 
-        //[FieldOffset(566)]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
         string _modifiedTimeDate;
 
-        //[FieldOffset(600)]
         TW_UINT32 _freeSpace;
-
-        //[FieldOffset(604)]
         TW_INT32 _newImageSize;
-
-        //[FieldOffset(608)]
         TW_UINT32 _numberOfFiles;
-
-        //[FieldOffset(612)]
         TW_UINT32 _numberOfSnippets;
-
-        //[FieldOffset(616)]
         TW_UINT32 _deviceGroupMask;
 
-        //[FieldOffset(620)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 508)]
         TW_INT8[] _reserved;
     }
@@ -300,6 +271,7 @@ namespace NTwain.Data
         TW_UINT16 _minorNum;
         TW_UINT16 _language;
         TW_UINT16 _country;
+
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
         string _info;
     }
@@ -313,10 +285,13 @@ namespace NTwain.Data
         TW_UINT16 _protocolMajor;
         TW_UINT16 _protocolMinor;
         TW_UINT32 _supportedGroups;
+
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
         string _manufacturer;
+        
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
         string _productFamily;
+        
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
         string _productName;
     }
@@ -329,8 +304,10 @@ namespace NTwain.Data
         TW_INT32 _imageWidth;
         TW_INT32 _imageLength;
         TW_INT16 _samplesPerPixel;
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         TW_INT16[] _bitsPerSample;
+        
         TW_INT16 _bitsPerPixel;
         TW_BOOL _planar;
         TW_INT16 _pixelType;
@@ -349,7 +326,7 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TWMemory
     {
-        // not a class due to embedded
+        // not a class due to being embedded next
 
         TW_UINT32 _flags;
         TW_UINT32 _length;
@@ -405,6 +382,7 @@ namespace NTwain.Data
     {
         TW_UINT16 _numColors;
         TW_UINT16 _paletteType;
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
         TWElement8[] _colors;
     }
@@ -420,18 +398,11 @@ namespace NTwain.Data
         TW_UINT32 _dataBytesXfered;
     }
 
-    //[StructLayout(LayoutKind.Explicit, Pack = 2)]
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial class TWPendingXfers
     {
-        //[FieldOffset(0)]
-        //TW_INT16 _count;
         TW_UINT16 _count;
-
-        //[FieldOffset(2)]
         TW_UINT32 _eOJ;
-        //[FieldOffset(2)]
-        //TW_UINT32 _reserved;
 
     }
 
@@ -459,6 +430,7 @@ namespace NTwain.Data
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _fileName;
+
         TW_UINT16 _format;
         TW_INT16 _vRefNum = -1;
     }
@@ -474,13 +446,8 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial class TWStatus
     {
-        //[FieldOffset(0)]
         TW_UINT16 _conditionCode;
-        //[FieldOffset(2)]
         TW_UINT16 _data;
-        //[FieldOffset(2)]
-        //TW_UINT16 _reserved;
-
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -491,9 +458,7 @@ namespace NTwain.Data
         // definition remember to change it here
         TW_UINT16 _conditionCode;
         TW_UINT16 _data;
-
         TW_UINT32 _size;
-        
         TW_HANDLE _uTF8string;
     }
 
@@ -503,7 +468,6 @@ namespace NTwain.Data
         TW_BOOL _showUI;
         TW_BOOL _modalUI;
         TW_HANDLE _hParent;
-        //HandleRef _hParent;
     }
 
     delegate ReturnCode CallbackDelegate(TWIdentity origin, TWIdentity destination,
@@ -525,10 +489,10 @@ namespace NTwain.Data
         [MarshalAs(UnmanagedType.FunctionPtr)]
         MemUnlockDelegate _dSM_MemUnlock;
 
-        public delegate IntPtr MemAllocateDelegate(uint size);
-        public delegate void MemFreeDelegate(IntPtr handle);
-        public delegate IntPtr MemLockDelegate(IntPtr handle);
-        public delegate void MemUnlockDelegate(IntPtr handle);
+        public delegate TW_HANDLE MemAllocateDelegate(TW_UINT32 size);
+        public delegate void MemFreeDelegate(TW_HANDLE handle);
+        public delegate TW_MEMREF MemLockDelegate(TW_HANDLE handle);
+        public delegate void MemUnlockDelegate(TW_HANDLE handle);
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]

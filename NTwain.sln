@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Others", "Others", "{4CE0B9
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.txt = LICENSE.txt
 		README.markdown = README.markdown
+		Spec\twain2.3.h = Spec\twain2.3.h
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester.Console", "Tests\Tester.Console\Tester.Console.csproj", "{12D761EF-68DF-41CE-92EF-0C7AE81857A3}"

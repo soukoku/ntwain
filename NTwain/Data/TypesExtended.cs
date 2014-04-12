@@ -890,12 +890,18 @@ namespace NTwain.Data
         /// </summary>
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposing) { }
             if (_hContainer != IntPtr.Zero)
             {
                 MemoryManager.Instance.Free(_hContainer);
                 _hContainer = IntPtr.Zero;
             }
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -903,11 +909,7 @@ namespace NTwain.Data
         /// </summary>
         ~TWCapability()
         {
-            if (_hContainer != IntPtr.Zero)
-            {
-                MemoryManager.Instance.Free(_hContainer);
-                _hContainer = IntPtr.Zero;
-            }
+            Dispose(false);
         }
         #endregion
     }
@@ -1296,15 +1298,15 @@ namespace NTwain.Data
         /// <summary>
         /// Tag identifying an information.
         /// </summary>
-        public ushort InfoID { get { return _infoID; } set { _infoID = value; } }
+        public ushort InfoID { get { return _infoID; } }
         /// <summary>
         /// Item data type.
         /// </summary>
-        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
+        public ItemType ItemType { get { return (ItemType)_itemType; } }
         /// <summary>
         /// Number of items.
         /// </summary>
-        public ushort NumItems { get { return _numItems; } set { _numItems = value; } }
+        public ushort NumItems { get { return _numItems; } }
 
         /// <summary>
         /// This is the return code of availability of data for extended image attribute requested.
@@ -1312,18 +1314,18 @@ namespace NTwain.Data
         /// <value>
         /// The return code.
         /// </value>
-        public ReturnCode ReturnCode { get { return (ReturnCode)_returnCode; } set { _returnCode = (ushort)value; } }
+        public ReturnCode ReturnCode { get { return (ReturnCode)_returnCode; } }
 
         /// <summary>
         /// Contains either data or a handle to data. The field
         /// contains data if the total amount of data is less than or equal to four bytes. The
-        /// field contains a handle of the total amount of data is more than four bytes.
+        /// field contains a handle if the total amount of data is more than four bytes.
         /// The amount of data is determined by multiplying NumItems times
         /// the byte size of the data type specified by ItemType.
         /// If the Item field contains a handle to data, then the Application is
         /// responsible for freeing that memory.
         /// </summary>
-        public UIntPtr Item { get { return _item; } set { _item = value; } }
+        public UIntPtr Item { get { return _item; } }
     }
 
     /// <summary>
@@ -1334,7 +1336,7 @@ namespace NTwain.Data
     /// using the above operation triplet. The data source then examines each Info, and fills the rest of
     /// data with information allocating memory when necessary.
     /// </summary>
-    public partial class TWExtImageInfo
+    public sealed partial class TWExtImageInfo : IDisposable
     {
         /// <summary>
         /// Number of information that application is requesting. This is filled by the
@@ -1342,11 +1344,47 @@ namespace NTwain.Data
         /// image information. The application should allocate memory and fill in the
         /// attribute tag for image information.
         /// </summary>
-        public uint NumInfos { get { return _numInfos; } set { _numInfos = value; } }
+        public uint NumInfos { get { return _numInfos; } }
         /// <summary>
         /// Array of information.
         /// </summary>
-        public TWInfo[] Info { get { return _info; } set { _info = value; } }
+        public TWInfo[] Info { get { return _info; } }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing) { }
+            // this is iffy & may have to flatten info array as individual fields in this class to work
+            if (_info != null)
+            {
+                foreach (var i in _info)
+                {
+                    if (i.Item != UIntPtr.Zero)
+                    {
+                        var sz = i.NumItems * CapReadOut.GetItemTypeSize(i.ItemType);
+                        if (sz > UIntPtr.Size || i.ItemType == ItemType.Handle)
+                        {
+                            // uintptr to intptr could be bad
+                            var ptr = new IntPtr(BitConverter.ToInt64(BitConverter.GetBytes(i.Item.ToUInt64()), 0));
+                            MemoryManager.Instance.Free(ptr);
+                        }
+                    }
+                }
+            }
+        }
+
+        ~TWExtImageInfo()
+        {
+            Dispose(false);
+        }
+        #endregion
     }
 
     /// <summary>
@@ -1374,7 +1412,7 @@ namespace NTwain.Data
         /// sub-directories in the directory being copied.
         /// </summary>
         public bool Recursive { get { return _subdirectories == TwainConst.True; } set { _subdirectories = value ? TwainConst.True : TwainConst.False; } }
-        
+
         /// <summary>
         /// Gets the type of the file.
         /// </summary>
@@ -1382,7 +1420,7 @@ namespace NTwain.Data
         /// The type of the file.
         /// </value>
         public FileType FileType { get { return (FileType)_fileType; } set { _fileType = (int)value; } }
-        
+
         /// <summary>
         /// If <see cref="NTwain.Values.FileType.Directory"/>, total size of media in bytes.
         /// If <see cref="NTwain.Values.FileType.Image"/>, size of image in bytes.
@@ -2155,7 +2193,7 @@ namespace NTwain.Data
     /// Translates the contents of Status into a localized UTF8string, with the total number of bytes
     /// in the string.
     /// </summary>
-    public partial class TWStatusUtf8
+    public sealed partial class TWStatusUtf8 : IDisposable
     {
         /// <summary>
         /// <see cref="TWStatus"/> data received from a previous call.
@@ -2163,24 +2201,69 @@ namespace NTwain.Data
         public TWStatus Status
         {
             get { return new TWStatus { ConditionCode = (ConditionCode)_conditionCode, Data = _data }; }
-            set
-            {
-                _conditionCode = (ushort)value.ConditionCode;
-                _data = value.Data;
-            }
         }
 
         /// <summary>
         /// Total number of bytes in the UTF8string, plus the terminating NULL byte. 
         /// This is not the same as the total number of characters in the string.
         /// </summary>
-        public uint Size { get { return _size; } set { _size = value; } }
+        public int Size { get { return (int)_size; } }
+
         /// <summary>
         /// TW_HANDLE to a UTF-8 encoded localized string (based on 
         /// TwIdentity.Language or CapLanguage). The Source allocates
         /// it, the Application frees it.
         /// </summary>
-        IntPtr UTF8string { get { return _uTF8string; } set { _uTF8string = value; } }
+        IntPtr UTF8StringPtr { get { return _uTF8string; } }
+
+        /// <summary>
+        /// Gets the actual string from the pointer.
+        /// </summary>
+        /// <returns></returns>
+        public string GetActualString()
+        {
+            if (_uTF8string != IntPtr.Zero)
+            {
+                var sb = new StringBuilder(Size - 1);
+                byte bt;
+                while (sb.Length < _size &&
+                    (bt = Marshal.ReadByte(_uTF8string, sb.Length)) != 0)
+                {
+                    sb.Append((char)bt);
+                }
+                return sb.ToString();
+            }
+            return null;
+        }
+
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+
+            }
+            if (_uTF8string != IntPtr.Zero)
+            {
+                MemoryManager.Instance.Free(_uTF8string);
+                _uTF8string = IntPtr.Zero;
+            }
+        }
+
+        ~TWStatusUtf8()
+        {
+            Dispose(false);
+        }
+
+        #endregion
     }
 
 
