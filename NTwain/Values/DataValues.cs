@@ -1962,7 +1962,7 @@ namespace NTwain.Values
     /// Bit mask for querying the operation that are supported by the data source on a capability.
     /// Corresponds to TWQC_*.
     /// </summary>
-    static class QuerySupportMask
+    public static class QuerySupportMask
     {
         public const int Get = 0x1;
         public const int Set = 0x2;
@@ -1976,4 +1976,18 @@ namespace NTwain.Values
         public const int GetLabelEnum = 0x400;
     }
 
+    /// <summary>
+    /// TWAIN's boolean values.
+    /// </summary>
+    public enum BoolType : ushort
+    {
+        /// <summary>
+        /// The false value (0).
+        /// </summary>
+        False = 0,
+        /// <summary>
+        /// The true value (1).
+        /// </summary>
+        True = 1
+    }
 }

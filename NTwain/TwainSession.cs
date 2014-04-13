@@ -203,7 +203,7 @@ namespace NTwain
 
         /// <summary>
         /// Opens the data source manager. This must be the first method used
-        /// before using other TWAIN functions. Calls to this must be followed by <see cref="CloseManager"/> when done.
+        /// before using other TWAIN functions. Calls to this must be followed by <see cref="CloseManager"/> when done with a TWAIN session.
         /// </summary>
         /// <param name="appHandle">On Windows = points to the window handle (hWnd) that will act as the Source’s
         /// "parent". On Macintosh = should be a NULL value.</param>
@@ -254,7 +254,7 @@ namespace NTwain
         /// <summary>
         /// Loads the specified source into main memory and causes its initialization.
         /// Calls to this must be followed by 
-        /// <see cref="CloseSource" /> when done.
+        /// <see cref="CloseSource" /> when not using it anymore.
         /// </summary>
         /// <param name="sourceProductName">Name of the source.</param>
         /// <returns></returns>
@@ -296,14 +296,15 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Enables the source.
+        /// Enables the source to start transferring.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="modal">if set to <c>true</c> any driver UI will display as modal.</param>
         /// <param name="windowHandle">The window handle if modal.</param>
-        /// <param name="context">The
-        /// Windows only. 
-        /// <see cref="SynchronizationContext" /> that is required for certain operations.
+        /// <param name="context">
+        /// The
+        /// <see cref="SynchronizationContext" /> is required if TWAIN is using callback mode 
+        /// instead of the typical WndProc message loop.
         /// It is recommended you call this method in an UI thread and pass in
         /// <see cref="SynchronizationContext.Current" />
         /// if you do not have a custom one setup.</param>
@@ -311,7 +312,7 @@ namespace NTwain
         /// <exception cref="ArgumentNullException">context</exception>
         public ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle, SynchronizationContext context)
         {
-            if (context == null) { throw new ArgumentNullException("context"); }
+            if (context == null && _callbackObj != null) { throw new ArgumentNullException("SynchronizationContext is required when not using message loop.", "context"); }
 
             Debug.WriteLine(string.Format("Thread {0}: EnableSource.", Thread.CurrentThread.ManagedThreadId));
 

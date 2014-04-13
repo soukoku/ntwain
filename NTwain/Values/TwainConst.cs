@@ -1,7 +1,7 @@
 ﻿namespace NTwain.Values
 {
 	/// <summary>
-	/// Contains magic number for some TWAIN stuff.
+	/// Contains direct magic values for some TWAIN stuff.
 	/// </summary>
 	public static class TwainConst
 	{
