@@ -212,27 +212,31 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode OpenManager()
         {
-            Debug.WriteLine(string.Format("Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
-
-            var rc = DGControl.Parent.OpenDsm(MessageLoop.Instance.LoopHandle);
-            if (rc == ReturnCode.Success)
+            ReturnCode rc = ReturnCode.Success;
+            MessageLoop.Instance.Invoke(() =>
             {
-                // if twain2 then get memory management functions
-                if ((_appId.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
+                Debug.WriteLine(string.Format("Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
+
+                rc = DGControl.Parent.OpenDsm(MessageLoop.Instance.LoopHandle);
+                if (rc == ReturnCode.Success)
                 {
-                    TWEntryPoint entry;
-                    rc = DGControl.EntryPoint.Get(out entry);
-                    if (rc == ReturnCode.Success)
+                    // if twain2 then get memory management functions
+                    if ((_appId.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
                     {
-                        MemoryManager.Instance.UpdateEntryPoint(entry);
-                        Debug.WriteLine("Using TWAIN2 memory functions.");
-                    }
-                    else
-                    {
-                        CloseManager();
+                        TWEntryPoint entry;
+                        rc = DGControl.EntryPoint.Get(out entry);
+                        if (rc == ReturnCode.Success)
+                        {
+                            MemoryManager.Instance.UpdateEntryPoint(entry);
+                            Debug.WriteLine("Using TWAIN2 memory functions.");
+                        }
+                        else
+                        {
+                            CloseManager();
+                        }
                     }
                 }
-            }
+            });
             return rc;
         }
 
@@ -242,9 +246,13 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode CloseManager()
         {
-            Debug.WriteLine(string.Format("Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
+            ReturnCode rc = ReturnCode.Success;
+            MessageLoop.Instance.Invoke(() =>
+            {
+                Debug.WriteLine(string.Format("Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
 
-            var rc = DGControl.Parent.CloseDsm(MessageLoop.Instance.LoopHandle);
+                rc = DGControl.Parent.CloseDsm(MessageLoop.Instance.LoopHandle);
+            });
             return rc;
         }
 
@@ -260,15 +268,16 @@ namespace NTwain
         {
             if (string.IsNullOrEmpty(sourceProductName)) { throw new ArgumentException("Source name is required.", "sourceProductName"); }
 
-            Debug.WriteLine(string.Format("Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
-
-            var source = new TWIdentity();
-            source.ProductName = sourceProductName;
-
-            var rc = DGControl.Identity.OpenDS(source);
-            if (rc == ReturnCode.Success)
+            ReturnCode rc = ReturnCode.Success;
+            MessageLoop.Instance.Invoke(() =>
             {
-            }
+                Debug.WriteLine(string.Format("Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
+
+                var source = new TWIdentity();
+                source.ProductName = sourceProductName;
+
+                rc = DGControl.Identity.OpenDS(source);
+            });
             return rc;
         }
 
@@ -281,15 +290,19 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode CloseSource()
         {
-            Debug.WriteLine(string.Format("Thread {0}: CloseSource.", Thread.CurrentThread.ManagedThreadId));
-
-            var rc = DGControl.Identity.CloseDS();
-            if (rc == ReturnCode.Success)
+            ReturnCode rc = ReturnCode.Success;
+            MessageLoop.Instance.Invoke(() =>
             {
-                MessageLoop.Instance.RemoveHook(HandleWndProcMessage);
-                _callbackObj = null;
-                SupportedCaps = null;
-            }
+                Debug.WriteLine(string.Format("Thread {0}: CloseSource.", Thread.CurrentThread.ManagedThreadId));
+
+                rc = DGControl.Identity.CloseDS();
+                if (rc == ReturnCode.Success)
+                {
+                    MessageLoop.Instance.RemoveHook(HandleWndProcMessage);
+                    _callbackObj = null;
+                    SupportedCaps = null;
+                }
+            });
             return rc;
         }
 
@@ -303,12 +316,12 @@ namespace NTwain
         /// <exception cref="ArgumentNullException">context</exception>
         public ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle)
         {
-            Debug.WriteLine(string.Format("Thread {0}: EnableSource.", Thread.CurrentThread.ManagedThreadId));
-
             ReturnCode rc = ReturnCode.Success;
 
             MessageLoop.Instance.Invoke(() =>
             {
+                Debug.WriteLine(string.Format("Thread {0}: EnableSource.", Thread.CurrentThread.ManagedThreadId));
+
                 // app v2.2 or higher uses callback2
                 if (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2)
                 {
@@ -363,12 +376,12 @@ namespace NTwain
         /// <returns></returns>
         protected ReturnCode DisableSource()
         {
-            Debug.WriteLine(string.Format("Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
-
             ReturnCode rc = ReturnCode.Success;
 
             MessageLoop.Instance.Invoke(() =>
             {
+                Debug.WriteLine(string.Format("Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
+
                 rc = DGControl.UserInterface.DisableDS(_twui);
                 if (rc == ReturnCode.Success)
                 {
@@ -386,48 +399,46 @@ namespace NTwain
         public void ForceStepDown(int targetState)
         {
             Debug.WriteLine(string.Format("Thread {0}: ForceStepDown.", Thread.CurrentThread.ManagedThreadId));
-            MessageLoop.Instance.Invoke(() =>
+
+            bool origFlag = EnforceState;
+            EnforceState = false;
+
+            // From the twain spec
+            // Stepping Back Down the States
+            // DG_CONTROL / DAT_PENDINGXFERS / MSG_ENDXFER → state 7 to 6
+            // DG_CONTROL / DAT_PENDINGXFERS / MSG_RESET → state 6 to 5
+            // DG_CONTROL / DAT_USERINTERFACE / MSG_DISABLEDS → state 5 to 4
+            // DG_CONTROL / DAT_IDENTITY / MSG_CLOSEDS → state 4 to 3
+            // Ignore the status returns from the calls prior to the one yielding the desired state. For instance, if a
+            // call during scanning returns TWCC_SEQERROR and the desire is to return to state 5, then use the
+            // following commands.
+            // DG_CONTROL / DAT_PENDINGXFERS / MSG_ENDXFER → state 7 to 6
+            // DG_CONTROL / DAT_PENDINGXFERS / MSG_RESET → state 6 to 5
+            // Being sure to confirm that DG_CONTROL / DAT_PENDINGXFERS / MSG_RESET returned
+            // success, the return status from DG_CONTROL / DAT_PENDINGXFERS / MSG_ENDXFER may
+            // be ignored.
+
+            if (targetState < 7)
             {
-                bool origFlag = EnforceState;
-                EnforceState = false;
-
-                // From the twain spec
-                // Stepping Back Down the States
-                // DG_CONTROL / DAT_PENDINGXFERS / MSG_ENDXFER → state 7 to 6
-                // DG_CONTROL / DAT_PENDINGXFERS / MSG_RESET → state 6 to 5
-                // DG_CONTROL / DAT_USERINTERFACE / MSG_DISABLEDS → state 5 to 4
-                // DG_CONTROL / DAT_IDENTITY / MSG_CLOSEDS → state 4 to 3
-                // Ignore the status returns from the calls prior to the one yielding the desired state. For instance, if a
-                // call during scanning returns TWCC_SEQERROR and the desire is to return to state 5, then use the
-                // following commands.
-                // DG_CONTROL / DAT_PENDINGXFERS / MSG_ENDXFER → state 7 to 6
-                // DG_CONTROL / DAT_PENDINGXFERS / MSG_RESET → state 6 to 5
-                // Being sure to confirm that DG_CONTROL / DAT_PENDINGXFERS / MSG_RESET returned
-                // success, the return status from DG_CONTROL / DAT_PENDINGXFERS / MSG_ENDXFER may
-                // be ignored.
-
-                if (targetState < 7)
-                {
-                    DGControl.PendingXfers.EndXfer(new TWPendingXfers());
-                }
-                if (targetState < 6)
-                {
-                    DGControl.PendingXfers.Reset(new TWPendingXfers());
-                }
-                if (targetState < 5)
-                {
-                    DisableSource();
-                }
-                if (targetState < 4)
-                {
-                    CloseSource();
-                }
-                if (targetState < 3)
-                {
-                    CloseManager();
-                }
-                EnforceState = origFlag;
-            });
+                DGControl.PendingXfers.EndXfer(new TWPendingXfers());
+            }
+            if (targetState < 6)
+            {
+                DGControl.PendingXfers.Reset(new TWPendingXfers());
+            }
+            if (targetState < 5)
+            {
+                DisableSource();
+            }
+            if (targetState < 4)
+            {
+                CloseSource();
+            }
+            if (targetState < 3)
+            {
+                CloseManager();
+            }
+            EnforceState = origFlag;
         }
 
         #endregion
@@ -609,10 +620,7 @@ namespace NTwain
                     {
                         Debug.WriteLine(string.Format("Thread {0}: HandleWndProcMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, evt.TWMessage));
 
-                        MessageLoop.Instance.BeginInvoke(() =>
-                        {
-                            HandleSourceMsg(evt.TWMessage);
-                        });
+                        HandleSourceMsg(evt.TWMessage);
                     }
                 }
                 finally

@@ -50,7 +50,17 @@ namespace Tester.WPF
             {
                 Messenger.Default.Register<DialogMessage>(this, msg =>
                 {
-                    ModernMessageBox.Show(this, msg.Content, msg.Caption, msg.Button, msg.Icon, msg.DefaultResult);
+                    if (Dispatcher.CheckAccess())
+                    {
+                        ModernMessageBox.Show(this, msg.Content, msg.Caption, msg.Button, msg.Icon, msg.DefaultResult);
+                    }
+                    else
+                    {
+                        Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            ModernMessageBox.Show(this, msg.Content, msg.Caption, msg.Button, msg.Icon, msg.DefaultResult);
+                        }));
+                    }
                 });
             }
         }
