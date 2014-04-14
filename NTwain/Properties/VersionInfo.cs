@@ -14,6 +14,6 @@ namespace NTwain
         // keep this same in majors releases
         public const string Release = "0.10.0.0";
         // change this for each nuget release
-        public const string Build = "0.10.1";
+        public const string Build = "0.10.2";
     }
 }

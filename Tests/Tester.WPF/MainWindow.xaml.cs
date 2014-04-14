@@ -68,12 +68,7 @@ namespace Tester.WPF
         {
             base.OnSourceInitialized(e);
 
-            var hwnd = new WindowInteropHelper(this).Handle;
-
-            // this line is unnecessary if using twain 2 dsm but doesn't hurt to use it
-            HwndSource.FromHwnd(hwnd).AddHook(_twainVM.PreFilterMessage);
-
-            var rc = _twainVM.OpenManager(hwnd);
+            var rc = _twainVM.OpenManager();
             if (rc == ReturnCode.Success)
             {
                 SrcList.ItemsSource = _twainVM.GetSources().Select(s => new DSVM { DS = s });

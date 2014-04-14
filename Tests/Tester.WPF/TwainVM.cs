@@ -17,7 +17,7 @@ namespace Tester.WPF
     /// <summary>
     /// Wraps the twain session as a view model for databinding.
     /// </summary>
-    class TwainVM : TwainSessionWPF
+    class TwainVM : TwainSession
     {
         public TwainVM()
             : base(TWIdentity.CreateFromAssembly(DataGroups.Image | DataGroups.Audio, Assembly.GetEntryAssembly()))
@@ -87,15 +87,18 @@ namespace Tester.WPF
 
         protected override void OnDataTransferred(DataTransferredEventArgs e)
         {
-            if (e.NativeData != IntPtr.Zero)
+            App.Current.Dispatcher.Invoke(new Action(() =>
             {
-                Image = e.NativeData.GetWPFBitmap();
-            }
-            else if (!string.IsNullOrEmpty(e.FileDataPath))
-            {
-                var img = new BitmapImage(new Uri(e.FileDataPath));
-                Image = img;
-            }
+                if (e.NativeData != IntPtr.Zero)
+                {
+                    Image = e.NativeData.GetWPFBitmap();
+                }
+                else if (!string.IsNullOrEmpty(e.FileDataPath))
+                {
+                    var img = new BitmapImage(new Uri(e.FileDataPath));
+                    Image = img;
+                }
+            }));
             base.OnDataTransferred(e);
         }
 
@@ -113,7 +116,7 @@ namespace Tester.WPF
                     this.CapSetImageXferMech(XferMech.File);
                 }
 
-                var rc = EnableSource(SourceEnableMode.NoUI, false, hwnd, SynchronizationContext.Current);
+                var rc = EnableSource(SourceEnableMode.NoUI, false, hwnd);
             }
         }
     }

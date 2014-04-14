@@ -17,14 +17,9 @@ namespace Tester
     {
         static void Main(string[] args)
         {
-            // just an amusing example to do twain in console without UI, but may not work in real life
-
-            Console.WriteLine("Running Main on thread {0}", Thread.CurrentThread.ManagedThreadId);
-            new Thread(new ParameterizedThreadStart(DoTwainWork)).Start(Dispatcher.CurrentDispatcher);
-
-            // basically just needs a msg loop to act as the UI thread
-            Dispatcher.Run();
-            Console.WriteLine("Test completed.");
+            // just an amusing example to do twain in console without UI
+            DoTwainWork();
+            Console.WriteLine("Test completed, press Enter to exit.");
             Console.ReadLine();
         }
 
@@ -41,19 +36,12 @@ namespace Tester
         }
 
 
-        static void DoTwainWork(object obj)
+        static void DoTwainWork()
         {
             Console.WriteLine("Getting ready to do twain stuff on thread {0}", Thread.CurrentThread.ManagedThreadId);
             Thread.Sleep(1000);
 
-            var mySyncer = SynchronizationContext.Current;
-
-            if (mySyncer == null)
-            {
-                mySyncer = new DispatcherSynchronizationContext(obj as Dispatcher);
-            }
-
-            var rc = twain.OpenManager(IntPtr.Zero);
+            var rc = twain.OpenManager();
 
             if (rc == ReturnCode.Success)
             {
@@ -61,20 +49,13 @@ namespace Tester
 
                 if (rc == ReturnCode.Success)
                 {
-                    // enablesource must be on the thread the sync context works on
-                    mySyncer.Post(blah =>
-                    {
-                        rc = twain.EnableSource(SourceEnableMode.NoUI, false, IntPtr.Zero, blah as SynchronizationContext);
-                    }, mySyncer);
-                    return;
+                    rc = twain.EnableSource(SourceEnableMode.NoUI, false, IntPtr.Zero);
                 }
                 else
                 {
                     twain.CloseManager();
                 }
             }
-
-            Dispatcher.ExitAllFrames();
         }
 
         static void twain_SourceDisabled(object sender, EventArgs e)
@@ -82,8 +63,6 @@ namespace Tester
             Console.WriteLine("Source disabled on thread {0}", Thread.CurrentThread.ManagedThreadId);
             var rc = twain.CloseSource();
             rc = twain.CloseManager();
-
-            Dispatcher.ExitAllFrames();
         }
 
         static void twain_TransferReady(object sender, TransferReadyEventArgs e)

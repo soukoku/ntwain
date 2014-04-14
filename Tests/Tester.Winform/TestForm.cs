@@ -20,7 +20,7 @@ namespace Tester.Winform
     sealed partial class TestForm : Form
     {
         ImageCodecInfo _tiffCodecInfo;
-        TwainSessionWinform _twain;
+        TwainSession _twain;
         bool _stopScan;
         bool _loadingCaps;
 
@@ -61,44 +61,48 @@ namespace Tester.Winform
         private void SetupTwain()
         {
             var appId = TWIdentity.CreateFromAssembly(DataGroups.Image, Assembly.GetEntryAssembly());
-            _twain = new TwainSessionWinform(appId);
+            _twain = new TwainSession(appId);
             _twain.DataTransferred += (s, e) =>
             {
-                if (pictureBox1.Image != null)
+                this.Invoke(new Action(() =>
                 {
-                    pictureBox1.Image.Dispose();
-                    pictureBox1.Image = null;
-                }
-                if (e.NativeData != IntPtr.Zero)
-                {
-                    //_ptrTest = e.Data;
-                    var img = e.NativeData.GetDrawingBitmap();
-                    if (img != null)
+                    if (pictureBox1.Image != null)
+                    {
+                        pictureBox1.Image.Dispose();
+                        pictureBox1.Image = null;
+                    }
+                    if (e.NativeData != IntPtr.Zero)
+                    {
+                        //_ptrTest = e.Data;
+                        var img = e.NativeData.GetDrawingBitmap();
+                        if (img != null)
+                            pictureBox1.Image = img;
+                    }
+                    else if (!string.IsNullOrEmpty(e.FileDataPath))
+                    {
+                        var img = new Bitmap(e.FileDataPath);
                         pictureBox1.Image = img;
-                }
-                else if (!string.IsNullOrEmpty(e.FileDataPath))
-                {
-                    var img = new Bitmap(e.FileDataPath);
-                    pictureBox1.Image = img;
-                }
+                    }
+                }));
             };
             _twain.SourceDisabled += (s, e) =>
             {
-                btnStopScan.Enabled = false;
-                btnStartCapture.Enabled = true;
-                panelOptions.Enabled = true;
-                LoadSourceCaps();
+                this.Invoke(new Action(() =>
+                {
+                    btnStopScan.Enabled = false;
+                    btnStartCapture.Enabled = true;
+                    panelOptions.Enabled = true;
+                    LoadSourceCaps();
+                }));
             };
             _twain.TransferReady += (s, e) =>
             {
                 e.CancelAll = _stopScan;
             };
-            Application.AddMessageFilter(_twain);
         }
 
         private void CleanupTwain()
         {
-            Application.RemoveMessageFilter(_twain);
             if (_twain.State == 4)
             {
                 _twain.CloseSource();
@@ -164,7 +168,7 @@ namespace Tester.Winform
                 if (_twain.SupportedCaps.Contains(CapabilityId.CapUIControllable))
                 {
                     // hide scanner ui if possible
-                    if (_twain.EnableSource(SourceEnableMode.NoUI, false, this.Handle, SynchronizationContext.Current) == ReturnCode.Success)
+                    if (_twain.EnableSource(SourceEnableMode.NoUI, false, this.Handle) == ReturnCode.Success)
                     {
                         btnStopScan.Enabled = true;
                         btnStartCapture.Enabled = false;
@@ -173,7 +177,7 @@ namespace Tester.Winform
                 }
                 else
                 {
-                    if (_twain.EnableSource(SourceEnableMode.ShowUI, true, this.Handle, SynchronizationContext.Current) == ReturnCode.Success)
+                    if (_twain.EnableSource(SourceEnableMode.ShowUI, true, this.Handle) == ReturnCode.Success)
                     {
                         btnStopScan.Enabled = true;
                         btnStartCapture.Enabled = false;
@@ -229,7 +233,7 @@ namespace Tester.Winform
         {
             if (_twain.State < 3)
             {
-                _twain.OpenManager(this.Handle);
+                _twain.OpenManager();
             }
 
             if (_twain.State >= 3)
@@ -356,7 +360,7 @@ namespace Tester.Winform
 
         private void btnAllSettings_Click(object sender, EventArgs e)
         {
-            _twain.EnableSource(SourceEnableMode.ShowUIOnly, true, this.Handle, SynchronizationContext.Current);
+            _twain.EnableSource(SourceEnableMode.ShowUIOnly, true, this.Handle);
         }
 
         #endregion
