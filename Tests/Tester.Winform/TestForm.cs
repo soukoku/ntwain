@@ -345,7 +345,7 @@ namespace Tester.Winform
         {
             if (!_loadingCaps && _twain.State == 4)
             {
-                var sel = (int)comboDPI.SelectedItem;
+                var sel = (TWFix32)comboDPI.SelectedItem;
                 _twain.CapSetDPI(sel);
             }
         }

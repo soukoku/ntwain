@@ -4,13 +4,13 @@ TWAIN Application-Side Library
 Info
 --------------------------------------
 This is a dotnet library created to work with [TWAIN](http://twain.org/) interface. 
-This project follows these general goals:
+This project has these features:
 
 * Targets latest TWAIN version (2.3 at the moment)
 * Supports all the TWAIN functions in the spec
-* Eventally work on platforms other than Windows (I can dream)
+* Hosts internal message loop so no need to hook into application UI thread
  
-The solution contains sample projects in winforms, wpf, and even (gasp!) console. 
+The solution contains tester projects in winform, wpf, and even (gasp!) console. 
 A nuget package is also [available here](https://www.nuget.org/packages/ntwain)
 
 Using the lib
@@ -23,3 +23,6 @@ when and how to use them. There are no high-level, single-line scan-a-page-for-m
 At the moment this lib does not provide ways to parse transferred image data and require
 consumers to do the conversion. The winform project contains one such 
 example for handling DIB image in native transfer.
+
+The main class to use is TwainSession. New it up, hook into the events, and start calling
+all the TWAIN functions provided through it.

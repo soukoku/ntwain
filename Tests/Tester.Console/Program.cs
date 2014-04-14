@@ -19,7 +19,7 @@ namespace Tester
         {
             // just an amusing example to do twain in console without UI
             DoTwainWork();
-            Console.WriteLine("Test completed, press Enter to exit.");
+            Console.WriteLine("Test started, press Enter to exit.");
             Console.ReadLine();
         }
 

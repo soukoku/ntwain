@@ -32,8 +32,6 @@ namespace NTwain
             ((ITwainStateInternal)this).ChangeState(1, false);
             EnforceState = true;
 
-            Debug.WriteLine("current thread id =" + Thread.CurrentThread.ManagedThreadId);
-
             MessageLoop.Instance.EnsureStarted();
         }
 
@@ -298,8 +296,6 @@ namespace NTwain
                 rc = DGControl.Identity.CloseDS();
                 if (rc == ReturnCode.Success)
                 {
-                    MessageLoop.Instance.RemoveHook(HandleWndProcMessage);
-                    _callbackObj = null;
                     SupportedCaps = null;
                 }
             });
@@ -385,6 +381,14 @@ namespace NTwain
                 rc = DGControl.UserInterface.DisableDS(_twui);
                 if (rc == ReturnCode.Success)
                 {
+                    if (_callbackObj == null)
+                    {
+                        MessageLoop.Instance.RemoveHook(HandleWndProcMessage);
+                    }
+                    else
+                    {
+                        _callbackObj = null;
+                    }
                     OnSourceDisabled();
                 }
             });
@@ -418,26 +422,29 @@ namespace NTwain
             // success, the return status from DG_CONTROL / DAT_PENDINGXFERS / MSG_ENDXFER may
             // be ignored.
 
-            if (targetState < 7)
+            MessageLoop.Instance.Invoke(() =>
             {
-                DGControl.PendingXfers.EndXfer(new TWPendingXfers());
-            }
-            if (targetState < 6)
-            {
-                DGControl.PendingXfers.Reset(new TWPendingXfers());
-            }
-            if (targetState < 5)
-            {
-                DisableSource();
-            }
-            if (targetState < 4)
-            {
-                CloseSource();
-            }
-            if (targetState < 3)
-            {
-                CloseManager();
-            }
+                if (targetState < 7)
+                {
+                    DGControl.PendingXfers.EndXfer(new TWPendingXfers());
+                }
+                if (targetState < 6)
+                {
+                    DGControl.PendingXfers.Reset(new TWPendingXfers());
+                }
+                if (targetState < 5)
+                {
+                    DisableSource();
+                }
+                if (targetState < 4)
+                {
+                    CloseSource();
+                }
+                if (targetState < 3)
+                {
+                    CloseManager();
+                }
+            });
             EnforceState = origFlag;
         }
 
@@ -601,12 +608,10 @@ namespace NTwain
         IntPtr HandleWndProcMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             // this handles the message from a typical WndProc message loop and check if it's from the TWAIN source.
-
-            var winmsg = new MESSAGE(hwnd, msg, wParam, lParam);
-
-            if (State >= 4) // technically we should only handle on state >= 5 but there might be missed msgs if we wait until state changes after enabling ds
+            if (State >= 5)
             {
                 // transform it into a pointer for twain
+                var winmsg = new MESSAGE(hwnd, msg, wParam, lParam);
                 IntPtr msgPtr = IntPtr.Zero;
                 try
                 {
@@ -614,7 +619,7 @@ namespace NTwain
                     msgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(winmsg));
                     Marshal.StructureToPtr(winmsg, msgPtr, false);
 
-                    TWEvent evt = new TWEvent();
+                    var evt = new TWEvent();
                     evt.pEvent = msgPtr;
                     if (handled = (DGControl.Event.ProcessEvent(evt) == ReturnCode.DSEvent))
                     {
