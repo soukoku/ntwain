@@ -1,6 +1,7 @@
 ﻿using NTwain.Triplets;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -27,8 +28,12 @@ namespace NTwain
         {
             if (!_started)
             {
+                // using this terrible hack so the new thread will start running before this function returns
+                var hack = new ManualResetEvent(false);
+
                 var loopThread = new Thread(new ThreadStart(() =>
                 {
+                    Debug.WriteLine("NTwain message loop started.");
                     _dispatcher = Dispatcher.CurrentDispatcher;
                     if (Dsm.IsWin)
                     {
@@ -37,11 +42,14 @@ namespace NTwain
                         // CS_NOCLOSE, WS_DISABLED, and WS_EX_NOACTIVATE
                         _dummyWindow = new HwndSource(0x0200, 0x8000000, 0x8000000, 0, 0, "NTWAIN_LOOPER", IntPtr.Zero);
                     }
+                    hack.Set();
                     Dispatcher.Run();
                 }));
                 loopThread.IsBackground = true;
                 loopThread.SetApartmentState(ApartmentState.STA);
                 loopThread.Start();
+                hack.WaitOne();
+                hack.Close();
                 _started = true;
             }
         }

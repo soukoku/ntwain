@@ -42,7 +42,6 @@ namespace Tester.Winform
             {
                 if (enc.MimeType == "image/tiff") { _tiffCodecInfo = enc; break; }
             }
-            SetupTwain();
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -231,6 +230,10 @@ namespace Tester.Winform
 
         private void ReloadSourceList()
         {
+            if (_twain == null)
+            {
+                SetupTwain();
+            }
             if (_twain.State < 3)
             {
                 _twain.OpenManager();
