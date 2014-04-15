@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -66,6 +67,20 @@ namespace NTwain.Values
         static uint GetUpperWord(uint value)
         {
             return (ushort)(value >> 16);
+        }
+
+        /// <summary>
+        /// Tries to convert to a value to <see cref="TWFix32"/> if possible.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public static TWFix32 ConvertToFix32(this object value)
+        {
+            if (value is TWFix32)
+            {
+                return (TWFix32)value;
+            }
+            return (TWFix32)Convert.ToSingle(value);
         }
     }
 }

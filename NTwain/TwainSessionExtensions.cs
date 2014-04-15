@@ -372,7 +372,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<TWFix32> CapGetDPIs(this TwainSession session)
         {
-            return session.GetCapabilityValues(CapabilityId.ICapXResolution).Cast<TWFix32>().ToList();
+            var list = session.GetCapabilityValues(CapabilityId.ICapXResolution);
+            return list.Select(o => o.ConvertToFix32()).ToList();
         }
 
         /// <summary>
