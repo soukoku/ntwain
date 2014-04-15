@@ -1008,59 +1008,58 @@ namespace NTwain.Data
         /// <summary>
         /// Defines the original color space that was transformed into CIE XYZ. 
         /// This value is not set-able by the application. 
-        /// Application should write <see cref="TwainConst.DontCare16"/> into this on a set.
         /// </summary>
-        public ushort ColorSpace { get { return _colorSpace; } set { _colorSpace = value; } }
+        public ushort ColorSpace { get { return _colorSpace; } }
         /// <summary>
         /// Used to indicate which data byte is taken first. If zero, then high byte is
         /// first. If non-zero, then low byte is first.
         /// </summary>
-        public short LowEndian { get { return _lowEndian; } set { _lowEndian = value; } }
+        public short LowEndian { get { return _lowEndian; } }
         /// <summary>
         /// If non-zero then color data is device-dependent and only ColorSpace is
         /// valid in this structure.
         /// </summary>
-        public short DeviceDependent { get { return _deviceDependent; } set { _deviceDependent = value; } }
+        public short DeviceDependent { get { return _deviceDependent; } }
         /// <summary>
         /// Version of the color space descriptor specification used to define the
         /// transform data. The current version is zero.
         /// </summary>
-        public int VersionNumber { get { return _versionNumber; } set { _versionNumber = value; } }
+        public int VersionNumber { get { return _versionNumber; } }
         /// <summary>
         /// Describes parametrics for the first stage transformation of the Postscript
         /// Level 2 CIE color space transform process.
         /// </summary>
-        public TWTransformStage StageABC { get { return _stageABC; } set { _stageABC = value; } }
+        public TWTransformStage StageABC { get { return _stageABC; } }
         /// <summary>
         /// Describes parametrics for the first stage transformation of the Postscript
         /// Level 2 CIE color space transform process.
         /// </summary>
-        public TWTransformStage StageLMN { get { return _stageLMN; } set { _stageLMN = value; } }
+        public TWTransformStage StageLMN { get { return _stageLMN; } }
         /// <summary>
         /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of the
         /// diffused white point.
         /// </summary>
-        public TWCiePoint WhitePoint { get { return _whitePoint; } set { _whitePoint = value; } }
+        public TWCiePoint WhitePoint { get { return _whitePoint; } }
         /// <summary>
         /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of the
         /// diffused black point.
         /// </summary>
-        public TWCiePoint BlackPoint { get { return _blackPoint; } set { _blackPoint = value; } }
+        public TWCiePoint BlackPoint { get { return _blackPoint; } }
         /// <summary>
         /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of inkless
         /// "paper" from which the image was acquired.
         /// </summary>
-        public TWCiePoint WhitePaper { get { return _whitePaper; } set { _whitePaper = value; } }
+        public TWCiePoint WhitePaper { get { return _whitePaper; } }
         /// <summary>
         /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of solid
         /// black ink on the "paper" from which the image was acquired.
         /// </summary>
-        public TWCiePoint BlackInk { get { return _blackInk; } set { _blackInk = value; } }
+        public TWCiePoint BlackInk { get { return _blackInk; } }
         /// <summary>
         /// Optional table look-up values used by the decode function. Samples
         /// are ordered sequentially and end-to-end as A, B, C, L, M, and N.
         /// </summary>
-        public TWFix32[] Samples { get { return _samples; } set { _samples = value; } }
+        public TWFix32[] Samples { get { return _samples; } }
     }
 
     /// <summary>
@@ -1873,49 +1872,49 @@ namespace NTwain.Data
     /// <summary>
     /// Describes the form of the acquired data being passed from the Source to the application.
     /// </summary>
-    public partial class TWImageMemXfer
+    partial class TWImageMemXfer
     {
         /// <summary>
         /// The compression method used to process the data being transferred.
         /// </summary>
-        public Compression Compression { get { return (Compression)_compression; } set { _compression = (ushort)value; } }
+        public Compression Compression { get { return (Compression)_compression; } }
         /// <summary>
         /// The number of uncompressed bytes in each row of the piece of the image
         /// being described in this buffer.
         /// </summary>
-        public uint BytesPerRow { get { return _bytesPerRow; } set { _bytesPerRow = value; } }
+        public uint BytesPerRow { get { return _bytesPerRow; } }
         /// <summary>
         /// The number of uncompressed columns (in pixels) in this buffer.
         /// </summary>
-        public uint Columns { get { return _columns; } set { _columns = value; } }
+        public uint Columns { get { return _columns; } }
         /// <summary>
         /// The number or uncompressed rows (in pixels) in this buffer.
         /// </summary>
-        public uint Rows { get { return _rows; } set { _rows = value; } }
+        public uint Rows { get { return _rows; } }
         /// <summary>
         /// How far, in pixels, the left edge of the piece of the image being described
         /// by this structure is inset from the "left" side of the original image. If the
         /// Source is transferring in "strips", this value will equal zero. If the Source
         /// is transferring in "tiles", this value will often be non-zero.
         /// </summary>
-        public uint XOffset { get { return _xOffset; } set { _xOffset = value; } }
+        public uint XOffset { get { return _xOffset; } }
         /// <summary>
         /// Same idea as XOffset, but the measure is in pixels from the "top" of the
         /// original image to the upper edge of this piece.
         /// </summary>
-        public uint YOffset { get { return _yOffset; } set { _yOffset = value; } }
+        public uint YOffset { get { return _yOffset; } }
         /// <summary>
         /// The number of bytes written into the transfer buffer. This field must
         /// always be filled in correctly, whether compressed or uncompressed data
         /// is being transferred.
         /// </summary>
-        public uint BytesWritten { get { return _bytesWritten; } set { _bytesWritten = value; } }
+        public uint BytesWritten { get { return _bytesWritten; } }
         /// <summary>
         /// A structure of type <see cref="TWMemory"/> describing who must dispose of the
         /// buffer, the actual size of the buffer, in bytes, and where the buffer is
         /// located in memory.
         /// </summary>
-        public TWMemory Memory { get { return _memory; } set { _memory = value; } }
+        public TWMemory Memory { get { return _memory; } internal set { _memory = value; } }
     }
 
     /// <summary>
