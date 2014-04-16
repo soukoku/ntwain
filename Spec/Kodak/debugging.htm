@@ -1,0 +1,897 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+xmlns:st1="urn:schemas-microsoft-com:office:smarttags"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 12">
+<meta name=Originator content="Microsoft Word 12">
+<link rel=File-List href="debugging_files/filelist.xml">
+<title>Kodak KDS TWAIN Driver</title>
+<o:SmartTagType namespaceuri="urn:schemas-microsoft-com:office:smarttags"
+ name="place"/>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>50484369</o:Author>
+  <o:LastAuthor>50484369</o:LastAuthor>
+  <o:Revision>4</o:Revision>
+  <o:TotalTime>4</o:TotalTime>
+  <o:Created>2012-06-20T19:36:00Z</o:Created>
+  <o:LastSaved>2012-07-03T14:06:00Z</o:LastSaved>
+  <o:Pages>2</o:Pages>
+  <o:Words>907</o:Words>
+  <o:Characters>5176</o:Characters>
+  <o:Company>Microsoft</o:Company>
+  <o:Lines>43</o:Lines>
+  <o:Paragraphs>12</o:Paragraphs>
+  <o:CharactersWithSpaces>6071</o:CharactersWithSpaces>
+  <o:Version>12.00</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+<link rel=themeData href="debugging_files/themedata.thmx">
+<link rel=colorSchemeMapping href="debugging_files/colorschememapping.xml">
+<!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:TrackMoves>false</w:TrackMoves>
+  <w:TrackFormatting/>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:DoNotPromoteQF/>
+  <w:LidThemeOther>EN-US</w:LidThemeOther>
+  <w:LidThemeAsian>X-NONE</w:LidThemeAsian>
+  <w:LidThemeComplexScript>X-NONE</w:LidThemeComplexScript>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+   <w:DontGrowAutofit/>
+   <w:SplitPgBreakAndParaMark/>
+   <w:DontVertAlignCellWithSp/>
+   <w:DontBreakConstrainedForcedTables/>
+   <w:DontVertAlignInTxbx/>
+   <w:Word11KerningPairs/>
+   <w:CachedColBalance/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+  <m:mathPr>
+   <m:mathFont m:val="Cambria Math"/>
+   <m:brkBin m:val="before"/>
+   <m:brkBinSub m:val="&#45;-"/>
+   <m:smallFrac m:val="off"/>
+   <m:dispDef/>
+   <m:lMargin m:val="0"/>
+   <m:rMargin m:val="0"/>
+   <m:defJc m:val="centerGroup"/>
+   <m:wrapIndent m:val="1440"/>
+   <m:intLim m:val="subSup"/>
+   <m:naryLim m:val="undOvr"/>
+  </m:mathPr></w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" DefUnhideWhenUsed="false"
+  DefSemiHidden="false" DefQFormat="false" LatentStyleCount="267">
+  <w:LsdException Locked="false" QFormat="true" Name="Normal"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 1"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 2"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 3"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 4"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 5"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 6"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 7"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 8"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="heading 9"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="caption"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Title"/>
+  <w:LsdException Locked="false" Priority="1" Name="Default Paragraph Font"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Subtitle"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Strong"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Emphasis"/>
+  <w:LsdException Locked="false" Priority="99" Name="No List"/>
+  <w:LsdException Locked="false" Priority="99" SemiHidden="true"
+   Name="Placeholder Text"/>
+  <w:LsdException Locked="false" Priority="1" QFormat="true" Name="No Spacing"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 1"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="99" SemiHidden="true" Name="Revision"/>
+  <w:LsdException Locked="false" Priority="34" QFormat="true"
+   Name="List Paragraph"/>
+  <w:LsdException Locked="false" Priority="29" QFormat="true" Name="Quote"/>
+  <w:LsdException Locked="false" Priority="30" QFormat="true"
+   Name="Intense Quote"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 1"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 1"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 1"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 2"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 2"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 2"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 2"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 3"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 3"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 3"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 3"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 4"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 4"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 4"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 4"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 5"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 5"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 5"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 5"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 6"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 6"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 6"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 6"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="19" QFormat="true"
+   Name="Subtle Emphasis"/>
+  <w:LsdException Locked="false" Priority="21" QFormat="true"
+   Name="Intense Emphasis"/>
+  <w:LsdException Locked="false" Priority="31" QFormat="true"
+   Name="Subtle Reference"/>
+  <w:LsdException Locked="false" Priority="32" QFormat="true"
+   Name="Intense Reference"/>
+  <w:LsdException Locked="false" Priority="33" QFormat="true" Name="Book Title"/>
+  <w:LsdException Locked="false" Priority="37" SemiHidden="true"
+   UnhideWhenUsed="true" Name="Bibliography"/>
+  <w:LsdException Locked="false" Priority="39" SemiHidden="true"
+   UnhideWhenUsed="true" QFormat="true" Name="TOC Heading"/>
+ </w:LatentStyles>
+</xml><![endif]--><!--[if !mso]><object
+ classid="clsid:38481807-CA0E-42D2-BF39-B33AF135CC4D" id=ieooui></object>
+<style>
+st1\:*{behavior:url(#ieooui) }
+</style>
+<![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:SimSun;
+	panose-1:2 1 6 0 3 1 1 1 1 1;
+	mso-font-alt:\5B8B\4F53;
+	mso-font-charset:134;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:3 680460288 22 0 262145 0;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:roman;
+	mso-font-pitch:variable;
+	mso-font-signature:-536870145 1107305727 0 0 415 0;}
+@font-face
+	{font-family:"\@SimSun";
+	panose-1:2 1 6 0 3 1 1 1 1 1;
+	mso-font-charset:134;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:3 680460288 22 0 262145 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;}
+h1
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 1 Char";
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:justify;
+	page-break-before:always;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:18.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h2
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 2 Char";
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h3
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 3 Char";
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h4
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 4 Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+p.MsoBodyText2, li.MsoBodyText2, div.MsoBodyText2
+	{mso-style-unhide:no;
+	mso-style-link:"Body Text 2 Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	line-height:200%;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;}
+p.MsoBodyText3, li.MsoBodyText3, div.MsoBodyText3
+	{mso-style-unhide:no;
+	mso-style-link:"Body Text 3 Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:8.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 1";
+	mso-ansi-font-size:14.0pt;
+	mso-bidi-font-size:14.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#365F91;
+	mso-themecolor:accent1;
+	mso-themeshade:191;
+	font-weight:bold;}
+span.Heading2Char
+	{mso-style-name:"Heading 2 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 2";
+	mso-ansi-font-size:13.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.Heading3Char
+	{mso-style-name:"Heading 3 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 3";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.Heading4Char
+	{mso-style-name:"Heading 4 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 4";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;
+	font-style:italic;}
+span.BodyText2Char
+	{mso-style-name:"Body Text 2 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Body Text 2";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:SimSun;
+	mso-ascii-font-family:SimSun;
+	mso-fareast-font-family:SimSun;
+	mso-hansi-font-family:SimSun;}
+span.BodyText3Char
+	{mso-style-name:"Body Text 3 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Body Text 3";
+	mso-ansi-font-size:8.0pt;
+	mso-bidi-font-size:8.0pt;
+	font-family:SimSun;
+	mso-ascii-font-family:SimSun;
+	mso-fareast-font-family:SimSun;
+	mso-hansi-font-family:SimSun;}
+p.style4, li.style4, div.style4
+	{mso-style-name:style4;
+	mso-style-unhide:no;
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:justify;
+	page-break-before:always;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:18.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;
+	font-weight:bold;}
+p.style2, li.style2, div.style2
+	{mso-style-name:style2;
+	mso-style-unhide:no;
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;
+	font-weight:bold;
+	font-style:italic;}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	mso-default-props:yes;
+	font-size:10.0pt;
+	mso-ansi-font-size:10.0pt;
+	mso-bidi-font-size:10.0pt;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.WordSection1
+	{page:WordSection1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="3074"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=WordSection1>
+
+<p class=MsoNormal>Kodak KDS TWAIN Driver</p>
+
+<p class=MsoNormal>Debugging Guide</p>
+
+<p class=MsoNormal>03-July-2012</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b><u><span style='font-size:14.0pt'>Contents</span></u></b></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1.0&nbsp;&nbsp;&nbsp;&nbsp; Overview</span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2.0&nbsp;&nbsp;&nbsp;&nbsp; Finding the Driver Files</span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+3.0&nbsp;&nbsp;&nbsp;&nbsp; Configuring the System</span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4.0&nbsp;&nbsp;&nbsp;&nbsp; Dumping the Data Files</span></p>
+
+<p class=MsoNormal><span style='font-size:14.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+5.0&nbsp;&nbsp;&nbsp;&nbsp; Dumping the Image Files</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b><u><span style='font-size:14.0pt'>1.0&nbsp;&nbsp;&nbsp;&nbsp;
+Overview</span></u></b></p>
+
+<p class=MsoNormal>If sending information to Kodak about the TWAIN driver, we
+recommend including log data, which will result in a quicker diagnosis.&nbsp;
+This document should be helpful to select what to send.&nbsp; If in doubt, send
+everything you can.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The TWAIN driver debugs most problems through its logging
+system.&nbsp;&nbsp; This logging system is reasonably sophisticated, and can be
+configured to focus on specific areas, as needed.&nbsp; The most common kinds
+of logging configurations are as follows:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><u>Logging everything</u>: recording all activity.&nbsp;
+Occasionally this is the best way to capture needed information, especially if
+the problem is easily reproducible, but not obviously a problem with either the
+application or the scanner.&nbsp; Logs generated this way tend to be very
+large, and full of a lot of information. (<b>Debug=1</b>)</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><st1:place w:st="on"><u>Flushing</u></st1:place><u> to disk</u>:
+best when analyzing crashes.&nbsp; Disk drives rely on caches to boost
+performance, however, when programs crash they may strand vital information in
+those caches.&nbsp; If an application crash is easily reproducible, then it’s
+possible to flush every log entry to disk.&nbsp; This is typically used when
+logging everything, so the log files are very large and the application and
+driver performance is very slow. (<b>Debug=7</b>)</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><u>Database Dumping</u>: (5.x only) used to take a snapshot
+of the main database elements in the driver.&nbsp; (<b>Debug=256</b>)</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><u>Image Dumping</u>: used to capture images as soon as they
+are transferred from the scanner, and before they are processed or passed to
+the application.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b><u><span style='font-size:14.0pt'>2.0&nbsp;&nbsp;&nbsp;&nbsp;
+Finding the Driver Files</span></u></b></p>
+
+<p class=MsoNormal>All Kodak TWAIN driver files are accessible through the
+following path:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='text-indent:.5in'><b>%winbootdir%\twain_32\kodak</b></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Where <b>%<span class=SpellE>winbootdir</span>%</b> is the
+path to the Windows directory, which is usually either C:\WINDOWS or
+C:\WINNT.&nbsp; If you are not sure what this is you can do the following to
+find it out.&nbsp; This works for all versions of Windows.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in'>1)<span
+style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Click on START</p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in'>2)<span
+style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Select RUN</p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in'>3)<span
+style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Type in COMMAND
+and hit the Enter key</p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in'>4)<span
+style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Type SET in the
+DOS window</p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in'>5)<span
+style='font-size:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Look for
+WINBOOTDIR</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>When you look in the <b>%winbootdir%\twain_32\kodak</b> you
+may see several directories and files.&nbsp; Look for anything beginning with
+the letters KDS; these contain the Kodak TWAIN drivers.&nbsp; Pick the one that
+matches your scanner.&nbsp; You can find the version at the top of the <b>readme.txt</b>
+file.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in'><span lang=IT style='mso-ansi-language:
+IT'>kds_i30_i40&nbsp;&nbsp;&nbsp;&nbsp; - Version 6.x i30/i40 driver</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span lang=IT style='mso-ansi-language:
+IT'>kds_i100&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Version
+6.x i100 driver</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span lang=IT style='mso-ansi-language:
+IT'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span lang=IT style='mso-ansi-language:
+IT'>kds_i200&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Version
+4.x i200 driver</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span lang=IT style='mso-ansi-language:
+IT'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span lang=IT style='mso-ansi-language:
+IT'>kds_i600&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Version
+5.x or 6.x i600 driver</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span lang=IT style='mso-ansi-language:
+IT'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span lang=IT style='mso-ansi-language:
+IT'>kds_i800&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Version
+4.x or 6.x i800 driver</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_i1200&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Version 7.x i1200
+driver</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_i1300&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Version 7.x i1300
+driver</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span lang=IT style='mso-ansi-language:IT'>kds_i1400&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-
+Version 9.x i1400 driver</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_i1800&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Version 8.x i1800
+driver</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_i1100&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Version 9.x i1100
+driver</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_i700&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Version 9.x
+i700 driver</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_i4200_i4600 - Version 10.x i4000 driver</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_i5000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Version 11.x i5000 driver</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_i2000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Version 11.x i2000 driver</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_i900&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Version 11.x
+i900 driver</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_i2900&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Version 12.x i2900 driver</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_i3000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Version 12.x i3000 driver</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+kds_pss<span style='mso-spacerun:yes'>    </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Version 12.x PS50/PS80 driver</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><u><span style='font-size:14.0pt'>3.0&nbsp;&nbsp;&nbsp;&nbsp;
+Configuring the System</span></u></b></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>If you are using a 2/3.x driver, then edit the <b>const.ini</b>
+file.&nbsp; If you are using a 4/5/6.x driver, then click on the file called <b>a
+shortcut to const.ini </b>to edit the file.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Inside of this file you will find two values near the top.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Debug=0</b></p>
+
+<p class=MsoNormal><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span class=SpellE>DebugFilter</span>=</b></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>These are the switches used to configure the Kodak TWAIN
+driver logging system.&nbsp; By default they are turned off, so that the driver
+will only record a small amount of information in the event of an error.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The recommended values for <b>Debug</b> are as follows:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in'><b>Debug=0</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- record nothing but errors</p>
+
+<p class=MsoNormal style='margin-left:.5in'><b>Debug=1</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- record everything</p>
+
+<p class=MsoNormal style='text-indent:.5in'><b>Debug=7</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- record everything and flush to disk</p>
+
+<p class=MsoNormal style='margin-left:.5in'><b>Debug=64</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- record just the memory usage</p>
+
+<p class=MsoNormal style='margin-left:.5in'><b>Debug=256</b>&nbsp;&nbsp;&nbsp;&nbsp;
+- (5.x only) dump the data files</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b><u><span style='font-size:14.0pt'>4.0&nbsp;&nbsp;&nbsp;&nbsp;
+Dumping the Data Files</span></u></b></p>
+
+<p class=MsoNormal>This is available with the version 5/6.x drivers.&nbsp; If
+there is doubt about the state of the database or the language files or the
+device configuration data, then it is possible to dump those files at the start
+of the session.&nbsp; This is done by setting <b>Debug=256</b> in the <b>const.ini</b>
+file.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The files all start with the letters <b>KDS</b> and are
+placed in the user’s temp directory.&nbsp; Unfortunately, there is no single,
+common way to find this directory across all versions of Windows, so rather
+than try to describe how it’s done for each OS, we recommend that you search on
+your Windows OS disk (usually C:\) for all occurrences of <b>KDS*.TXT, </b>finding
+the files:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+KdsDbFixed.txt</p>
+
+<p class=MsoNormal style='text-indent:.5in'>KdsDeviceConfig.txt</p>
+
+<p class=MsoNormal style='text-indent:.5in'>KdsLabel.txt</p>
+
+<p class=MsoNormal style='text-indent:.5in'>KdsLookupGui.txt</p>
+
+<p class=MsoNormal style='text-indent:.5in'>KdsLookupTwain.txt</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>So, if you’re looking for everything possible to send when
+looking for help, feel free to include these files.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b><u><span style='font-size:14.0pt'>5.0&nbsp;&nbsp;&nbsp;&nbsp;
+Dumping the Image Files</span></u></b></p>
+
+<p class=MsoNormal>Not all drivers support this, but those that do will show a Dump
+tab in the TWAIN GUI when it is run from the Scanner Validation Tool (SVT), if
+the user has the right license level.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>You have to contact Kodak to get a license.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>For all scanners the tab offers a way to write images to
+disk before they are passed up to the application.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The first option provides a way to guarantee that the
+transfer of the image from the driver to the application did not change it in
+any way.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The second option dumps the data before it is processed by
+the driver.&nbsp; This ‘raw’ image is the one that we would want to see if
+there are questions about image quality.&nbsp; It’s also the image you need to
+use if you want to feed it back into the driver using the simulator.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

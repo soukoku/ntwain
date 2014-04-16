@@ -1,0 +1,2707 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 12">
+<meta name=Originator content="Microsoft Word 12">
+<link rel=File-List href="TWAIN_Features_files/filelist.xml">
+<title>Correct TWAIN Usage</title>
+<link rel=themeData href="TWAIN_Features_files/themedata.thmx">
+<link rel=colorSchemeMapping href="TWAIN_Features_files/colorschememapping.xml">
+<!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Zoom>104</w:Zoom>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:TrackMoves>false</w:TrackMoves>
+  <w:TrackFormatting/>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:DoNotPromoteQF/>
+  <w:LidThemeOther>EN-US</w:LidThemeOther>
+  <w:LidThemeAsian>X-NONE</w:LidThemeAsian>
+  <w:LidThemeComplexScript>X-NONE</w:LidThemeComplexScript>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+   <w:DontGrowAutofit/>
+   <w:SplitPgBreakAndParaMark/>
+   <w:DontVertAlignCellWithSp/>
+   <w:DontBreakConstrainedForcedTables/>
+   <w:DontVertAlignInTxbx/>
+   <w:Word11KerningPairs/>
+   <w:CachedColBalance/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+  <m:mathPr>
+   <m:mathFont m:val="Cambria Math"/>
+   <m:brkBin m:val="before"/>
+   <m:brkBinSub m:val="&#45;-"/>
+   <m:smallFrac m:val="off"/>
+   <m:dispDef/>
+   <m:lMargin m:val="0"/>
+   <m:rMargin m:val="0"/>
+   <m:defJc m:val="centerGroup"/>
+   <m:wrapIndent m:val="1440"/>
+   <m:intLim m:val="subSup"/>
+   <m:naryLim m:val="undOvr"/>
+  </m:mathPr></w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" DefUnhideWhenUsed="true"
+  DefSemiHidden="true" DefQFormat="false" DefPriority="99"
+  LatentStyleCount="267">
+  <w:LsdException Locked="false" Priority="0" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Normal"/>
+  <w:LsdException Locked="false" Priority="9" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="heading 1"/>
+  <w:LsdException Locked="false" Priority="9" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="heading 2"/>
+  <w:LsdException Locked="false" Priority="9" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="heading 3"/>
+  <w:LsdException Locked="false" Priority="9" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="heading 4"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 5"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 6"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 7"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 8"/>
+  <w:LsdException Locked="false" Priority="9" QFormat="true" Name="heading 9"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 1"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 2"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 3"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 4"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 5"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 6"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 7"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 8"/>
+  <w:LsdException Locked="false" Priority="39" Name="toc 9"/>
+  <w:LsdException Locked="false" Priority="35" QFormat="true" Name="caption"/>
+  <w:LsdException Locked="false" Priority="10" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Title"/>
+  <w:LsdException Locked="false" Priority="1" Name="Default Paragraph Font"/>
+  <w:LsdException Locked="false" Priority="11" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Subtitle"/>
+  <w:LsdException Locked="false" Priority="22" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Strong"/>
+  <w:LsdException Locked="false" Priority="20" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Emphasis"/>
+  <w:LsdException Locked="false" Priority="59" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Table Grid"/>
+  <w:LsdException Locked="false" UnhideWhenUsed="false" Name="Placeholder Text"/>
+  <w:LsdException Locked="false" Priority="1" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="No Spacing"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 1"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 1"/>
+  <w:LsdException Locked="false" UnhideWhenUsed="false" Name="Revision"/>
+  <w:LsdException Locked="false" Priority="34" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="List Paragraph"/>
+  <w:LsdException Locked="false" Priority="29" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Quote"/>
+  <w:LsdException Locked="false" Priority="30" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Intense Quote"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 1"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 1"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 1"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 2"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 2"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 2"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 2"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 3"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 3"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 3"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 3"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 4"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 4"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 4"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 4"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 5"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 5"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 5"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 5"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="60" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="61" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light List Accent 6"/>
+  <w:LsdException Locked="false" Priority="62" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Light Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="63" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="64" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Shading 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="65" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="66" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium List 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="67" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="68" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="69" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Medium Grid 3 Accent 6"/>
+  <w:LsdException Locked="false" Priority="70" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Dark List Accent 6"/>
+  <w:LsdException Locked="false" Priority="71" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="72" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful List Accent 6"/>
+  <w:LsdException Locked="false" Priority="73" SemiHidden="false"
+   UnhideWhenUsed="false" Name="Colorful Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="19" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Subtle Emphasis"/>
+  <w:LsdException Locked="false" Priority="21" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Intense Emphasis"/>
+  <w:LsdException Locked="false" Priority="31" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Subtle Reference"/>
+  <w:LsdException Locked="false" Priority="32" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Intense Reference"/>
+  <w:LsdException Locked="false" Priority="33" SemiHidden="false"
+   UnhideWhenUsed="false" QFormat="true" Name="Book Title"/>
+  <w:LsdException Locked="false" Priority="37" Name="Bibliography"/>
+  <w:LsdException Locked="false" Priority="39" QFormat="true" Name="TOC Heading"/>
+ </w:LatentStyles>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset:1;
+	mso-generic-font-family:roman;
+	mso-font-format:other;
+	mso-font-pitch:variable;
+	mso-font-signature:0 0 0 0 0 0;}
+@font-face
+	{font-family:Consolas;
+	panose-1:2 11 6 9 2 2 4 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:modern;
+	mso-font-pitch:fixed;
+	mso-font-signature:-520092929 1073806591 9 0 415 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h1
+	{mso-style-priority:9;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 1 Char";
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:justify;
+	page-break-before:always;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:18.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h2
+	{mso-style-priority:9;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 2 Char";
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h3
+	{mso-style-priority:9;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 3 Char";
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h4
+	{mso-style-priority:9;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 4 Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-link:"Header Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-link:"Footer Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+p.MsoBodyText2, li.MsoBodyText2, div.MsoBodyText2
+	{mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-link:"Body Text 2 Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	line-height:200%;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+p.MsoBodyText3, li.MsoBodyText3, div.MsoBodyText3
+	{mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-link:"Body Text 3 Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:8.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+pre
+	{mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-link:"HTML Preformatted Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+	{mso-style-priority:34;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	mso-add-space:auto;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+p.MsoListParagraphCxSpFirst, li.MsoListParagraphCxSpFirst, div.MsoListParagraphCxSpFirst
+	{mso-style-priority:34;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-type:export-only;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	mso-add-space:auto;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+p.MsoListParagraphCxSpMiddle, li.MsoListParagraphCxSpMiddle, div.MsoListParagraphCxSpMiddle
+	{mso-style-priority:34;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-type:export-only;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	mso-add-space:auto;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+p.MsoListParagraphCxSpLast, li.MsoListParagraphCxSpLast, div.MsoListParagraphCxSpLast
+	{mso-style-priority:34;
+	mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-type:export-only;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	mso-add-space:auto;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-priority:9;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 1";
+	mso-ansi-font-size:14.0pt;
+	mso-bidi-font-size:14.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#365F91;
+	mso-themecolor:accent1;
+	mso-themeshade:191;
+	font-weight:bold;}
+span.Heading2Char
+	{mso-style-name:"Heading 2 Char";
+	mso-style-noshow:yes;
+	mso-style-priority:9;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 2";
+	mso-ansi-font-size:13.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.Heading3Char
+	{mso-style-name:"Heading 3 Char";
+	mso-style-noshow:yes;
+	mso-style-priority:9;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 3";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.Heading4Char
+	{mso-style-name:"Heading 4 Char";
+	mso-style-noshow:yes;
+	mso-style-priority:9;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 4";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;
+	font-style:italic;}
+span.HTMLPreformattedChar
+	{mso-style-name:"HTML Preformatted Char";
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"HTML Preformatted";
+	font-family:Consolas;
+	mso-ascii-font-family:Consolas;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	mso-hansi-font-family:Consolas;
+	mso-bidi-font-family:Consolas;}
+span.HeaderChar
+	{mso-style-name:"Header Char";
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:Header;
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-ascii-font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+span.FooterChar
+	{mso-style-name:"Footer Char";
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:Footer;
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-ascii-font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+span.BodyText2Char
+	{mso-style-name:"Body Text 2 Char";
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Body Text 2";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-ascii-font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+span.BodyText3Char
+	{mso-style-name:"Body Text 3 Char";
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Body Text 3";
+	mso-ansi-font-size:8.0pt;
+	mso-bidi-font-size:8.0pt;
+	font-family:"Times New Roman","serif";
+	mso-ascii-font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	mso-hansi-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.style4, li.style4, div.style4
+	{mso-style-name:style4;
+	mso-style-unhide:no;
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:justify;
+	page-break-before:always;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:18.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	font-weight:bold;}
+p.style2, li.style2, div.style2
+	{mso-style-name:style2;
+	mso-style-unhide:no;
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	font-weight:bold;
+	font-style:italic;}
+span.hcp2
+	{mso-style-name:hcp2;
+	mso-style-unhide:no;
+	font-weight:bold;}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	mso-default-props:yes;
+	font-size:10.0pt;
+	mso-ansi-font-size:10.0pt;
+	mso-bidi-font-size:10.0pt;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.WordSection1
+	{page:WordSection1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:109906176;
+	mso-list-template-ids:-170858746;}
+@list l1
+	{mso-list-id:935669577;
+	mso-list-template-ids:2069690248;}
+@list l1:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2
+	{mso-list-id:1589003956;
+	mso-list-template-ids:2023675700;}
+@list l2:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3
+	{mso-list-id:1936554396;
+	mso-list-template-ids:-322507588;}
+@list l4
+	{mso-list-id:2056542986;
+	mso-list-template-ids:-858726200;}
+@list l5
+	{mso-list-id:2120174043;
+	mso-list-template-ids:390083278;}
+@list l5:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="12290"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=WordSection1>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Background Smoothing:</span></b></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The purpose of Background Smoothing is to remove overall
+mottle or discolorations in the background of the scanned image typically
+resulting from scanning and/or paper non-uniformity. Background Smoothing improves
+overall appearance of the image and also results in higher file compression
+ratios. These results are achieved by “smoothing” up to three background colors
+(one neutral and two additional colors). Optionally one or more background
+colors may be smoothed to white.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Background smoothing is only available for Color/Grayscale
+output.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The type of background smoothing that is applied to the
+image is selected using ICAP_BACKGROUNDADJUSTMODE. Selecting TWBS_AUTOMATIC or
+TWBS_AUTOMATICBASIC will “smooth” up to three background colors. Selecting
+TWBS_CHANGETOWHITE will allow one or more background colors to be smoothed to
+white.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>When the TWBS_CHANGETOWHITE adjustment mode is selected,
+ICAP_ BACKGROUNDADJUSTAPPLYTO becomes available. ICAP_ BACKGROUNDADJUSTAPPLYTO
+is<span style='color:black'> used to select which background colors to smooth
+to white.</span></p>
+
+<p class=MsoNormal><span style='color:black'>TWBA_</span> <span lang=IT
+style='mso-ansi-language:IT'>PREDOMINATE will smooth the predominate background
+color to white.</span></p>
+
+<p class=MsoNormal><span style='color:black'>TWBA_NEUTRAL will smooth just the
+neutral color to white and also smooth the two additional background colors.</span></p>
+
+<p class=MsoNormal><span lang=IT style='mso-ansi-language:IT'>TWBA_ALL</span><span
+style='color:black'> will smooth up to three background colors to white.</span></p>
+
+<p class=MsoNormal><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal>The aggressiveness of the background smoothing is selected
+using ICAP_BACKGROUNDADJUSTAGGRESSIVENESS. The more higher the value, the more
+likely a pixel will be determined to be background.</p>
+
+<p class=MsoNormal>This is available when ICAP_BACKGROUNDADJUSTMODE is not set
+to TWBS_NONE or TWBS_AUTOMATICBASIC.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Blank Image Deletion:</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>This
+feature allows the user to instruct the driver to remove images that are
+considered blank. The driver can determine if an image is blank based on the
+content in the image or the final image size after any compression. The driver
+determines if it is blank on a per image basis. For example, if a Color and
+Black and White images are being created on the Front, it is possible that Front
+Color image will not be considered blank, but the Black and White image will be
+considered blank.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>Blank
+image deletion, for a camera, can be turned on by setting CAP_BLANKPAGEMODE to
+TWBM_CONTENT (content based) or TWBM_COMPSIZE (final image size). It can be
+turned off by setting CAP_BLANKPAGEMODE to TWBM_NONE. However, blank page
+detection based on content is not available for all scanners.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>When
+TWBM_CONTENT is selected, CAP_BLANKPAGECONTENT becomes available.&nbsp;
+CAP_BLANKPAGECONTENT is used to set the content percentage.&nbsp; If the image
+content is less or equal to the percent specified, the image will be deleted.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>When
+TWBM_COMPSIZE is selected, CAP_BLANKPAGECOMPSIZEBW (Black and White image),
+CAP_BLANKPAGECOMPSIZEGRAY (Grayscale image) and CAP_BLANKPAGECOMPSIZERGB (Color
+image) are use to set the image size. If the final image size is less that the
+corresponding value, the image is deleted. For backward compatibility, the
+value CAP_BLANKPAGEMODE will be changed when any <span class=SpellE>CAP_BLANKPAGECOMPSIZExxx</span>
+is changed. If any value becomes non-zero, CAP_BLANKPAGEMODE will be set to
+TWBM_COMPSIZE. If all three values become zero, CAP_BLANKPAGEMODE well be set
+to TWBM_NONE.</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='text-autospace:none'><b><span style='font-size:14.0pt;
+color:black'>Color Adjustments:</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><b><span
+style='color:black'>&nbsp;</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>There are
+adjustments for Color/Grayscale outputs. These adjustments allow users to
+modify the overall Brightness, Contrast and Hue (red, green and blue) of their
+scanned documents; they are applied after the image has been color corrected.
+The user may also turn off color correction, including gamma correction (i.e.
+raw scanner image); the other adjustments are still applied.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>All the
+possible adjustments are: Brightness, Contrast, Red, Green, Blue, and Raw.
+However, not all scanners support these.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>Brightness
+and Contrast is controlled using ICAP_COLORBRIGHTNESSMODE. </span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCBR_NONE means no adjustment is made.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCBR_MANUAL means the user can adjust Brightness and Contrast (see
+ICAP_BRIGHTNESS and ICAP_CONTRAST).</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCBR_AUTOMATICBASIC means the scanner will automatically adjust the image.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>Brightness
+is controlled using ICAP_BRIGHTNESS. Increasing this will make documents appear
+to be lighter. This is ignored if ICAP_COLORBRIGHTNESSMODE is not set to
+TWCBR_MANUAL.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>Contrast
+is controlled using ICAP_CONTRAST. Increasing this, for Color/Grayscale, will
+increase the image’s tonal range. This is ignored if ICAP_COLORBRIGHTNESSMODE
+is not set to TWCBR_MANUAL.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>Color
+Balance is controlled using ICAP_COLORBALANCEMODE.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCBM_NONE means no adjustment is made.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCBM_MANUAL means the user can adjust Red, Green and Blue (see
+ICAP_COLORBALANCEREAD/GREEN/BLUE)</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCBM_AUTOMATICBASIC means the scanner will automatically adjust the balance to
+be white.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCBM_AUTOMATIC is the same as TWCBM_AUTOMATICBASIC but the user can also
+adjust the aggressiveness of the balance (see
+ICAP_COLORBALANCEAUTOMATICAGRESSIVENESS)</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>The
+aggressiveness of the auto white is set using ICAP_COLORBALANCEAUTOMATICAGGRESSIVENESS.
+The higher the value, the more likely a pixel will be determined to be white.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>Red,
+Green, and Blue are controlled using ICAP_COLORBALANCERED,
+ICAP_COLORBALANCEGREEN, and ICAP_COLORBALANCEBLUE; respectively. Increasing
+Blue, for example, will make the image appear bluer. This is ignored if
+ICAP_COLORBALANCEMODE is not set to TWCBM_MANUAL</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>Raw
+(i.e. no color/gamma correction) is controlled using ICAP_GAMMAENABLED.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='text-autospace:none'><b><span style='font-size:14.0pt'>Color
+Sharpening:</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-top:2.05pt;text-autospace:none'><span
+style='color:black'>Apply ICAP_COLORSHARPEN to color and grayscale
+images:&nbsp; 0 indicates no sharpening. 1 is normal, 2 is more sharpening, and
+a value of 3 applies a lot of sharpening.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Document Type</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>If supported by the scanner, Document type indicates the
+type of content that is on the document. This is available for all outputs;
+however, for some scanners the selection needs to be the same for the Front and
+Back.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>This is controlled using ICAP_DOCUMENTTYPE.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>How to select the type:</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>------------------------------------------------------</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>If your documents contain a mix of text and business
+graphics (e.g. charts, graphs, etc), then select: TWDT_TEXTWITHGRAPHICS.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>If your documents contain only text, then select:
+TWDT_TEXT.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>If your documents contain mainly photographs, or you want
+the color correction optimized for photographs, then select: TWDT_PHOTO.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>If, supported by the scanner and, your documents contain a
+mix of text and photographs, then select: TWDT_TEXTWITHPHOTO. If not supported,
+then TWDT_PHOTO or TWDT_TEXTWITHGRAPHICS is suggested.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>NOTE: refer to the Color Table section of this guide for
+information on backward compatibility with color tables</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Media Type</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>If supported by the scanner, Media type indicates the type
+of paper being scanned. This is available for all outputs; however, for some scanners
+the selection needs to be the same for the Front and Back.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>This is controlled using ICAP_MEDIATYPE.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>How to select the type:</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>------------------------------------------------------</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>If your documents are normal everyday paper (e.g. copier
+paper, inkjet paper, etc), then select: TWMT_PLAINPAPER.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>If your documents are lightweight or thin (e.g. rice paper,
+‘tissue’ paper, etc), then select: TWMT_THINPAPER.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>If your documents are glossy (e.g. photographic paper),
+then select: TWMT_GLOSSYPAPER.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>If your documents are magazine articles, then select:
+TWMT_MAGAZINE. If not supported, then TWMT_GLOSSYPAPER or TWMT_PLAINPAPER is
+suggested.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>If your documents appear to be normal everyday paper but
+are thick (e.g. card stock), then select: TWMT_CARDSTOCK.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>NOTE: unless otherwise specified, if the desired type is
+not supported by the scanner, then select TWMT_PLAINPAPER.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>NOTE: refer to the Color Table section of this guide for
+information on backward compatibility with color tables</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Color Tables</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>For scanners than now support Document Type
+(ICAP_DOCUMENTTYPE) and Media Type (ICAP_MEDIATYPE), Color Tables is only
+supported for backwards compatibility. That means selecting ICAP_COLORTABLE
+will still work, however it is highly recommend that code be setup to handle
+Document and Media Type.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>For reference, the mapping between Color Tables and
+Document/Media Types is as follows:</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>--------------------------------------------------------------------------------------------</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>‘Mixed’ and ‘Text with Pictures’: TWDT_TEXTWITHGRAPHICS /
+TWMT_PLAINPAPER.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>‘Photo’ and ‘Pictures’: TWDT_PHOTO / TWMT_GLOSSY.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>‘Text’: TWDT_TEXT / TWMT_PLAINPAPER</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><a name="_Toc116885147"><b><span style='font-size:14.0pt'>Electronic
+Color Drop-Out (ECDO)</span></b></a><b><span style='font-size:14.0pt'>:</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>There are adjustments for <span class=SpellE>Bitonal</span>/Grayscale
+outputs. These adjustments allow users to select the ECDO color of their
+scanned documents.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>The applications should only try to set the TWCD_FILE
+values.&nbsp; The DAT_ECDO operation for a way to map the display strings to
+the various ICAP_ECDO values.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>ICAP_ECDOTREATASCOLOR
+allows you to indicate that a color other than black or dark blue ink was used
+for the data entered on the form. This not available on all scanner models or
+when ECDO is set to (none).</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='color:black'>NOTE: refer to the ICAP_FILTERENUM
+section of this guide for information on backward compatibility with ECDO</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Orthogonal Rotation:</span></b><br>
+<br>
+This will rotate an image in 90 degree increments. The rotation occurs after
+the image has been cropped and/or <span class=SpellE>deskewed</span>.<br>
+<br>
+This is set using ICAP_ROTATION to indicate the number of degrees.<br>
+<br>
+Some scanners support Automatic orthogonal rotation. When set, the driver will
+automatically determine the degrees of rotation based on the content of the
+image. This is turned on by setting ICAP_AUTOMATICROTATE to true.<br>
+<br>
+ICAP_ORTHOGONALROTATE is a custom capability. It’s a combination of
+ICAP_AUTOMATICROTATE and ICAP_ROTATION plus the TWOROT_AUTOMATIC_90 (or 180,
+270). When ICAP_ORTHOGONALROTATE sets to TWOROT_AUTOMATIC_90 the driver uses
+auto-orient algorithm automatically determine orthogonal rotation. However, if
+the orientation cannot be determined, the image will be rotated 90 degrees.<br>
+<br>
+For your reference, the following table shows the mapping between
+ICAP_ORTHOGONALROTATE and ICAP_AUTOMATICROTATE and ICAP_ROTATION.<br>
+&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;<o:p></o:p></p>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0
+ style='margin-left:23.4pt;border-collapse:collapse;mso-yfti-tbllook:1184;
+ mso-padding-alt:0in 0in 0in 0in' id=table2>
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+  <td width=216 valign=top style='width:2.25in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><b>ICAP_ORTHOGONALROTATE</b></p>
+  </td>
+  <td width=204 valign=top style='width:153.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><b>ICAP_AUTOMATICROTATE</b></p>
+  </td>
+  <td width=166 valign=top style='width:124.2pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><b>ICAP_ROTATION</b></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1'>
+  <td width=216 valign=top style='width:2.25in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWOROT_NONE</p>
+  </td>
+  <td width=204 valign=top style='width:153.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>False</p>
+  </td>
+  <td width=166 valign=top style='width:124.2pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>0</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2'>
+  <td width=216 valign=top style='width:2.25in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWOROT_90</p>
+  </td>
+  <td width=204 valign=top style='width:153.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>False</p>
+  </td>
+  <td width=166 valign=top style='width:124.2pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>90</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:3'>
+  <td width=216 valign=top style='width:2.25in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWOROT_180</p>
+  </td>
+  <td width=204 valign=top style='width:153.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>False</p>
+  </td>
+  <td width=166 valign=top style='width:124.2pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>180</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:4'>
+  <td width=216 valign=top style='width:2.25in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWOROT_270</p>
+  </td>
+  <td width=204 valign=top style='width:153.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>False</p>
+  </td>
+  <td width=166 valign=top style='width:124.2pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>270</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:5'>
+  <td width=216 valign=top style='width:2.25in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWOROT_AUTOMATIC</p>
+  </td>
+  <td width=204 valign=top style='width:153.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>True</p>
+  </td>
+  <td width=166 valign=top style='width:124.2pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>0</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:6'>
+  <td width=216 valign=top style='width:2.25in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWOROT_AUTOMATIC_90</p>
+  </td>
+  <td width=204 valign=top style='width:153.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>True</p>
+  </td>
+  <td width=166 valign=top style='width:124.2pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>0</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:7'>
+  <td width=216 valign=top style='width:2.25in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWOROT_AUTOMATIC_180</p>
+  </td>
+  <td width=204 valign=top style='width:153.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>True</p>
+  </td>
+  <td width=166 valign=top style='width:124.2pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>0</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:8;mso-yfti-lastrow:yes'>
+  <td width=216 valign=top style='width:2.25in;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWOROT_AUTOMATIC_270</p>
+  </td>
+  <td width=204 valign=top style='width:153.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>True</p>
+  </td>
+  <td width=166 valign=top style='width:124.2pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>0</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='font-family:"Courier New";color:red'>&nbsp;</span><br>
+<br>
+<b><span style='font-size:14.0pt'>Automatic Rotation:</span></b><br>
+<br>
+If Automatic orthogonal rotation is supported (see Orthogonal Rotation) then
+the TWAIN feature Automatic Rotate is also supported (ICAP_AUTOMATICROTATE).<br>
+<br>
+If ICAP_AUTOMATICROTATE is set to true, then ICAP_ROTATION is set to 0<br>
+<br>
+ICAP_AUTOMATICROTATE will automatically be updated anytime ICAP_ROTATION is
+changed <br>
+&nbsp;</p>
+
+<p class=MsoNormal style='text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><span class=SpellE><b><span style='font-size:14.0pt'>Multifeed</span></b></span><b><span
+style='font-size:14.0pt'> UDDS Sensors</span></b><span style='color:black'><br>
+<br>
+The TWAIN driver provides the ability to detect a <span class=SpellE>multifeed</span>
+condition by setting the CAP_ULTRASONICSENSITIVITY to TWUS_LOW, TWUS_MEDIUM or
+TWUS_HIGH.<br>
+<br>
+When CAP_ULTRASONICSENSITIVITY is not TWUSS_DISABLED, if supported, each sensor
+(CAP_ULTRASONICSENSOR*) can be individually turned on (TWUO_ENABLED) or off
+(TWUO_DISABLED). For scanners that support the “Ignore” feature,
+TWUO_IGNOREZONE can also be selected.<br>
+NOTE: at least one sensor must remain on.<br>
+<br>
+When TWUO_IGNOREZONE is selected, the height of the area to be ignored is
+controlled by CAP_ULTRASONICSENSORZONEHEIGHT. This setting will apply to all
+sensors set to TWUO_IGNOREZONE.</span><br>
+&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span class=SpellE><b><span style='font-size:14.0pt'>Multifeed</span></b></span><b><span
+style='font-size:14.0pt'> Response:</span></b></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The <span class=SpellE>Multifeed</span> Response is used to
+indicate what action to take when a <span class=SpellE>multifeed</span> is
+detected by the scanner. This value is only available when <span class=SpellE>multifeed</span>
+detection is turned on (i.e. CAP_ULTRASONICSENSITIVITY is not set to
+TWUSS_DISABLED, or CAP_PAGESIZELIMIT is not zero). </p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Going forward CAP_MULTIFEEDRESPONSE should be used instead
+of the values: CAP_DOUBLEFEEDSTOP and CAP_DOUBLEFEEDENDJOB. These values don’t
+allow access to all the possible <span class=SpellE>multifeed</span> responses,
+but are left in for backwards compatibility. All three values will
+automatically be updated, to stay in sync, when any of them are changed. </p>
+
+<p class=MsoNormal><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='color:black'>For your reference, the following
+table shows the mapping between </span>CAP_MULTIFEEDRESPONSE and <span
+style='color:black'>CAP_DOUBLEFEEDSTOP and </span>CAP_DOUBLEFEEDENDJOB.</p>
+
+<p class=MsoNormal><span style='color:black'>&nbsp;</span><o:p></o:p></p>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0
+ style='margin-left:23.4pt;border-collapse:collapse;mso-yfti-tbllook:1184;
+ mso-padding-alt:0in 0in 0in 0in;border:msorm' id=table1>
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+  <td width=175 valign=top style='width:131.4pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><b><span style='color:black'>CAP_DOUBLEFEEDSTOP</span></b><o:p></o:p></p>
+  </td>
+  <td width=194 valign=top style='width:145.85pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><b>CAP_DOUBLEFEEDENDJOB</b><o:p></o:p></p>
+  </td>
+  <td width=216 valign=top style='width:161.95pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><b>CAP_MULTIFEEDRESPONSE</b></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1'>
+  <td width=175 valign=top style='width:131.4pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>True</span><o:p></o:p></p>
+  </td>
+  <td width=194 valign=top style='width:145.85pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>True</span><o:p></o:p></p>
+  </td>
+  <td width=216 valign=top style='width:161.95pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>TWMR_ENDOFJOB</span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2'>
+  <td width=175 valign=top style='width:131.4pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>True</span><o:p></o:p></p>
+  </td>
+  <td width=194 valign=top style='width:145.85pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>True</span><o:p></o:p></p>
+  </td>
+  <td width=216 valign=top style='width:161.95pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>TWMR_ENDOFJOBLEAVEPAPER</span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:3'>
+  <td width=175 valign=top style='width:131.4pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>True</span><o:p></o:p></p>
+  </td>
+  <td width=194 valign=top style='width:145.85pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>False</span><o:p></o:p></p>
+  </td>
+  <td width=216 valign=top style='width:161.95pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>TWMR_STOPFEEDER</span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:4;mso-yfti-lastrow:yes'>
+  <td width=175 valign=top style='width:131.4pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>False</span><o:p></o:p></p>
+  </td>
+  <td width=194 valign=top style='width:145.85pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>False</span><o:p></o:p></p>
+  </td>
+  <td width=216 valign=top style='width:161.95pt;padding:0in 5.4pt 0in 5.4pt;
+  border-left:msorm;border-right:msorm;border-top:msorm;border-bottom:msorm'>
+  <p class=MsoNormal><span style='color:black'>TWMR_CONTINUE</span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Image Edge Fill:</span></b></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>This feature fills the edges of the final electronic image
+by covering the area with the specified color. Use ICAP_IMAGEEDGEFILL to
+specify the color to fill with.<br>
+<br>
+If scanner supported TWIE_AUTOMATIC and TWIE_AUTOMATICWITHTEAR the edge of an
+image is automatically filled in with the same color space as the image.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>When TWIE_AUTOMATIC or TWIE_AUTOMATICWITHTEAR is selected
+the ICAP_CROPPINGMODE is automatically changed to TWCR_AUTOMATICBORDERDETECTION
+and the ICAP_AUTOMATICDESKEW is also changed to TRUE.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>If the current value of ICAP_IMAGEEDGEFILL is TWIE_AUTOMATIC
+or TWIE_AUTOMATICWITHTEAR and ICAP_CROPPINGMODE is changed to not
+TWCR_AUTOMATICBORDERDETECTION or ICAP_AUTOMATICDESKEW is changed to FALSE then
+ICAP_IMAGEEDGEFILL is automatically changed to TWIE_NONE.<br>
+<br>
+For the TWIE_WHITE and TWIE_BLACK, use ICAP_IMAGEEDGELEFT, ICAP_IMAGEEDGERIGHT,
+ICAP_IMAGEEDGETOP and ICAP_IMAGEEDGEBOTTOM to specify the amount of fill for
+each edge.<br>
+<br>
+If you want all sides to be forced to have the same amount of fill, then set
+ICAP_IMAGEEDGEFILLALLSIDES to True. The driver uses the value for the top edge
+(ICAP_IMAGEEDGETOP) as the size of the fill for the other three edges. In
+addition, the left (ICAP_ IMAGEEDGELEFT), right (ICAP_ IMAGEEDGERIGHT), and
+bottom (ICAP_ IMAGEEDGEBOTTOM) edge will have read-only access since their
+values are automatically set to match the top edge.<br>
+&nbsp;</p>
+
+<p class=MsoNormal style='text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Sides Different:</span></b></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The purpose of Sides Different allows the user to determine
+if Front and Rear values need to be the same or not.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>When CAP_SIDESDIFFERENT is changed to False (i.e.
+transitioned from True to False), the driver will make the sides the same by
+copying all the Front camera settings to the Rear camera. While CAP_SIDESDIFFERENT
+is False, any value that is set on the current camera (e.g. Front) will
+automatically be set on the opposite camera (e.g. Rear).</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>When CAP_SIDESDIFFERENT is set to True, the driver would
+then allow different values for the Front and Rear camera. Realize that when
+CAP_SIDESDIFFERENT has a value of True, the values for Front and Rear may not
+actually be different. This would be the case when Sides Different is first set
+to True (i.e. transitioned from False to True), and no other values have been
+changed.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='text-autospace:none'><b><span style='font-size:14.0pt'>Device
+Events:</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>Applications can register for device events by issuing a
+CAP_DEVICEEVENT for events the driver wants to receive. For a list of supported
+events for each scanner model, refer to <span class=SpellE>kdscust.h</span>.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>Applications are notified of device events via </span>DG_CONTROL
+/ DAT_NULL / MSG_DEVICEEVENT.&nbsp; Upon receiving a MSG_DEVICEEVENT, the
+application must immediately issue a DG_CONTROL / MSG_DEVICEEVENT / MSG_GET to
+obtain the event information.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><b><span
+style='color:black'>TWDE_LAMPWARMUP</span></b></p>
+
+<p class=MsoNormal style='margin-left:.5in;line-height:12.0pt;text-autospace:
+none'><span style='color:black'>For version 9.3 drivers and up, the application
+can ask the driver to send this custom CAP_DEVICEEVENT if the lamps need to <span
+class=SpellE>warmup</span> prior to scanning. This event will be issued after a
+MSG_ENABLEDS if the lamps are not warmed up. The number of seconds before the
+lamps are ready will be in the <span class=SpellE>TimeBeforeFirstCapture</span>
+field of the TW_DEVICEVENT structure.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;line-height:12.0pt;text-autospace:
+none'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;line-height:12.0pt;text-autospace:
+none'><span style='color:black'>NOTE: The number of seconds may be longer than
+what it actually take. This could happen because an error occurred (e.g.
+opening cover, cancelling) or for models that do not have an accurate <span
+class=SpellE>warmup</span> value.&nbsp; Because of this, if your application is
+displaying a “please wait” message for the user, the message needs to be closed
+when MSG_XFERREADY is received.</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Blank Image Deletion:</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>This
+feature allows the user to instruct the driver to remove images that are
+considered blank. The driver can determine if an image is blank based on the
+content in the image or the final image size after any compression. The driver
+determines if it is blank on a per image basis. For example, if a Color and
+Black and White images are being created on the Front, it is possible that
+Front Color image will not be considered blank, but the Black and White image
+will be considered blank.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>Blank image
+deletion, for a camera, can be turned on by setting CAP_BLANKPAGEMODE to
+TWBM_CONTENT (content based) or TWBM_COMPSIZE (final image size). It can be
+turned off by setting CAP_BLANKPAGEMODE to TWBM_NONE. However, blank page
+detection based on content is not available for all scanners.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>When
+TWBM_CONTENT is selected, CAP_BLANKPAGECONTENT becomes available.&nbsp;
+CAP_BLANKPAGECONTENT is used to set the content percentage.&nbsp; If the image
+content is less or equal to the percent specified, the image will be deleted.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>When
+TWBM_COMPSIZE is selected, CAP_BLANKPAGECOMPSIZEBW (Black and White image),
+CAP_BLANKPAGECOMPSIZEGRAY (Grayscale image) and CAP_BLANKPAGECOMPSIZERGB (Color
+image) are use to set the image size. If the final image size is less that the
+corresponding value, the image is deleted. For backward compatibility, the
+value CAP_BLANKPAGEMODE will be changed when any <span class=SpellE>CAP_BLANKPAGECOMPSIZExxx</span>
+is changed. If any value becomes non-zero, CAP_BLANKPAGEMODE will be set to
+TWBM_COMPSIZE. If all three values become zero, CAP_BLANKPAGEMODE well be set
+to TWBM_NONE.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Getting Logs
+Programmatically:</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>This
+feature allows the user to retrieve logs. </span>There are text based logs, XML
+based logs and EKLOG package files. A<span style='color:black'> log is
+retrieved by issuing a DG_CONTROL/DAT_LOG/MSG_GET with a properly filled in
+TW_LOG structure. Fill in a TW_LOG structure with the desired log (<span
+class=SpellE>LogType</span>), the desired device (<span class=SpellE>DeviceType</span>),
+and the full path and name of the file (Filename) to store the log data into.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>For all
+scanners, set <span class=SpellE>DeviceType</span> to TWDV_ADF to get the base
+scanners information. For those scanners that support the flatbed as an
+accessory (e.g. i1200, i1300, i1400), you will need to make a second call, with
+<span class=SpellE>DeviceType</span> set to TWDV_FLATBED, to get the flatbed’s
+information. This is necessary because the flatbed is a separate device.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>DAT_LOG
+will return TWRC_FAILURE/TWCC_OPERATIONERROR if a request is made for a log
+that is not supported by the scanner (e.g. not all scanners have an operator
+log).</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>DAT_LOG
+will return TWRC_FAILURE/TWCC_BADVALUE if the <span class=SpellE>DeviceType</span>
+is TWDV_FLATBED and there is no separate flatbed scanner (e.g. i1000A4 &amp;
+i1000A3) attached. Since this is the only case when this error code is
+returned, applications could make use of this by always issuing the second
+DAT_LOG call and let this be the way to know there is no separate flatbed
+scanner attached.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>The
+text based logs are ones that can be easily viewed in something like Notepad,
+each log entry will be on its own line. These logs contain the same information
+as is shown on the driver UI on the Log tab. The language for the translated
+text will be based on the current language selected for the driver. </span>The
+format of each log entry is not guaranteed, so you should never parse the
+entries to get information.</p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>The XML
+based logs are designed to be flexible across scanners and to allow for future
+expansion. The following notes apply to the XML based logs:</span></p>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l5 level1 lfo3;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>Not all fields may be returned for each scanner. For
+     example, rear lamp-on hours would not be returned for a simplex scanner;
+     patch counts would not be returned on a scanner that does not support
+     patch reading; and versions will only be returned for the items that the
+     scanner actually has. Therefore, it is the responsibility of the
+     application to handle tags not being there.<o:p></o:p></span></li>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l5 level1 lfo3;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>The order of the tags is not guaranteed. Therefore it
+     is the responsibility of the application to parse the entire XML.<o:p></o:p></span></li>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l5 level1 lfo3;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>The character format for the entire XML is UTF-8<o:p></o:p></span></li>
+ <li class=MsoNormal style='color:black;line-height:12.0pt;mso-list:l5 level1 lfo3;
+     tab-stops:list .5in'><span style='mso-fareast-font-family:"Times New Roman"'>The
+     spacing shown below is for clarity; it may or may not be as shown. It is
+     the responsibility of the application to handle variable spacing.<o:p></o:p></span></li>
+</ol>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>The
+possible logs (<span class=SpellE>LogType</span>) are:</span></p>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l1 level1 lfo6;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>TWGL_GENERAL: this returns the text based log called
+     General on the driver UI. This log is not common among scanner families.<o:p></o:p></span></li>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l1 level1 lfo6;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>TWGL_OPERATOR: this returns the text based log called
+     Operator on the driver UI. This log is not common among scanner families.<o:p></o:p></span></li>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l1 level1 lfo6;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>TWGL_GENERAL_XML: this returns a XML based log that
+     contains information typically found in the General log: model, serial
+     number, versions, meters, etc.<o:p></o:p></span></li>
+ <li class=MsoNormal style='margin-bottom:6.0pt;line-height:12.0pt;mso-list:
+     l1 level1 lfo6;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>TWGL_EKLOG: returns an EKLOG package file for Service
+     (the same kind of file that can be generated from the TWAIN User
+     Interface); when using this type be sure to offer a description of the log
+     (why it’s being sent), and set <span class=SpellE>SaveImages</span> to
+     TRUE if delivering device or application images with the package.&nbsp;
+     This is not a viewable log.<o:p></o:p></span></li>
+</ol>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>The XML
+format of the TWGL_GENERAL_XML log is as follows. Included are examples of what
+the tag values could be. The text to the right of the tags is a description of
+what the tag is (the numbers in parenthesis refer to the tag notes below. The
+descriptions will not appear in the log file:</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&lt;<span class=SpellE>tw_log</span>&gt;</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp; &lt;<span class=SpellE>cdname</span>&gt;</span>
+<span style='color:black'>KODAK i1210/i1220 Scanner&lt;/<span class=SpellE>cdname</span>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Family name from CD</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp; &lt;modelname&gt;i1220&lt;/modelname&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+name of scanner model</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;versioncd&gt;1.25&lt;/versioncd&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CD version</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;versiontwain&gt;9.64&lt;/versiontwain&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWAIN driver version</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;versionui&gt;3.23&lt;/versionui&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWAIN UI version</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;flatbed&gt;false&lt;/flatbed&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+flatbed attached (1)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;printer&gt;false&lt;/printer&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+printer accessory available (1)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;background&gt;black&lt;/background&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+front camera’s background color (2)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;backgroundrear&gt;black&lt;/backgroundrear&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rear camera’s background color (2)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp; &nbsp;&lt;connection&gt;USBSCAN
+2.0&lt;/connection&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+interface scanner is connected to (3)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;serialnumber&gt;1234567890&lt;/serialnumber&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+scanner’s serial number</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;versionfirmware&gt;1.43&lt;/versionfirmware&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+scanner firmware version</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;versionhippo&gt;4.5.1&lt;/versionhippo&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+image processing version</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;versiondriver&gt;2.3&lt;/versiondriver&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+driver.dll version</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;versiondevice&gt;2.10&lt;/versiondevice&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+device.dll version</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp; &lt;<span class=SpellE>versiondevicemanager</span>&gt;1.1&lt;/<span
+class=SpellE>versiondevicemanager</span>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+devicemanager.dll version</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp; &lt;meterpower&gt;104&lt;/meterpower&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+time scanner has been on (4)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;metertransport&gt;99&lt;/metertransport&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+time transport has been on (4)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;meterlampfront&gt;104&lt;/meterlampfront&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+time front lamps have been on (4)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;meterlamprear&gt;100&lt;/meterlamprear&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+time rear lamps have been on (4)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp; &lt;<span class=SpellE>meterfirstscan</span>&gt;2008/12/03
+15:58:44.245&lt;/<span class=SpellE>meterfirstscan</span>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+time &amp; date of first scan (5)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;meterpagecount&gt;5&lt;/meterpagecount&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+number of pages scanned</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;multifeedcount&gt;0&lt;/multifeedcount&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+# <span class=SpellE>multifeeds</span> seen (6)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp; &lt;patchcountfront&gt;0&lt;/patchcountfront&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+# patches seen on the front (6)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;&nbsp;&nbsp;
+&lt;patchcountrear&gt;0&lt;/patchcountrear&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+# patches seen on the rear (6)</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&lt;/<span class=SpellE>tw_log</span>&gt;</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:20.0pt;line-height:12.0pt'><span
+style='color:black'>Tag Notes:</span></p>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l2 level1 lfo9;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>The values for this tag are: true and false. If this
+     tag is not present, then assume the value is false.<o:p></o:p></span></li>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l2 level1 lfo9;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>The values for this tag are: black, white and
+     switchable. If this tag is not present, then assume the background is
+     black.<o:p></o:p></span></li>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l2 level1 lfo9;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>Typical values will be: USBSCAN 2.0, USBSCAN 1.1, and
+     SCSISCAN (for 1394 devices).<o:p></o:p></span></li>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l2 level1 lfo9;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>This tag will contain the number of hours in tenths.
+     For example, a value of 104 equates to 10.4 hours.<o:p></o:p></span></li>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l2 level1 lfo9;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>This tag will contain a zero-filled date and time with
+     the format: YYYY/MM/DD[space]<span class=SpellE>HH:MM:SS.mmm</span><o:p></o:p></span></li>
+ <li class=MsoNormal style='color:black;margin-bottom:6.0pt;line-height:12.0pt;
+     mso-list:l2 level1 lfo9;tab-stops:list .5in'><span style='mso-fareast-font-family:
+     "Times New Roman"'>This count is based on what occurred during the
+     previous scan session. This value is reset to zero at the start of every
+     scan session.<o:p></o:p></span></li>
+</ol>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Combine/Merge Front and
+Back Images:</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>This feature
+allows the user to instruct the driver to combine the front and back images
+from a document into a single image. This feature is <span style='color:black'>designed
+for use with</span> Duplex scanning from the document feeder, where there is
+one image per side and the front and back camera settings are the same. For
+example: CAP_DUPLEXENABLED set to True; Sides Different (CAP_SIDESDIFFERENT) is
+False; one camera per side has been enabled (i.e. just Color, or just
+Grayscale, or just Black and White).</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>This feature
+is only available for duplex scanner models. Even if this is turned on, the
+images will not be combined if more than one camera per side is enabled or the
+flatbed is scanned.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>When this
+feature is on, the application will receive one image that contains both the
+front and the back of the page; instead of one image for the front and another
+image for the rear. If the final image has the original images one on top of
+the other (e.g. front on top of back), then the width of the final image will
+be based on the wider of the two original images. If the final image has the
+original images one to the left of the other (e.g. front to the left of the
+back), then the height of the final image will be based on the taller of the
+two original images. Any area that needs to be filled in (i.e. any padding of
+the narrower or shorter image) will be based on the color of the camera’s
+background. For example, if the camera’s background is black, then the image
+will be padded with black<span style='color:black'>.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>This feature
+can be turned on by setting CAP_IMAGEMERGE to a value other than TWIM_NONE. The
+valid choices are: TWIM_FRONTONTOP (front is on top of the back), TWIM_FRONTONBOTTOM
+(back is on top of front), TWIM_FRONTONLEFT (front is to the left of the back),
+and TWIM_FRONTONRIGHT (back is to the left of the front)<span style='color:
+black'>.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Feeder Mode</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>This allows
+you to select how the scanner transports documents through the scanner. This affects
+how the documents are fed into the scanner, how fast they move through the
+scanner, and how they are placed in the output tray.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>The available
+enumerations for this capability, ICAP_FEEDERMODE, are different based on
+scanner and defined as follows:</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWFM_NONE: No additional handling is performed. Best used when all documents
+are similar in size. </p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWFM_STACKINGIMPROVED: Aids in controlling how the documents are
+stacked/ordered in the output tray for mixed document sets. This should work
+for the majority of mixed sets.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWFM_STACKINGBEST: When your document set contains a great variability in size,
+this option provides the best control of how the documents are stacked/ordered
+within the output tray.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWFM_SPECIAL: For irregularly shaped documents (e.g., pages with coupons
+removed or documents with large holes or cutouts in them).</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWFM_FRAGILE: For documents that need extra care as they are transported
+through the scanner and placed in the output tray.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWFM_THICK: For thick documents.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Controlled Dual Stacking
+Accessory</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>If you have
+the Controlled Dual Stacking Accessory installed, then you can separate
+documents into the two stacks of the Dual Stacking Accessory output tray.
+Separation of documents will be possible via any combination of document
+length, document content (toggle patch), and multifeed detection.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>The first step
+is to turn on the feature by setting the following CAP:</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt;line-height:
+12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGENABLED<span style='mso-spacerun:yes'>                 
+</span>- Set to TRUE to enable the Controlled Dual Stacking Accessory</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>Next,
+determine which stack of the output tray to place detected documents into by
+setting the following CAP.</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGSTACK<span style='mso-spacerun:yes'>                       
+</span>- If CAP_DUALSTACKINGSTACK is set to <span style='mso-no-proof:yes'>TWDSS_STACK1,
+then</span> documents that match any of the defined detection settings will be
+separated from the document set and placed in stack 1. All other documents will
+be placed in stack 2. </p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-9.0pt'>- If CAP_DUALSTACKINGSTACK
+is set to <span style='mso-no-proof:yes'>TWDSS_STACK2, then</span> documents
+that match any of the defined detection settings will be separated from the
+document set and placed in stack 2. All other documents will be placed in stack
+1.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>Next, define
+the document detection criteria. Separation of documents will be possible via
+any combination of document length, document content (toggle patch), and <span
+class=SpellE>multifeed</span> detection.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>If you would
+like to select which documents to separate from the document set based on the
+document's length, then you would set the following CAPs:</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt;line-height:
+12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGLENGTHMODE<span style='mso-spacerun:yes'>     </span><span
+style='mso-spacerun:yes'>    </span>- Set to TWDSLM_LESSTHAN,
+TWDSLM_GREATERTHAN, or TWDSLM_BETWEEN</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt;mso-layout-grid-align:
+none;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGLENGTH1<span style='mso-spacerun:yes'>                  
+</span>- If CAP_DUALSTACKINGLENGTHMODE is set to TWDSLM_LESSTHAN, then any
+documents shorter than this length will be separated and placed in the
+selected<span style='mso-spacerun:yes'>  </span>CAP_DUALSTACKINGSTACK. </p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-9.0pt;mso-layout-grid-align:
+none;text-autospace:none'>- If CAP_DUALSTACKINGLENGTHMODE is set to
+TWDSLM_GREATERTHAN, then any documents longer than this length will be
+separated and placed in the selected CAP_DUALSTACKINGSTACK. </p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-9.0pt;mso-layout-grid-align:
+none;text-autospace:none'>- If CAP_DUALSTACKINGLENGTHMODE is set to TWDSLM_BETWEEN,
+then any documents whose length falls between<span style='mso-spacerun:yes'> 
+</span>CAP_DUALSTACKINGLENGTH1 and CAP_DUALSTACKINGLENGTH2 will be separated
+and placed in the selected CAP_DUALSTACKINGSTACK.</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt;mso-layout-grid-align:
+none;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGLENGTH2<span style='mso-spacerun:yes'>                  
+</span>- If CAP_DUALSTACKINGLENGTHMODE is &quot;between&quot;, then any
+documents whose length falls between<span style='mso-spacerun:yes'> 
+</span>CAP_DUALSTACKINGLENGTH1 and CAP_DUALSTACKINGLENGTH2 will be separated
+and placed in the selected CAP_DUALSTACKINGSTACK.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>If you would like
+to select which patch sheets, if any, to separate from the document set and
+place in the selected stack, then you would set the following CAPs:</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt;mso-layout-grid-align:
+none;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGPATCHTRANSFER<span style='mso-spacerun:yes'>   </span>- Set to
+TRUE will place Patch Type Transfer sheets in the selected
+CAP_DUALSTACKINGSTACK.</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt;mso-pagination:
+none;tab-stops:33.0pt 168.0pt;mso-layout-grid-align:none;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGPATCHTYPE1<span style='mso-spacerun:yes'>           </span><span
+style='mso-spacerun:yes'> </span>- Set to TRUE will place Patch Type 1 sheets
+in the selected CAP_DUALSTACKINGSTACK.</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt;mso-pagination:
+none;tab-stops:33.0pt 168.0pt;mso-layout-grid-align:none;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGPATCHTYPE2<span style='mso-spacerun:yes'>            </span>-
+Set to TRUE will place Patch Type 2 sheets in the selected
+CAP_DUALSTACKINGSTACK.</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt;mso-pagination:
+none;tab-stops:33.0pt 168.0pt;mso-layout-grid-align:none;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGPATCHTYPE3<span style='mso-spacerun:yes'>            </span>- Set
+to TRUE will place Patch Type 3 sheets in the selected CAP_DUALSTACKINGSTACK.</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt;mso-pagination:
+none;tab-stops:33.0pt 168.0pt;mso-layout-grid-align:none;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGPATCHTYPE4<span style='mso-spacerun:yes'>            </span>-
+Set to TRUE will place Patch Type 4 sheets in the selected
+CAP_DUALSTACKINGSTACK.</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt;mso-pagination:
+none;tab-stops:33.0pt 168.0pt;mso-layout-grid-align:none;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGPATCHTYPE6<span style='mso-spacerun:yes'>            </span>-
+Set to TRUE will place Patch Type 6 sheets in the selected
+CAP_DUALSTACKINGSTACK.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>NOTE: You can
+select any combination of the above Patch Types.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>If you would
+like to separate all documents that are determined to have been <span
+class=SpellE>multifed</span>, then you would set the following CAPs:</p>
+
+<p class=MsoNormal style='margin-left:279.0pt;text-indent:-279.0pt;line-height:
+12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CAP_DUALSTACKINGMULTIFEED<span style='mso-spacerun:yes'>              </span>-
+Set to TRUE will place documents that are determined to have been <span
+class=SpellE>multifed</span> in the selected CAP_DUALSTACKINGSTACK</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Background </span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>This will
+allow the user to select the color of the imaging background. This can be set
+differently per side.. The imaging background is what the scanner will see
+where there is no paper.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>Use
+CAP_BACKGROUND to set the background color to white (i.e. TWBK_WHITE) or Black
+(<span class=SpellE>i.e.TWBK_BLACK</span>),</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>Examples of
+when the white background is useful are:</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Scanning non-rectangular documents and, in the final image, you want the area
+outside the document to be White instead of Black.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Scanning lightweight or thin paper, with printing on one side, and you do not
+want the black background to bleed through the document and appear in the final
+image.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Physical Height Adjust</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>For scanners that support this setting, it is provided as a
+way to optimize throughput. It limits the maximum document length that the
+scanner can scan. So while the scanner is capable of scanning longer documents,
+it will not process any documents that are longer then this setting. Setting
+this to larger lengths may reduce the scanner’s throughput. For example, the
+scanner may be able to scan up to an 80 inch long document (i.e. the range
+maximum would be 80 inches), but if the default for this setting is 17 inches
+then the scanner will stop if something longer than 17 inches is scanned. To
+scan something longer than the default, this capability will need to be
+modified.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>The range for this setting is determined by the scanner;
+therefore it should be read when connecting to the scanner. An example range is
+2.5” to 3 meters.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>When this
+capability, ICAP_PHYSICALHEIGHTADJUST, is modified the maximum paper size (i.e.
+ICAP_PHYSICALHEIGHT) will be impacted as well as any settings based on that
+(e.g. ICAP_SUPPORTEDSIZES, ICAP_FRAMES, CAP_PRINTERPOSITION,
+CAP_PAGESIZELIMIT). Therefore, it is recommended to re-read those values as
+appropriate.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>NOTE: Some
+combinations of ICAP_PIXELTYPE and ICAP_XRESOLUTION may not be supported by the
+scanner when this capability is set to larger values. Instead of preventing
+these values from being set, and to allow for greater flexibility with
+applications, the scanner will not generate an error until it scans a document
+whose length is not supported.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>OCP Buttons:</span></b><br>
+<br>
+This feature allows the application to set the displayed text on the OCP for
+each button. The driver may not remember this information. So we recommend that
+the application should send the text after successfully MSG_OPENDS. The maximum
+number of buttons that are allowed to be configured is 9.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><br>
+To configure the number of buttons for the user to scroll through, the App must
+send an array of TW_OCPBUTTONS structures which has the number of the buttons
+defined plus an extra one that has Text field blank. For example, if the user
+wants to setup the text for 3 buttons then define the array of 4 TW_OCPBUTTONS
+structures. Set the Text for the first 3 items and set the Text to blank for
+the 4th.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><br>
+For the scanners that don’t have the ability to display the text, the
+application still can configure the number of buttons for the user to scroll
+through.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><br>
+The order of the buttons displayed on the OCP is the same order of the buttons
+defined in the array.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><br>
+The Text is in the current language. The <span class=SpellE>Ansi</span> code
+page which is based on the CAP_LANGUAGE is used for the conversion.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span class=SpellE><span style='mso-fareast-font-family:
+"Times New Roman";color:black'>NumDataFields</span></span><span
+style='mso-fareast-font-family:"Times New Roman";color:black'> indicates how
+many fields, after it and before Reserved, are filled in by the application.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='mso-fareast-font-family:"Times New Roman";
+color:black'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+class=SpellE><span style='mso-fareast-font-family:"Times New Roman";color:black'>PaperSource</span></span><span
+style='mso-fareast-font-family:"Times New Roman";color:black'> is used to
+indicate which Paper Source the button will scan from. Set it to the desired
+TWPU_* value. Refer to CAP_PAPERSOURCE for a list of TWPU_* values. For
+example, if setting a button to &quot;Color PDF&quot; and the paper source is
+&quot;Document Feeder&quot;, then set:<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+text-autospace:none'><span style='mso-fareast-font-family:"Times New Roman";
+color:black'>Text = &quot;Color PDF&quot;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+text-autospace:none'><span class=SpellE><span style='mso-fareast-font-family:
+"Times New Roman";color:black'>NumDataFields</span></span><span
+style='mso-fareast-font-family:"Times New Roman";color:black'> = 1<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in;mso-layout-grid-align:none;
+text-autospace:none'><span class=SpellE><span style='mso-fareast-font-family:
+"Times New Roman";color:black'>PaperSource</span></span><span style='mso-fareast-font-family:
+"Times New Roman";color:black'> = TWPU_ADF<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='mso-fareast-font-family:"Times New Roman";
+color:black'>NOTE: Not all scanners make use of <span class=SpellE>PaperSource</span><o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='mso-fareast-font-family:"Times New Roman";
+color:black'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>The Reserved
+field must be initialized to zero.<br>
+&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Hole Fill:</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>The
+Hole Fill feature is designed to remove “punch holes” in the original document
+from the resultant image. The output image is the same as the input image with
+the identified “holes” in the document image filled in with background.&nbsp;
+In the <span class=SpellE>Bitonal</span> case the background is white.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'>This feature can be turned on by
+setting ICAP_HOLEFILLENABLED to TRUE<span style='color:black'>.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Streak Filter:</span></b></p>
+
+<p class=MsoNormal style='line-height:12.0pt'><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='color:black'>The Streak Filter Fill feature is
+designed to remove “streaks” in the original document from the resultant image.</span>
+The amount of &quot;aggressiveness&quot; that the Streak Filter algorithm
+applies can be adjusted as needed.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>This feature can be turned on by setting ICAP_STREAKREMOVALENABLED
+to TRUE<span style='color:black'>.</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The amount of aggressiveness can be adjusted by setting
+ICAP_STREAKREMOVALAGGRESSIVENESS to a value ranging from -2 to 2 in steps of 1;
+the default is 0. This value does not apply if ICAP_STREAKREMOVALENABLED is
+FALSE<span style='color:black'>.</span></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Cropping Mode:</span></b></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>This feature allows the user to specify how the scanner will
+detect document as it is being fed through the scanner.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>The available
+enumerations for this capability, ICAP_CROPPINGMODE, are different based on
+scanner and defined as follows:</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCR_AUTOMATICBORDERDETECTION: The scanner will automatically find each
+document (regardless of size). </p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCR_TRANSPORT: The scanner will return an image based on the area you specify in
+the ICAP_FRAMES or ICAP_FRAMESANGLE. It is suggested that you only use this
+option for scan jobs that contain same-sized documents.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCR_DOCUMENT: The scanner will return an image based on the area you specify
+in the ICAP_FRAMES or ICAP_FRAMESANGLE which is relative to entire document.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCR_AGGRESSIVEAUTOCROP: The scanner will automatically find each document and
+will straighten any document that may have been fed crooked.&nbsp; It’s also
+eliminating any residual border. Residual border can be caused by variations in
+a document edge; for example, when a document is not a perfect rectangle and/or
+was fed crooked.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCR_CONTINUOUS: The scanner will split the document into separate images based
+on the area you specify with the ICAP_FRAMES or ICAP_FRAMESANGLE. It is
+suggested that you select an area that covers the entire width of the document
+and a height around 11 inches (297 mm).</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCR_PHOTO: The scanner will locate the photograph on the document and return
+an image that contains just the photograph. If the scanner finds more than one
+photograph on a document, one image is still returned which contains all
+photographs.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWCR_PHOTOINROI: The scanner will locate the photograph on the area you specify
+in the ICAP_FRAMES or ICAP_FRAMESANGLE and return an image that contains just
+the photograph. If the scanner finds more than one photograph on a specify
+area, one image is still returned which contains all photographs.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>When
+TWIE_AUTOMATIC or TWIE_AUTOMATICWITHTEAR is selected from ICAP_IMAGEEDGEFILL
+the ICAP_CROPPINGMODE is automatically changed to TWCR_AUTOMATICBORDERDETECTION
+and the ICAP_AUTOMATICDESKEW is also changed to TRUE. </p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal>When the ICAP_CROPPINGMODE value is changed other
+capabilities are also changed. The following table shows the mapping between
+ICAP_CROPPINGMODE and ICAP_AUTOMATICDESKEW and ICAP_IMAGEEDGEFILL</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;<o:p></o:p></p>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=810
+ style='width:607.5pt;margin-left:23.4pt;border-collapse:collapse;mso-yfti-tbllook:
+ 1184;mso-padding-alt:0in 0in 0in 0in' id=table3>
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+  <td width=331 valign=top style='width:248.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><b>ICAP_CROPPINGMODE</b></p>
+  </td>
+  <td width=247 valign=top style='width:185.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><b>ICAP_AUTOMATICDESKEW</b></p>
+  </td>
+  <td width=279 valign=top style='width:209.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><b>ICAP_IMAGEEDGEFILL
+  (If current value is TWIE_AUTOMATIC or TWIE_AUTOMATICWITHTEAR)</b></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1'>
+  <td width=331 valign=top style='width:248.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWCR_AUTOMATICBORDERDETECTION</p>
+  </td>
+  <td width=247 valign=top style='width:185.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TRUE</p>
+  </td>
+  <td width=279 valign=top style='width:209.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>No change</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2'>
+  <td width=331 valign=top style='width:248.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWCR_TRANSPORT</p>
+  </td>
+  <td width=247 valign=top style='width:185.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>FALSE</p>
+  </td>
+  <td width=279 valign=top style='width:209.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWIE_NONE</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:3'>
+  <td width=331 valign=top style='width:248.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWCR_DOCUMENT</p>
+  </td>
+  <td width=247 valign=top style='width:185.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TRUE</p>
+  </td>
+  <td width=279 valign=top style='width:209.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWIE_NONE</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:4'>
+  <td width=331 valign=top style='width:248.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWCR_AGGRESSIVEAUTOCROP</p>
+  </td>
+  <td width=247 valign=top style='width:185.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TRUE</p>
+  </td>
+  <td width=279 valign=top style='width:209.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWIE_NONE</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:5'>
+  <td width=331 valign=top style='width:248.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWCR_CONTINUOUS</p>
+  </td>
+  <td width=247 valign=top style='width:185.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>FALSE</p>
+  </td>
+  <td width=279 valign=top style='width:209.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWIE_NONE</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:6'>
+  <td width=331 valign=top style='width:248.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWCR_PHOTO</p>
+  </td>
+  <td width=247 valign=top style='width:185.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TRUE</p>
+  </td>
+  <td width=279 valign=top style='width:209.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWIE_NONE</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:7;mso-yfti-lastrow:yes'>
+  <td width=331 valign=top style='width:248.0pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWCR_PHOTOINROI</p>
+  </td>
+  <td width=247 valign=top style='width:185.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TRUE</p>
+  </td>
+  <td width=279 valign=top style='width:209.6pt;padding:0in 0in 0in 0in'>
+  <p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>TWIE_NONE</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>Foreground Boldness:</span></b></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Use this option for documents or forms where you want the
+foreground (e.g. text, lines, etc.) to be more prominent<span style='mso-fareast-font-family:
+"Times New Roman";color:black'>.</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Foreground Boldness is only available for Color/Grayscale
+output.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>The available
+enumerations for this capability, ICAP_FOREGROUNDBOLDNESSMODE are defined as
+follows:</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'>·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TWFB_NONE: No Foreground Boldness is applied to the image.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='mso-spacerun:yes'>             </span>TWFB_AUTOMATICBASIC: All
+foreground will be bolder.</p>
+
+<p class=MsoNormal style='line-height:12.0pt;text-autospace:none'><span
+style='mso-spacerun:yes'>             </span>TWFB_AUTOMATIC: For advanced users
+that want to further adjust the aggressiveness of the Foreground Boldness
+algorithm.</p>
+
+<p class=MsoNormal><span style='color:black'>&nbsp;</span></p>
+
+<p class=MsoNormal>The aggressiveness of the Foreground Boldness algorithm is
+selected using ICAP_FOREGROUNDBOLDNESSAGGRESSIVENESS. The higher the value, the
+more boldness is applied to the image foreground. This is available only when
+ICAP_FOREGROUNDBOLDNESSMODE is set to TWFB_AUTOMATIC.</p>
+
+<p class=MsoNormal style='line-height:12.0pt'><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>

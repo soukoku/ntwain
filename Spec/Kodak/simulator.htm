@@ -1,0 +1,1808 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 12">
+<meta name=Originator content="Microsoft Word 12">
+<link rel=File-List href="simulator_files/filelist.xml">
+<title>Kodak KDS TWAIN Driver</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>50484369</o:Author>
+  <o:LastAuthor>50484369</o:LastAuthor>
+  <o:Revision>4</o:Revision>
+  <o:TotalTime>42</o:TotalTime>
+  <o:Created>2012-06-21T14:50:00Z</o:Created>
+  <o:LastSaved>2012-06-21T15:32:00Z</o:LastSaved>
+  <o:Pages>4</o:Pages>
+  <o:Words>2968</o:Words>
+  <o:Characters>16918</o:Characters>
+  <o:Company>Microsoft</o:Company>
+  <o:Lines>140</o:Lines>
+  <o:Paragraphs>39</o:Paragraphs>
+  <o:CharactersWithSpaces>19847</o:CharactersWithSpaces>
+  <o:Version>12.00</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+<link rel=dataStoreItem href="simulator_files/item0004.xml"
+target="simulator_files/props0005.xml">
+<link rel=themeData href="simulator_files/themedata.thmx">
+<link rel=colorSchemeMapping href="simulator_files/colorschememapping.xml">
+<!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Zoom>94</w:Zoom>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:TrackMoves>false</w:TrackMoves>
+  <w:TrackFormatting/>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:DoNotPromoteQF/>
+  <w:LidThemeOther>EN-US</w:LidThemeOther>
+  <w:LidThemeAsian>X-NONE</w:LidThemeAsian>
+  <w:LidThemeComplexScript>X-NONE</w:LidThemeComplexScript>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+   <w:DontGrowAutofit/>
+   <w:SplitPgBreakAndParaMark/>
+   <w:DontVertAlignCellWithSp/>
+   <w:DontBreakConstrainedForcedTables/>
+   <w:DontVertAlignInTxbx/>
+   <w:Word11KerningPairs/>
+   <w:CachedColBalance/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+  <m:mathPr>
+   <m:mathFont m:val="Cambria Math"/>
+   <m:brkBin m:val="before"/>
+   <m:brkBinSub m:val="&#45;-"/>
+   <m:smallFrac m:val="off"/>
+   <m:dispDef/>
+   <m:lMargin m:val="0"/>
+   <m:rMargin m:val="0"/>
+   <m:defJc m:val="centerGroup"/>
+   <m:wrapIndent m:val="1440"/>
+   <m:intLim m:val="subSup"/>
+   <m:naryLim m:val="undOvr"/>
+  </m:mathPr></w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" DefUnhideWhenUsed="false"
+  DefSemiHidden="false" DefQFormat="false" LatentStyleCount="267">
+  <w:LsdException Locked="false" QFormat="true" Name="Normal"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 1"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 2"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 3"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 4"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 5"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 6"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 7"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 8"/>
+  <w:LsdException Locked="false" QFormat="true" Name="heading 9"/>
+  <w:LsdException Locked="false" SemiHidden="true" UnhideWhenUsed="true"
+   QFormat="true" Name="caption"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Title"/>
+  <w:LsdException Locked="false" Priority="1" Name="Default Paragraph Font"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Subtitle"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Strong"/>
+  <w:LsdException Locked="false" QFormat="true" Name="Emphasis"/>
+  <w:LsdException Locked="false" Priority="99" Name="No List"/>
+  <w:LsdException Locked="false" Priority="99" SemiHidden="true"
+   Name="Placeholder Text"/>
+  <w:LsdException Locked="false" Priority="1" QFormat="true" Name="No Spacing"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 1"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="99" SemiHidden="true" Name="Revision"/>
+  <w:LsdException Locked="false" Priority="34" QFormat="true"
+   Name="List Paragraph"/>
+  <w:LsdException Locked="false" Priority="29" QFormat="true" Name="Quote"/>
+  <w:LsdException Locked="false" Priority="30" QFormat="true"
+   Name="Intense Quote"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 1"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 1"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 1"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 1"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 1"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 1"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 1"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 2"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 2"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 2"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 2"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 2"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 2"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 2"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 2"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 3"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 3"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 3"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 3"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 3"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 3"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 3"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 3"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 4"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 4"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 4"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 4"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 4"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 4"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 4"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 4"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 5"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 5"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 5"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 5"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 5"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 5"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 5"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 5"/>
+  <w:LsdException Locked="false" Priority="60" Name="Light Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="61" Name="Light List Accent 6"/>
+  <w:LsdException Locked="false" Priority="62" Name="Light Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="63" Name="Medium Shading 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="64" Name="Medium Shading 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="65" Name="Medium List 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="66" Name="Medium List 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="67" Name="Medium Grid 1 Accent 6"/>
+  <w:LsdException Locked="false" Priority="68" Name="Medium Grid 2 Accent 6"/>
+  <w:LsdException Locked="false" Priority="69" Name="Medium Grid 3 Accent 6"/>
+  <w:LsdException Locked="false" Priority="70" Name="Dark List Accent 6"/>
+  <w:LsdException Locked="false" Priority="71" Name="Colorful Shading Accent 6"/>
+  <w:LsdException Locked="false" Priority="72" Name="Colorful List Accent 6"/>
+  <w:LsdException Locked="false" Priority="73" Name="Colorful Grid Accent 6"/>
+  <w:LsdException Locked="false" Priority="19" QFormat="true"
+   Name="Subtle Emphasis"/>
+  <w:LsdException Locked="false" Priority="21" QFormat="true"
+   Name="Intense Emphasis"/>
+  <w:LsdException Locked="false" Priority="31" QFormat="true"
+   Name="Subtle Reference"/>
+  <w:LsdException Locked="false" Priority="32" QFormat="true"
+   Name="Intense Reference"/>
+  <w:LsdException Locked="false" Priority="33" QFormat="true" Name="Book Title"/>
+  <w:LsdException Locked="false" Priority="37" SemiHidden="true"
+   UnhideWhenUsed="true" Name="Bibliography"/>
+  <w:LsdException Locked="false" Priority="39" SemiHidden="true"
+   UnhideWhenUsed="true" QFormat="true" Name="TOC Heading"/>
+ </w:LatentStyles>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Courier;
+	panose-1:2 7 4 9 2 2 5 2 4 4;
+	mso-font-alt:"Courier New";
+	mso-font-charset:0;
+	mso-generic-font-family:modern;
+	mso-font-format:other;
+	mso-font-pitch:fixed;
+	mso-font-signature:3 0 0 0 1 0;}
+@font-face
+	{font-family:SimSun;
+	panose-1:2 1 6 0 3 1 1 1 1 1;
+	mso-font-alt:\5B8B\4F53;
+	mso-font-charset:134;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:3 680460288 22 0 262145 0;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:roman;
+	mso-font-pitch:variable;
+	mso-font-signature:-536870145 1107305727 0 0 415 0;}
+@font-face
+	{font-family:"\@SimSun";
+	panose-1:2 1 6 0 3 1 1 1 1 1;
+	mso-font-charset:134;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:3 680460288 22 0 262145 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;}
+h1
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 1 Char";
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:justify;
+	page-break-before:always;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:18.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h2
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 2 Char";
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h3
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 3 Char";
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h4
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 4 Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;}
+h5
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 5 Char";
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:5;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	font-weight:normal;}
+h6
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 6 Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:6;
+	font-size:11.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	font-weight:normal;
+	font-style:italic;}
+p.MsoHeading7, li.MsoHeading7, div.MsoHeading7
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 7 Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:7;
+	font-size:10.0pt;
+	font-family:"Arial","sans-serif";
+	mso-fareast-font-family:SimSun;}
+p.MsoHeading8, li.MsoHeading8, div.MsoHeading8
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 8 Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:8;
+	font-size:10.0pt;
+	font-family:"Arial","sans-serif";
+	mso-fareast-font-family:SimSun;
+	font-style:italic;}
+p.MsoHeading9, li.MsoHeading9, div.MsoHeading9
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-link:"Heading 9 Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	line-height:12.0pt;
+	mso-pagination:widow-orphan;
+	mso-outline-level:9;
+	font-size:1.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{mso-style-update:auto;
+	mso-style-unhide:no;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;}
+p.MsoBodyText2, li.MsoBodyText2, div.MsoBodyText2
+	{mso-style-unhide:no;
+	mso-style-link:"Body Text 2 Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	line-height:200%;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;}
+p.MsoBodyText3, li.MsoBodyText3, div.MsoBodyText3
+	{mso-style-unhide:no;
+	mso-style-link:"Body Text 3 Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:8.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;}
+a:link, span.MsoHyperlink
+	{mso-style-unhide:no;
+	color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-unhide:no;
+	color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 1";
+	mso-ansi-font-size:14.0pt;
+	mso-bidi-font-size:14.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#365F91;
+	mso-themecolor:accent1;
+	mso-themeshade:191;
+	font-weight:bold;}
+span.Heading2Char
+	{mso-style-name:"Heading 2 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 2";
+	mso-ansi-font-size:13.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.Heading3Char
+	{mso-style-name:"Heading 3 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 3";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;}
+span.Heading4Char
+	{mso-style-name:"Heading 4 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 4";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#4F81BD;
+	mso-themecolor:accent1;
+	font-weight:bold;
+	font-style:italic;}
+span.Heading5Char
+	{mso-style-name:"Heading 5 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 5";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#243F60;
+	mso-themecolor:accent1;
+	mso-themeshade:127;}
+span.Heading6Char
+	{mso-style-name:"Heading 6 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 6";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#243F60;
+	mso-themecolor:accent1;
+	mso-themeshade:127;
+	font-style:italic;}
+span.Heading7Char
+	{mso-style-name:"Heading 7 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 7";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#404040;
+	mso-themecolor:text1;
+	mso-themetint:191;
+	font-style:italic;}
+span.Heading8Char
+	{mso-style-name:"Heading 8 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 8";
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#404040;
+	mso-themecolor:text1;
+	mso-themetint:191;}
+span.Heading9Char
+	{mso-style-name:"Heading 9 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Heading 9";
+	font-family:"Cambria","serif";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:major-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:major-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:major-latin;
+	mso-bidi-font-family:"Times New Roman";
+	mso-bidi-theme-font:major-bidi;
+	color:#404040;
+	mso-themecolor:text1;
+	mso-themetint:191;
+	font-style:italic;}
+span.BodyText2Char
+	{mso-style-name:"Body Text 2 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Body Text 2";
+	mso-ansi-font-size:12.0pt;
+	mso-bidi-font-size:12.0pt;
+	font-family:SimSun;
+	mso-fareast-font-family:SimSun;}
+span.BodyText3Char
+	{mso-style-name:"Body Text 3 Char";
+	mso-style-unhide:no;
+	mso-style-locked:yes;
+	mso-style-link:"Body Text 3";
+	mso-ansi-font-size:8.0pt;
+	mso-bidi-font-size:8.0pt;
+	font-family:SimSun;
+	mso-fareast-font-family:SimSun;}
+p.style4, li.style4, div.style4
+	{mso-style-name:style4;
+	mso-style-unhide:no;
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	text-align:justify;
+	page-break-before:always;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:18.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;
+	font-weight:bold;}
+p.style2, li.style2, div.style2
+	{mso-style-name:style2;
+	mso-style-unhide:no;
+	margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:SimSun;
+	font-weight:bold;
+	font-style:italic;}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	mso-default-props:yes;
+	font-size:10.0pt;
+	mso-ansi-font-size:10.0pt;
+	mso-bidi-font-size:10.0pt;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.WordSection1
+	{page:WordSection1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:-132;
+	mso-list-type:simple;
+	mso-list-template-ids:837825120;}
+@list l0:level1
+	{mso-level-tab-stop:1.25in;
+	mso-level-number-position:left;
+	margin-left:1.25in;
+	text-indent:-.25in;}
+@list l1
+	{mso-list-id:-131;
+	mso-list-type:simple;
+	mso-list-template-ids:-1110944440;}
+@list l1:level1
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	margin-left:1.0in;
+	text-indent:-.25in;}
+@list l2
+	{mso-list-id:-130;
+	mso-list-type:simple;
+	mso-list-template-ids:1260574852;}
+@list l2:level1
+	{mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;}
+@list l3
+	{mso-list-id:-129;
+	mso-list-type:simple;
+	mso-list-template-ids:-1456313748;}
+@list l3:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4
+	{mso-list-id:-128;
+	mso-list-type:simple;
+	mso-list-template-ids:2042553288;}
+@list l4:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.25in;
+	mso-level-number-position:left;
+	margin-left:1.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l5
+	{mso-list-id:-127;
+	mso-list-type:simple;
+	mso-list-template-ids:420930614;}
+@list l5:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	margin-left:1.0in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l6
+	{mso-list-id:-126;
+	mso-list-type:simple;
+	mso-list-template-ids:-1425779696;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l7
+	{mso-list-id:-125;
+	mso-list-type:simple;
+	mso-list-template-ids:-1100324832;}
+@list l7:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l8
+	{mso-list-id:-120;
+	mso-list-type:simple;
+	mso-list-template-ids:779245582;}
+@list l8:level1
+	{mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;}
+@list l9
+	{mso-list-id:-119;
+	mso-list-type:simple;
+	mso-list-template-ids:2087589072;}
+@list l9:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;
+	font-family:Symbol;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="2050"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=WordSection1>
+
+<p class=MsoNormal>Kodak KDS TWAIN Driver</p>
+
+<p class=MsoNormal>Simulator for Virtual Integration</p>
+
+<p class=MsoNormal>21-June-2012</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b><u><span style='font-size:14.0pt'>Contents</span></u></b></p>
+
+<p class=MsoToc1>1.&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_Overview">Overview</a>......................................................................................................................
+3</p>
+
+<p class=MsoToc1>2.&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_Glossary_of_Terms">Glossary
+of Terms</a>.........................................................................................................
+4</p>
+
+<p class=MsoToc1>3.&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_Simulate_Setting">Simulate
+Setting</a>.............................................................................................................
+5</p>
+
+<p class=MsoToc1>3.1.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+href="#_Version_2/3/4_TWAIN_Drivers">Version 2/3/4 TWAIN Drivers</a>..................................................................................
+6</p>
+
+<p class=MsoToc1>3.2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+href="#_Version_5+_TWAIN_Drivers">Version 5+ TWAIN Drivers</a>......................................................................................
+7</p>
+
+<p class=MsoToc1>3.2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_3.3.__">Version 9.x+
+TWAIN Drivers</a>...................................................................................
+8</p>
+
+<p class=MsoToc1>4.&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_RAMSCAN.TXT_File">RAMSCAN.TXT
+File</a>...................................................................................................
+9</p>
+
+<p class=MsoToc1>4.1.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_Command_Format">Command
+Format</a>.....................................................................................................
+10</p>
+
+<p class=MsoToc1>4.2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_@check">@check</a>....................................................................................................................
+11</p>
+
+<p class=MsoToc1>4.3.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_@delay">@delay</a>...................................................................................................................
+13</p>
+
+<p class=MsoToc1>4.4.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_@image">@image</a>..................................................................................................................
+14</p>
+
+<p class=MsoToc1>4.5.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_@init">@init</a>.......................................................................................................................
+16</p>
+
+<p class=MsoToc1>4.6.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_@jam">@jam</a>......................................................................................................................
+17</p>
+
+<p class=MsoToc1>4.7.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_@multifeed">@<span
+class=SpellE>multifeed</span></a>..............................................................................................................
+18</p>
+
+<p class=MsoToc1>4.8.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_@nodata">@<span
+class=SpellE>nodata</span></a>.................................................................................................................
+19</p>
+
+<p class=MsoToc1>4.9.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_@patch">@patch</a>...................................................................................................................
+20</p>
+
+<p class=MsoToc1>4.9.1.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#_@patch_#">@patch
+#</a>............................................................................................................
+21</p>
+
+<p class=MsoToc1>4.9.2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+href="#_@patch_toggle">@patch toggle</a>.....................................................................................................
+22</p>
+
+<p class=MsoToc1>4.10.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+href="#_@repeat_label_count">@repeat label count</a>............................................................................................
+23</p>
+
+<p class=MsoToc1>4.11.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+href="#_@restart">@restart</a>..............................................................................................................
+24</p>
+
+<p class=MsoToc1>4.12.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+href="#_@stop">@stop</a>.................................................................................................................
+25</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.25in;text-indent:-.25in'><a name="_Toc56922958"></a><a
+name="_Toc39263860"></a><a name="_Toc32301880"></a><a name="_Overview"></a><span
+style='mso-fareast-font-family:"Times New Roman"'>1.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp; </span><span
+style='mso-fareast-font-family:"Times New Roman"'>Overview<o:p></o:p></span></h1>
+
+<p class=MsoNormal>The session simulator mimics events that occur in a real
+session with a Kodak Document Scanner.&nbsp; It allows the logging system to
+record the exact commands that would be sent to a physical scanner, and as a
+result of this allows an application to get a good feeling for how a physical
+scanner behaves; especially during the negotiation phase prior to scanning.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The simulator is appropriate as a tool to exercise
+developing applications without a physical scanner, especially if the
+application writer is interested in testing against several models.&nbsp; Using
+the simulator frees the programmer from the bulk of a physical scanner in the
+early phases of development.&nbsp; We always recommend full testing with a
+physical scanner, but believe that the integration time will be shorter and the
+process more smooth when the simulator is used.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The simulator also serves as a diagnostic tool.&nbsp; It can
+be used to precisely recreate specific conditions (like errors) that may be
+hard to duplicate with a physical scanner.&nbsp; When combined with the
+debugging features of the driver it becomes possible to easily analyze most
+situations.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.25in;text-indent:-.25in'><a name="_Toc56922959"></a><a
+name="_Glossary_of_Terms"></a><span style='mso-fareast-font-family:"Times New Roman"'>2.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp; </span><span
+style='mso-fareast-font-family:"Times New Roman"'>Glossary of Terms<o:p></o:p></span></h1>
+
+<p class=MsoNormal>Here are some terms used in the document.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+A2O2
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the i1400 scanners&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Gemini&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the 500/900/923/990/55xx/75xx/95xx scanners</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Viper&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the 35xx/4500 scanners</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Phoenix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the i6xx scanners</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Inferno&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the i7xx scanners</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Prism&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the i8xx scanners</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Alien&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;- Family name for the i2xx scanners</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Mustang&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -
+Family name for the i30/i40/i50/i60 scanners</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Fosters&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the i1100 scanners&nbsp;&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Piranha&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the i1200/i1300 scanners&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Wildfire&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the i1800 scanners&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Panther&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the i4000 scanners</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Piranha2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Family
+name for the i2000 scanners&nbsp;&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Blaze&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the i5000 scanners&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Rufous&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the i900 scanners&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Falcon &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Family name for the i2900 (FalconA4) and i3000 (FalconA3) scanners&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.25in;text-indent:-.25in'><a name="_Toc56922960"></a><a
+name="_Simulate_Setting"></a><span style='mso-fareast-font-family:"Times New Roman"'>3.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp; </span><span
+style='mso-fareast-font-family:"Times New Roman"'>Simulate Setting<o:p></o:p></span></h1>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>&nbsp;</span></b></p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922961"></a><a
+name="_Version_2/3/4_TWAIN_Drivers"></a><span style='mso-fareast-font-family:
+"Times New Roman"'>3.1.</span><span style='font-size:7.0pt;mso-fareast-font-family:
+"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>Version 2/3/4
+TWAIN Drivers<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'><i>In the ramscan.txt file, set <b>simulate</b>
+to the desired value (ex: simulate i280).</i></p>
+
+<p class=MsoNormal style='margin-left:.25in'>The simulator is activated by
+going into the ramscan.txt file, and changing the simulate value to the full
+model name of the desired scanner.&nbsp; The default value is 0.&nbsp; Valid
+values are found in the ramscan.txt file.&nbsp; Each driver is only intended to
+support certain kinds of scanners.&nbsp; The name of the TWAIN directory is a
+good clue about what is supported.&nbsp; For instance, if the directory path to
+the TWAIN driver is %windir%\twain_32\kodak\kds_i800, then the supported scanners
+are: i810, i820, i830 and i840.</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>&nbsp;</span></b></p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>&nbsp;</span></b></p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922962"></a><a
+name="_Version_5+_TWAIN_Drivers"></a><span style='mso-fareast-font-family:"Times New Roman"'>3.2.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>Version 5+ TWAIN
+Drivers<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'><i>In the const.ini file, under [<span
+class=SpellE>dsIdentity</span>], set <b>simulate</b> to the desired value (ex:
+simulate i660).</i></p>
+
+<p class=MsoNormal style='margin-left:.25in'>The simulator is activated by
+going into the const.ini file, and changing the simulate value to the model
+name of the desired scanner.&nbsp; The default value is 0.&nbsp; Valid values
+are found in the ramscan.txt file.&nbsp; Each driver is only capable of
+supporting certain kinds of scanners.&nbsp; The name of the TWAIN directory is
+a good clue about what is supported.&nbsp; For instance, if the directory path
+to the TWAIN driver is %windir%\twain_32\kodak\kds_i800, then the support
+scanners are: i810, i820, i830 and i840.&nbsp; The ramscan.txt file is the
+final authority on what is supported in simulation mode.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt'>&nbsp;</span></b></p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_3.3.__"></a><span
+style='mso-fareast-font-family:"Times New Roman"'>3.3.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>Version 9.x+
+TWAIN Drivers<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'><i>In the const.ini file, under [Simulation],
+set <b>simulation</b> to true to enable simulation. Set <span class=SpellE><b
+style='mso-bidi-font-weight:normal'>simmodel</b></span> to the desired ADF scanner
+model (ex: i2900).Set <span class=SpellE><b style='mso-bidi-font-weight:normal'>simflatbed</b></span>
+to the desired flatbed accessory (ex: i2000legal).<o:p></o:p></i></p>
+
+<p class=MsoNormal style='margin-left:.25in'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='margin-left:.25in'>For example to simulate a FalconA3
+scanner with attached KODAK Legal Size Flatbed Accessory:</p>
+
+<p class=MsoNormal style='margin-left:.5in'><b style='mso-bidi-font-weight:
+normal'>[Simulation]<o:p></o:p></b></p>
+
+<p class=MsoNormal style='margin-left:.5in'><b style='mso-bidi-font-weight:
+normal'>simulation=true<o:p></o:p></b></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span class=SpellE><b
+style='mso-bidi-font-weight:normal'>simmodel</b></span><b style='mso-bidi-font-weight:
+normal'>=i3000<o:p></o:p></b></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span class=SpellE><b
+style='mso-bidi-font-weight:normal'>simflatbed</b></span><b style='mso-bidi-font-weight:
+normal'>=i2000legal</b></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.25in;text-indent:-.25in'><a name="_Toc56922963"></a><a
+name="_RAMSCAN.TXT_File"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp; </span><span
+style='mso-fareast-font-family:"Times New Roman"'>RAMSCAN.TXT File<o:p></o:p></span></h1>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>This file owns the configurations that describe the
+supported scanners.&nbsp; For instance, if a user wants to simulate an i260
+without a printer, they can go into this file, find the setting for the printer
+accessory and turn it off.&nbsp; The simulator will then run like an i260 that
+has no printer.&nbsp; By default the virtual scanners are simulated with all
+available accessories.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The ramscan.txt is also able to simulate a wide range of
+scanning behavior, which is accomplished via the @-commands at the end of the
+file.&nbsp; For example:</p>
+
+<p class=MsoNormal><b>&nbsp;</b></p>
+
+<p class=MsoNormal style='text-indent:.5in'><b>@init</b></p>
+
+<p class=MsoNormal style='text-indent:.5in'><b>@image</b></p>
+
+<p class=MsoNormal style='text-indent:.5in'><b>@image</b></p>
+
+<p class=MsoNormal style='text-indent:.5in'><b>@stop</b></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>This sequence initializes the simulator and allows two
+‘images’ to be captured before ending the session.&nbsp; The word ‘image’ isn’t
+ideal, it actually corresponds to a side of a sheet of paper, so if this
+particular sequence was used with <span class=SpellE>dualstream</span> settings
+(simultaneous output of <span class=SpellE>bitonal</span>/color on the front
+and rear) then we’d get four images in total from the two @image commands.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922964"></a><a
+name="_Command_Format"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.1.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>Command Format<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'>The format of any given command is
+as follows:</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>@<span
+class=SpellE>command.platform</span> arguments</b></p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>Where</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>@command</b>
+is the command to be issued.</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>.platform</b>
+is an optional <span class=SpellE>specifier</span> for one of the following:</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Gemini, Viper, Prism, Alien</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>arguments
+</b>are any data for the command</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>For example:</p>
+
+<p class=MsoNormal style='margin-left:.25in'><b>&nbsp;</b></p>
+
+<p class=MsoNormal style='margin-left:.25in'><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+@image</b></p>
+
+<p class=MsoNormal style='margin-left:.25in'><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+@<span class=SpellE>jam.Prism</span></b></p>
+
+<p class=MsoNormal style='text-indent:.5in'><b>@stop</b></p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>The full list of available
+commands follow:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922965"></a><a
+name="_@check"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.2.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@check<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'>This command generates an error
+during a session.&nbsp; Typically the value is dotted with the targeted command.&nbsp;
+If a dot isn’t specified, then the check is applied to any command.&nbsp;
+@check is platform dependent, meaning that the error codes have meaning for
+particular platforms.&nbsp; For instance, this is the list of jam conditions
+for all the scanner platforms.</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.5in'><b><span
+style='font-size:8.0pt;font-family:Courier'>@<span class=SpellE>check.ReadHeader.Gemini</span>
+F0 00 <u>04</u> 00 <span class=SpellE>00</span> <span class=SpellE>00</span> <span
+class=SpellE>00</span> 0A 00 <span class=SpellE>00</span> <span class=SpellE>00</span>
+09 <u>82</u> <u>00</u></span></b></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.5in'><b><span
+style='font-size:8.0pt;font-family:Courier'>@<span class=SpellE>check.ReadHeader.Viper</span>
+F0 00 <u>04</u> 00 <span class=SpellE>00</span> <span class=SpellE>00</span> <span
+class=SpellE>00</span> 0A 00 <span class=SpellE>00</span> <span class=SpellE>00</span>
+09 <u>3B</u> <u>05</u></span></b></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.5in'><b><span
+style='font-size:8.0pt;font-family:Courier'>@<span class=SpellE>check.ReadHeader.Prism</span>
+F0 00 <u>04</u> 00 <span class=SpellE>00</span> <span class=SpellE>00</span> <span
+class=SpellE>00</span> 0A 00 <span class=SpellE>00</span> <span class=SpellE>00</span>
+09 <u>3B</u> <u>05</u></span></b></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.5in'><b><span
+style='font-size:8.0pt;font-family:Courier'>@<span class=SpellE>check.ReadHeader.Alien</span>
+F0 00 <u>04</u> 00 <span class=SpellE>00</span> <span class=SpellE>00</span> <span
+class=SpellE>00</span> 0A 00 <span class=SpellE>00</span> <span class=SpellE>00</span>
+09 <u>3B</u> <u>05</u></span></b></p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>The underlined values are the only
+ones that have any meaning for the simulator.&nbsp; All numbers are
+hexadecimal.&nbsp; If necessary, an SRB status can be added as an extra number
+at the end of the list to simulate errors from the SCSI/SBP2 Class
+Drivers.&nbsp; A list of these codes are wire/protocol specific, and can be
+found in ASPI’s <span class=SpellE>wnaspi.h</span> file or SCSISCAN’s <span
+class=SpellE>scsiscan.h</span> file.&nbsp; The check codes come from the SCSI
+Interface Spec for each of the supported scanner models, usually they will be obtained
+from a KDS.LOG.</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>@check has become increasingly
+sophisticated as time has gone on.&nbsp; Most users will not need this
+additional behavior, but here it is anyway.</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>@check without a <span
+class=SpellE>specifier</span> is applied to any attempt to get an image (the
+@image command) and is position sensitive in the simulation.&nbsp; @check with
+a <span class=SpellE>specifier</span> is used to target a specific scanner
+command and is NOT position specific within the simulation.&nbsp; We’ll use
+examples to illustrate this.</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>;
+Jam with one image in the scanner buffer</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@init</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@jam</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@stop</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>;
+Jam with one image in the scanner buffer</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@init</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='text-indent:.5in'><span style='font-size:10.0pt'>@check
+F0 00 04 00 <span class=SpellE>00</span> <span class=SpellE>00</span> <span
+class=SpellE>00</span> 0A 00 <span class=SpellE>00</span> <span class=SpellE>00</span>
+09 3B 05</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@stop</span></p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>;
+Jam with two images in the scanner buffer</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@init</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@<span
+class=SpellE>check.ReadHeader</span> F0 00 04 00 <span class=SpellE>00</span> <span
+class=SpellE>00</span> <span class=SpellE>00</span> 0A 00 <span class=SpellE>00</span>
+<span class=SpellE>00</span> 09 3B 05</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@stop</span></p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>Note that the third example will
+throw its jam message before reading any images from the scanner.&nbsp; If we
+want to target a specific occurrence of a command, then we have to get somewhat
+fancy.&nbsp; The following example will give us the result we want.&nbsp; We’ve
+moved the check conditions to the top, since it doesn’t matter where they are
+located.</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>;
+Jam with two images in the scanner buffer</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@init</span></p>
+
+<p class=MsoNormal style='text-indent:.5in'><span style='font-size:10.0pt'>@<span
+class=SpellE>check.ReadHeader</span> 00 <span class=SpellE>00</span> <span
+class=SpellE>00</span> <span class=SpellE>00</span> <span class=SpellE>00</span>
+<span class=SpellE>00</span> <span class=SpellE>00</span> <span class=SpellE>00</span>
+<span class=SpellE>00</span> <span class=SpellE>00</span> <span class=SpellE>00</span>
+<span class=SpellE>00</span> <span class=SpellE>00</span> <span class=SpellE>00</span></span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.25in'><span
+style='font-size:10.0pt'>@<span class=SpellE>check.ReadHeader</span> F0 00 04
+00 <span class=SpellE>00</span> <span class=SpellE>00</span> <span
+class=SpellE>00</span> 0A 00 <span class=SpellE>00</span> <span class=SpellE>00</span>
+09 3B 05</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@stop</span></p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p>
+
+<p class=MsoNormal style='margin-left:.25in'>The simulator ignores any check
+condition that is all zeros.&nbsp; Here is a list of the current supported
+commands that can be checked.</p>
+
+<p class=MsoNormal style='margin-left:.25in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@check&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- @image command</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@<span
+class=SpellE>check.Enable</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Enable scanner</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@<span
+class=SpellE>check.GetWindow</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- SCSI Get Window</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@<span
+class=SpellE>check.SetWindow</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- SCSI Define Window</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@<span
+class=SpellE>check.ReadHeader</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Gemini Read Header</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@<span
+class=SpellE>check.ReadImage</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Read Image</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@<span
+class=SpellE>check.ReadLength</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Viper Read Length</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@<span
+class=SpellE>check.ReadBitdepth</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Viper Read <span class=SpellE>Bitdepth</span></span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@<span
+class=SpellE>check.ReadSide</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Viper Read Side (not currently used)</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>@<span
+class=SpellE>check.XX</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- XX == scanner unique command, like SC for Scan Configuration</span></p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>Not all commands are supported,
+but many of them are.&nbsp; Note that the text is case sensitive, and the
+simulator isn’t very tolerate of whitespace, so only use single spaces to
+separate items.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922966"></a><a
+name="_@delay"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.3.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@delay<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='text-indent:.25in'>Pauses the driver for the
+specified number of milliseconds; for example:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span style='font-size:8.0pt;font-family:Courier'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+@delay 1000</span></p>
+
+<p class=MsoNormal><span style='font-size:8.0pt;font-family:Courier'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:8.0pt;font-family:Courier'>&nbsp;</span></p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922967"></a><a
+name="_@image"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.4.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@image<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='text-indent:.25in'>Generates or specifies an image to
+the simulator.&nbsp; This command comes in several forms:</p>
+
+<p class=MsoNormal style='margin-left:.5in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in'><b><span style='font-size:8.0pt;
+font-family:Courier'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; @image</span></b></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:.5in'><b><span
+style='font-size:8.0pt;font-family:Courier'>@image 1280 1692&nbsp; 1 0 250
+c:\twain\bitonal.tif</span></b></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:.5in'><b><span
+style='font-size:8.0pt;font-family:Courier'>@image&nbsp; 640&nbsp; 848 24
+6&nbsp;&nbsp; 0 c:\twain\color.jpg</span></b></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:.5in'><b><span
+style='font-size:8.0pt;font-family:Courier'>@image 1280 1692 1 0 250
+c:\twain\bitonal.tif 640 848 24 6 0 c:\twain\color.jpg</span></b></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:.5in'><span
+style='font-size:8.0pt;font-family:Courier'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.25in'>The first form is the easiest to
+use.&nbsp; The simulator will generate an image meeting the following
+characteristics of the negotiated session:&nbsp; cropping, compression,
+polarity (if appropriate) and pixel type.&nbsp; The image is largely blank with
+a horizontal line at the top and the bottom, and with a counting image number
+in each of the four corners.&nbsp; The line is always black.&nbsp; The first
+three digits of the number (reading left to right) should always be
+red/green/blue if the image is in color.</p>
+
+<p class=MsoNormal style='margin-left:.5in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>The second and third forms show
+how to use an image file from disk.&nbsp; The arguments are, in order:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+width&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- in pixels</span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+height&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- in pixels</span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span class=SpellE>bitdepth</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- 1=<span class=SpellE>bitonal</span>, 8=grayscale, 24=color</span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+compression&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - 0=none, 2=Group
+31D, 4=Group 32D, 5=Group 4, 6=JPEG</span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+offset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- byte offset to the raw image data</span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- the full path to the image</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+The offset is always 0 for JPEG/JFIF images.&nbsp; It corresponds to the <span
+class=SpellE>StripByteOffset</span> for TIFF images, and skips over the file
+header, bitmap header, and color table (if any) for bitmap images.&nbsp; Any
+image format is permissible, provided that the data can be handled by the
+simulator as a single block for data.&nbsp; Stripped TIFF images are not
+supported.&nbsp; If for any reason the @image requested doesn’t match the image
+values negotiated with the driver (for example, if the file is uncompressed,
+but ICAP_COMPRESSION is TWCP_JPEG), then the simulator falls back to the first
+form, discarding the file info.&nbsp; The version 4+ drivers report the reason
+for the failure in the KDS.LOG file (though it may be necessary to set Debug=1
+to get the information).</p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+The third form is a combination of <span class=SpellE>bitonal</span> and color,
+and can be used to provide two images for <span class=SpellE>dualstream</span>
+scanning for i600/i800/i1800.&nbsp; The order of the images in the @image does
+not matter; the simulator will grab the appropriate one needed to match the
+requirements of the CAP_CAMERAORDER capability.</p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>Note that <span class=SpellE>dualstream</span>
+for the 3590/4500/i30/i40/i200 scanners always comes from a single (or
+grayscale) color image generated by the scanner.</p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in'>One final note, for most of the
+scanners it is possible to generate the input images used by the simulator in a
+variety of ways: using image editing packages or scanning them in from other
+scanner models.&nbsp; For instance, it is possible to scan JPEG images on a
+Kodak 4500 Scanner and use them in simulations for a Kodak i840 Scanner.&nbsp;
+This is not true for the Kodak i200 Scanners, these devices output image data
+in YCC411 format, the simulator must receive the data in this same format to
+perform properly.&nbsp; Likewise the Kodak i600/i1800 Scanners output
+uncompressed color in YCC444 format.&nbsp; In both cases the best way to
+generate the needed images is to capture data from an existing scanner.&nbsp;
+The Scanner Validation Tool (SVT) has a raw dump feature on the Dump tab (which
+only appears if you have a Level-1 or higher License); it is also possible to
+get this tab through the CONST.INI file, please contact Kodak for information
+about how to do this.&nbsp; This dump is capable of generating the needed
+images along with a fragment of a ramscan.txt file to help set up the
+simulation.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922968"></a><a
+name="_@init"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.5.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@init<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'>This has to be the first command
+in any sequence of @-commands in the ramscan.txt file.&nbsp; The simulator uses
+it as the reset point so that it is possible to run multiple scanning sessions
+without exiting from the application.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922969"></a><a
+name="_@jam"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.6.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@jam<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'>Indicates that a paper jam check
+condition is to be thrown before the next command is read, this command is
+position sensitive, so the following two lists will throw the check condition
+at different points in the simulation.</p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>;
+Jam with two images still in the scanner buffer.</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@init</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@jam</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@stop</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>;
+Jam with no images in the scanner buffer.</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@init</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@jam</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@stop</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922970"></a><a
+name="_@multifeed"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.7.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@<span
+class=SpellE>multifeed</span><o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'>Indicates that a <span
+class=SpellE>multifeed</span> check condition is to be thrown before the next command
+is read, this command is position sensitive, so the following two lists will
+throw the check condition at different points in the simulation.&nbsp; Note
+that the inclusion of @<span class=SpellE>multifeed</span> will result in the
+generation of the check condition no matter what the current settings are on
+the TWAIN <span class=SpellE>Multifeed</span> tab.</p>
+
+<p class=MsoNormal style='margin-left:.25in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>; <span
+class=SpellE>Multifeed</span> with two images still in the scanner buffer.</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@init</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@<span
+class=SpellE>multifeed</span></span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@stop</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>; <span
+class=SpellE>Multifeed</span> with no images in the scanner buffer.</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@init</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@jam</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@<span
+class=SpellE>multifeed</span></span></p>
+
+<p class=MsoNormal style='margin-left:45.0pt'><span style='font-size:10.0pt'>@stop</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922971"></a><a
+name="_@nodata"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.8.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@<span
+class=SpellE>nodata</span><o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'>The 5000/7000/9000 scanners do not
+support a clear buffer command, so the only way to guarantee that the buffers
+are empty prior to scanning is to read out any images from the buffers and
+discard them.&nbsp; The i200 requires a test to make sure the camera is
+homed.&nbsp; And the i600/i1800 needs a way to wait until the elevator is
+homed.&nbsp; We use @<span class=SpellE>nodata.Gemini</span> or @<span
+class=SpellE>nodata.Prism</span> to consume these read image instruction so
+that the @image commands are not accidentally included.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922972"></a><a
+name="_@patch"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.9.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@patch<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'>The patch page command causes the
+simulator to behave as if a patch has been seen by the scanner.</p>
+
+<p class=MsoNormal style='margin-left:.5in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in'>&nbsp;</p>
+
+<h1 style='margin-left:.85in;text-indent:-.35in'><a name="_Toc56922973"></a><a
+name="_@patch_#"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.9.1.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@patch #<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.5in'>For the 5000/7000/900/i800 this
+command causes the scanner to report the presence of a patch page (1 –
+6).&nbsp; Since the image address simulation isn’t very sophisticated, this
+part of the simulation is most useful when trying to generate feature patches
+that the application has to handle.</p>
+
+<p class=MsoNormal style='margin-left:.5in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in'>&nbsp;</p>
+
+<h1 style='margin-left:.85in;text-indent:-.35in'><a name="_Toc56922974"></a><a
+name="_@patch_toggle"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.9.2.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@patch toggle<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.5in'>For the
+3590/4500/i200/i600/i800/i1800 this command tells the simulator to toggle back
+and forth between <span class=SpellE>bitonal</span> and grayscale/color output.</p>
+
+<p class=MsoNormal style='margin-left:.5in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:.5in'><span
+style='font-size:10.0pt'>@init</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:.5in'><span
+style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:.5in'><span
+style='font-size:10.0pt'>@patch toggle</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:.5in'><span
+style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:.5in'><span
+style='font-size:10.0pt'>@stop</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922975"></a><a
+name="_@repeat_label_count"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.10.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@repeat label
+count<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'>This command is only available for
+Version 4+ of the TWAIN driver.&nbsp; There are times when it is desirable to
+repeat a sequence of commands many times.&nbsp; The typical case is scanning
+several hundred or several thousand images.&nbsp; This command allows the
+construction of a repeat loop.</p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.5in'><span
+style='font-size:10.0pt'>@init</span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.5in'><span
+style='font-size:10.0pt'>@:label</span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.5in'><span
+style='font-size:10.0pt'>@image</span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.5in'><span
+style='font-size:10.0pt'>@repeat label 5</span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.5in'><span
+style='font-size:10.0pt'>@stop</span></p>
+
+<p class=MsoNormal style='margin-left:.25in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p>
+
+<p class=MsoNormal style='margin-left:.25in'>This loop will generate five
+@image commands to the simulator.&nbsp; Note the use of the colon ( : ) before
+“label” to mark the topmost point in the loop.&nbsp; Repeat loops can be
+nested.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922976"></a><a
+name="_@restart"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.11.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@restart<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'>This is the command that preceded
+@repeat.&nbsp; All it does is move the simulation reader back to the top of the
+file.&nbsp; Version 2/3 drivers can use it, newer ones should not.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1 style='margin-left:.55in;text-indent:-.3in'><a name="_Toc56922977"></a><a
+name="_@stop"></a><span style='mso-fareast-font-family:"Times New Roman"'>4.12.</span><span
+style='font-size:7.0pt;mso-fareast-font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style='mso-fareast-font-family:"Times New Roman"'>@stop<o:p></o:p></span></h1>
+
+<p class=MsoNormal style='margin-left:.25in'>This command indicates the End-Of-Job
+condition (for 5000/7000/9000/i30/i40/i200/i600/i800/i1800) and the transport
+timeout / disabled state for 3000/4000.&nbsp; It must be at the end of any
+sequence of @image commands.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
