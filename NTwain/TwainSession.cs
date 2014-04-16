@@ -72,7 +72,7 @@ namespace NTwain
         /// Gets the app id used for the session.
         /// </summary>
         /// <value>The app id.</value>
-        TWIdentity ITwainStateInternal.GetAppId() { return _appId; }
+        TWIdentity ITwainStateInternal.AppId { get { return _appId; } }
 
         /// <summary>
         /// Gets or sets a value indicating whether calls to triplets will verify the current twain session state.
@@ -1170,15 +1170,8 @@ namespace NTwain
         /// The MSG structure in Windows for TWAIN use.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
-        protected struct MESSAGE
+        struct MESSAGE
         {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="MESSAGE"/> struct.
-            /// </summary>
-            /// <param name="hwnd">The HWND.</param>
-            /// <param name="message">The message.</param>
-            /// <param name="wParam">The w parameter.</param>
-            /// <param name="lParam">The l parameter.</param>
             public MESSAGE(IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam)
             {
                 _hwnd = hwnd;

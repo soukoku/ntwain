@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.CustomDSData, Message.Get);
 			customData = new TWCustomDSData();
-			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Get, customData);
+			return Dsm.DsmEntry(Session.AppId, Session.SourceId, Message.Get, customData);
 		}
 
 		/// <summary>
@@ -34,7 +34,7 @@ namespace NTwain.Triplets
 		public ReturnCode Set(TWCustomDSData customData)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.CustomDSData, Message.Set);
-			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, Message.Set, customData);
+			return Dsm.DsmEntry(Session.AppId, Session.SourceId, Message.Set, customData);
 		}
 	}
 }

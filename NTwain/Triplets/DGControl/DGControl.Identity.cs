@@ -20,7 +20,7 @@ namespace NTwain.Triplets
 		internal ReturnCode CloseDS()
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.Identity, Message.CloseDS);
-			var rc = Dsm.DsmEntry(Session.GetAppId(), Message.CloseDS, Session.SourceId);
+			var rc = Dsm.DsmEntry(Session.AppId, Message.CloseDS, Session.SourceId);
 			if (rc == ReturnCode.Success)
             {
                 Session.ChangeSourceId(null);
@@ -38,7 +38,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetDefault);
 			source = new TWIdentity();
-			return Dsm.DsmEntry(Session.GetAppId(), Message.GetDefault, source);
+			return Dsm.DsmEntry(Session.AppId, Message.GetDefault, source);
 		}
 
 
@@ -52,7 +52,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetFirst);
 			source = new TWIdentity();
-			return Dsm.DsmEntry(Session.GetAppId(), Message.GetFirst, source);
+			return Dsm.DsmEntry(Session.AppId, Message.GetFirst, source);
 		}
 
 		/// <summary>
@@ -65,7 +65,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetNext);
 			source = new TWIdentity();
-			return Dsm.DsmEntry(Session.GetAppId(), Message.GetNext, source);
+			return Dsm.DsmEntry(Session.AppId, Message.GetNext, source);
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace NTwain.Triplets
 		internal ReturnCode OpenDS(TWIdentity source)
 		{
 			Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.Identity, Message.OpenDS);
-			var rc = Dsm.DsmEntry(Session.GetAppId(), Message.OpenDS, source);
+			var rc = Dsm.DsmEntry(Session.AppId, Message.OpenDS, source);
 			if (rc == ReturnCode.Success)
             {
                 Session.ChangeSourceId(source);
@@ -95,7 +95,7 @@ namespace NTwain.Triplets
 		public ReturnCode Set(TWIdentity source)
 		{
 			Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.Identity, Message.Set);
-			return Dsm.DsmEntry(Session.GetAppId(), Message.Set, source);
+			return Dsm.DsmEntry(Session.AppId, Message.Set, source);
 		}
 
 		/// <summary>
@@ -108,7 +108,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.UserSelect);
 			source = new TWIdentity();
-			return Dsm.DsmEntry(Session.GetAppId(), Message.UserSelect, source);
+			return Dsm.DsmEntry(Session.AppId, Message.UserSelect, source);
 		}
 	}
 }

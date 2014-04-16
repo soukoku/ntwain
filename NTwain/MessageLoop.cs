@@ -64,33 +64,37 @@ namespace NTwain
 
         public void BeginInvoke(Action action)
         {
-            if (_dispatcher != null)
-            {
-                _dispatcher.BeginInvoke(DispatcherPriority.Normal, action);
-            }
+            if (_dispatcher == null) { throw new InvalidOperationException("Message loop has not started yet."); }
+
+            _dispatcher.BeginInvoke(DispatcherPriority.Normal, action);
         }
 
         public void Invoke(Action action)
         {
-            if (_dispatcher != null)
-            {
-                if (_dispatcher.CheckAccess())
-                {
-                    action();
-                }
-                else
-                {
-                    //_dispatcher.Invoke(DispatcherPriority.Normal, action);
+            if (_dispatcher == null) { throw new InvalidOperationException("Message loop has not started yet."); }
 
-                    var man = new ManualResetEvent(false);
-                    _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            if (_dispatcher.CheckAccess())
+            {
+                action();
+            }
+            else
+            {
+                //_dispatcher.Invoke(DispatcherPriority.Normal, action);
+                // why use this instead of the single line above? for possible future use in mono!
+                var man = new ManualResetEvent(false);
+                _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                {
+                    try
                     {
                         action();
+                    }
+                    finally
+                    {
                         man.Set();
-                    }));
-                    man.WaitOne();
-                    man.Close();
-                }
+                    }
+                }));
+                man.WaitOne();
+                man.Close();
             }
         }
 

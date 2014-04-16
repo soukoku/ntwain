@@ -17,7 +17,7 @@ namespace NTwain.Triplets
 		public ReturnCode RegisterCallback(TWCallback2 callback)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.Callback, Message.RegisterCallback);
-			return Dsm.DsmEntry(Session.GetAppId(), Session.SourceId, Message.RegisterCallback, callback);
+			return Dsm.DsmEntry(Session.AppId, Session.SourceId, Message.RegisterCallback, callback);
 		}
 	}
 }

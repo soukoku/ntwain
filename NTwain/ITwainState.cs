@@ -32,7 +32,7 @@ namespace NTwain
         /// Gets the app id used for the session.
         /// </summary>
         /// <returns></returns>
-        TWIdentity GetAppId();
+        TWIdentity AppId { get; }
 
         /// <summary>
         /// Gets or sets a value indicating whether calls to triplets will verify the current twain session state.
