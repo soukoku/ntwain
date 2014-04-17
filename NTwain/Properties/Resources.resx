@@ -117,10 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BadContainerType" xml:space="preserve">
-    <value>The specified container type does not match the data.</value>
+  <data name="BadValueType" xml:space="preserve">
+    <value>Invalid value type for {0}.</value>
+  </data>
+  <data name="CapHasBadContainer" xml:space="preserve">
+    <value>Capability has invalid container type {0}.</value>
+  </data>
+  <data name="CapHasNoData" xml:space="preserve">
+    <value>Capability contains no data.</value>
   </data>
   <data name="MaxStringLengthExceeded" xml:space="preserve">
     <value>The string value has exceeded the maximum length allowed.</value>
+  </data>
+  <data name="MemAllocError" xml:space="preserve">
+    <value>Failed to allocate requested memory.</value>
+  </data>
+  <data name="MsgLoopUnavailble" xml:space="preserve">
+    <value>Message loop has not started yet.</value>
+  </data>
+  <data name="SourceRequired" xml:space="preserve">
+    <value>Source name is required.</value>
   </data>
 </root>

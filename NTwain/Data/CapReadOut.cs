@@ -1,4 +1,5 @@
-﻿using NTwain.Values;
+﻿using NTwain.Properties;
+using NTwain.Values;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace NTwain.Data
         public static CapReadOut ReadValue(TWCapability capability)
         {
             if (capability == null) { throw new ArgumentNullException("capability"); }
-            if (capability.Container == IntPtr.Zero) { throw new ArgumentException("Capability contains no data.", "capability"); }
+            if (capability.Container == IntPtr.Zero) { throw new ArgumentException(Resources.CapHasNoData, "capability"); }
 
             IntPtr baseAddr = IntPtr.Zero;
             try
@@ -57,7 +58,7 @@ namespace NTwain.Data
                             ContainerType = capability.ContainerType,
                         }.ReadRangeValue(baseAddr);
                     default:
-                        throw new ArgumentException(string.Format("Capability has invalid container type {0}.", capability.ContainerType), "capability");
+                        throw new ArgumentException(string.Format(Resources.CapHasBadContainer, capability.ContainerType), "capability");
                 }
             }
             finally

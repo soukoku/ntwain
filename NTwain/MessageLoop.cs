@@ -1,4 +1,5 @@
-﻿using NTwain.Triplets;
+﻿using NTwain.Properties;
+using NTwain.Triplets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -65,14 +66,14 @@ namespace NTwain
 
         public void BeginInvoke(Action action)
         {
-            if (_dispatcher == null) { throw new InvalidOperationException("Message loop has not started yet."); }
+            if (_dispatcher == null) { throw new InvalidOperationException(Resources.MsgLoopUnavailble); }
 
             _dispatcher.BeginInvoke(DispatcherPriority.Normal, action);
         }
 
         public void Invoke(Action action)
         {
-            if (_dispatcher == null) { throw new InvalidOperationException("Message loop has not started yet."); }
+            if (_dispatcher == null) { throw new InvalidOperationException(Resources.MsgLoopUnavailble); }
 
             if (_dispatcher.CheckAccess())
             {

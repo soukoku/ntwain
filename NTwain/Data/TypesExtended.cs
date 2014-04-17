@@ -688,10 +688,10 @@ namespace NTwain.Data
         void SetOneValue(TWOneValue value)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
-            if (ContainerType != Values.ContainerType.OneValue) { throw new ArgumentException(Resources.BadContainerType, "value"); }
+            ContainerType = Values.ContainerType.OneValue;
 
             // since one value can only house UInt32 we will not allow type size > 4
-            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid one value type"); }
+            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(Resources.BadValueType, "TWOneValue")); }
 
             _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
@@ -704,7 +704,7 @@ namespace NTwain.Data
         void SetEnumValue(TWEnumeration value)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
-            if (ContainerType != Values.ContainerType.Enum) { throw new ArgumentException(Resources.BadContainerType, "value"); }
+            ContainerType = Values.ContainerType.Enum;
 
 
             Int32 valueSize = value.ItemOffset + value.ItemList.Length * TypeReader.GetItemTypeSize(value.ItemType);
@@ -730,10 +730,10 @@ namespace NTwain.Data
         void SetRangeValue(TWRange value)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
-            if (ContainerType != Values.ContainerType.Range) { throw new ArgumentException(Resources.BadContainerType, "value"); }
+            ContainerType = Values.ContainerType.Range;
 
             // since range value can only house UInt32 we will not allow type size > 4
-            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException("Invalid range value type"); }
+            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(Resources.BadValueType, "TWRange")); }
 
             _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
@@ -1297,7 +1297,7 @@ namespace NTwain.Data
         /// <summary>
         /// Tag identifying an information.
         /// </summary>
-        public ushort InfoID { get { return _infoID; } }
+        public ExtendedImageInfo InfoID { get { return (ExtendedImageInfo)_infoID; } }
         /// <summary>
         /// Item data type.
         /// </summary>

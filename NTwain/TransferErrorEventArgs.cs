@@ -13,7 +13,7 @@ namespace NTwain
     public class TransferErrorEventArgs : EventArgs
     {
         /// <summary>
-        /// Gets the return code.
+        /// Gets the return code from the transfer.
         /// </summary>
         /// <value>
         /// The return code.

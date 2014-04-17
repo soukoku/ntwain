@@ -1,4 +1,5 @@
 ﻿using NTwain.Data;
+using NTwain.Properties;
 using NTwain.Triplets;
 using NTwain.Values;
 using System;
@@ -21,7 +22,7 @@ namespace NTwain
     public class TwainSession : ITwainStateInternal, ITwainOperation
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TwainSessionOld" /> class.
+        /// Initializes a new instance of the <see cref="TwainSession" /> class.
         /// </summary>
         /// <param name="appId">The app id.</param>
         /// <exception cref="System.ArgumentNullException"></exception>
@@ -293,7 +294,7 @@ namespace NTwain
         /// <exception cref="ArgumentException">Source name is required.;sourceProductName</exception>
         public ReturnCode OpenSource(string sourceProductName)
         {
-            if (string.IsNullOrEmpty(sourceProductName)) { throw new ArgumentException("Source name is required.", "sourceProductName"); }
+            if (string.IsNullOrEmpty(sourceProductName)) { throw new ArgumentException(Resources.SourceRequired, "sourceProductName"); }
 
             ReturnCode rc = ReturnCode.Success;
             MessageLoop.Instance.Invoke(() =>
@@ -517,7 +518,7 @@ namespace NTwain
         /// <typeparam name="TEventArgs">The type of the event arguments.</typeparam>
         /// <param name="onEventFunc">The on event function.</param>
         /// <param name="handler">The handler.</param>
-        /// <param name="e">The <see cref="TEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The TEventArgs instance containing the event data.</param>
         void SafeSyncableRaiseOnEvent<TEventArgs>(Action<TEventArgs> onEventFunc, EventHandler<TEventArgs> handler, TEventArgs e) where TEventArgs : EventArgs
         {
             var syncer = SynchronizationContext;
@@ -883,6 +884,14 @@ namespace NTwain
                 {
                     State = 7;
                     TWImageInfo imgInfo;
+                    TWExtImageInfo extInfo = null;
+                    if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
+                    {
+                        if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
+                        {
+                            extInfo = null;
+                        }
+                    }
                     if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
                     {
                         imgInfo = null;
@@ -891,7 +900,13 @@ namespace NTwain
                     {
                         lockedPtr = MemoryManager.Instance.Lock(dataPtr);
                     }
-                    SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { NativeData = lockedPtr, ImageInfo = imgInfo });
+                    SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs
+                    {
+                        NativeData = lockedPtr,
+                        ImageInfo = imgInfo,
+                        ExImageInfo = extInfo
+                    });
+                    if (extInfo != null) { extInfo.Dispose(); }
                 }
                 else
                 {
@@ -932,11 +947,25 @@ namespace NTwain
             if (xrc == ReturnCode.XferDone)
             {
                 TWImageInfo imgInfo;
+                TWExtImageInfo extInfo = null;
+                if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
+                {
+                    if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
+                    {
+                        extInfo = null;
+                    }
+                }
                 if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
                 {
                     imgInfo = null;
                 }
-                SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { FileDataPath = filePath, ImageInfo = imgInfo });
+                SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs
+                {
+                    FileDataPath = filePath,
+                    ImageInfo = imgInfo,
+                    ExImageInfo = extInfo
+                });
+                if (extInfo != null) { extInfo.Dispose(); }
             }
             else
             {
@@ -1000,22 +1029,26 @@ namespace NTwain
                         if (xrc == ReturnCode.XferDone)
                         {
                             TWImageInfo imgInfo;
-                            //TWExtImageInfo extInfo;
-                            //if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
-                            //{
-                            //    if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
-                            //    {
-                            //        extInfo = null;
-                            //    }
-                            //}
-                            if (DGImage.ImageInfo.Get(out imgInfo) == ReturnCode.Success)
+                            TWExtImageInfo extInfo = null;
+                            if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
                             {
-                                SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { MemData = xferredData.ToArray(), ImageInfo = imgInfo });
+                                if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
+                                {
+                                    extInfo = null;
+                                }
                             }
-                            else
+                            if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
                             {
-                                throw new TwainException("Failed to get image info after ImageMemXfer.");
+                                imgInfo = null;
                             }
+
+                            SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs
+                            {
+                                MemData = xferredData.ToArray(),
+                                ImageInfo = imgInfo,
+                                ExImageInfo = extInfo
+                            });
+                            if (extInfo != null) { extInfo.Dispose(); }
                         }
                         else
                         {
@@ -1168,11 +1201,25 @@ namespace NTwain
                 if (File.Exists(finalFile))
                 {
                     TWImageInfo imgInfo;
+                    TWExtImageInfo extInfo = null;
+                    if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
+                    {
+                        if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
+                        {
+                            extInfo = null;
+                        }
+                    }
                     if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
                     {
                         imgInfo = null;
                     }
-                    SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { FileDataPath = finalFile, ImageInfo = imgInfo });
+                    SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs
+                    {
+                        FileDataPath = finalFile,
+                        ImageInfo = imgInfo,
+                        ExImageInfo = extInfo
+                    });
+                    if (extInfo != null) { extInfo.Dispose(); }
                 }
             }
         }

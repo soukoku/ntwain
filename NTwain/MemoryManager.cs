@@ -1,4 +1,5 @@
 ﻿using NTwain.Data;
+using NTwain.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace NTwain
 
             if (retVal == IntPtr.Zero)
             {
-                throw new OutOfMemoryException("Failed to allocate requested memory.");
+                throw new OutOfMemoryException(Resources.MemAllocError);
             }
             return retVal;
         }
