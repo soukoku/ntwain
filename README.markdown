@@ -20,9 +20,15 @@ and how it works in general. Except for certain "important" calls that drive the
 TWAIN state change, most triplet operations are only availble as-is so you will need to know
 when and how to use them. There are no high-level, single-line scan-a-page-for-me-now functions.
 
-At the moment this lib does not provide ways to parse transferred image data and require
-consumers to do the conversion. The winform project contains one such 
-example for handling DIB image in native transfer.
-
 The main class to use is TwainSession. New it up, hook into the events, and start calling
 all the TWAIN functions provided through it.
+
+Caveats
+--------------------------------------
+At the moment this lib does not provide ways to parse transferred image data and require
+consumers to do the conversion themselves. The winform project contains one such 
+example for handling DIB image in native transfer using the CommonWin32 lib.
+
+Because it hosts its own message thread, the event callbacks will likely be from another thread. 
+If you would like things marshalled to a "UI" thread then set the SynchronizationContext property
+to the one from the UI thread. This part is highly experimental.

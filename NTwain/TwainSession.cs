@@ -65,6 +65,16 @@ namespace NTwain
             }
         }
 
+        /// <summary>
+        /// EXPERIMENTAL. Gets or sets the optional synchronization context.
+        /// This allows events to be raised on the thread
+        /// associated with the context.
+        /// </summary>
+        /// <value>
+        /// The synchronization context.
+        /// </value>
+        public SynchronizationContext SynchronizationContext { get; set; }
+
 
         #region ITwainStateInternal Members
 
@@ -88,7 +98,7 @@ namespace NTwain
             if (notifyChange)
             {
                 RaisePropertyChanged("State");
-                OnStateChanged();
+                SafeAsyncSyncableRaiseOnEvent(OnStateChanged, StateChanged);
             }
         }
 
@@ -101,7 +111,7 @@ namespace NTwain
         {
             SourceId = sourceId;
             RaisePropertyChanged("SourceId");
-            OnSourceChanged();
+            SafeAsyncSyncableRaiseOnEvent(OnSourceChanged, SourceChanged);
         }
 
         #endregion
@@ -132,7 +142,7 @@ namespace NTwain
                 {
                     _state = value;
                     RaisePropertyChanged("State");
-                    OnStateChanged();
+                    SafeAsyncSyncableRaiseOnEvent(OnStateChanged, StateChanged);
                 }
             }
         }
@@ -195,8 +205,27 @@ namespace NTwain
         /// <param name="propertyName">Name of the property.</param>
         protected void RaisePropertyChanged(string propertyName)
         {
-            var hand = PropertyChanged;
-            if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+            if (SynchronizationContext == null)
+            {
+                try
+                {
+                    var hand = PropertyChanged;
+                    if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+                }
+                catch { }
+            }
+            else
+            {
+                SynchronizationContext.Post(o =>
+                {
+                    try
+                    {
+                        var hand = PropertyChanged;
+                        if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+                    }
+                    catch { }
+                }, null);
+            }
         }
 
         #endregion
@@ -389,7 +418,7 @@ namespace NTwain
                     {
                         _callbackObj = null;
                     }
-                    OnSourceDisabled();
+                    SafeAsyncSyncableRaiseOnEvent(OnSourceDisabled, SourceDisabled);
                 }
             });
             return rc;
@@ -483,123 +512,108 @@ namespace NTwain
         public event EventHandler<TransferErrorEventArgs> TransferError;
 
         /// <summary>
-        /// Called when <see cref="State"/> changed
-        /// and raises the <see cref="StateChanged" /> event.
+        /// Raises event and if applicable marshal it synchronously to the <see cref="SynchronizationContext" /> thread.
         /// </summary>
-        protected virtual void OnStateChanged()
+        /// <typeparam name="TEventArgs">The type of the event arguments.</typeparam>
+        /// <param name="onEventFunc">The on event function.</param>
+        /// <param name="handler">The handler.</param>
+        /// <param name="e">The <see cref="TEventArgs"/> instance containing the event data.</param>
+        void SafeSyncableRaiseOnEvent<TEventArgs>(Action<TEventArgs> onEventFunc, EventHandler<TEventArgs> handler, TEventArgs e) where TEventArgs : EventArgs
         {
-            var hand = StateChanged;
-            if (hand != null)
+            var syncer = SynchronizationContext;
+            if (syncer == null)
             {
                 try
                 {
-                    hand(this, EventArgs.Empty);
+                    onEventFunc(e);
+                    if (handler != null) { handler(this, e); }
                 }
                 catch { }
+            }
+            else
+            {
+                syncer.Send(o =>
+                {
+                    try
+                    {
+                        onEventFunc(e);
+                        if (handler != null) { handler(this, e); }
+                    }
+                    catch { }
+                }, null);
             }
         }
 
         /// <summary>
-        /// Called when <see cref="SourceId"/> changed
-        /// and raises the <see cref="SourceChanged" /> event.
+        /// Raises event and if applicable marshal it asynchronously to the <see cref="SynchronizationContext"/> thread.
         /// </summary>
-        protected virtual void OnSourceChanged()
+        /// <param name="onEventFunc">The on event function.</param>
+        /// <param name="handler">The handler.</param>
+        void SafeAsyncSyncableRaiseOnEvent(Action onEventFunc, EventHandler handler)
         {
-            var hand = SourceChanged;
-            if (hand != null)
+            var syncer = SynchronizationContext;
+            if (syncer == null)
             {
                 try
                 {
-                    hand(this, EventArgs.Empty);
+                    onEventFunc();
+                    if (handler != null) { handler(this, EventArgs.Empty); }
                 }
                 catch { }
+            }
+            else
+            {
+                syncer.Post(o =>
+                {
+                    try
+                    {
+                        onEventFunc();
+                        if (handler != null) { handler(this, EventArgs.Empty); }
+                    }
+                    catch { }
+                }, null);
             }
         }
 
         /// <summary>
-        /// Called when source has been disabled (back to state 4)
-        /// and raises the <see cref="SourceDisabled" /> event.
+        /// Called when <see cref="State"/> changed.
         /// </summary>
-        protected virtual void OnSourceDisabled()
-        {
-            var hand = SourceDisabled;
-            if (hand != null)
-            {
-                try
-                {
-                    hand(this, EventArgs.Empty);
-                }
-                catch { }
-            }
-        }
+        protected virtual void OnStateChanged() { }
 
         /// <summary>
-        /// Raises the <see cref="E:DeviceEvent" /> event.
+        /// Called when <see cref="SourceId"/> changed.
+        /// </summary>
+        protected virtual void OnSourceChanged() { }
+
+        /// <summary>
+        /// Called when source has been disabled (back to state 4).
+        /// </summary>
+        protected virtual void OnSourceDisabled() { }
+
+        /// <summary>
+        /// Called when the source has generated an event.
         /// </summary>
         /// <param name="e">The <see cref="DeviceEventArgs"/> instance containing the event data.</param>
-        protected virtual void OnDeviceEvent(DeviceEventArgs e)
-        {
-            var hand = DeviceEvent;
-            if (hand != null)
-            {
-                try
-                {
-                    hand(this, e);
-                }
-                catch { }
-            }
-        }
+        protected virtual void OnDeviceEvent(DeviceEventArgs e) { }
 
         /// <summary>
-        /// Raises the <see cref="E:TransferReady" /> event.
+        /// Called when a data transfer is ready.
         /// </summary>
         /// <param name="e">The <see cref="TransferReadyEventArgs"/> instance containing the event data.</param>
-        protected virtual void OnTransferReady(TransferReadyEventArgs e)
-        {
-            var hand = TransferReady;
-            if (hand != null)
-            {
-                try
-                {
-                    hand(this, e);
-                }
-                catch { }
-            }
-        }
+        protected virtual void OnTransferReady(TransferReadyEventArgs e) { }
 
         /// <summary>
-        /// Raises the <see cref="E:DataTransferred" /> event.
+        /// Called when data has been transferred.
         /// </summary>
         /// <param name="e">The <see cref="DataTransferredEventArgs"/> instance containing the event data.</param>
-        protected virtual void OnDataTransferred(DataTransferredEventArgs e)
-        {
-            var hand = DataTransferred;
-            if (hand != null)
-            {
-                try
-                {
-                    hand(this, e);
-                }
-                catch { }
-            }
-        }
+        protected virtual void OnDataTransferred(DataTransferredEventArgs e) { }
 
         /// <summary>
-        /// Raises the <see cref="E:TransferError" /> event.
+        /// Called when an error has been encountered during transfer.
         /// </summary>
         /// <param name="e">The <see cref="TransferErrorEventArgs"/> instance containing the event data.</param>
-        protected virtual void OnTransferError(TransferErrorEventArgs e)
-        {
-            var hand = TransferError;
-            if (hand != null)
-            {
-                try
-                {
-                    hand(this, e);
-                }
-                catch { }
-            }
-        }
+        protected virtual void OnTransferError(TransferErrorEventArgs e) { }
+
         #endregion
 
         #region TWAIN logic during xfer work
@@ -671,7 +685,7 @@ namespace NTwain
                     var rc = DGControl.DeviceEvent.Get(out de);
                     if (rc == ReturnCode.Success)
                     {
-                        OnDeviceEvent(new DeviceEventArgs(de));
+                        SafeSyncableRaiseOnEvent(OnDeviceEvent, DeviceEvent, new DeviceEventArgs(de));
                     }
                     break;
                 case Message.CloseDSReq:
@@ -726,7 +740,7 @@ namespace NTwain
                     EndOfJob = pending.EndOfJob == 0
                 };
 
-                OnTransferReady(preXferArgs);
+                SafeSyncableRaiseOnEvent(OnTransferReady, TransferReady, preXferArgs);
 
                 #endregion
 
@@ -805,16 +819,17 @@ namespace NTwain
                     {
                         lockedPtr = MemoryManager.Instance.Lock(dataPtr);
                     }
-                    OnDataTransferred(new DataTransferredEventArgs { NativeData = lockedPtr });
+
+                    SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { NativeData = lockedPtr });
                 }
                 else
                 {
-                    OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
+                    SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
                 }
             }
             catch (Exception ex)
             {
-                OnTransferError(new TransferErrorEventArgs { Exception = ex });
+                SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { Exception = ex });
             }
             finally
             {
@@ -845,11 +860,11 @@ namespace NTwain
             var xrc = DGAudio.AudioFileXfer.Get();
             if (xrc == ReturnCode.XferDone)
             {
-                OnDataTransferred(new DataTransferredEventArgs { FileDataPath = filePath });
+                SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { FileDataPath = filePath });
             }
             else
             {
-                OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
+                SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
             }
         }
 
@@ -876,16 +891,16 @@ namespace NTwain
                     {
                         lockedPtr = MemoryManager.Instance.Lock(dataPtr);
                     }
-                    OnDataTransferred(new DataTransferredEventArgs { NativeData = lockedPtr, ImageInfo = imgInfo });
+                    SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { NativeData = lockedPtr, ImageInfo = imgInfo });
                 }
                 else
                 {
-                    OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
+                    SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
                 }
             }
             catch (Exception ex)
             {
-                OnTransferError(new TransferErrorEventArgs { Exception = ex });
+                SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { Exception = ex });
             }
             finally
             {
@@ -921,11 +936,11 @@ namespace NTwain
                 {
                     imgInfo = null;
                 }
-                OnDataTransferred(new DataTransferredEventArgs { FileDataPath = filePath, ImageInfo = imgInfo });
+                SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { FileDataPath = filePath, ImageInfo = imgInfo });
             }
             else
             {
-                OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
+                SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
             }
         }
 
@@ -995,7 +1010,7 @@ namespace NTwain
                             //}
                             if (DGImage.ImageInfo.Get(out imgInfo) == ReturnCode.Success)
                             {
-                                OnDataTransferred(new DataTransferredEventArgs { MemData = xferredData.ToArray(), ImageInfo = imgInfo });
+                                SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { MemData = xferredData.ToArray(), ImageInfo = imgInfo });
                             }
                             else
                             {
@@ -1004,13 +1019,13 @@ namespace NTwain
                         }
                         else
                         {
-                            OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
+                            SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    OnTransferError(new TransferErrorEventArgs { Exception = ex });
+                    SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { Exception = ex });
                 }
                 finally
                 {
@@ -1130,12 +1145,12 @@ namespace NTwain
                     }
                     else
                     {
-                        OnTransferError(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
+                        SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
                     }
                 }
                 catch (Exception ex)
                 {
-                    OnTransferError(new TransferErrorEventArgs { Exception = ex });
+                    SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { Exception = ex });
                 }
                 finally
                 {
@@ -1157,7 +1172,7 @@ namespace NTwain
                     {
                         imgInfo = null;
                     }
-                    OnDataTransferred(new DataTransferredEventArgs { FileDataPath = finalFile, ImageInfo = imgInfo });
+                    SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { FileDataPath = finalFile, ImageInfo = imgInfo });
                 }
             }
         }

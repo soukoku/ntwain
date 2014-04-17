@@ -61,10 +61,21 @@ namespace Tester.Winform
         {
             var appId = TWIdentity.CreateFromAssembly(DataGroups.Image, Assembly.GetEntryAssembly());
             _twain = new TwainSession(appId);
+            // either set this and don't worry about threads during events,
+            // or don't and invoke during the events yourselv
+            _twain.SynchronizationContext = SynchronizationContext.Current;
+            _twain.StateChanged += (s, e) =>
+            {
+                Debug.WriteLine("State change on thread " + Thread.CurrentThread.ManagedThreadId);
+                //this.BeginInvoke(new Action(() =>
+                //{
+                //    Debug.WriteLine("State change marshaled to thread " + Thread.CurrentThread.ManagedThreadId);
+                //}));
+            };
             _twain.DataTransferred += (s, e) =>
             {
-                this.Invoke(new Action(() =>
-                {
+                //this.Invoke(new Action(() =>
+                //{
                     if (pictureBox1.Image != null)
                     {
                         pictureBox1.Image.Dispose();
@@ -72,7 +83,6 @@ namespace Tester.Winform
                     }
                     if (e.NativeData != IntPtr.Zero)
                     {
-                        //_ptrTest = e.Data;
                         var img = e.NativeData.GetDrawingBitmap();
                         if (img != null)
                             pictureBox1.Image = img;
@@ -82,17 +92,17 @@ namespace Tester.Winform
                         var img = new Bitmap(e.FileDataPath);
                         pictureBox1.Image = img;
                     }
-                }));
+                //}));
             };
             _twain.SourceDisabled += (s, e) =>
             {
-                this.Invoke(new Action(() =>
-                {
+                //this.Invoke(new Action(() =>
+                //{
                     btnStopScan.Enabled = false;
                     btnStartCapture.Enabled = true;
                     panelOptions.Enabled = true;
                     LoadSourceCaps();
-                }));
+                //}));
             };
             _twain.TransferReady += (s, e) =>
             {

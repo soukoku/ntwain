@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using CommonWin32;
 using System.Threading;
 using GalaSoft.MvvmLight.Messaging;
+using System.Diagnostics;
 
 namespace Tester.WPF
 {
@@ -22,7 +23,7 @@ namespace Tester.WPF
         public TwainVM()
             : base(TWIdentity.CreateFromAssembly(DataGroups.Image | DataGroups.Audio, Assembly.GetEntryAssembly()))
         {
-
+            this.SynchronizationContext = SynchronizationContext.Current;
         }
 
         private ImageSource _image;
@@ -63,7 +64,6 @@ namespace Tester.WPF
                     Button = System.Windows.MessageBoxButton.OK
                 });
             }
-            base.OnTransferError(e);
         }
 
         protected override void OnTransferReady(TransferReadyEventArgs e)
@@ -82,24 +82,22 @@ namespace Tester.WPF
                 };
                 var rc = this.DGControl.SetupFileXfer.Set(fileSetup);
             }
-            base.OnTransferReady(e);
         }
 
         protected override void OnDataTransferred(DataTransferredEventArgs e)
         {
-            App.Current.Dispatcher.Invoke(new Action(() =>
+            //App.Current.Dispatcher.Invoke(new Action(() =>
+            //{
+            if (e.NativeData != IntPtr.Zero)
             {
-                if (e.NativeData != IntPtr.Zero)
-                {
-                    Image = e.NativeData.GetWPFBitmap();
-                }
-                else if (!string.IsNullOrEmpty(e.FileDataPath))
-                {
-                    var img = new BitmapImage(new Uri(e.FileDataPath));
-                    Image = img;
-                }
-            }));
-            base.OnDataTransferred(e);
+                Image = e.NativeData.GetWPFBitmap();
+            }
+            else if (!string.IsNullOrEmpty(e.FileDataPath))
+            {
+                var img = new BitmapImage(new Uri(e.FileDataPath));
+                Image = img;
+            }
+            //}));
         }
 
         public void TestCapture(IntPtr hwnd)

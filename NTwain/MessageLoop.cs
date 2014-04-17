@@ -15,7 +15,6 @@ namespace NTwain
     /// </summary>
     class MessageLoop
     {
-        // mostly wraps around a dispatcher?
         static MessageLoop _instance = new MessageLoop();
         public static MessageLoop Instance { get { return _instance; } }
 
@@ -24,6 +23,7 @@ namespace NTwain
         HwndSource _dummyWindow;
 
         private MessageLoop() { }
+
         public void EnsureStarted()
         {
             if (!_started)
@@ -42,8 +42,9 @@ namespace NTwain
                         // CS_NOCLOSE, WS_DISABLED, and WS_EX_NOACTIVATE
                         _dummyWindow = new HwndSource(0x0200, 0x8000000, 0x8000000, 0, 0, "NTWAIN_LOOPER", IntPtr.Zero);
                     }
-                    hack.Set();
+                    hack.Set(); 
                     Dispatcher.Run();
+                    _started = false;
                 }));
                 loopThread.IsBackground = true;
                 loopThread.SetApartmentState(ApartmentState.STA);
