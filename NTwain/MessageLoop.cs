@@ -1,10 +1,7 @@
 ﻿using NTwain.Properties;
 using NTwain.Triplets;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Interop;
 using System.Windows.Threading;

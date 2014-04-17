@@ -1,6 +1,6 @@
-﻿using System;
+﻿using NTwain.Values;
+using System;
 using System.Runtime.Serialization;
-using NTwain.Values;
 using System.Security.Permissions;
 
 namespace NTwain

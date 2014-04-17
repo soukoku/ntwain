@@ -6,16 +6,16 @@ namespace NTwain
     /// <summary>
     /// Contains event data after whatever data from the source has been transferred.
     /// </summary>
-	public class DataTransferredEventArgs : EventArgs
-	{
-		/// <summary>
-		/// Gets pointer to the complete data if the transfer was native.
-		/// The data will be freed once the event handler ends
-		/// so consumers must complete whatever processing before then.
+    public class DataTransferredEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets pointer to the complete data if the transfer was native.
+        /// The data will be freed once the event handler ends
+        /// so consumers must complete whatever processing before then.
         /// For image type this data is DIB (Windows), PICT (old Mac), and TIFF (Linux/OSX).
-		/// </summary>
-		/// <value>The data pointer.</value>
-		public IntPtr NativeData { get; internal set; }
+        /// </summary>
+        /// <value>The data pointer.</value>
+        public IntPtr NativeData { get; internal set; }
 
         /// <summary>
         /// Gets the file path to the complete data if the transfer was file or memory-file.
@@ -50,5 +50,5 @@ namespace NTwain
         /// The extended image information.
         /// </value>
         public TWExtImageInfo ExImageInfo { get; internal set; }
-	}
+    }
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using NTwain.Data;
-using NTwain.Values;
-using System.Collections.Generic;
-using System.Linq;
+﻿using NTwain.Data;
+using System;
 
 namespace NTwain
 {

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using NTwain.Data;
+﻿using NTwain.Data;
 using NTwain.Values;
-using System.IO;
+using System;
 
 namespace NTwain.Triplets
 {

@@ -1,5 +1,4 @@
 ﻿using NTwain.Data;
-using NTwain.Triplets;
 using System;
 using System.ComponentModel;
 namespace NTwain

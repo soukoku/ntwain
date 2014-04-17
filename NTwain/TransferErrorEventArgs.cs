@@ -1,9 +1,6 @@
 ﻿using NTwain.Data;
 using NTwain.Values;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NTwain
 {

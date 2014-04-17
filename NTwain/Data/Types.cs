@@ -1,9 +1,9 @@
 ﻿// This file contains all the structs defined in the twain.h file.
 
+using NTwain.Values;
 using System;
 using System.Runtime.InteropServices;
-using NTwain.Values;
-
+using TW_BOOL = System.UInt16; // unsigned short
 // The following TWAIN basic types are mapped with "using"
 // to aid in mapping against the twain.h file using copy-paste.
 // Consumers will not see those names.
@@ -11,19 +11,15 @@ using NTwain.Values;
 
 // use HandleRef instead?
 using TW_HANDLE = System.IntPtr; // HANDLE, todo: should really be uintptr?
-using TW_MEMREF = System.IntPtr; // LPVOID
-// iffy
-using TW_UINTPTR = System.UIntPtr; // UINT_PTR
-
-using TW_INT8 = System.SByte;  // char
 using TW_INT16 = System.Int16; // short
 using TW_INT32 = System.Int32; // long
-
-using TW_UINT8 = System.Byte;    // unsigned char
+using TW_INT8 = System.SByte;  // char
+using TW_MEMREF = System.IntPtr; // LPVOID
 using TW_UINT16 = System.UInt16; // unsigned short
 using TW_UINT32 = System.UInt32; // unsigned long
-
-using TW_BOOL = System.UInt16; // unsigned short
+using TW_UINT8 = System.Byte;    // unsigned char
+// iffy
+using TW_UINTPTR = System.UIntPtr; // UINT_PTR
 
 
 

@@ -1,5 +1,5 @@
-﻿using System;
-using NTwain.Data;
+﻿using NTwain.Data;
+using System;
 
 namespace NTwain
 {
