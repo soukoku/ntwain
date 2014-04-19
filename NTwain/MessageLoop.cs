@@ -18,35 +18,39 @@ namespace NTwain
         public static MessageLoop Instance { get { return _instance; } }
 
         Dispatcher _dispatcher;
-        bool _started;
         WindowsHook _hook;
         private MessageLoop() { }
 
         public void EnsureStarted(WindowsHook.WndProcHook hook)
         {
-            if (!_started)
+            if (_dispatcher == null)
             {
                 // using this terrible hack so the new thread will start running before this function returns
-                var hack = new ManualResetEvent(false);
-
-                var loopThread = new Thread(new ThreadStart(() =>
+                using (var hack = new ManualResetEvent(false))
                 {
-                    Debug.WriteLine("NTwain message loop started.");
-                    _dispatcher = Dispatcher.CurrentDispatcher;
-                    if (!Dsm.IsOnMono)
+                    var loopThread = new Thread(new ThreadStart(() =>
                     {
-                        _hook = new WindowsHook(hook);
-                    }
-                    hack.Set();
-                    Dispatcher.Run();
-                    _started = false;
-                }));
-                loopThread.IsBackground = true;
-                loopThread.SetApartmentState(ApartmentState.STA);
-                loopThread.Start();
-                hack.WaitOne();
-                hack.Close();
-                _started = true;
+                        Debug.WriteLine("NTwain message loop is starting.");
+                        _dispatcher = Dispatcher.CurrentDispatcher;
+                        if (!Dsm.IsOnMono)
+                        {
+                            _hook = new WindowsHook(hook);
+                        }
+                        hack.Set();
+                        Dispatcher.Run();
+                        // if for whatever reason it ever gets here make everything uninitialized
+                        _dispatcher = null;
+                        if (_hook != null)
+                        {
+                            _hook.Dispose();
+                            _hook = null;
+                        }
+                    }));
+                    loopThread.IsBackground = true;
+                    loopThread.SetApartmentState(ApartmentState.STA);
+                    loopThread.Start();
+                    hack.WaitOne();
+                }
             }
         }
 
@@ -73,23 +77,27 @@ namespace NTwain
             {
                 action();
             }
+            else if (Dsm.IsOnMono)
+            {
+                using (var man = new ManualResetEvent(false))
+                {
+                    _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                    {
+                        try
+                        {
+                            action();
+                        }
+                        finally
+                        {
+                            man.Set();
+                        }
+                    }));
+                    man.WaitOne();
+                }
+            }
             else
             {
-                //_dispatcher.Invoke(DispatcherPriority.Normal, action);
-                var man = new ManualResetEvent(false);
-                _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
-                {
-                    try
-                    {
-                        action();
-                    }
-                    finally
-                    {
-                        man.Set();
-                    }
-                }));
-                man.WaitOne();
-                man.Close();
+                _dispatcher.Invoke(DispatcherPriority.Normal, action);
             }
         }
     }
@@ -99,8 +107,11 @@ namespace NTwain
     /// This allows things to not depend on PresentationCore.dll at runtime on mono.
     /// Not that everything works yet in mono but it's something.
     /// </summary>
-    class WindowsHook
+    class WindowsHook : IDisposable
     {
+        IDisposable _win;
+        WndProcHook _hook;
+
         public WindowsHook(WndProcHook hook)
         {
             // hook into windows msg loop for old twain to post msgs.
@@ -108,14 +119,14 @@ namespace NTwain
             // CS_NOCLOSE, WS_DISABLED, and WS_EX_NOACTIVATE
             var win = new HwndSource(0x0200, 0x8000000, 0x8000000, 0, 0, "NTWAIN_LOOPER", IntPtr.Zero);
             Handle = win.Handle;
-            _hook = hook;
             win.AddHook(WndProc);
+            _win = win;
+            _hook = hook;
         }
 
         public delegate void WndProcHook(ref MESSAGE winMsg, ref bool handled);
 
-        WndProcHook _hook;
-
+        
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (_hook != null)
@@ -154,5 +165,19 @@ namespace NTwain
             int _x;
             int _y;
         }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (_win != null)
+            {
+                ((HwndSource)_win).RemoveHook(WndProc);
+                _win.Dispose();
+                _win = null;
+            }
+        }
+
+        #endregion
     }
 }
