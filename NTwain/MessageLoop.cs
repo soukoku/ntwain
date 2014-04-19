@@ -2,6 +2,7 @@
 using NTwain.Triplets;
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -18,11 +19,10 @@ namespace NTwain
 
         Dispatcher _dispatcher;
         bool _started;
-        HwndSource _dummyWindow;
-
+        WindowsHook _hook;
         private MessageLoop() { }
 
-        public void EnsureStarted()
+        public void EnsureStarted(WindowsHook.WndProcHook hook)
         {
             if (!_started)
             {
@@ -33,14 +33,11 @@ namespace NTwain
                 {
                     Debug.WriteLine("NTwain message loop started.");
                     _dispatcher = Dispatcher.CurrentDispatcher;
-                    if (Dsm.IsWin)
+                    if (!Dsm.IsOnMono)
                     {
-                        // start a windows msg loop for old twain to post msgs
-                        // the style values are purely guesses here with
-                        // CS_NOCLOSE, WS_DISABLED, and WS_EX_NOACTIVATE
-                        _dummyWindow = new HwndSource(0x0200, 0x8000000, 0x8000000, 0, 0, "NTWAIN_LOOPER", IntPtr.Zero);
+                        _hook = new WindowsHook(hook);
                     }
-                    hack.Set(); 
+                    hack.Set();
                     Dispatcher.Run();
                     _started = false;
                 }));
@@ -57,7 +54,7 @@ namespace NTwain
         {
             get
             {
-                return _dummyWindow == null ? IntPtr.Zero : _dummyWindow.Handle;
+                return _hook == null ? IntPtr.Zero : _hook.Handle;
             }
         }
 
@@ -79,7 +76,6 @@ namespace NTwain
             else
             {
                 //_dispatcher.Invoke(DispatcherPriority.Normal, action);
-                // why use this instead of the single line above? for possible future use in mono!
                 var man = new ManualResetEvent(false);
                 _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
@@ -96,14 +92,67 @@ namespace NTwain
                 man.Close();
             }
         }
+    }
 
-        public void AddHook(HwndSourceHook hook)
+    /// <summary>
+    /// Abstracts out wnd proc hook on Windows from MessageLoop class.
+    /// This allows things to not depend on PresentationCore.dll at runtime on mono.
+    /// Not that everything works yet in mono but it's something.
+    /// </summary>
+    class WindowsHook
+    {
+        public WindowsHook(WndProcHook hook)
         {
-            if (_dummyWindow != null) { _dummyWindow.AddHook(hook); }
+            // hook into windows msg loop for old twain to post msgs.
+            // the style values are purely guesses here with
+            // CS_NOCLOSE, WS_DISABLED, and WS_EX_NOACTIVATE
+            var win = new HwndSource(0x0200, 0x8000000, 0x8000000, 0, 0, "NTWAIN_LOOPER", IntPtr.Zero);
+            Handle = win.Handle;
+            _hook = hook;
+            win.AddHook(WndProc);
         }
-        public void RemoveHook(HwndSourceHook hook)
+
+        public delegate void WndProcHook(ref MESSAGE winMsg, ref bool handled);
+
+        WndProcHook _hook;
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (_dummyWindow != null) { _dummyWindow.RemoveHook(hook); }
+            if (_hook != null)
+            {
+                var winmsg = new MESSAGE(hwnd, msg, wParam, lParam);
+                _hook(ref winmsg, ref handled);
+            }
+            return IntPtr.Zero;
+        }
+
+        public IntPtr Handle { get; private set; }
+
+
+        /// <summary>
+        /// The MSG structure in Windows for TWAIN use.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MESSAGE
+        {
+            public MESSAGE(IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam)
+            {
+                _hwnd = hwnd;
+                _message = (uint)message;
+                _wParam = wParam;
+                _lParam = lParam;
+                _time = 0;
+                _x = 0;
+                _y = 0;
+            }
+
+            IntPtr _hwnd;
+            uint _message;
+            IntPtr _wParam;
+            IntPtr _lParam;
+            uint _time;
+            int _x;
+            int _y;
         }
     }
 }

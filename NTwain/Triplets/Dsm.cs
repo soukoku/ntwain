@@ -32,6 +32,7 @@ namespace NTwain.Triplets
                 File.Exists(path);
 #endif
         }
+        internal static readonly bool IsOnMono = Type.GetType("Mono.Runtime") != null;
 
         internal static readonly bool IsWin = Environment.OSVersion.Platform == PlatformID.Win32NT;
         static readonly bool IsLinux = Environment.OSVersion.Platform == PlatformID.Unix;

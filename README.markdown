@@ -32,3 +32,15 @@ example for handling DIB image in native transfer using the CommonWin32 lib.
 Because it hosts its own message thread, the event callbacks will likely be from another thread. 
 If you would like things marshalled to a "UI" thread then set the SynchronizationContext property
 to the one from the UI thread. This part is highly experimental.
+
+64-bit OS
+--------------------------------------
+If the application process is running in 64-bit then you will need to make sure you have the 
+newer data source manager (twaindsm.dll) installed. 
+[DSM from TWAIN.org](http://sourceforge.net/projects/twain-dsm/files/TWAIN%20DSM%202%20Win/)
+
+Otherwise just compile and run the app as x86 and it'll use the 32-bit version (twain_32.dll) that comes with Windows.
+
+If you really want to test 64-bit drivers for whatever reason, you most likely will have to use 
+the test one from TWAIN.org since there are no known 64-bit TWAIN DS drivers at the time of writing.
+[Sample DS from TWAIN.org](http://sourceforge.net/projects/twain-samples/files/TWAIN%202%20Sample%20Data%20Source/TWAIN%20DS%202.1.3/)

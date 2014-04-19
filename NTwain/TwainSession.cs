@@ -29,7 +29,7 @@ namespace NTwain
             ((ITwainStateInternal)this).ChangeState(1, false);
             EnforceState = true;
 
-            MessageLoop.Instance.EnsureStarted();
+            MessageLoop.Instance.EnsureStarted(HandleWndProcMessage);
         }
 
         TWIdentity _appId;
@@ -369,12 +369,6 @@ namespace NTwain
                     }
                 }
 
-                if (_callbackObj == null)
-                {
-                    // must use msg loop if callback is not available
-                    MessageLoop.Instance.AddHook(HandleWndProcMessage);
-                }
-
                 _twui = new TWUserInterface();
                 _twui.ShowUI = mode == SourceEnableMode.ShowUI;
                 _twui.ModalUI = modal;
@@ -407,14 +401,7 @@ namespace NTwain
                 rc = DGControl.UserInterface.DisableDS(_twui);
                 if (rc == ReturnCode.Success)
                 {
-                    if (_callbackObj == null)
-                    {
-                        MessageLoop.Instance.RemoveHook(HandleWndProcMessage);
-                    }
-                    else
-                    {
-                        _callbackObj = null;
-                    }
+                    _callbackObj = null;
                     SafeAsyncSyncableRaiseOnEvent(OnSourceDisabled, SourceDisabled);
                 }
             });
@@ -616,19 +603,18 @@ namespace NTwain
         #region TWAIN logic during xfer work
 
         //[EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
-        IntPtr HandleWndProcMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        void HandleWndProcMessage(ref NTwain.WindowsHook.MESSAGE winMsg, ref bool handled)
         {
             // this handles the message from a typical WndProc message loop and check if it's from the TWAIN source.
             if (State >= 5)
             {
                 // transform it into a pointer for twain
-                var winmsg = new MESSAGE(hwnd, msg, wParam, lParam);
                 IntPtr msgPtr = IntPtr.Zero;
                 try
                 {
                     // no need to do another lock call when using marshal alloc
-                    msgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(winmsg));
-                    Marshal.StructureToPtr(winmsg, msgPtr, false);
+                    msgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(winMsg));
+                    Marshal.StructureToPtr(winMsg, msgPtr, false);
 
                     var evt = new TWEvent();
                     evt.pEvent = msgPtr;
@@ -644,8 +630,6 @@ namespace NTwain
                     if (msgPtr != IntPtr.Zero) { Marshal.FreeHGlobal(msgPtr); }
                 }
             }
-
-            return IntPtr.Zero;
         }
 
         ReturnCode HandleCallback(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
@@ -1223,31 +1207,5 @@ namespace NTwain
         #endregion
 
         #endregion
-
-        /// <summary>
-        /// The MSG structure in Windows for TWAIN use.
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        struct MESSAGE
-        {
-            public MESSAGE(IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam)
-            {
-                _hwnd = hwnd;
-                _message = (uint)message;
-                _wParam = wParam;
-                _lParam = lParam;
-                _time = 0;
-                _x = 0;
-                _y = 0;
-            }
-
-            IntPtr _hwnd;
-            uint _message;
-            IntPtr _wParam;
-            IntPtr _lParam;
-            uint _time;
-            int _x;
-            int _y;
-        }
     }
 }
