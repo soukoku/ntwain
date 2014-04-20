@@ -1,6 +1,7 @@
 ﻿using NTwain.Data;
 using NTwain.Values;
 using System;
+using System.IO;
 
 namespace NTwain.Triplets
 {
@@ -27,9 +28,8 @@ namespace NTwain.Triplets
             return IntPtr.Size == 8;
 #else
             var path = Path.Combine(Environment.SystemDirectory, "twaindsm.dll");
-            // if 64bit or the dll exists use it
-            return IntPtr.Size == 8 ||
-                File.Exists(path);
+            // if 64bit or the new dll exists use it
+            return IntPtr.Size == 8 || File.Exists(path);
 #endif
         }
         internal static readonly bool IsOnMono = Type.GetType("Mono.Runtime") != null;

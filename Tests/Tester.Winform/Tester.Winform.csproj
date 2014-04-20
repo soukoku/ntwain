@@ -79,9 +79,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NTwain\NTwain.csproj">
-      <Project>{0C5A6FB1-0282-4D61-8354-68DEB1515001}</Project>
-      <Name>NTwain</Name>
+    <ProjectReference Include="..\..\NTwain.Net35\NTwain.Net35.csproj">
+      <Project>{2e965494-94b0-4ec7-960c-24e5d7d04278}</Project>
+      <Name>NTwain.Net35</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

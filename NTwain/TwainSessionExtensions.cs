@@ -213,14 +213,14 @@ namespace NTwain
         #region compression
 
         /// <summary>
-        /// Gets the supported <see cref="Compression"/> for the current source.
+        /// Gets the supported <see cref="CompressionType"/> for the current source.
         /// Only call this at state 4 or higher.
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<Compression> CapGetCompression(this TwainSession session)
+        public static IList<CompressionType> CapGetCompression(this TwainSession session)
         {
-            return session.GetCapabilityValues(CapabilityId.ICapCompression).CastToEnum<Compression>(true);
+            return session.GetCapabilityValues(CapabilityId.ICapCompression).CastToEnum<CompressionType>(true);
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="compression">The compression.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetImageCompression(this TwainSession session, Compression compression)
+        public static ReturnCode CapSetImageCompression(this TwainSession session, CompressionType compression)
         {
             using (TWCapability compressCap = new TWCapability(CapabilityId.ICapCompression, new TWOneValue { Item = (uint)compression, ItemType = Values.ItemType.UInt16 }))
             {

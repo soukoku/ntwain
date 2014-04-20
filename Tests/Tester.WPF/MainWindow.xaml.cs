@@ -426,7 +426,7 @@ namespace Tester.WPF
                         CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap);
                         break;
                     case CapabilityId.ICapCompression:
-                        CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap).CastToEnum<Compression>();
+                        CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap).CastToEnum<CompressionType>();
                         break;
                     case CapabilityId.ICapContrast:
                         CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap);

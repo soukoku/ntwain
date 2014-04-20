@@ -16,9 +16,9 @@
     <tags>twain scan</tags>
   </metadata>
 	<files>
-		<file src="bin\$configuration$\$id$.pdb" target="lib\net35-client"/>
-    <!--<file src="bin\$configuration$\Net4\$id$.dll" target="lib\net40-client"/>
-    <file src="bin\$configuration$\Net4\$id$.xml" target="lib\net40-client"/>
-    <file src="bin\$configuration$\Net4\$id$.pdb" target="lib\net40-client"/>-->
+		<file src="bin\$configuration$\$id$.pdb" target="lib\net40-client"/>
+    <file src="bin\$configuration$\Net35\$id$.dll" target="lib\net35-client"/>
+    <file src="bin\$configuration$\Net35\$id$.xml" target="lib\net35-client"/>
+    <file src="bin\$configuration$\Net35\$id$.pdb" target="lib\net35-client"/>
 	</files>
 </package>

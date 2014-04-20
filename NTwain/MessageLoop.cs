@@ -26,7 +26,7 @@ namespace NTwain
             if (_dispatcher == null)
             {
                 // using this terrible hack so the new thread will start running before this function returns
-                using (var hack = new ManualResetEvent(false))
+                using (var hack = new WrappedManualResetEvent())
                 {
                     var loopThread = new Thread(new ThreadStart(() =>
                     {
@@ -49,7 +49,7 @@ namespace NTwain
                     loopThread.IsBackground = true;
                     loopThread.SetApartmentState(ApartmentState.STA);
                     loopThread.Start();
-                    hack.WaitOne();
+                    hack.Wait();
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace NTwain
             }
             else if (Dsm.IsOnMono)
             {
-                using (var man = new ManualResetEvent(false))
+                using (var man = new WrappedManualResetEvent())
                 {
                     _dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                     {
@@ -92,7 +92,7 @@ namespace NTwain
                             man.Set();
                         }
                     }));
-                    man.WaitOne();
+                    man.Wait();
                 }
             }
             else
@@ -117,16 +117,24 @@ namespace NTwain
             // hook into windows msg loop for old twain to post msgs.
             // the style values are purely guesses here with
             // CS_NOCLOSE, WS_DISABLED, and WS_EX_NOACTIVATE
-            var win = new HwndSource(0x0200, 0x8000000, 0x8000000, 0, 0, "NTWAIN_LOOPER", IntPtr.Zero);
-            Handle = win.Handle;
-            win.AddHook(WndProc);
-            _win = win;
-            _hook = hook;
+            HwndSource win = null;
+            try
+            {
+                win = new HwndSource(0x0200, 0x8000000, 0x8000000, 0, 0, "NTWAIN_LOOPER", IntPtr.Zero);
+                Handle = win.Handle;
+                win.AddHook(WndProc);
+                _win = win;
+                _hook = hook;
+            }
+            catch
+            {
+                if (win != null) { win.Dispose(); }
+            }
         }
 
         public delegate void WndProcHook(ref MESSAGE winMsg, ref bool handled);
 
-        
+
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (_hook != null)
@@ -176,6 +184,57 @@ namespace NTwain
                 _win.Dispose();
                 _win = null;
             }
+        }
+
+        #endregion
+    }
+
+    // just a test
+
+    class WrappedManualResetEvent : IDisposable
+    {
+#if NET4
+        ManualResetEventSlim _slim;
+#else
+        ManualResetEvent _mre;
+#endif
+
+        public WrappedManualResetEvent()
+        {
+#if NET4
+            _slim = new ManualResetEventSlim();
+#else
+            _mre = new ManualResetEvent(false);
+#endif
+        }
+
+        public void Wait()
+        {
+#if NET4
+            _slim.Wait();
+#else
+            _mre.WaitOne();
+#endif
+        }
+
+        public void Set()
+        {
+#if NET4
+            _slim.Set();
+#else
+            _mre.Set();
+#endif
+        }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+#if NET4
+            _slim.Dispose();
+#else
+            _mre.Close();
+#endif
         }
 
         #endregion

@@ -267,7 +267,7 @@ namespace NTwain.Values
     /// setting the desired file format with ICAP_IMAGEFILEFORMAT.
     /// Corresponds to TWCP_* values.
     /// </summary>
-    public enum Compression : ushort
+    public enum CompressionType : ushort
     {
         /// <summary>
         /// All Sources must support this.

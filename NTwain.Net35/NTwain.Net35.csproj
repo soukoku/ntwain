@@ -1,0 +1,281 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2E965494-94B0-4EC7-960C-24E5D7D04278}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NTwain</RootNamespace>
+    <AssemblyName>NTwain</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\NTwain\bin\Debug\Net35\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\NTwain\bin\Release\Net35\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\NTwain\bin\Release\Net35\NTwain.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Sign.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\NTwain\DataTransferredEventArgs.cs">
+      <Link>DataTransferredEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Data\CapReadOut.cs">
+      <Link>Data\CapReadOut.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Data\TypeReader.cs">
+      <Link>Data\TypeReader.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Data\Types.cs">
+      <Link>Data\Types.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Data\TypesExtended.cs">
+      <Link>Data\TypesExtended.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\DeviceEventArgs.cs">
+      <Link>DeviceEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Extensions.cs">
+      <Link>Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\IMemoryManager.cs">
+      <Link>IMemoryManager.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\ITwainOperation.cs">
+      <Link>ITwainOperation.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\ITwainState.cs">
+      <Link>ITwainState.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\MemoryManager.cs">
+      <Link>MemoryManager.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\MessageLoop.cs">
+      <Link>MessageLoop.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\NativeMethods.cs">
+      <Link>NativeMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Properties\Resources.Designer.cs">
+      <Link>Properties\Resources.Designer.cs</Link>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="..\NTwain\Properties\VersionInfo.cs">
+      <Link>Properties\VersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\TentativeStateCommitable.cs">
+      <Link>TentativeStateCommitable.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\TransferErrorEventArgs.cs">
+      <Link>TransferErrorEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\TransferReadyEventArgs.cs">
+      <Link>TransferReadyEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGAudio\DGAudio.AudioFileXfer.cs">
+      <Link>Triplets\DGAudio\DGAudio.AudioFileXfer.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGAudio\DGAudio.AudioInfo.cs">
+      <Link>Triplets\DGAudio\DGAudio.AudioInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGAudio\DGAudio.AudioNativeXfer.cs">
+      <Link>Triplets\DGAudio\DGAudio.AudioNativeXfer.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGAudio\DGAudio.cs">
+      <Link>Triplets\DGAudio\DGAudio.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.Callback.cs">
+      <Link>Triplets\DGControl\DGControl.Callback.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.Callback2.cs">
+      <Link>Triplets\DGControl\DGControl.Callback2.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.Capability.cs">
+      <Link>Triplets\DGControl\DGControl.Capability.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.cs">
+      <Link>Triplets\DGControl\DGControl.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.CustomDSData.cs">
+      <Link>Triplets\DGControl\DGControl.CustomDSData.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.DeviceEvent.cs">
+      <Link>Triplets\DGControl\DGControl.DeviceEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.EntryPoint.cs">
+      <Link>Triplets\DGControl\DGControl.EntryPoint.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.Event.cs">
+      <Link>Triplets\DGControl\DGControl.Event.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.FileSystem.cs">
+      <Link>Triplets\DGControl\DGControl.FileSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.Identity.cs">
+      <Link>Triplets\DGControl\DGControl.Identity.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.Parent.cs">
+      <Link>Triplets\DGControl\DGControl.Parent.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.PassThru.cs">
+      <Link>Triplets\DGControl\DGControl.PassThru.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.PendingXfers.cs">
+      <Link>Triplets\DGControl\DGControl.PendingXfers.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.SetupFileXfer.cs">
+      <Link>Triplets\DGControl\DGControl.SetupFileXfer.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.SetupMemXfer.cs">
+      <Link>Triplets\DGControl\DGControl.SetupMemXfer.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.Status.cs">
+      <Link>Triplets\DGControl\DGControl.Status.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.StatusUtf8.cs">
+      <Link>Triplets\DGControl\DGControl.StatusUtf8.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.UserInterface.cs">
+      <Link>Triplets\DGControl\DGControl.UserInterface.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.XferGroup.cs">
+      <Link>Triplets\DGControl\DGControl.XferGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.CieColor.cs">
+      <Link>Triplets\DGImage\DGImage.CieColor.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.cs">
+      <Link>Triplets\DGImage\DGImage.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.ExtImageInfo.cs">
+      <Link>Triplets\DGImage\DGImage.ExtImageInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.Filter.cs">
+      <Link>Triplets\DGImage\DGImage.Filter.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.GrayResponse.cs">
+      <Link>Triplets\DGImage\DGImage.GrayResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.IccProfile.cs">
+      <Link>Triplets\DGImage\DGImage.IccProfile.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.ImageFileXfer.cs">
+      <Link>Triplets\DGImage\DGImage.ImageFileXfer.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.ImageInfo.cs">
+      <Link>Triplets\DGImage\DGImage.ImageInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.ImageLayout.cs">
+      <Link>Triplets\DGImage\DGImage.ImageLayout.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.ImageMemFileXfer.cs">
+      <Link>Triplets\DGImage\DGImage.ImageMemFileXfer.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.ImageMemXfer.cs">
+      <Link>Triplets\DGImage\DGImage.ImageMemXfer.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.ImageNativeXfer.cs">
+      <Link>Triplets\DGImage\DGImage.ImageNativeXfer.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.JpegCompression.cs">
+      <Link>Triplets\DGImage\DGImage.JpegCompression.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.Palette8.cs">
+      <Link>Triplets\DGImage\DGImage.Palette8.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\DGImage\DGImage.RgbResponse.cs">
+      <Link>Triplets\DGImage\DGImage.RgbResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\Dsm.cs">
+      <Link>Triplets\Dsm.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\Dsm.Linux.cs">
+      <Link>Triplets\Dsm.Linux.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\Dsm.WinNew.cs">
+      <Link>Triplets\Dsm.WinNew.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\Dsm.WinOld.cs">
+      <Link>Triplets\Dsm.WinOld.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Triplets\OpBase.cs">
+      <Link>Triplets\OpBase.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\TwainException.cs">
+      <Link>TwainException.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\TwainSession.cs">
+      <Link>TwainSession.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\TwainSessionExtensions.cs">
+      <Link>TwainSessionExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\TwainStateException.cs">
+      <Link>TwainStateException.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Values\DataValues.cs">
+      <Link>Values\DataValues.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Values\SourceEnableMode.cs">
+      <Link>Values\SourceEnableMode.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Values\TwainConst.cs">
+      <Link>Values\TwainConst.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Values\ValueConverter.cs">
+      <Link>Values\ValueConverter.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\NTwain\Properties\Resources.resx">
+      <Link>Properties\Resources.resx</Link>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\NTwain\Triplets\WhatsThis.txt">
+      <Link>Triplets\WhatsThis.txt</Link>
+    </None>
+    <None Include="Sign.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

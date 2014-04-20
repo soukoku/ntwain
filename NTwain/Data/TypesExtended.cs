@@ -707,7 +707,7 @@ namespace NTwain.Data
             ContainerType = Values.ContainerType.Enum;
 
 
-            Int32 valueSize = value.ItemOffset + value.ItemList.Length * TypeReader.GetItemTypeSize(value.ItemType);
+            Int32 valueSize = TWEnumeration.ItemOffset + value.ItemList.Length * TypeReader.GetItemTypeSize(value.ItemType);
 
             int offset = 0;
             _hContainer = MemoryManager.Instance.Allocate((uint)valueSize);
@@ -817,7 +817,7 @@ namespace NTwain.Data
         /// <param name="offset"></param>
         /// <param name="item"></param>
         /// <param name="maxLength"></param>
-        private void WriteString(IntPtr baseAddr, int offset, string item, int maxLength)
+        static void WriteString(IntPtr baseAddr, int offset, string item, int maxLength)
         {
             if (string.IsNullOrEmpty(item))
             {
@@ -1262,7 +1262,7 @@ namespace NTwain.Data
         /// <summary>
         /// Gets the byte offset of the item list from a Ptr to the first item.
         /// </summary>
-        internal int ItemOffset { get { return 14; } }
+        internal const int ItemOffset = 14;
     }
 
 
@@ -1686,7 +1686,7 @@ namespace NTwain.Data
         }
 
         /// <summary>
-        /// Creates a <see cref="TWIdentity"/> from specified values.
+        /// Creates a <see cref="TWIdentity" /> from specified values.
         /// </summary>
         /// <param name="supportedGroups">The supported groups.</param>
         /// <param name="version">The version.</param>
@@ -1695,9 +1695,12 @@ namespace NTwain.Data
         /// <param name="productName">Name of the product.</param>
         /// <param name="productDescription">The product description.</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException">version</exception>
         public static TWIdentity Create(DataGroups supportedGroups, Version version,
             string manufacturer, string productFamily, string productName, string productDescription)
         {
+            if (version == null) { throw new ArgumentNullException("version"); }
+
             return new TWIdentity
             {
                 Manufacturer = string.IsNullOrEmpty(manufacturer) ? "UNKNOWN" : manufacturer,
@@ -1796,7 +1799,7 @@ namespace NTwain.Data
         /// The compression method used to process the data being transferred.
         /// Default is no compression.
         /// </summary>
-        public Compression Compression { get { return (Values.Compression)_compression; } }
+        public CompressionType Compression { get { return (Values.CompressionType)_compression; } }
     }
 
     /// <summary>
@@ -1877,7 +1880,7 @@ namespace NTwain.Data
         /// <summary>
         /// The compression method used to process the data being transferred.
         /// </summary>
-        public Compression Compression { get { return (Compression)_compression; } }
+        public CompressionType Compression { get { return (CompressionType)_compression; } }
         /// <summary>
         /// The number of uncompressed bytes in each row of the piece of the image
         /// being described in this buffer.
@@ -2221,10 +2224,10 @@ namespace NTwain.Data
         /// TwIdentity.Language or CapLanguage). The Source allocates
         /// it, the Application frees it.
         /// </summary>
-        IntPtr UTF8StringPtr { get { return _uTF8string; } }
+        public IntPtr UTF8StringPtr { get { return _uTF8string; } }
 
         /// <summary>
-        /// Gets the actual string from the pointer.
+        /// Gets the actual string from the pointer. This may be incorrect.
         /// </summary>
         /// <returns></returns>
         public string GetActualString()
