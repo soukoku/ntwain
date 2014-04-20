@@ -1,5 +1,4 @@
-﻿using NTwain.Values;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace NTwain.Data

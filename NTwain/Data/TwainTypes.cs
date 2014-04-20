@@ -1,6 +1,5 @@
 ﻿// This file contains all the structs defined in the twain.h file.
 
-using NTwain.Values;
 using System;
 using System.Runtime.InteropServices;
 using TW_BOOL = System.UInt16; // unsigned short

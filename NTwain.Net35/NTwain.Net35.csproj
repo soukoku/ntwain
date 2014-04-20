@@ -49,23 +49,56 @@
     <Compile Include="..\NTwain\Data\CapReadOut.cs">
       <Link>Data\CapReadOut.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\Data\SourceEnableMode.cs">
+      <Link>Data\SourceEnableMode.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Data\TwainTypes.cs">
+      <Link>Data\TwainTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Data\TwainTypesExtended.cs">
+      <Link>Data\TwainTypesExtended.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Data\TwainValues.cs">
+      <Link>Data\TwainValues.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\Data\TypeReader.cs">
       <Link>Data\TypeReader.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\Data\Types.cs">
-      <Link>Data\Types.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\Data\TypesExtended.cs">
-      <Link>Data\TypesExtended.cs</Link>
+    <Compile Include="..\NTwain\Data\ValueConverter.cs">
+      <Link>Data\ValueConverter.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\DeviceEventArgs.cs">
       <Link>DeviceEventArgs.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\Extensions.cs">
-      <Link>Extensions.cs</Link>
-    </Compile>
     <Compile Include="..\NTwain\IMemoryManager.cs">
       <Link>IMemoryManager.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\Extensions.cs">
+      <Link>Internals\Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\ICommittable.cs">
+      <Link>Internals\ICommittable.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\ITwainStateInternal.cs">
+      <Link>Internals\ITwainStateInternal.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\MessageLoop.cs">
+      <Link>Internals\MessageLoop.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\NativeMethods.cs">
+      <Link>Internals\NativeMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\TentativeStateCommitable.cs">
+      <Link>Internals\TentativeStateCommitable.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\WindowsHook.cs">
+      <Link>Internals\WindowsHook.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\WinMemoryManager.cs">
+      <Link>Internals\WinMemoryManager.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\WrappedManualResetEvent.cs">
+      <Link>Internals\WrappedManualResetEvent.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\ITwainOperation.cs">
       <Link>ITwainOperation.cs</Link>
@@ -73,14 +106,8 @@
     <Compile Include="..\NTwain\ITwainState.cs">
       <Link>ITwainState.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\MemoryManager.cs">
-      <Link>MemoryManager.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\MessageLoop.cs">
-      <Link>MessageLoop.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\NativeMethods.cs">
-      <Link>NativeMethods.cs</Link>
+    <Compile Include="..\NTwain\Platform.cs">
+      <Link>Platform.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
@@ -93,9 +120,6 @@
     </Compile>
     <Compile Include="..\NTwain\Properties\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\TentativeStateCommitable.cs">
-      <Link>TentativeStateCommitable.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\TransferErrorEventArgs.cs">
       <Link>TransferErrorEventArgs.cs</Link>
@@ -243,18 +267,6 @@
     </Compile>
     <Compile Include="..\NTwain\TwainStateException.cs">
       <Link>TwainStateException.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\Values\DataValues.cs">
-      <Link>Values\DataValues.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\Values\SourceEnableMode.cs">
-      <Link>Values\SourceEnableMode.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\Values\TwainConst.cs">
-      <Link>Values\TwainConst.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\Values\ValueConverter.cs">
-      <Link>Values\ValueConverter.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

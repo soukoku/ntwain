@@ -1,5 +1,4 @@
 ﻿using NTwain.Properties;
-using NTwain.Values;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -32,7 +31,7 @@ namespace NTwain.Data
             IntPtr baseAddr = IntPtr.Zero;
             try
             {
-                baseAddr = MemoryManager.Instance.Lock(capability.Container);
+                baseAddr = Platform.MemoryManager.Lock(capability.Container);
                 switch (capability.ContainerType)
                 {
                     case ContainerType.Array:
@@ -63,7 +62,7 @@ namespace NTwain.Data
             {
                 if (baseAddr != IntPtr.Zero)
                 {
-                    MemoryManager.Instance.Unlock(baseAddr);
+                    Platform.MemoryManager.Unlock(baseAddr);
                 }
             }
         }
@@ -87,7 +86,7 @@ namespace NTwain.Data
         public ItemType ItemType { get; private set; }
 
         /// <summary>
-        /// Gets the one value if container is <see cref="NTwain.Values.ContainerType.Array"/>.
+        /// Gets the one value if container is <see cref="NTwain.ContainerType.Array"/>.
         /// </summary>
         /// <value>
         /// The one value.
@@ -95,7 +94,7 @@ namespace NTwain.Data
         public object OneValue { get; private set; }
 
         /// <summary>
-        /// Gets the collection values if container is <see cref="NTwain.Values.ContainerType.Enum"/> or <see cref="NTwain.Values.ContainerType.Range"/> .
+        /// Gets the collection values if container is <see cref="NTwain.ContainerType.Enum"/> or <see cref="NTwain.ContainerType.Range"/> .
         /// </summary>
         /// <value>
         /// The collection values.
@@ -107,11 +106,11 @@ namespace NTwain.Data
         #region enum prop
 
         /// <summary>
-        /// Gets the current value index if container is <see cref="NTwain.Values.ContainerType.Enum"/>.
+        /// Gets the current value index if container is <see cref="NTwain.ContainerType.Enum"/>.
         /// </summary>
         public int EnumCurrentIndex { get; private set; }
         /// <summary>
-        /// Gets the default value index if container is <see cref="NTwain.Values.ContainerType.Enum" />.
+        /// Gets the default value index if container is <see cref="NTwain.ContainerType.Enum" />.
         /// </summary>
         public int EnumDefaultIndex { get; private set; }
 
@@ -120,14 +119,14 @@ namespace NTwain.Data
         #region range prop
 
         /// <summary>
-        /// Gets the current value if container is <see cref="NTwain.Values.ContainerType.Range" />.
+        /// Gets the current value if container is <see cref="NTwain.ContainerType.Range" />.
         /// </summary>
         /// <value>
         /// The range current value.
         /// </value>
         public object RangeCurrentValue { get; private set; }
         /// <summary>
-        /// Gets the default value if container is <see cref="NTwain.Values.ContainerType.Range" />.
+        /// Gets the default value if container is <see cref="NTwain.ContainerType.Range" />.
         /// </summary>
         /// <value>
         /// The range default value.

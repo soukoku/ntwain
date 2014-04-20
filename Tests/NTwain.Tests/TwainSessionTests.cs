@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NTwain.Data;
-using NTwain.Values;
+using NTwain.Internals;
+using System;
 
 namespace NTwain.Tests
 {

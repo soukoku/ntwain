@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WIN32</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>false</RunCodeAnalysis>
@@ -54,23 +54,28 @@
   <ItemGroup>
     <Compile Include="Data\CapReadOut.cs" />
     <Compile Include="Data\TypeReader.cs" />
-    <Compile Include="Data\TypesExtended.cs" />
+    <Compile Include="Data\TwainTypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Internals\Extensions.cs" />
     <Compile Include="DataTransferredEventArgs.cs" />
     <Compile Include="IMemoryManager.cs" />
+    <Compile Include="Internals\ICommittable.cs" />
+    <Compile Include="Internals\ITwainStateInternal.cs" />
+    <Compile Include="Internals\WindowsHook.cs" />
+    <Compile Include="Internals\WrappedManualResetEvent.cs" />
     <Compile Include="ITwainOperation.cs" />
     <Compile Include="ITwainState.cs" />
-    <Compile Include="MemoryManager.cs" />
-    <Compile Include="MessageLoop.cs" />
-    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Internals\WinMemoryManager.cs" />
+    <Compile Include="Internals\MessageLoop.cs" />
+    <Compile Include="Internals\NativeMethods.cs" />
+    <Compile Include="Platform.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\VersionInfo.cs" />
-    <Compile Include="TentativeStateCommitable.cs" />
+    <Compile Include="Internals\TentativeStateCommitable.cs" />
     <Compile Include="TransferErrorEventArgs.cs" />
     <Compile Include="TransferReadyEventArgs.cs" />
     <Compile Include="Triplets\DGControl\DGControl.Callback2.cs" />
@@ -82,7 +87,7 @@
     <Compile Include="TwainSessionExtensions.cs" />
     <Compile Include="TwainSession.cs" />
     <Compile Include="TwainStateException.cs" />
-    <Compile Include="Data\Types.cs" />
+    <Compile Include="Data\TwainTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Triplets\DGAudio\DGAudio.AudioFileXfer.cs" />
     <Compile Include="Triplets\DGAudio\DGAudio.AudioInfo.cs" />
@@ -122,10 +127,9 @@
     <Compile Include="Triplets\DGImage\DGImage.RgbResponse.cs" />
     <Compile Include="Triplets\Dsm.cs" />
     <Compile Include="TwainException.cs" />
-    <Compile Include="Values\DataValues.cs" />
-    <Compile Include="Values\SourceEnableMode.cs" />
-    <Compile Include="Values\TwainConst.cs" />
-    <Compile Include="Values\ValueConverter.cs" />
+    <Compile Include="Data\TwainValues.cs" />
+    <Compile Include="Data\SourceEnableMode.cs" />
+    <Compile Include="Data\ValueConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NTwain.nuspec" />
@@ -140,6 +144,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

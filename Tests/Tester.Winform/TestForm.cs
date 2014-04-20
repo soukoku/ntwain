@@ -1,19 +1,14 @@
-﻿using System;
-using System.Windows.Forms;
-using System.Linq;
-using NTwain.Data;
-using NTwain.Values;
-using NTwain.Triplets;
+﻿using CommonWin32;
 using NTwain;
+using NTwain.Data;
+using System;
 using System.Diagnostics;
-using System.IO;
-using System.Drawing.Imaging;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.Linq;
 using System.Reflection;
-using CommonWin32;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Tester.Winform
 {
@@ -62,7 +57,7 @@ namespace Tester.Winform
             var appId = TWIdentity.CreateFromAssembly(DataGroups.Image, Assembly.GetEntryAssembly());
             _twain = new TwainSession(appId);
             // either set this and don't worry about threads during events,
-            // or don't and invoke during the events yourselv
+            // or don't and invoke during the events yourself
             _twain.SynchronizationContext = SynchronizationContext.Current;
             _twain.StateChanged += (s, e) =>
             {

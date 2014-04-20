@@ -1,15 +1,9 @@
 ﻿using NTwain;
 using NTwain.Data;
-using NTwain.Values;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Windows.Threading;
 
 namespace Tester
 {

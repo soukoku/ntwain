@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace NTwain
+namespace NTwain.Internals
 {
     static class NativeMethods
     {

@@ -1,17 +1,12 @@
-﻿using NTwain;
+﻿using CommonWin32;
+using GalaSoft.MvvmLight.Messaging;
+using NTwain;
 using NTwain.Data;
-using NTwain.Values;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
+using System.Threading;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using CommonWin32;
-using System.Threading;
-using GalaSoft.MvvmLight.Messaging;
-using System.Diagnostics;
 
 namespace Tester.WPF
 {
@@ -86,8 +81,6 @@ namespace Tester.WPF
 
         protected override void OnDataTransferred(DataTransferredEventArgs e)
         {
-            //App.Current.Dispatcher.Invoke(new Action(() =>
-            //{
             if (e.NativeData != IntPtr.Zero)
             {
                 Image = e.NativeData.GetWPFBitmap();
@@ -97,7 +90,6 @@ namespace Tester.WPF
                 var img = new BitmapImage(new Uri(e.FileDataPath));
                 Image = img;
             }
-            //}));
         }
 
         public void TestCapture(IntPtr hwnd)

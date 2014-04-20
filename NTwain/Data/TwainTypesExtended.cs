@@ -1,5 +1,5 @@
-﻿using NTwain.Properties;
-using NTwain.Values;
+﻿using NTwain.Internals;
+using NTwain.Properties;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -625,7 +625,7 @@ namespace NTwain.Data
         public TWCapability(CapabilityId capability)
         {
             Capability = capability;
-            ContainerType = Values.ContainerType.DontCare;
+            ContainerType = ContainerType.DontCare;
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="TWCapability" /> class.
@@ -636,7 +636,7 @@ namespace NTwain.Data
         public TWCapability(CapabilityId capability, TWOneValue value)
         {
             Capability = capability;
-            ContainerType = Values.ContainerType.OneValue;
+            ContainerType = ContainerType.OneValue;
             SetOneValue(value);
         }
         /// <summary>
@@ -648,7 +648,7 @@ namespace NTwain.Data
         public TWCapability(CapabilityId capability, TWEnumeration value)
         {
             Capability = capability;
-            ContainerType = Values.ContainerType.Enum;
+            ContainerType = ContainerType.Enum;
             SetEnumValue(value);
         }
         /// <summary>
@@ -660,7 +660,7 @@ namespace NTwain.Data
         public TWCapability(CapabilityId capability, TWRange value)
         {
             Capability = capability;
-            ContainerType = Values.ContainerType.Range;
+            ContainerType = ContainerType.Range;
             SetRangeValue(value);
         }
         #endregion
@@ -676,7 +676,7 @@ namespace NTwain.Data
         /// will be one of four types: <see cref="TWArray"/>, <see cref="TWEnumeration"/>,
         /// <see cref="TWOneValue"/>, or <see cref="TWRange"/>.
         /// </summary>
-        public ContainerType ContainerType { get { return (Values.ContainerType)_conType; } set { _conType = (ushort)value; } }
+        public ContainerType ContainerType { get { return (ContainerType)_conType; } set { _conType = (ushort)value; } }
 
         internal IntPtr Container { get { return _hContainer; } }
 
@@ -688,12 +688,12 @@ namespace NTwain.Data
         void SetOneValue(TWOneValue value)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
-            ContainerType = Values.ContainerType.OneValue;
+            ContainerType = ContainerType.OneValue;
 
             // since one value can only house UInt32 we will not allow type size > 4
             if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(Resources.BadValueType, "TWOneValue")); }
 
-            _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
+            _hContainer = Platform.MemoryManager.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
             {
                 Marshal.StructureToPtr(value, _hContainer, false);
@@ -704,14 +704,14 @@ namespace NTwain.Data
         void SetEnumValue(TWEnumeration value)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
-            ContainerType = Values.ContainerType.Enum;
+            ContainerType = ContainerType.Enum;
 
 
             Int32 valueSize = TWEnumeration.ItemOffset + value.ItemList.Length * TypeReader.GetItemTypeSize(value.ItemType);
 
             int offset = 0;
-            _hContainer = MemoryManager.Instance.Allocate((uint)valueSize);
-            IntPtr baseAddr = MemoryManager.Instance.Lock(_hContainer);
+            _hContainer = Platform.MemoryManager.Allocate((uint)valueSize);
+            IntPtr baseAddr = Platform.MemoryManager.Lock(_hContainer);
 
             // can't safely use StructureToPtr here so write it our own
             WriteValue(baseAddr, ref offset, ItemType.UInt16, value.ItemType);
@@ -722,7 +722,7 @@ namespace NTwain.Data
             {
                 WriteValue(baseAddr, ref offset, value.ItemType, item);
             }
-            MemoryManager.Instance.Unlock(baseAddr);
+            Platform.MemoryManager.Unlock(baseAddr);
         }
 
 
@@ -730,12 +730,12 @@ namespace NTwain.Data
         void SetRangeValue(TWRange value)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
-            ContainerType = Values.ContainerType.Range;
+            ContainerType = ContainerType.Range;
 
             // since range value can only house UInt32 we will not allow type size > 4
             if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(Resources.BadValueType, "TWRange")); }
 
-            _hContainer = MemoryManager.Instance.Allocate((uint)Marshal.SizeOf(value));
+            _hContainer = Platform.MemoryManager.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
             {
                 Marshal.StructureToPtr(value, _hContainer, false);
@@ -899,7 +899,7 @@ namespace NTwain.Data
             if (disposing) { }
             if (_hContainer != IntPtr.Zero)
             {
-                MemoryManager.Instance.Free(_hContainer);
+                Platform.MemoryManager.Free(_hContainer);
                 _hContainer = IntPtr.Zero;
             }
         }
@@ -1376,7 +1376,7 @@ namespace NTwain.Data
                         {
                             // uintptr to intptr could be bad
                             var ptr = new IntPtr(BitConverter.ToInt64(BitConverter.GetBytes(it.Item.ToUInt64()), 0));
-                            MemoryManager.Instance.Free(ptr);
+                            Platform.MemoryManager.Free(ptr);
                         }
                     }
                     it.Item = UIntPtr.Zero;
@@ -1794,12 +1794,12 @@ namespace NTwain.Data
         /// color is called Rgb, for R-G-B color. There is no
         /// default for this value.
         /// </summary>
-        public PixelType PixelType { get { return (Values.PixelType)_pixelType; } }
+        public PixelType PixelType { get { return (PixelType)_pixelType; } }
         /// <summary>
         /// The compression method used to process the data being transferred.
         /// Default is no compression.
         /// </summary>
-        public CompressionType Compression { get { return (Values.CompressionType)_compression; } }
+        public CompressionType Compression { get { return (CompressionType)_compression; } }
     }
 
     /// <summary>
@@ -2266,7 +2266,7 @@ namespace NTwain.Data
             }
             if (_uTF8string != IntPtr.Zero)
             {
-                MemoryManager.Instance.Free(_uTF8string);
+                Platform.MemoryManager.Free(_uTF8string);
                 _uTF8string = IntPtr.Zero;
             }
         }
@@ -2312,34 +2312,39 @@ namespace NTwain.Data
     /// <summary>
     /// Provides entry points required by TWAIN 2.0 Applications and Sources.
     /// </summary>
-    partial class TWEntryPoint
+    partial class TWEntryPoint : IMemoryManager
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TWEntryPoint"/> class.
         /// </summary>
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         public TWEntryPoint()
         {
             _size = (uint)Marshal.SizeOf(this);
         }
 
-        /// <summary>
-        /// The memory allocation function.
-        /// </summary>
-        public MemAllocateDelegate AllocateFunction { get { return _dSM_MemAllocate; } }
-        /// <summary>
-        /// The memory free function.
-        /// </summary>
-        public MemFreeDelegate FreeFunction { get { return _dSM_MemFree; } }
-        /// <summary>
-        /// The memory lock function.
-        /// </summary>
-        public MemLockDelegate LockFunction { get { return _dSM_MemLock; } }
-        /// <summary>
-        /// The memory unlock function.
-        /// </summary>
-        public MemUnlockDelegate UnlockFunction { get { return _dSM_MemUnlock; } }
+        #region IMemoryManager Members
 
+        public IntPtr Allocate(uint size)
+        {
+            return _dSM_MemAllocate(size);
+        }
+
+        public void Free(IntPtr handle)
+        {
+            _dSM_MemFree(handle);
+        }
+
+        public IntPtr Lock(IntPtr handle)
+        {
+            return _dSM_MemLock(handle);
+        }
+
+        public void Unlock(IntPtr handle)
+        {
+            _dSM_MemUnlock(handle);
+        }
+
+        #endregion
     }
 
 

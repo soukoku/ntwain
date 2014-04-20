@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Internals;
+using System;
 
 namespace NTwain.Triplets
 {

@@ -1,9 +1,8 @@
-﻿using NTwain.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NTwain.Values
+namespace NTwain.Data
 {
     /// <summary>
     /// Utility on converting (possibly bad) integer values to enum values.

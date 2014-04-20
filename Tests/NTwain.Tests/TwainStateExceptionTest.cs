@@ -1,8 +1,5 @@
-﻿using NTwain;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using NTwain.Values;
-using System.Runtime.Serialization;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NTwain.Data;
 
 namespace NTwain.Tests
 {

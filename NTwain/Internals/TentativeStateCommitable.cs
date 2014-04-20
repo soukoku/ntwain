@@ -1,6 +1,6 @@
-﻿namespace NTwain
+﻿namespace NTwain.Internals
 {
-    class TentativeStateCommitable : ICommitable
+    class TentativeStateCommitable : ICommittable
     {
         bool _commit;
         ITwainStateInternal _session;

@@ -1,4 +1,5 @@
-﻿using NTwain.Values;
+﻿using NTwain.Data;
+using NTwain.Internals;
 
 namespace NTwain.Triplets
 {

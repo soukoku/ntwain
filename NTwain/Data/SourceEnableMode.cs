@@ -1,4 +1,4 @@
-﻿namespace NTwain.Values
+﻿namespace NTwain.Data
 {
 	/// <summary>
 	/// Indicates how the source should be enabled in a TWAIN session.

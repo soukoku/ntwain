@@ -1,4 +1,4 @@
-﻿using NTwain.Values;
+﻿using NTwain.Data;
 using System;
 using System.Runtime.Serialization;
 using System.Security.Permissions;

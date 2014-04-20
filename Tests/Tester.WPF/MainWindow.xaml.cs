@@ -1,27 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using GalaSoft.MvvmLight.Messaging;
+using ModernWPF.Controls;
 using NTwain;
 using NTwain.Data;
-using NTwain.Values;
-using System.Windows.Interop;
-using System.Runtime.InteropServices;
-using CommonWin32;
-using System.Threading;
-using ModernWPF.Controls;
-using System.Reflection;
+using System;
 using System.ComponentModel;
-using GalaSoft.MvvmLight.Messaging;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 
 namespace Tester.WPF
 {
@@ -522,7 +509,7 @@ namespace Tester.WPF
                         CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap).CastToEnum<NoiseFilter>();
                         break;
                     case CapabilityId.ICapOrientation:
-                        CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap).CastToEnum<NTwain.Values.Orientation>();
+                        CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap).CastToEnum<OrientationType>();
                         break;
                     case CapabilityId.ICapOverScan:
                         CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap).CastToEnum<OverScan>();

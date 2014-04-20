@@ -1,5 +1,4 @@
 ﻿using NTwain.Data;
-using NTwain.Values;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -60,29 +59,7 @@ namespace NTwain
             return list;
         }
 
-        /// <summary>
-        /// Verifies the session is within the specified state range (inclusive). Throws
-        /// <see cref="TwainStateException" /> if violated.
-        /// </summary>
-        /// <param name="session">The session.</param>
-        /// <param name="allowedMinimum">The allowed minimum.</param>
-        /// <param name="allowedMaximum">The allowed maximum.</param>
-        /// <param name="group">The triplet data group.</param>
-        /// <param name="dataArgumentType">The triplet data argument type.</param>
-        /// <param name="message">The triplet message.</param>
-        /// <exception cref="TwainStateException"></exception>
-        internal static void VerifyState(this ITwainStateInternal session, int allowedMinimum, int allowedMaximum, DataGroups group, DataArgumentType dataArgumentType, NTwain.Values.Message message)
-        {
-            if (session.EnforceState && (session.State < allowedMinimum || session.State > allowedMaximum))
-            {
-                throw new TwainStateException(session.State, allowedMinimum, allowedMaximum, group, dataArgumentType, message,
-                    string.Format("TWAIN state {0} does not match required range {1}-{2} for operation {3}-{4}-{5}.",
-                    session.State, allowedMinimum, allowedMaximum, group, dataArgumentType, message));
-            }
-        }
-
-
-        #region common caps
+        #region caps routines
 
         /// <summary>
         /// Gets the current value for a capability.
@@ -231,7 +208,7 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetImageCompression(this TwainSession session, CompressionType compression)
         {
-            using (TWCapability compressCap = new TWCapability(CapabilityId.ICapCompression, new TWOneValue { Item = (uint)compression, ItemType = Values.ItemType.UInt16 }))
+            using (TWCapability compressCap = new TWCapability(CapabilityId.ICapCompression, new TWOneValue { Item = (uint)compression, ItemType = ItemType.UInt16 }))
             {
                 return session.DGControl.Capability.Set(compressCap);
             }
@@ -260,7 +237,7 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetImageFormat(this TwainSession session, FileFormat format)
         {
-            using (TWCapability formatCap = new TWCapability(CapabilityId.ICapImageFileFormat, new TWOneValue { Item = (uint)format, ItemType = Values.ItemType.UInt16 }))
+            using (TWCapability formatCap = new TWCapability(CapabilityId.ICapImageFileFormat, new TWOneValue { Item = (uint)format, ItemType = ItemType.UInt16 }))
             {
                 return session.DGControl.Capability.Set(formatCap);
             }
