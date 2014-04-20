@@ -1700,14 +1700,14 @@ namespace NTwain.Data
         {
             return new TWIdentity
             {
-                Manufacturer = manufacturer ?? "UNKNOWN",
+                Manufacturer = string.IsNullOrEmpty(manufacturer) ? "UNKNOWN" : manufacturer,
                 ProtocolMajor = TwainConst.ProtocolMajor,
                 ProtocolMinor = TwainConst.ProtocolMinor,
                 DataGroup = DataGroups.Control | supportedGroups,
                 DataFunctionalities = DataFunctionalities.App2,
 
-                ProductFamily = productFamily ?? "UNKNOWN",
-                ProductName = productName ?? "UNKNOWN",
+                ProductFamily = string.IsNullOrEmpty(productFamily) ? "UNKNOWN" : productFamily,
+                ProductName = string.IsNullOrEmpty(productName) ? "UNKNOWN" : productName,
                 Version = new TWVersion
                 {
                     Major = (short)version.Major,

@@ -18,7 +18,10 @@ namespace Tester
         static void Main(string[] args)
         {
             // just an amusing example to do twain in console without UI
-            DoTwainWork();
+            ThreadPool.QueueUserWorkItem(o =>
+            {
+                DoTwainWork();
+            });
             Console.WriteLine("Test started, press Enter to exit.");
             Console.ReadLine();
         }
@@ -65,6 +68,10 @@ namespace Tester
                         twain.CloseManager();
                     }
                 }
+            }
+            else
+            {
+                Console.WriteLine("Failed to open dsm with rc={0}!", rc);
             }
         }
 
