@@ -236,7 +236,7 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode OpenManager()
         {
-            ReturnCode rc = ReturnCode.Success;
+            var rc = ReturnCode.Failure;
             MessageLoop.Instance.Invoke(() =>
             {
                 Debug.WriteLine(string.Format("Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
@@ -270,7 +270,7 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode CloseManager()
         {
-            ReturnCode rc = ReturnCode.Success;
+            ReturnCode rc = ReturnCode.Failure;
             MessageLoop.Instance.Invoke(() =>
             {
                 Debug.WriteLine(string.Format("Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
@@ -292,7 +292,7 @@ namespace NTwain
         {
             if (string.IsNullOrEmpty(sourceProductName)) { throw new ArgumentException(Resources.SourceRequired, "sourceProductName"); }
 
-            ReturnCode rc = ReturnCode.Success;
+            ReturnCode rc = ReturnCode.Failure;
             MessageLoop.Instance.Invoke(() =>
             {
                 Debug.WriteLine(string.Format("Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
@@ -314,7 +314,7 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode CloseSource()
         {
-            ReturnCode rc = ReturnCode.Success;
+            var rc = ReturnCode.Failure;
             MessageLoop.Instance.Invoke(() =>
             {
                 Debug.WriteLine(string.Format("Thread {0}: CloseSource.", Thread.CurrentThread.ManagedThreadId));
@@ -338,7 +338,7 @@ namespace NTwain
         /// <exception cref="ArgumentNullException">context</exception>
         public ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle)
         {
-            ReturnCode rc = ReturnCode.Success;
+            var rc = ReturnCode.Failure;
 
             MessageLoop.Instance.Invoke(() =>
             {
@@ -392,7 +392,7 @@ namespace NTwain
         /// <returns></returns>
         protected ReturnCode DisableSource()
         {
-            ReturnCode rc = ReturnCode.Success;
+            var rc = ReturnCode.Failure;
 
             MessageLoop.Instance.Invoke(() =>
             {
