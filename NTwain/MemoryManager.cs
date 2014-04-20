@@ -10,10 +10,11 @@ namespace NTwain
     /// </summary>
     public class MemoryManager : IMemoryManager
     {
+        static readonly MemoryManager _instance = new MemoryManager();
         /// <summary>
         /// Gets the singleton <see cref="MemoryManager"/> instance.
         /// </summary>
-        public static readonly MemoryManager Instance = new MemoryManager();
+        public static MemoryManager Instance { get { return _instance; } }
 
         private MemoryManager() { }
 
@@ -49,7 +50,7 @@ namespace NTwain
 
             if (retVal == IntPtr.Zero)
             {
-                throw new OutOfMemoryException(Resources.MemAllocError);
+                throw new OutOfMemoryException();
             }
             return retVal;
         }

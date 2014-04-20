@@ -97,15 +97,6 @@ namespace NTwain.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to allocate requested memory..
-        /// </summary>
-        internal static string MemAllocError {
-            get {
-                return ResourceManager.GetString("MemAllocError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Message loop has not started yet..
         /// </summary>
         internal static string MsgLoopUnavailble {

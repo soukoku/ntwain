@@ -13,7 +13,7 @@ using System.Threading;
 namespace NTwain
 {
     /// <summary>
-    /// Basic class for interfacing with TWAIN.
+    /// Basic class for interfacing with TWAIN. You should only have one of this per application process.
     /// </summary>
     public class TwainSession : ITwainStateInternal, ITwainOperation
     {
@@ -270,7 +270,7 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode CloseManager()
         {
-            ReturnCode rc = ReturnCode.Failure;
+            var rc = ReturnCode.Failure;
             MessageLoop.Instance.Invoke(() =>
             {
                 Debug.WriteLine(string.Format("Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
@@ -282,17 +282,17 @@ namespace NTwain
 
         /// <summary>
         /// Loads the specified source into main memory and causes its initialization.
-        /// Calls to this must be followed by 
+        /// Calls to this must be followed by
         /// <see cref="CloseSource" /> when not using it anymore.
         /// </summary>
         /// <param name="sourceProductName">Name of the source.</param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">Source name is required.;sourceProductName</exception>
+        /// <exception cref="System.ArgumentException">sourceProductName</exception>
         public ReturnCode OpenSource(string sourceProductName)
         {
             if (string.IsNullOrEmpty(sourceProductName)) { throw new ArgumentException(Resources.SourceRequired, "sourceProductName"); }
 
-            ReturnCode rc = ReturnCode.Failure;
+            var rc = ReturnCode.Failure;
             MessageLoop.Instance.Invoke(() =>
             {
                 Debug.WriteLine(string.Format("Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));

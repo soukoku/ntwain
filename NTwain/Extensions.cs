@@ -3,10 +3,7 @@ using System;
 
 namespace NTwain
 {
-	/// <summary>
-	/// Some utility stuff.
-	/// </summary>
-    public static class Extensions
+    static class Extensions
     {
         /// <summary>
         /// Verifies the string length is under the maximum length

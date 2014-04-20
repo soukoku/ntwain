@@ -129,9 +129,6 @@
   <data name="MaxStringLengthExceeded" xml:space="preserve">
     <value>The string value has exceeded the maximum length allowed.</value>
   </data>
-  <data name="MemAllocError" xml:space="preserve">
-    <value>Failed to allocate requested memory.</value>
-  </data>
   <data name="MsgLoopUnavailble" xml:space="preserve">
     <value>Message loop has not started yet.</value>
   </data>
