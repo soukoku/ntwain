@@ -1467,7 +1467,7 @@ namespace NTwain.Data
     /// <summary>
     /// Corresponds to DG_*.
     /// </summary>
-    [Flags]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2217:DoNotMarkEnumsWithFlags"), Flags]
     public enum DataGroups : uint
     {
         None = 0,

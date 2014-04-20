@@ -1,11 +1,12 @@
 ﻿using NTwain.Data;
+using System.Collections.Generic;
 
 namespace NTwain.Internals
 {
     /// <summary>
     /// Internal interface for state management.
     /// </summary>
-    interface ITwainStateInternal : ITwainState
+    interface ITwainSessionInternal : ITwainSession
     {
         /// <summary>
         /// Gets the app id used for the session.
@@ -37,5 +38,11 @@ namespace NTwain.Internals
         ICommittable GetPendingStateChanger(int newState);
 
         void ChangeSourceId(TWIdentity sourceId);
+
+        ReturnCode DisableSource();
+
+        void SafeSyncableRaiseEvent(DataTransferredEventArgs e);
+        void SafeSyncableRaiseEvent(TransferErrorEventArgs e);
+        void SafeSyncableRaiseEvent(TransferReadyEventArgs e);
     }
 }

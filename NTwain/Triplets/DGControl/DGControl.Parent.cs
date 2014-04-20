@@ -9,7 +9,7 @@ namespace NTwain.Triplets
     /// </summary>
     sealed class Parent : OpBase
     {
-        internal Parent(ITwainStateInternal session) : base(session) { }
+        internal Parent(ITwainSessionInternal session) : base(session) { }
 
         /// <summary>
         /// When the application has closed all the Sources it had previously opened, and is finished with

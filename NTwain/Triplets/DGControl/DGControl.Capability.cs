@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class Capability : OpBase
 	{
-		internal Capability(ITwainStateInternal session) : base(session) { }
+		internal Capability(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// Returns the Source’s Current, Default and Available Values for a specified capability.
 		/// </summary>

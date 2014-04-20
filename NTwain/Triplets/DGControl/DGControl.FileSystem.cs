@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class FileSystem : OpBase
 	{
-		internal FileSystem(ITwainStateInternal session) : base(session) { }
+		internal FileSystem(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// This operation selects the destination directory within the Source (camera, storage, etc), where
 		/// images captured using CapAutomaticCapture will be stored. This command only selects

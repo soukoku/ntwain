@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class CieColor : OpBase
 	{
-		internal CieColor(ITwainStateInternal session) : base(session) { }
+		internal CieColor(ITwainSessionInternal session) : base(session) { }
 
 		/// <summary>
 		/// This operation causes the Source to report the currently active parameters to be used in

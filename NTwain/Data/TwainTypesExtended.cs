@@ -234,7 +234,7 @@ namespace NTwain.Data
 
         object IConvertible.ToType(Type conversionType, IFormatProvider provider)
         {
-            return Convert.ChangeType((float)this, conversionType);
+            return Convert.ChangeType((float)this, conversionType, CultureInfo.InvariantCulture);
         }
 
         ushort IConvertible.ToUInt16(IFormatProvider provider)
@@ -632,7 +632,6 @@ namespace NTwain.Data
         /// </summary>
         /// <param name="capability">The capability.</param>
         /// <param name="value">The value.</param>
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         public TWCapability(CapabilityId capability, TWOneValue value)
         {
             Capability = capability;
@@ -644,7 +643,6 @@ namespace NTwain.Data
         /// </summary>
         /// <param name="capability">The capability.</param>
         /// <param name="value">The value.</param>
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         public TWCapability(CapabilityId capability, TWEnumeration value)
         {
             Capability = capability;
@@ -656,7 +654,6 @@ namespace NTwain.Data
         /// </summary>
         /// <param name="capability">The capability.</param>
         /// <param name="value">The value.</param>
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         public TWCapability(CapabilityId capability, TWRange value)
         {
             Capability = capability;
@@ -684,14 +681,13 @@ namespace NTwain.Data
 
         #region value functions
 
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         void SetOneValue(TWOneValue value)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
             ContainerType = ContainerType.OneValue;
 
             // since one value can only house UInt32 we will not allow type size > 4
-            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(Resources.BadValueType, "TWOneValue")); }
+            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWOneValue")); }
 
             _hContainer = Platform.MemoryManager.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
@@ -700,7 +696,6 @@ namespace NTwain.Data
             }
         }
 
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         void SetEnumValue(TWEnumeration value)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
@@ -726,14 +721,13 @@ namespace NTwain.Data
         }
 
 
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         void SetRangeValue(TWRange value)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
             ContainerType = ContainerType.Range;
 
             // since range value can only house UInt32 we will not allow type size > 4
-            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(Resources.BadValueType, "TWRange")); }
+            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWRange")); }
 
             _hContainer = Platform.MemoryManager.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
@@ -752,23 +746,22 @@ namespace NTwain.Data
         /// <param name="offset"></param>
         /// <param name="type"></param>
         /// <param name="value"></param>
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         void WriteValue(IntPtr baseAddr, ref int offset, ItemType type, object value)
         {
             switch (type)
             {
                 case ItemType.Int8:
                 case ItemType.UInt8:
-                    Marshal.WriteByte(baseAddr, offset, Convert.ToByte(value));// (byte)value);
+                    Marshal.WriteByte(baseAddr, offset, Convert.ToByte(value, CultureInfo.InvariantCulture));// (byte)value);
                     break;
                 case ItemType.Bool:
                 case ItemType.Int16:
                 case ItemType.UInt16:
-                    Marshal.WriteInt16(baseAddr, offset, Convert.ToInt16(value));//(short)value);
+                    Marshal.WriteInt16(baseAddr, offset, Convert.ToInt16(value, CultureInfo.InvariantCulture));//(short)value);
                     break;
                 case ItemType.UInt32:
                 case ItemType.Int32:
-                    Marshal.WriteInt32(baseAddr, offset, Convert.ToInt32(value));//(int)value);
+                    Marshal.WriteInt32(baseAddr, offset, Convert.ToInt32(value, CultureInfo.InvariantCulture));//(int)value);
                     break;
                 case ItemType.Fix32:
                     TWFix32 f32 = (TWFix32)value;
@@ -2188,15 +2181,24 @@ namespace NTwain.Data
     /// </summary>
     public partial class TWStatus
     {
+        public TWStatus()
+        {
+
+        }
+        internal TWStatus(ushort code, ushort data)
+        {
+            _conditionCode = code;
+            _data = data;
+        }
         /// <summary>
         /// Condition Code describing the status.
         /// </summary>
-        public ConditionCode ConditionCode { get { return (ConditionCode)_conditionCode; } internal set { _conditionCode = (ushort)value; } }
+        public ConditionCode ConditionCode { get { return (ConditionCode)_conditionCode; } }
         /// <summary>
         /// Valid for TWAIN 2.1 and later. This field contains additional
         /// scanner-specific data. If there is no data, then this value must be zero.
         /// </summary>
-        public ushort Data { get { return _data; } internal set { _data = Data; } }
+        public ushort Data { get { return _data; } }
     }
 
     /// <summary>
@@ -2210,7 +2212,7 @@ namespace NTwain.Data
         /// </summary>
         public TWStatus Status
         {
-            get { return new TWStatus { ConditionCode = (ConditionCode)_conditionCode, Data = _data }; }
+            get { return new TWStatus(_conditionCode, _data); }
         }
 
         /// <summary>

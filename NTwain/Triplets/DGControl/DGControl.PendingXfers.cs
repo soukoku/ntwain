@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
 	sealed class PendingXfers : OpBase
 	{
-		internal PendingXfers(ITwainStateInternal session) : base(session) { }
+		internal PendingXfers(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// This triplet is used to cancel or terminate a transfer. Issued in state 6, this triplet cancels the next
 		/// pending transfer, discards the transfer data, and decrements the pending transfers count. In

@@ -1,6 +1,7 @@
 ﻿using NTwain.Properties;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace NTwain.Data
@@ -55,7 +56,7 @@ namespace NTwain.Data
                             ContainerType = capability.ContainerType,
                         }.ReadRangeValue(baseAddr);
                     default:
-                        throw new ArgumentException(string.Format(Resources.CapHasBadContainer, capability.ContainerType), "capability");
+                        throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.CapHasBadContainer, capability.ContainerType), "capability");
                 }
             }
             finally

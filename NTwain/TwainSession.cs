@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -15,7 +16,7 @@ namespace NTwain
     /// <summary>
     /// Basic class for interfacing with TWAIN. You should only have one of this per application process.
     /// </summary>
-    public class TwainSession : ITwainStateInternal, ITwainOperation
+    public class TwainSession : ITwainSessionInternal
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSession" /> class.
@@ -27,21 +28,22 @@ namespace NTwain
             if (appId == null) { throw new ArgumentNullException("appId"); }
 
             _appId = appId;
-            ((ITwainStateInternal)this).ChangeState(1, false);
+            ((ITwainSessionInternal)this).ChangeState(1, false);
             EnforceState = true;
 
             MessageLoop.Instance.EnsureStarted(HandleWndProcMessage);
         }
 
-        TWIdentity _appId;
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
         object _callbackObj; // kept around so it doesn't get gc'ed
+        TWIdentity _appId;
         TWUserInterface _twui;
 
         static readonly CapabilityId[] _emptyCapList = new CapabilityId[0];
 
         private IList<CapabilityId> _supportedCaps;
         /// <summary>
-        /// Gets the supported caps for the current source.
+        /// Gets the supported caps for the currently open source.
         /// </summary>
         /// <value>
         /// The supported caps.
@@ -64,7 +66,7 @@ namespace NTwain
         }
 
         /// <summary>
-        /// EXPERIMENTAL. Gets or sets the optional synchronization context.
+        /// Gets or sets the optional synchronization context.
         /// This allows events to be raised on the thread
         /// associated with the context.
         /// </summary>
@@ -74,13 +76,13 @@ namespace NTwain
         public SynchronizationContext SynchronizationContext { get; set; }
 
 
-        #region ITwainStateInternal Members
+        #region ITwainSessionInternal Members
 
         /// <summary>
         /// Gets the app id used for the session.
         /// </summary>
         /// <value>The app id.</value>
-        TWIdentity ITwainStateInternal.AppId { get { return _appId; } }
+        TWIdentity ITwainSessionInternal.AppId { get { return _appId; } }
 
         /// <summary>
         /// Gets or sets a value indicating whether calls to triplets will verify the current twain session state.
@@ -90,7 +92,7 @@ namespace NTwain
         /// </value>
         public bool EnforceState { get; set; }
 
-        void ITwainStateInternal.ChangeState(int newState, bool notifyChange)
+        void ITwainSessionInternal.ChangeState(int newState, bool notifyChange)
         {
             _state = newState;
             if (notifyChange)
@@ -100,16 +102,29 @@ namespace NTwain
             }
         }
 
-        ICommittable ITwainStateInternal.GetPendingStateChanger(int newState)
+        ICommittable ITwainSessionInternal.GetPendingStateChanger(int newState)
         {
             return new TentativeStateCommitable(this, newState);
         }
 
-        void ITwainStateInternal.ChangeSourceId(TWIdentity sourceId)
+        void ITwainSessionInternal.ChangeSourceId(TWIdentity sourceId)
         {
             SourceId = sourceId;
             RaisePropertyChanged("SourceId");
             SafeAsyncSyncableRaiseOnEvent(OnSourceChanged, SourceChanged);
+        }
+
+        void ITwainSessionInternal.SafeSyncableRaiseEvent(DataTransferredEventArgs e)
+        {
+            SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, e);
+        }
+        void ITwainSessionInternal.SafeSyncableRaiseEvent(TransferErrorEventArgs e)
+        {
+            SafeSyncableRaiseOnEvent(OnTransferError, TransferError, e);
+        }
+        void ITwainSessionInternal.SafeSyncableRaiseEvent(TransferReadyEventArgs e)
+        {
+            SafeSyncableRaiseOnEvent(OnTransferReady, TransferReady, e);
         }
 
         #endregion
@@ -134,7 +149,7 @@ namespace NTwain
         public int State
         {
             get { return _state; }
-            protected set
+            internal protected set
             {
                 if (value > 0 && value < 8)
                 {
@@ -240,7 +255,7 @@ namespace NTwain
             var rc = ReturnCode.Failure;
             MessageLoop.Instance.Invoke(() =>
             {
-                Debug.WriteLine(string.Format("Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
 
                 rc = DGControl.Parent.OpenDsm(MessageLoop.Instance.LoopHandle);
                 if (rc == ReturnCode.Success)
@@ -274,7 +289,7 @@ namespace NTwain
             var rc = ReturnCode.Failure;
             MessageLoop.Instance.Invoke(() =>
             {
-                Debug.WriteLine(string.Format("Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
 
                 rc = DGControl.Parent.CloseDsm(MessageLoop.Instance.LoopHandle);
             });
@@ -296,7 +311,7 @@ namespace NTwain
             var rc = ReturnCode.Failure;
             MessageLoop.Instance.Invoke(() =>
             {
-                Debug.WriteLine(string.Format("Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
 
                 var source = new TWIdentity();
                 source.ProductName = sourceProductName;
@@ -318,7 +333,7 @@ namespace NTwain
             var rc = ReturnCode.Failure;
             MessageLoop.Instance.Invoke(() =>
             {
-                Debug.WriteLine(string.Format("Thread {0}: CloseSource.", Thread.CurrentThread.ManagedThreadId));
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseSource.", Thread.CurrentThread.ManagedThreadId));
 
                 rc = DGControl.Identity.CloseDS();
                 if (rc == ReturnCode.Success)
@@ -343,7 +358,7 @@ namespace NTwain
 
             MessageLoop.Instance.Invoke(() =>
             {
-                Debug.WriteLine(string.Format("Thread {0}: EnableSource.", Thread.CurrentThread.ManagedThreadId));
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: EnableSource.", Thread.CurrentThread.ManagedThreadId));
 
                 // app v2.2 or higher uses callback2
                 if (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2)
@@ -387,17 +402,13 @@ namespace NTwain
             return rc;
         }
 
-        /// <summary>
-        /// Disables the source to end data acquisition.
-        /// </summary>
-        /// <returns></returns>
-        protected ReturnCode DisableSource()
+        ReturnCode ITwainSessionInternal.DisableSource()
         {
             var rc = ReturnCode.Failure;
 
             MessageLoop.Instance.Invoke(() =>
             {
-                Debug.WriteLine(string.Format("Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
 
                 rc = DGControl.UserInterface.DisableDS(_twui);
                 if (rc == ReturnCode.Success)
@@ -416,7 +427,7 @@ namespace NTwain
         /// <param name="targetState">State of the target.</param>
         public void ForceStepDown(int targetState)
         {
-            Debug.WriteLine(string.Format("Thread {0}: ForceStepDown.", Thread.CurrentThread.ManagedThreadId));
+            Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: ForceStepDown.", Thread.CurrentThread.ManagedThreadId));
 
             bool origFlag = EnforceState;
             EnforceState = false;
@@ -448,7 +459,7 @@ namespace NTwain
                 }
                 if (targetState < 5)
                 {
-                    DisableSource();
+                    ((ITwainSessionInternal)this).DisableSource();
                 }
                 if (targetState < 4)
                 {
@@ -496,6 +507,38 @@ namespace NTwain
         /// </summary>
         public event EventHandler<TransferErrorEventArgs> TransferError;
 
+
+        /// <summary>
+        /// Raises event and if applicable marshal it asynchronously to the <see cref="SynchronizationContext"/> thread.
+        /// </summary>
+        /// <param name="onEventFunc">The on event function.</param>
+        /// <param name="handler">The handler.</param>
+        void SafeAsyncSyncableRaiseOnEvent(Action onEventFunc, EventHandler handler)
+        {
+            var syncer = SynchronizationContext;
+            if (syncer == null)
+            {
+                try
+                {
+                    onEventFunc();
+                    if (handler != null) { handler(this, EventArgs.Empty); }
+                }
+                catch { }
+            }
+            else
+            {
+                syncer.Post(o =>
+                {
+                    try
+                    {
+                        onEventFunc();
+                        if (handler != null) { handler(this, EventArgs.Empty); }
+                    }
+                    catch { }
+                }, null);
+            }
+        }
+
         /// <summary>
         /// Raises event and if applicable marshal it synchronously to the <see cref="SynchronizationContext" /> thread.
         /// </summary>
@@ -530,37 +573,6 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Raises event and if applicable marshal it asynchronously to the <see cref="SynchronizationContext"/> thread.
-        /// </summary>
-        /// <param name="onEventFunc">The on event function.</param>
-        /// <param name="handler">The handler.</param>
-        void SafeAsyncSyncableRaiseOnEvent(Action onEventFunc, EventHandler handler)
-        {
-            var syncer = SynchronizationContext;
-            if (syncer == null)
-            {
-                try
-                {
-                    onEventFunc();
-                    if (handler != null) { handler(this, EventArgs.Empty); }
-                }
-                catch { }
-            }
-            else
-            {
-                syncer.Post(o =>
-                {
-                    try
-                    {
-                        onEventFunc();
-                        if (handler != null) { handler(this, EventArgs.Empty); }
-                    }
-                    catch { }
-                }, null);
-            }
-        }
-
-        /// <summary>
         /// Called when <see cref="State"/> changed.
         /// </summary>
         protected virtual void OnStateChanged() { }
@@ -585,25 +597,24 @@ namespace NTwain
         /// Called when a data transfer is ready.
         /// </summary>
         /// <param name="e">The <see cref="TransferReadyEventArgs"/> instance containing the event data.</param>
-        protected virtual void OnTransferReady(TransferReadyEventArgs e) { }
+        internal protected virtual void OnTransferReady(TransferReadyEventArgs e) { }
 
         /// <summary>
         /// Called when data has been transferred.
         /// </summary>
         /// <param name="e">The <see cref="DataTransferredEventArgs"/> instance containing the event data.</param>
-        protected virtual void OnDataTransferred(DataTransferredEventArgs e) { }
+        internal protected virtual void OnDataTransferred(DataTransferredEventArgs e) { }
 
         /// <summary>
         /// Called when an error has been encountered during transfer.
         /// </summary>
         /// <param name="e">The <see cref="TransferErrorEventArgs"/> instance containing the event data.</param>
-        protected virtual void OnTransferError(TransferErrorEventArgs e) { }
+        internal protected virtual void OnTransferError(TransferErrorEventArgs e) { }
 
         #endregion
 
-        #region TWAIN logic during xfer work
+        #region handle twain ds message
 
-        //[EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
         void HandleWndProcMessage(ref WindowsHook.MESSAGE winMsg, ref bool handled)
         {
             // this handles the message from a typical WndProc message loop and check if it's from the TWAIN source.
@@ -621,7 +632,7 @@ namespace NTwain
                     evt.pEvent = msgPtr;
                     if (handled = (DGControl.Event.ProcessEvent(evt) == ReturnCode.DSEvent))
                     {
-                        Debug.WriteLine(string.Format("Thread {0}: HandleWndProcMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, evt.TWMessage));
+                        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: HandleWndProcMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, evt.TWMessage));
 
                         HandleSourceMsg(evt.TWMessage);
                     }
@@ -637,7 +648,7 @@ namespace NTwain
         {
             if (origin != null && SourceId != null && origin.Id == SourceId.Id)
             {
-                Debug.WriteLine(string.Format("Thread {0}: CallbackHandler at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg));
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CallbackHandler at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg));
                 // spec says we must handle this on the thread that enabled the DS.
                 // by using the internal dispatcher this will be the case.
 
@@ -660,7 +671,7 @@ namespace NTwain
                     {
                         State = 6;
                     }
-                    DoTransferRoutine();
+                    TransferLogic.DoTransferRoutine(this);
                     break;
                 case Message.DeviceEvent:
                     TWDeviceEvent de;
@@ -683,529 +694,11 @@ namespace NTwain
                     else if (State == 5)
                     {
                         // needs this state check since some source sends this more than once
-                        DisableSource();
+                        ((ITwainSessionInternal)this).DisableSource();
                     }
                     break;
             }
         }
-
-        /// <summary>
-        /// Performs the TWAIN transfer routine at state 6. 
-        /// </summary>
-        protected virtual void DoTransferRoutine()
-        {
-            var pending = new TWPendingXfers();
-            var rc = ReturnCode.Success;
-
-            do
-            {
-                #region build and raise xfer ready
-
-                TWAudioInfo audInfo;
-                if (DGAudio.AudioInfo.Get(out audInfo) != ReturnCode.Success)
-                {
-                    audInfo = null;
-                }
-
-                TWImageInfo imgInfo;
-                if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
-                {
-                    imgInfo = null;
-                }
-
-                // ask consumer for xfer details
-                var preXferArgs = new TransferReadyEventArgs
-                {
-                    AudioInfo = audInfo,
-                    PendingImageInfo = imgInfo,
-                    PendingTransferCount = pending.Count,
-                    EndOfJob = pending.EndOfJob == 0
-                };
-
-                SafeSyncableRaiseOnEvent(OnTransferReady, TransferReady, preXferArgs);
-
-                #endregion
-
-                #region actually handle xfer
-
-                if (preXferArgs.CancelAll)
-                {
-                    rc = DGControl.PendingXfers.Reset(pending);
-                }
-                else if (!preXferArgs.CancelCurrent)
-                {
-                    DataGroups xferGroup = DataGroups.None;
-
-                    if (DGControl.XferGroup.Get(ref xferGroup) != ReturnCode.Success)
-                    {
-                        xferGroup = DataGroups.None;
-                    }
-
-                    if ((xferGroup & DataGroups.Image) == DataGroups.Image)
-                    {
-                        var mech = this.GetCurrentCap(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>();
-                        switch (mech)
-                        {
-                            case XferMech.Native:
-                                DoImageNativeXfer();
-                                break;
-                            case XferMech.Memory:
-                                DoImageMemoryXfer();
-                                break;
-                            case XferMech.File:
-                                DoImageFileXfer();
-                                break;
-                            case XferMech.MemFile:
-                                DoImageMemoryFileXfer();
-                                break;
-                        }
-                    }
-                    if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
-                    {
-                        var mech = this.GetCurrentCap(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
-                        switch (mech)
-                        {
-                            case XferMech.Native:
-                                DoAudioNativeXfer();
-                                break;
-                            case XferMech.File:
-                                DoAudioFileXfer();
-                                break;
-                        }
-                    }
-                }
-                rc = DGControl.PendingXfers.EndXfer(pending);
-
-                #endregion
-
-            } while (rc == ReturnCode.Success && pending.Count != 0);
-
-            State = 5;
-            DisableSource();
-
-        }
-
-        #region audio xfers
-
-        private void DoAudioNativeXfer()
-        {
-            IntPtr dataPtr = IntPtr.Zero;
-            IntPtr lockedPtr = IntPtr.Zero;
-            try
-            {
-                var xrc = DGAudio.AudioNativeXfer.Get(ref dataPtr);
-                if (xrc == ReturnCode.XferDone)
-                {
-                    State = 7;
-                    if (dataPtr != IntPtr.Zero)
-                    {
-                        lockedPtr = Platform.MemoryManager.Lock(dataPtr);
-                    }
-
-                    SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { NativeData = lockedPtr });
-                }
-                else
-                {
-                    SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
-                }
-            }
-            catch (Exception ex)
-            {
-                SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { Exception = ex });
-            }
-            finally
-            {
-                State = 6;
-                // data here is allocated by source so needs to use shared mem calls
-                if (lockedPtr != IntPtr.Zero)
-                {
-                    Platform.MemoryManager.Unlock(lockedPtr);
-                    lockedPtr = IntPtr.Zero;
-                }
-                if (dataPtr != IntPtr.Zero)
-                {
-                    Platform.MemoryManager.Free(dataPtr);
-                    dataPtr = IntPtr.Zero;
-                }
-            }
-        }
-
-        private void DoAudioFileXfer()
-        {
-            string filePath = null;
-            TWSetupFileXfer setupInfo;
-            if (DGControl.SetupFileXfer.Get(out setupInfo) == ReturnCode.Success)
-            {
-                filePath = setupInfo.FileName;
-            }
-
-            var xrc = DGAudio.AudioFileXfer.Get();
-            if (xrc == ReturnCode.XferDone)
-            {
-                SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs { FileDataPath = filePath });
-            }
-            else
-            {
-                SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
-            }
-        }
-
-        #endregion
-
-        #region image xfers
-
-        private void DoImageNativeXfer()
-        {
-            IntPtr dataPtr = IntPtr.Zero;
-            IntPtr lockedPtr = IntPtr.Zero;
-            try
-            {
-                var xrc = DGImage.ImageNativeXfer.Get(ref dataPtr);
-                if (xrc == ReturnCode.XferDone)
-                {
-                    State = 7;
-                    TWImageInfo imgInfo;
-                    TWExtImageInfo extInfo = null;
-                    if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
-                    {
-                        if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
-                        {
-                            extInfo = null;
-                        }
-                    }
-                    if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
-                    {
-                        imgInfo = null;
-                    }
-                    if (dataPtr != IntPtr.Zero)
-                    {
-                        lockedPtr = Platform.MemoryManager.Lock(dataPtr);
-                    }
-                    SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs
-                    {
-                        NativeData = lockedPtr,
-                        ImageInfo = imgInfo,
-                        ExImageInfo = extInfo
-                    });
-                    if (extInfo != null) { extInfo.Dispose(); }
-                }
-                else
-                {
-                    SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
-                }
-            }
-            catch (Exception ex)
-            {
-                SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { Exception = ex });
-            }
-            finally
-            {
-                State = 6;
-                // data here is allocated by source so needs to use shared mem calls
-                if (lockedPtr != IntPtr.Zero)
-                {
-                    Platform.MemoryManager.Unlock(lockedPtr);
-                    lockedPtr = IntPtr.Zero;
-                }
-                if (dataPtr != IntPtr.Zero)
-                {
-                    Platform.MemoryManager.Free(dataPtr);
-                    dataPtr = IntPtr.Zero;
-                }
-            }
-        }
-
-        private void DoImageFileXfer()
-        {
-            string filePath = null;
-            TWSetupFileXfer setupInfo;
-            if (DGControl.SetupFileXfer.Get(out setupInfo) == ReturnCode.Success)
-            {
-                filePath = setupInfo.FileName;
-            }
-
-            var xrc = DGImage.ImageFileXfer.Get();
-            if (xrc == ReturnCode.XferDone)
-            {
-                TWImageInfo imgInfo;
-                TWExtImageInfo extInfo = null;
-                if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
-                {
-                    if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
-                    {
-                        extInfo = null;
-                    }
-                }
-                if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
-                {
-                    imgInfo = null;
-                }
-                SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs
-                {
-                    FileDataPath = filePath,
-                    ImageInfo = imgInfo,
-                    ExImageInfo = extInfo
-                });
-                if (extInfo != null) { extInfo.Dispose(); }
-            }
-            else
-            {
-                SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
-            }
-        }
-
-        private void DoImageMemoryXfer()
-        {
-            TWSetupMemXfer memInfo;
-            if (DGControl.SetupMemXfer.Get(out memInfo) == ReturnCode.Success)
-            {
-                TWImageMemXfer xferInfo = new TWImageMemXfer();
-                try
-                {
-                    // how to tell if going to xfer in strip vs tile?
-                    // if tile don't allocate memory in app?
-
-                    xferInfo.Memory = new TWMemory
-                    {
-                        Flags = MemoryFlags.AppOwns | MemoryFlags.Pointer,
-                        Length = memInfo.Preferred,
-                        TheMem = Platform.MemoryManager.Allocate(memInfo.Preferred)
-                    };
-
-                    // do the unthinkable and keep all xferred batches in memory, 
-                    // possibly defeating the purpose of mem xfer
-                    // unless compression is used.
-                    // todo: use array instead of memory stream?
-                    using (MemoryStream xferredData = new MemoryStream())
-                    {
-                        var xrc = ReturnCode.Success;
-                        do
-                        {
-                            xrc = DGImage.ImageMemFileXfer.Get(xferInfo);
-
-                            if (xrc == ReturnCode.Success ||
-                                xrc == ReturnCode.XferDone)
-                            {
-                                State = 7;
-                                // optimize and allocate buffer only once instead of inside the loop?
-                                byte[] buffer = new byte[(int)xferInfo.BytesWritten];
-
-                                IntPtr lockPtr = IntPtr.Zero;
-                                try
-                                {
-                                    lockPtr = Platform.MemoryManager.Lock(xferInfo.Memory.TheMem);
-                                    Marshal.Copy(lockPtr, buffer, 0, buffer.Length);
-                                    xferredData.Write(buffer, 0, buffer.Length);
-                                }
-                                finally
-                                {
-                                    if (lockPtr != IntPtr.Zero)
-                                    {
-                                        Platform.MemoryManager.Unlock(lockPtr);
-                                    }
-                                }
-                            }
-                        } while (xrc == ReturnCode.Success);
-
-                        if (xrc == ReturnCode.XferDone)
-                        {
-                            TWImageInfo imgInfo;
-                            TWExtImageInfo extInfo = null;
-                            if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
-                            {
-                                if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
-                                {
-                                    extInfo = null;
-                                }
-                            }
-                            if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
-                            {
-                                imgInfo = null;
-                            }
-
-                            SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs
-                            {
-                                MemData = xferredData.ToArray(),
-                                ImageInfo = imgInfo,
-                                ExImageInfo = extInfo
-                            });
-                            if (extInfo != null) { extInfo.Dispose(); }
-                        }
-                        else
-                        {
-                            SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { Exception = ex });
-                }
-                finally
-                {
-                    State = 6;
-                    if (xferInfo.Memory.TheMem != IntPtr.Zero)
-                    {
-                        Platform.MemoryManager.Free(xferInfo.Memory.TheMem);
-                    }
-                }
-
-            }
-        }
-
-        private void DoImageMemoryFileXfer()
-        {
-            // since it's memory-file xfer need info from both (maybe)
-            TWSetupMemXfer memInfo;
-            TWSetupFileXfer fileInfo;
-            if (DGControl.SetupMemXfer.Get(out memInfo) == ReturnCode.Success &&
-                DGControl.SetupFileXfer.Get(out fileInfo) == ReturnCode.Success)
-            {
-                TWImageMemXfer xferInfo = new TWImageMemXfer();
-                var tempFile = Path.GetTempFileName();
-                string finalFile = null;
-                try
-                {
-                    // no strip or tile here, just chunks
-                    xferInfo.Memory = new TWMemory
-                    {
-                        Flags = MemoryFlags.AppOwns | MemoryFlags.Pointer,
-                        Length = memInfo.Preferred,
-                        TheMem = Platform.MemoryManager.Allocate(memInfo.Preferred)
-                    };
-
-                    var xrc = ReturnCode.Success;
-                    using (var outStream = File.OpenWrite(tempFile))
-                    {
-                        do
-                        {
-                            xrc = DGImage.ImageMemFileXfer.Get(xferInfo);
-
-                            if (xrc == ReturnCode.Success ||
-                                xrc == ReturnCode.XferDone)
-                            {
-                                State = 7;
-                                byte[] buffer = new byte[(int)xferInfo.BytesWritten];
-
-                                IntPtr lockPtr = IntPtr.Zero;
-                                try
-                                {
-                                    lockPtr = Platform.MemoryManager.Lock(xferInfo.Memory.TheMem);
-                                    Marshal.Copy(lockPtr, buffer, 0, buffer.Length);
-                                }
-                                finally
-                                {
-                                    if (lockPtr != IntPtr.Zero)
-                                    {
-                                        Platform.MemoryManager.Unlock(lockPtr);
-                                    }
-                                }
-                                outStream.Write(buffer, 0, buffer.Length);
-                            }
-                        } while (xrc == ReturnCode.Success);
-                    }
-
-                    if (xrc == ReturnCode.XferDone)
-                    {
-                        switch (fileInfo.Format)
-                        {
-                            case FileFormat.Bmp:
-                                finalFile = Path.ChangeExtension(tempFile, ".bmp");
-                                break;
-                            case FileFormat.Dejavu:
-                                finalFile = Path.ChangeExtension(tempFile, ".dejavu");
-                                break;
-                            case FileFormat.Exif:
-                                finalFile = Path.ChangeExtension(tempFile, ".exit");
-                                break;
-                            case FileFormat.Fpx:
-                                finalFile = Path.ChangeExtension(tempFile, ".fpx");
-                                break;
-                            case FileFormat.Jfif:
-                                finalFile = Path.ChangeExtension(tempFile, ".jpg");
-                                break;
-                            case FileFormat.Jp2:
-                                finalFile = Path.ChangeExtension(tempFile, ".jp2");
-                                break;
-                            case FileFormat.Jpx:
-                                finalFile = Path.ChangeExtension(tempFile, ".jpx");
-                                break;
-                            case FileFormat.Pdf:
-                            case FileFormat.PdfA:
-                            case FileFormat.PdfA2:
-                                finalFile = Path.ChangeExtension(tempFile, ".pdf");
-                                break;
-                            case FileFormat.Pict:
-                                finalFile = Path.ChangeExtension(tempFile, ".pict");
-                                break;
-                            case FileFormat.Png:
-                                finalFile = Path.ChangeExtension(tempFile, ".png");
-                                break;
-                            case FileFormat.Spiff:
-                                finalFile = Path.ChangeExtension(tempFile, ".spiff");
-                                break;
-                            case FileFormat.Tiff:
-                            case FileFormat.TiffMulti:
-                                finalFile = Path.ChangeExtension(tempFile, ".tif");
-                                break;
-                            case FileFormat.Xbm:
-                                finalFile = Path.ChangeExtension(tempFile, ".xbm");
-                                break;
-                            default:
-                                finalFile = Path.ChangeExtension(tempFile, ".unknown");
-                                break;
-                        }
-                        File.Move(tempFile, finalFile);
-                    }
-                    else
-                    {
-                        SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = this.GetSourceStatus() });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SafeSyncableRaiseOnEvent(OnTransferError, TransferError, new TransferErrorEventArgs { Exception = ex });
-                }
-                finally
-                {
-                    State = 6;
-                    if (xferInfo.Memory.TheMem != IntPtr.Zero)
-                    {
-                        Platform.MemoryManager.Free(xferInfo.Memory.TheMem);
-                    }
-                    if (File.Exists(tempFile))
-                    {
-                        File.Delete(tempFile);
-                    }
-                }
-
-                if (File.Exists(finalFile))
-                {
-                    TWImageInfo imgInfo;
-                    TWExtImageInfo extInfo = null;
-                    if (SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
-                    {
-                        if (DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
-                        {
-                            extInfo = null;
-                        }
-                    }
-                    if (DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
-                    {
-                        imgInfo = null;
-                    }
-                    SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, new DataTransferredEventArgs
-                    {
-                        FileDataPath = finalFile,
-                        ImageInfo = imgInfo,
-                        ExImageInfo = extInfo
-                    });
-                    if (extInfo != null) { extInfo.Dispose(); }
-                }
-            }
-        }
-
-        #endregion
 
         #endregion
     }

@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
     sealed class UserInterface : OpBase
     {
-        internal UserInterface(ITwainStateInternal session) : base(session) { }
+        internal UserInterface(ITwainSessionInternal session) : base(session) { }
         /// <summary>
         /// This operation causes the Source’s user interface, if displayed during the
         /// EnableDS operation, to be lowered. The Source is returned to

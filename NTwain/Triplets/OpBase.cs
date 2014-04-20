@@ -13,7 +13,7 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="session">The session.</param>
 		/// <exception cref="System.ArgumentNullException"></exception>
-        internal OpBase(ITwainStateInternal session)
+        internal OpBase(ITwainSessionInternal session)
 		{
 			if (session == null) { throw new ArgumentNullException("session"); }
 			Session = session;
@@ -25,6 +25,6 @@ namespace NTwain.Triplets
 		/// <value>
 		/// The session.
 		/// </value>
-        internal ITwainStateInternal Session { get; private set; }
+        internal ITwainSessionInternal Session { get; private set; }
 	}
 }

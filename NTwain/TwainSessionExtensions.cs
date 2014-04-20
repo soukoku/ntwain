@@ -15,7 +15,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static TWStatus GetManagerStatus(this TwainSession session)
+        public static TWStatus GetManagerStatus(this ITwainOperation session)
         {
             TWStatus stat;
             session.DGControl.Status.GetManager(out stat);
@@ -26,7 +26,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static TWStatus GetSourceStatus(this TwainSession session)
+        public static TWStatus GetSourceStatus(this ITwainOperation session)
         {
             TWStatus stat;
             session.DGControl.Status.GetSource(out stat);
@@ -39,7 +39,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<TWIdentity> GetSources(this TwainSession session)
+        public static IList<TWIdentity> GetSources(this ITwainOperation session)
         {
             List<TWIdentity> list = new List<TWIdentity>();
 
@@ -67,7 +67,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="capId">The cap id.</param>
         /// <returns></returns>
-        public static object GetCurrentCap(this TwainSession session, CapabilityId capId)
+        public static object GetCurrentCap(this ITwainOperation session, CapabilityId capId)
         {
             using (TWCapability cap = new TWCapability(capId))
             {
@@ -147,7 +147,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="capabilityId">The capability unique identifier.</param>
         /// <returns></returns>
-        public static IList<object> GetCapabilityValues(this TwainSession session, CapabilityId capabilityId)
+        public static IList<object> GetCapabilityValues(this ITwainOperation session, CapabilityId capabilityId)
         {
             var list = new List<object>();
             using (TWCapability cap = new TWCapability(capabilityId))
@@ -167,7 +167,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        internal static IList<CapabilityId> GetCapabilities(this TwainSession session)
+        internal static IList<CapabilityId> GetCapabilities(this ITwainOperation session)
         {
             return session.GetCapabilityValues(CapabilityId.CapSupportedCaps).CastToEnum<CapabilityId>(false);
         }
@@ -180,7 +180,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<XferMech> CapGetImageXferMech(this TwainSession session)
+        public static IList<XferMech> CapGetImageXferMech(this ITwainOperation session)
         {
             return session.GetCapabilityValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
         }
@@ -195,7 +195,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<CompressionType> CapGetCompression(this TwainSession session)
+        public static IList<CompressionType> CapGetCompression(this ITwainOperation session)
         {
             return session.GetCapabilityValues(CapabilityId.ICapCompression).CastToEnum<CompressionType>(true);
         }
@@ -206,7 +206,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="compression">The compression.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetImageCompression(this TwainSession session, CompressionType compression)
+        public static ReturnCode CapSetImageCompression(this ITwainOperation session, CompressionType compression)
         {
             using (TWCapability compressCap = new TWCapability(CapabilityId.ICapCompression, new TWOneValue { Item = (uint)compression, ItemType = ItemType.UInt16 }))
             {
@@ -224,7 +224,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<FileFormat> CapGetImageFileFormat(this TwainSession session)
+        public static IList<FileFormat> CapGetImageFileFormat(this ITwainOperation session)
         {
             return session.GetCapabilityValues(CapabilityId.ICapImageFileFormat).CastToEnum<FileFormat>(true);
         }
@@ -235,7 +235,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="format">The format.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetImageFormat(this TwainSession session, FileFormat format)
+        public static ReturnCode CapSetImageFormat(this ITwainOperation session, FileFormat format)
         {
             using (TWCapability formatCap = new TWCapability(CapabilityId.ICapImageFileFormat, new TWOneValue { Item = (uint)format, ItemType = ItemType.UInt16 }))
             {
@@ -253,7 +253,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<PixelType> CapGetPixelTypes(this TwainSession session)
+        public static IList<PixelType> CapGetPixelTypes(this ITwainOperation session)
         {
             return session.GetCapabilityValues(CapabilityId.ICapPixelType).CastToEnum<PixelType>(true);
         }
@@ -264,7 +264,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="type">The type.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetPixelType(this TwainSession session, PixelType type)
+        public static ReturnCode CapSetPixelType(this ITwainOperation session, PixelType type)
         {
             var one = new TWOneValue();
             one.Item = (uint)type;
@@ -285,7 +285,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<XferMech> CapGetImageXferMechs(this TwainSession session)
+        public static IList<XferMech> CapGetImageXferMechs(this ITwainOperation session)
         {
             return session.GetCapabilityValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
         }
@@ -296,7 +296,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<XferMech> CapGetAudioXferMechs(this TwainSession session)
+        public static IList<XferMech> CapGetAudioXferMechs(this ITwainOperation session)
         {
             return session.GetCapabilityValues(CapabilityId.ACapXferMech).CastToEnum<XferMech>(true);
         }
@@ -307,7 +307,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="type">The type.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetImageXferMech(this TwainSession session, XferMech type)
+        public static ReturnCode CapSetImageXferMech(this ITwainOperation session, XferMech type)
         {
             var one = new TWOneValue();
             one.Item = (uint)type;
@@ -324,7 +324,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="type">The type.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetAudioXferMech(this TwainSession session, XferMech type)
+        public static ReturnCode CapSetAudioXferMech(this ITwainOperation session, XferMech type)
         {
             var one = new TWOneValue();
             one.Item = (uint)type;
@@ -345,7 +345,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<TWFix32> CapGetDPIs(this TwainSession session)
+        public static IList<TWFix32> CapGetDPIs(this ITwainOperation session)
         {
             var list = session.GetCapabilityValues(CapabilityId.ICapXResolution);
             return list.Select(o => o.ConvertToFix32()).ToList();
@@ -357,7 +357,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="dpi">The DPI.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetDPI(this TwainSession session, TWFix32 dpi)
+        public static ReturnCode CapSetDPI(this ITwainOperation session, TWFix32 dpi)
         {
             return CapSetDPI(session, dpi, dpi);
         }
@@ -369,7 +369,7 @@ namespace NTwain
         /// <param name="xDPI">The x DPI.</param>
         /// <param name="yDPI">The y DPI.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetDPI(this TwainSession session, TWFix32 xDPI, TWFix32 yDPI)
+        public static ReturnCode CapSetDPI(this ITwainOperation session, TWFix32 xDPI, TWFix32 yDPI)
         {
             TWOneValue one = new TWOneValue();
             one.Item = (uint)xDPI;// ((uint)dpi) << 16;
@@ -400,7 +400,7 @@ namespace NTwain
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static IList<SupportedSize> CapGetSupportedSizes(this TwainSession session)
+        public static IList<SupportedSize> CapGetSupportedSizes(this ITwainOperation session)
         {
             return session.GetCapabilityValues(CapabilityId.ICapSupportedSizes).CastToEnum<SupportedSize>(true);
         }
@@ -411,7 +411,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="size">The size.</param>
         /// <returns></returns>
-        public static ReturnCode CapSetSupportedSize(this TwainSession session, SupportedSize size)
+        public static ReturnCode CapSetSupportedSize(this ITwainOperation session, SupportedSize size)
         {
             var one = new TWOneValue();
             one.Item = (uint)size;
@@ -474,7 +474,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="useIt">if set to <c>true</c> [use it].</param>
         /// <returns></returns>
-        public static ReturnCode CapSetAutoRotate(this TwainSession session, bool useIt)
+        public static ReturnCode CapSetAutoRotate(this ITwainSession session, bool useIt)
         {
             var rc = ReturnCode.Failure;
             if (session.SupportedCaps.Contains(CapabilityId.ICapAutomaticRotate))
@@ -512,7 +512,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="useIt">if set to <c>true</c> [use it].</param>
         /// <returns></returns>
-        public static ReturnCode CapSetBorderDetection(this TwainSession session, bool useIt)
+        public static ReturnCode CapSetBorderDetection(this ITwainSession session, bool useIt)
         {
             var rc = ReturnCode.Failure;
             if (session.SupportedCaps.Contains(CapabilityId.ICapAutomaticBorderDetection))
@@ -560,7 +560,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="useIt">if set to <c>true</c> [use it].</param>
         /// <returns></returns>
-        public static ReturnCode CapSetDuplex(this TwainSession session, bool useIt)
+        public static ReturnCode CapSetDuplex(this ITwainSession session, bool useIt)
         {
             if (session.SourceId.ProtocolMajor >= 2)
             {
@@ -594,7 +594,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="useIt">if set to <c>true</c> [use it].</param>
         /// <returns></returns>
-        public static ReturnCode CapSetFeeder(this TwainSession session, bool useIt)
+        public static ReturnCode CapSetFeeder(this ITwainSession session, bool useIt)
         {
             var rc = ReturnCode.Failure;
             if (session.SupportedCaps.Contains(CapabilityId.CapFeederEnabled))

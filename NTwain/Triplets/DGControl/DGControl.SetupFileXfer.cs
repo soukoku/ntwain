@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class SetupFileXfer : OpBase
 	{
-		internal SetupFileXfer(ITwainStateInternal session) : base(session) { }
+		internal SetupFileXfer(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// Returns information about the file into which the Source has or will put the acquired image
 		/// or audio data.

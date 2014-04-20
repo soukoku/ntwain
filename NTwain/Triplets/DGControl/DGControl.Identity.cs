@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class Identity : OpBase
 	{
-		internal Identity(ITwainStateInternal session) : base(session) { }
+		internal Identity(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
 		/// When an application is finished with a Source, it must formally close the session between them
 		/// using this operation. This is necessary in case the Source only supports connection with a single

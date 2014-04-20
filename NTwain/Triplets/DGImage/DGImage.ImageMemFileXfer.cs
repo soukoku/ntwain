@@ -5,7 +5,7 @@ namespace NTwain.Triplets
 {
 	sealed class ImageMemFileXfer : OpBase
 	{
-		internal ImageMemFileXfer(ITwainStateInternal session) : base(session) { }
+		internal ImageMemFileXfer(ITwainSessionInternal session) : base(session) { }
 
 		/// <summary>
 		/// This operation is used to initiate the transfer of an image from the Source to the application via

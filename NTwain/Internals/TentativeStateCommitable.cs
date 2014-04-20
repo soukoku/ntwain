@@ -3,10 +3,10 @@
     class TentativeStateCommitable : ICommittable
     {
         bool _commit;
-        ITwainStateInternal _session;
+        ITwainSessionInternal _session;
         int _origState;
         int _newState;
-        public TentativeStateCommitable(ITwainStateInternal session, int newState)
+        public TentativeStateCommitable(ITwainSessionInternal session, int newState)
         {
             _session = session;
             _origState = session.State;

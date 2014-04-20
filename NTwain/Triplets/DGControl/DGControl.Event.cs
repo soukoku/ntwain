@@ -5,7 +5,7 @@ namespace NTwain.Triplets
 {
 	sealed class Event : OpBase
 	{
-		internal Event(ITwainStateInternal session) : base(session) { }
+		internal Event(ITwainSessionInternal session) : base(session) { }
 
 		/// <summary>
 		/// This operation supports the distribution of events from the application to Sources so that the

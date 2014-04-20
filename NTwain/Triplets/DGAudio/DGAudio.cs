@@ -8,8 +8,8 @@ namespace NTwain.Triplets
 	/// </summary>
 	public sealed class DGAudio
 	{
-        ITwainStateInternal _session;
-        internal DGAudio(ITwainStateInternal session)
+        ITwainSessionInternal _session;
+        internal DGAudio(ITwainSessionInternal session)
 		{
 			if (session == null) { throw new ArgumentNullException("session"); }
 			_session = session;

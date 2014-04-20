@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class Filter : OpBase
 	{
-        internal Filter(ITwainStateInternal session) : base(session) { }
+        internal Filter(ITwainSessionInternal session) : base(session) { }
 
 
         /// <summary>

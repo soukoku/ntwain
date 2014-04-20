@@ -1,6 +1,7 @@
 ﻿using NTwain.Data;
 using NTwain.Internals;
 using System;
+using System.ComponentModel;
 
 namespace NTwain
 {
@@ -16,7 +17,7 @@ namespace NTwain
 
             if (retVal == IntPtr.Zero)
             {
-                throw new OutOfMemoryException();
+                throw new Win32Exception();
             }
             return retVal;
         }

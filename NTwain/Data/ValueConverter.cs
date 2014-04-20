@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace NTwain.Data
@@ -36,7 +37,7 @@ namespace NTwain.Data
                     var rawType = Enum.GetUnderlyingType(returnType);
                     if (typeof(ushort).IsAssignableFrom(rawType))
                     {
-                        var intVal = Convert.ToUInt32(value);
+                        var intVal = Convert.ToUInt32(value, CultureInfo.InvariantCulture);
                         var enumVal = GetLowerWord(intVal);
                         if (!Enum.IsDefined(returnType, enumVal))
                         {
@@ -52,7 +53,7 @@ namespace NTwain.Data
             else if (typeof(IConvertible).IsAssignableFrom(returnType))
             {
                 // for regular integers and whatnot
-                return (T)Convert.ChangeType(value, returnType);
+                return (T)Convert.ChangeType(value, returnType, CultureInfo.InvariantCulture);
             }
             // return as-is from cap. if caller made a mistake then there should be exceptions
             return (T)value;
@@ -78,7 +79,7 @@ namespace NTwain.Data
             {
                 return (TWFix32)value;
             }
-            return (TWFix32)Convert.ToSingle(value);
+            return (TWFix32)Convert.ToSingle(value, CultureInfo.InvariantCulture);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace NTwain.Triplets
 {
 	sealed class ImageNativeXfer : OpBase
 	{
-		internal ImageNativeXfer(ITwainStateInternal session) : base(session) { }
+		internal ImageNativeXfer(ITwainSessionInternal session) : base(session) { }
 
 		/// <summary>
 		/// Causes the transfer of an image’s data from the Source to the application, via the Native transfer

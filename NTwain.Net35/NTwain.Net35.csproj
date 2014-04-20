@@ -79,8 +79,8 @@
     <Compile Include="..\NTwain\Internals\ICommittable.cs">
       <Link>Internals\ICommittable.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\Internals\ITwainStateInternal.cs">
-      <Link>Internals\ITwainStateInternal.cs</Link>
+    <Compile Include="..\NTwain\Internals\ITwainSessionInternal.cs">
+      <Link>Internals\ITwainSessionInternal.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Internals\MessageLoop.cs">
       <Link>Internals\MessageLoop.cs</Link>
@@ -90,6 +90,9 @@
     </Compile>
     <Compile Include="..\NTwain\Internals\TentativeStateCommitable.cs">
       <Link>Internals\TentativeStateCommitable.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\TransferLogic.cs">
+      <Link>Internals\TransferLogic.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Internals\WindowsHook.cs">
       <Link>Internals\WindowsHook.cs</Link>
@@ -102,6 +105,9 @@
     </Compile>
     <Compile Include="..\NTwain\ITwainOperation.cs">
       <Link>ITwainOperation.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\ITwainSession.cs">
+      <Link>ITwainSession.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\ITwainState.cs">
       <Link>ITwainState.cs</Link>

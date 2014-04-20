@@ -27,7 +27,7 @@
     <DocumentationFile>
     </DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -60,10 +60,12 @@
     <Compile Include="DataTransferredEventArgs.cs" />
     <Compile Include="IMemoryManager.cs" />
     <Compile Include="Internals\ICommittable.cs" />
-    <Compile Include="Internals\ITwainStateInternal.cs" />
+    <Compile Include="Internals\ITwainSessionInternal.cs" />
+    <Compile Include="Internals\TransferLogic.cs" />
     <Compile Include="Internals\WindowsHook.cs" />
     <Compile Include="Internals\WrappedManualResetEvent.cs" />
     <Compile Include="ITwainOperation.cs" />
+    <Compile Include="ITwainSession.cs" />
     <Compile Include="ITwainState.cs" />
     <Compile Include="Internals\WinMemoryManager.cs" />
     <Compile Include="Internals\MessageLoop.cs" />

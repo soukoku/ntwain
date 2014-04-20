@@ -8,7 +8,7 @@ namespace NTwain.Triplets
     /// </summary>
 	public sealed class XferGroup : OpBase
 	{
-		internal XferGroup(ITwainStateInternal session) : base(session) { }
+		internal XferGroup(ITwainSessionInternal session) : base(session) { }
 
 		/// <summary>
 		/// Returns the Data Group (the type of data) for the upcoming transfer. The Source is required to
