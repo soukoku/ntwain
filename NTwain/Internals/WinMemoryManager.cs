@@ -13,7 +13,7 @@ namespace NTwain
     {
         public IntPtr Allocate(uint size)
         {
-            IntPtr retVal = NativeMethods.WinGlobalAlloc(0x0040, new UIntPtr(size));
+            IntPtr retVal = UnsafeNativeMethods.WinGlobalAlloc(0x0040, new UIntPtr(size));
 
             if (retVal == IntPtr.Zero)
             {
@@ -24,17 +24,17 @@ namespace NTwain
 
         public void Free(IntPtr handle)
         {
-            NativeMethods.WinGlobalFree(handle);
+            UnsafeNativeMethods.WinGlobalFree(handle);
         }
 
         public IntPtr Lock(IntPtr handle)
         {
-            return NativeMethods.WinGlobalLock(handle);
+            return UnsafeNativeMethods.WinGlobalLock(handle);
         }
 
         public void Unlock(IntPtr handle)
         {
-            NativeMethods.WinGlobalUnlock(handle);
+            UnsafeNativeMethods.WinGlobalUnlock(handle);
         }
     }
 }

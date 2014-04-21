@@ -92,7 +92,8 @@ namespace Tester.WPF
                 {
                     var caps = _twainVM.SupportedCaps.Select(o => new CapVM
                     {
-                        Cap = o
+                        Cap = o,
+                        Supports = _twainVM.GetCapSupport(o)
                     }).OrderBy(o => o.Name).ToList();
                     CapList.ItemsSource = caps;
                 }

@@ -2037,18 +2037,20 @@ namespace NTwain.Data
     /// Bit mask for querying the operation that are supported by the data source on a capability.
     /// Corresponds to TWQC_*.
     /// </summary>
-    public static class QuerySupportMask
+    [Flags]
+    public enum QuerySupport
     {
-        public const int Get = 0x1;
-        public const int Set = 0x2;
-        public const int GetDefault = 0x4;
-        public const int GetCurrent = 0x8;
-        public const int Reset = 0x10;
-        public const int SetConstraint = 0x20;
-        public const int Constrainable = 0x40;
-        public const int GetHelp = 0x100;
-        public const int GetLabel = 0x200;
-        public const int GetLabelEnum = 0x400;
+        None = 0,
+        Get = 0x1,
+        Set = 0x2,
+        GetDefault = 0x4,
+        GetCurrent = 0x8,
+        Reset = 0x10,
+        SetConstraint = 0x20,
+        Constrainable = 0x40,
+        GetHelp = 0x100,
+        GetLabel = 0x200,
+        GetLabelEnum = 0x400
     }
 
     /// <summary>

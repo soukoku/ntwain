@@ -3,9 +3,6 @@ using System.Collections.Generic;
 
 namespace NTwain.Internals
 {
-    /// <summary>
-    /// Internal interface for state management.
-    /// </summary>
     interface ITwainSessionInternal : ITwainSession
     {
         /// <summary>

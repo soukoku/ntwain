@@ -21,13 +21,7 @@ namespace Tester.WPF
             }
         }
 
-        //public void SupportedOperations
-        //{
-        //    get
-        //    {
-
-        //    }
-        //}
+        public QuerySupport Supports { get; set; }
 
         public override string ToString()
         {

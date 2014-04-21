@@ -25,17 +25,28 @@
                 <DataTemplate>
                     <StackPanel>
                         <TextBlock Text="{Binding Name}" TextWrapping="Wrap"></TextBlock>
-                        <TextBlock Text="{Binding Version, StringFormat='Version {0}'}" TextWrapping="Wrap" Foreground="{DynamicResource ModernForeground2}"/>
-                        <TextBlock Text="{Binding Protocol, StringFormat='TWAIN {0}'}" Foreground="{DynamicResource ModernForeground2}"/>
+                        <TextBlock Text="{Binding Version, StringFormat='Version {0}'}" TextWrapping="Wrap" Foreground="{DynamicResource ModernForeground2}"
+                                   Margin="8 0 0 0"/>
+                        <TextBlock Text="{Binding Protocol, StringFormat='TWAIN {0}'}" Foreground="{DynamicResource ModernForeground2}"
+                                   Margin="8 0 0 0"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
         <Label Content="Caps" Grid.Column="1"></Label>
-        <ListBox x:Name="CapList" Grid.Row="1" Grid.Column="1" MinWidth="100"
+        <ListBox x:Name="CapList" Grid.Row="1" Grid.Column="1" Width="150"
                  SelectionChanged="CapList_SelectionChanged"
-                 Style="{StaticResource AppListBox}"></ListBox>
+                 Style="{StaticResource AppListBox}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}" ></TextBlock>
+                        <TextBlock Text="{Binding Supports}" TextWrapping="Wrap" Foreground="{DynamicResource ModernForeground2}"
+                                   FontStyle="Italic"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate></ListBox>
 
         <Label Content="Cap values" Grid.Column="2"></Label>
         <ListBox x:Name="CapDetailList" Grid.Row="1" Grid.Column="2" MinWidth="100"

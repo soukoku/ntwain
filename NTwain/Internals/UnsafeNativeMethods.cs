@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace NTwain.Internals
 {
-    static class NativeMethods
+    [SuppressUnmanagedCodeSecurity]
+    static class UnsafeNativeMethods
     {
-        // should be unsafe native methods?
-
         #region mem stuff for twain 1.x
 
         [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalAlloc")]
-        public static extern IntPtr WinGlobalAlloc(uint uFlags, UIntPtr dwBytes);
+        internal static extern IntPtr WinGlobalAlloc(uint uFlags, UIntPtr dwBytes);
 
         [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalFree")]
-        public static extern IntPtr WinGlobalFree(IntPtr hMem);
+        internal static extern IntPtr WinGlobalFree(IntPtr hMem);
 
         [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalLock")]
-        public static extern IntPtr WinGlobalLock(IntPtr handle);
+        internal static extern IntPtr WinGlobalLock(IntPtr handle);
 
         [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalUnlock")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool WinGlobalUnlock(IntPtr handle);
+        internal static extern bool WinGlobalUnlock(IntPtr handle);
 
         #endregion
     }

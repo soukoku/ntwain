@@ -69,7 +69,7 @@
     <Compile Include="ITwainState.cs" />
     <Compile Include="Internals\WinMemoryManager.cs" />
     <Compile Include="Internals\MessageLoop.cs" />
-    <Compile Include="Internals\NativeMethods.cs" />
+    <Compile Include="Internals\UnsafeNativeMethods.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

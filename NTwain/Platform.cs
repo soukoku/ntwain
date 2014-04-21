@@ -64,7 +64,7 @@ namespace NTwain
         }
 
 
-        static readonly WinMemoryManager _defaultMemManager;
+        static readonly IMemoryManager _defaultMemManager;
         static IMemoryManager _specifiedMemManager;
 
         /// <summary>

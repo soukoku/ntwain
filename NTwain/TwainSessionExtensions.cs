@@ -6,8 +6,8 @@ using System.Linq;
 namespace NTwain
 {
     /// <summary>
-    /// Defines common methods on <see cref="TwainSession"/> using the raw
-    /// TWAIN triplet api.
+    /// Defines useful methods on <see cref="TwainSession"/> without having to dive into
+    /// the raw TWAIN triplet API.
     /// </summary>
     public static class TwainSessionExtensions
     {
@@ -67,6 +67,33 @@ namespace NTwain
         }
 
         #region caps routines
+
+        /// <summary>
+        /// Gets the actual supported operations for a capability.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="capId">The cap identifier.</param>
+        /// <returns></returns>
+        public static QuerySupport GetCapSupport(this ITwainOperation session, CapabilityId capId)
+        {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
+            QuerySupport retVal = QuerySupport.None;
+            using (TWCapability cap = new TWCapability(capId))
+            {
+                var rc = session.DGControl.Capability.QuerySupport(cap);
+                if (rc == ReturnCode.Success)
+                {
+                    var read = CapReadOut.ReadValue(cap);
+
+                    if (read.ContainerType == ContainerType.OneValue)
+                    {
+                        retVal = read.OneValue.ConvertToEnum<QuerySupport>();
+                    }
+                }
+            }
+            return retVal;
+        }
 
         /// <summary>
         /// Gets the current value for a capability.
