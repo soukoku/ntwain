@@ -10,21 +10,24 @@ namespace NTwain.Triplets
 	{
 		internal ImageLayout(ITwainSessionInternal session) : base(session) { }
 
-		public ReturnCode Get(out TWImageLayout layout)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Get(out TWImageLayout layout)
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.ImageLayout, Message.Get);
 			layout = new TWImageLayout();
 			return Dsm.DsmEntry(Session.AppId, Session.SourceId, Message.Get, layout);
 		}
 
-		public ReturnCode GetDefault(out TWImageLayout layout)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode GetDefault(out TWImageLayout layout)
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.ImageLayout, Message.GetDefault);
 			layout = new TWImageLayout();
 			return Dsm.DsmEntry(Session.AppId, Session.SourceId, Message.GetDefault, layout);
 		}
 
-		public ReturnCode Reset(out TWImageLayout layout)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Reset(out TWImageLayout layout)
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.ImageLayout, Message.Reset);
 			layout = new TWImageLayout();

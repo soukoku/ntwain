@@ -16,7 +16,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="cieColor">Color data.</param>
 		/// <returns></returns>
-		public ReturnCode Get(out TWCieColor cieColor)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Get(out TWCieColor cieColor)
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.CieColor, Message.Get);
 			cieColor = new TWCieColor();

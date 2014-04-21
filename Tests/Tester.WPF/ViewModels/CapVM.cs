@@ -21,6 +21,14 @@ namespace Tester.WPF
             }
         }
 
+        //public void SupportedOperations
+        //{
+        //    get
+        //    {
+
+        //    }
+        //}
+
         public override string ToString()
         {
             return Name;

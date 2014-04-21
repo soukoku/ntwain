@@ -16,7 +16,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="profile">The profile.</param>
 		/// <returns></returns>
-		public ReturnCode Get(ref TWMemory profile)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "0#")]
+        public ReturnCode Get(ref TWMemory profile)
 		{
 			Session.VerifyState(6, 7, DataGroups.Image, DataArgumentType.IccProfile, Message.Get);
 			profile = new TWMemory();

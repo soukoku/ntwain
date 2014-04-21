@@ -15,7 +15,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="palette">The palette.</param>
 		/// <returns></returns>
-		public ReturnCode Get(out TWPalette8 palette)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Get(out TWPalette8 palette)
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.Palette8, Message.Get);
 			palette = new TWPalette8();
@@ -27,7 +28,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="palette">The palette.</param>
 		/// <returns></returns>
-		public ReturnCode GetDefault(out TWPalette8 palette)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode GetDefault(out TWPalette8 palette)
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.Palette8, Message.GetDefault);
 			palette = new TWPalette8();
@@ -40,7 +42,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="palette">The palette.</param>
 		/// <returns></returns>
-		public ReturnCode Reset(out TWPalette8 palette)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Reset(out TWPalette8 palette)
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.Palette8, Message.Reset);
 			palette = new TWPalette8();

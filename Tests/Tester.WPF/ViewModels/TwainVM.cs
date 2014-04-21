@@ -35,7 +35,7 @@ namespace Tester.WPF
             set
             {
                 _image = value;
-                RaisePropertyChanged("Image");
+                OnPropertyChanged("Image");
             }
         }
 

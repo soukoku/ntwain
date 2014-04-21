@@ -17,7 +17,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="response">The response.</param>
 		/// <returns></returns>
-		public ReturnCode Reset(out TWRgbResponse response)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Reset(out TWRgbResponse response)
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.RgbResponse, Message.Reset);
 			response = new TWRgbResponse();

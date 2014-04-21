@@ -6,7 +6,8 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.SetupFileXfer"/>.
     /// </summary>
-	public sealed class SetupFileXfer : OpBase
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer")]
+    public sealed class SetupFileXfer : OpBase
 	{
 		internal SetupFileXfer(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
@@ -15,7 +16,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="setupFileXfer">The setup file xfer.</param>
 		/// <returns></returns>
-		public ReturnCode Get(out TWSetupFileXfer setupFileXfer)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Get(out TWSetupFileXfer setupFileXfer)
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.Get);
 			setupFileXfer = new TWSetupFileXfer();
@@ -27,7 +29,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="setupFileXfer">The setup file xfer.</param>
 		/// <returns></returns>
-		public ReturnCode GetDefault(out TWSetupFileXfer setupFileXfer)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode GetDefault(out TWSetupFileXfer setupFileXfer)
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.GetDefault);
 			setupFileXfer = new TWSetupFileXfer();
@@ -40,7 +43,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="setupFileXfer">The setup file xfer.</param>
 		/// <returns></returns>
-		public ReturnCode Reset(out TWSetupFileXfer setupFileXfer)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Reset(out TWSetupFileXfer setupFileXfer)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.Reset);
 			setupFileXfer = new TWSetupFileXfer();

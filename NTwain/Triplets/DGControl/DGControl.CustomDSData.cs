@@ -16,7 +16,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="customData">The custom data.</param>
 		/// <returns></returns>
-		public ReturnCode Get(out TWCustomDSData customData)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Get(out TWCustomDSData customData)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.CustomDSData, Message.Get);
 			customData = new TWCustomDSData();

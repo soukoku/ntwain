@@ -14,7 +14,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="info">The info.</param>
 		/// <returns></returns>
-		public ReturnCode Get(out TWAudioInfo info)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Get(out TWAudioInfo info)
 		{
 			Session.VerifyState(6, 7, DataGroups.Audio, DataArgumentType.AudioInfo, Message.Get);
 			info = new TWAudioInfo();

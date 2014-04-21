@@ -10,7 +10,8 @@ namespace NTwain.Triplets
 	{
 		internal ImageInfo(ITwainSessionInternal session) : base(session) { }
 
-		public ReturnCode Get(out TWImageInfo info)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Get(out TWImageInfo info)
 		{
 			Session.VerifyState(6, 7, DataGroups.Image, DataArgumentType.ImageInfo, Message.Get);
 			info = new TWImageInfo();

@@ -125,7 +125,8 @@ namespace NTwain.Triplets
 			}
 		}
 		SetupFileXfer _setupFileXfer;
-		public SetupFileXfer SetupFileXfer
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer")]
+        public SetupFileXfer SetupFileXfer
 		{
 			get
 			{
@@ -134,7 +135,8 @@ namespace NTwain.Triplets
 			}
 		}
 		SetupMemXfer _setupMemXfer;
-		public SetupMemXfer SetupMemXfer
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mem")]
+        public SetupMemXfer SetupMemXfer
 		{
 			get
 			{
@@ -170,7 +172,8 @@ namespace NTwain.Triplets
 			}
 		}
 		XferGroup _xferGroup;
-		public XferGroup XferGroup
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer")]
+        public XferGroup XferGroup
 		{
 			get
 			{

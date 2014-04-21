@@ -15,6 +15,7 @@ namespace NTwain
         /// Initializes a new instance of the <see cref="TwainStateException"/> class.
         /// </summary>
         public TwainStateException() { }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainStateException"/> class.
         /// </summary>

@@ -33,7 +33,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="source">The source.</param>
 		/// <returns></returns>
-		public ReturnCode GetDefault(out TWIdentity source)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode GetDefault(out TWIdentity source)
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetDefault);
 			source = new TWIdentity();
@@ -47,7 +48,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="source">The source.</param>
 		/// <returns></returns>
-		public ReturnCode GetFirst(out TWIdentity source)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode GetFirst(out TWIdentity source)
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetFirst);
 			source = new TWIdentity();
@@ -60,7 +62,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="source">The source.</param>
 		/// <returns></returns>
-		public ReturnCode GetNext(out TWIdentity source)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode GetNext(out TWIdentity source)
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetNext);
 			source = new TWIdentity();
@@ -103,7 +106,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="source">The source.</param>
 		/// <returns></returns>
-		public ReturnCode UserSelect(out TWIdentity source)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode UserSelect(out TWIdentity source)
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.UserSelect);
 			source = new TWIdentity();

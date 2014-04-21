@@ -16,7 +16,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="compression">The compression.</param>
 		/// <returns></returns>
-		public ReturnCode Get(out TWJpegCompression compression)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Get(out TWJpegCompression compression)
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.JpegCompression, Message.Get);
 			compression = new TWJpegCompression();
@@ -29,7 +30,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="compression">The compression.</param>
 		/// <returns></returns>
-		public ReturnCode GetDefault(out TWJpegCompression compression)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode GetDefault(out TWJpegCompression compression)
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.JpegCompression, Message.GetDefault);
 			compression = new TWJpegCompression();
@@ -41,7 +43,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="compression">The compression.</param>
 		/// <returns></returns>
-		public ReturnCode Reset(out TWJpegCompression compression)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Reset(out TWJpegCompression compression)
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.JpegCompression, Message.Reset);
 			compression = new TWJpegCompression();

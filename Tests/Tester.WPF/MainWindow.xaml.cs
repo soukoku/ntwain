@@ -460,7 +460,7 @@ namespace Tester.WPF
                     case CapabilityId.ICapICCProfile:
                         CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap).CastToEnum<IccProfile>();
                         break;
-                    case CapabilityId.ICapImageDataset:
+                    case CapabilityId.ICapImageDataSet:
                         CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap);
                         break;
                     case CapabilityId.ICapImageFileFormat:
@@ -481,8 +481,8 @@ namespace Tester.WPF
                     case CapabilityId.ICapJpegQuality:
                         CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap).CastToEnum<JpegQuality>();
                         break;
-                    case CapabilityId.ICapJpegSubSampling:
-                        CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap).CastToEnum<JpegSubSampling>();
+                    case CapabilityId.ICapJpegSubsampling:
+                        CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap).CastToEnum<JpegSubsampling>();
                         break;
                     case CapabilityId.ICapLampState:
                         CapDetailList.ItemsSource = _twainVM.GetCapabilityValues(cap);

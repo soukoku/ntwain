@@ -14,7 +14,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="status">The status.</param>
 		/// <returns></returns>
-		public ReturnCode GetManager(out TWStatus status)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode GetManager(out TWStatus status)
 		{
 			Session.VerifyState(2, 7, DataGroups.Control, DataArgumentType.Status, Message.Get);
 			status = new TWStatus();
@@ -26,7 +27,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="status">The status.</param>
 		/// <returns></returns>
-		public ReturnCode GetSource(out TWStatus status)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode GetSource(out TWStatus status)
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.Status, Message.Get);
 			status = new TWStatus();

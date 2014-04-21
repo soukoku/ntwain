@@ -19,6 +19,7 @@ namespace NTwain
         // in essence it only exists in 64 bit systems and thus
         // the 2 sets of identical pinvokes for windows :(
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static Platform()
         {
             IsApp64bit = IntPtr.Size == 8;
@@ -29,6 +30,8 @@ namespace NTwain
             IsOnMono = Type.GetType("Mono.Runtime") != null;
             IsWin = Environment.OSVersion.Platform == PlatformID.Win32NT;
             IsLinux = Environment.OSVersion.Platform == PlatformID.Unix;
+
+            _defaultMemManager = new WinMemoryManager();
         }
 
         internal static readonly bool UseNewDSM;
@@ -61,8 +64,8 @@ namespace NTwain
         }
 
 
-        static readonly WinMemoryManager _defaultMemManager = new WinMemoryManager();
-        static IMemoryManager _specifiedMemManager = null;
+        static readonly WinMemoryManager _defaultMemManager;
+        static IMemoryManager _specifiedMemManager;
 
         /// <summary>
         /// Gets the <see cref="IMemoryManager"/> for communicating with data sources.

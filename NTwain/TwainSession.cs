@@ -61,7 +61,7 @@ namespace NTwain
             private set
             {
                 _supportedCaps = value;
-                RaisePropertyChanged("SupportedCaps");
+                OnPropertyChanged("SupportedCaps");
             }
         }
 
@@ -97,7 +97,7 @@ namespace NTwain
             _state = newState;
             if (notifyChange)
             {
-                RaisePropertyChanged("State");
+                OnPropertyChanged("State");
                 SafeAsyncSyncableRaiseOnEvent(OnStateChanged, StateChanged);
             }
         }
@@ -110,7 +110,7 @@ namespace NTwain
         void ITwainSessionInternal.ChangeSourceId(TWIdentity sourceId)
         {
             SourceId = sourceId;
-            RaisePropertyChanged("SourceId");
+            OnPropertyChanged("SourceId");
             SafeAsyncSyncableRaiseOnEvent(OnSourceChanged, SourceChanged);
         }
 
@@ -154,7 +154,7 @@ namespace NTwain
                 if (value > 0 && value < 8)
                 {
                     _state = value;
-                    RaisePropertyChanged("State");
+                    OnPropertyChanged("State");
                     SafeAsyncSyncableRaiseOnEvent(OnStateChanged, StateChanged);
                 }
             }
@@ -216,7 +216,7 @@ namespace NTwain
         /// Raises the <see cref="PropertyChanged"/> event.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
-        protected void RaisePropertyChanged(string propertyName)
+        protected void OnPropertyChanged(string propertyName)
         {
             if (SynchronizationContext == null)
             {

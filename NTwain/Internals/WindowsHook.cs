@@ -32,6 +32,7 @@ namespace NTwain.Internals
             catch
             {
                 if (win != null) { win.Dispose(); }
+                throw;
             }
         }
 

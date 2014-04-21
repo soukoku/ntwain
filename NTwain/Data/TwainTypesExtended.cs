@@ -371,42 +371,42 @@ namespace NTwain.Data
         /// Starting input value of the extended gamma function. Defines the
         /// minimum input value of channel data.
         /// </summary>
-        public float StartIn { get { return _startIn; } set { _startIn = value; } }
+        public float StartIn { get { return _startIn; } }//set { _startIn = value; } }
         /// <summary>
         /// Ending input value of the extended gamma function. Defines the maximum
         /// input value of channel data.
         /// </summary>
-        public float BreakIn { get { return _breakIn; } set { _breakIn = value; } }
+        public float BreakIn { get { return _breakIn; } }//set { _breakIn = value; } }
         /// <summary>
         /// The input value at which the transform switches from linear
         /// transformation/interpolation to gamma transformation.
         /// </summary>
-        public float EndIn { get { return _endIn; } set { _endIn = value; } }
+        public float EndIn { get { return _endIn; } }//set { _endIn = value; } }
         /// <summary>
         /// Starting output value of the extended gamma function. Defines the
         /// minimum output value of channel data.
         /// </summary>
-        public float StartOut { get { return _startOut; } set { _startOut = value; } }
+        public float StartOut { get { return _startOut; } }//set { _startOut = value; } }
         /// <summary>
         /// Ending output value of the extended gamma function. Defines the
         /// maximum output value of channel data.
         /// </summary>
-        public float BreakOut { get { return _breakOut; } set { _breakOut = value; } }
+        public float BreakOut { get { return _breakOut; } }//set { _breakOut = value; } }
         /// <summary>
         /// The output value at which the transform switches from linear
         /// transformation/interpolation to gamma transformation.
         /// </summary>
-        public float EndOut { get { return _endOut; } set { _endOut = value; } }
+        public float EndOut { get { return _endOut; } }//set { _endOut = value; } }
         /// <summary>
         /// Constant value. The exponential used in the gamma function.
         /// </summary>
-        public float Gamma { get { return _gamma; } set { _gamma = value; } }
+        public float Gamma { get { return _gamma; } }//set { _gamma = value; } }
         /// <summary>
         /// The number of samples in the look-up table. Includes the values of StartIn
         /// and EndIn. Zero-based index (actually, number of samples - 1). If zero, use
         /// extended gamma, otherwise use table look-up.
         /// </summary>
-        public float SampleCount { get { return _sampleCount; } set { _sampleCount = value; } }
+        public float SampleCount { get { return _sampleCount; } }//set { _sampleCount = value; } }
         #endregion
 
         #region equals
@@ -486,20 +486,22 @@ namespace NTwain.Data
         /// <summary>
         /// Channel-specific transform parameters.
         /// </summary>
-        public TWDecodeFunction[] Decode { get { return _decode; } set { _decode = value; } }
+        public TWDecodeFunction[] Decode { get { return _decode; } }//set { _decode = value; } }
         /// <summary>
         /// Flattened 3x3 matrix that specifies how channels are mixed in.
         /// </summary>
-        public TWFix32[] Mix { get { return _mix; } set { _mix = value; } }
+        public TWFix32[] Mix { get { return _mix; } }//set { _mix = value; } }
 
         /// <summary>
         /// Gets the <see cref="Mix"/> value as matrix.
         /// </summary>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body"), 
+        System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Return")]
         public TWFix32[,] GetMixMatrix()
         {
             // from http://stackoverflow.com/questions/3845235/convert-array-to-matrix, haven't tested it
-            TWFix32[,] mat = new TWFix32[3, 3];
+            TWFix32[,] mat = new TWFix32[3, 3]; 
             Buffer.BlockCopy(_mix, 0, mat, 0, _mix.Length * 4);
             return mat;
         }
@@ -542,6 +544,8 @@ namespace NTwain.Data
     /// </summary>
     public partial class TWAudioInfo
     {
+        internal TWAudioInfo() { }
+
         /// <summary>
         /// Name of audio data.
         /// </summary>
@@ -746,6 +750,7 @@ namespace NTwain.Data
         /// <param name="offset"></param>
         /// <param name="type"></param>
         /// <param name="value"></param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         void WriteValue(IntPtr baseAddr, ref int offset, ItemType type, object value)
         {
             switch (type)
@@ -786,16 +791,16 @@ namespace NTwain.Data
                 //    WriteString(baseAddr, offset, value as string, 1024);
                 //    break;
                 case ItemType.String128:
-                    WriteString(baseAddr, offset, value as string, 128);
+                    WriteString(baseAddr, offset, (string)value, 128);
                     break;
                 case ItemType.String255:
-                    WriteString(baseAddr, offset, value as string, 255);
+                    WriteString(baseAddr, offset, (string)value, 255);
                     break;
                 case ItemType.String32:
-                    WriteString(baseAddr, offset, value as string, 32);
+                    WriteString(baseAddr, offset, (string)value, 32);
                     break;
                 case ItemType.String64:
-                    WriteString(baseAddr, offset, value as string, 64);
+                    WriteString(baseAddr, offset, (string)value, 64);
                     break;
                 //case ItemType.Unicode512:
                 //    WriteUString(baseAddr, offset, value as string, 512);
@@ -998,6 +1003,8 @@ namespace NTwain.Data
     /// </summary>
     public partial class TWCieColor
     {
+        internal TWCieColor() { }
+
         /// <summary>
         /// Defines the original color space that was transformed into CIE XYZ. 
         /// This value is not set-able by the application. 
@@ -1042,6 +1049,7 @@ namespace NTwain.Data
         /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of inkless
         /// "paper" from which the image was acquired.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "WhitePaper")]
         public TWCiePoint WhitePaper { get { return _whitePaper; } }
         /// <summary>
         /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of solid
@@ -1077,6 +1085,8 @@ namespace NTwain.Data
     /// </summary>
     public partial class TWDeviceEvent
     {
+        internal TWDeviceEvent() { }
+
         /// <summary>
         /// Defines event that has taken place.
         /// </summary>
@@ -1330,6 +1340,8 @@ namespace NTwain.Data
     /// </summary>
     public sealed partial class TWExtImageInfo : IDisposable
     {
+        internal TWExtImageInfo() { }
+
         /// <summary>
         /// Number of information that application is requesting. This is filled by the
         /// application. If positive, then the application is requesting specific extended
@@ -1723,6 +1735,8 @@ namespace NTwain.Data
     /// </summary>
     public partial class TWImageInfo
     {
+        internal TWImageInfo() { }
+
         /// <summary>
         /// The number of pixels per ICapUnits in the horizontal direction. The
         /// current unit is assumed to be "inches" unless it has been otherwise
@@ -1853,6 +1867,7 @@ namespace NTwain.Data
         /// <summary>
         /// Encodes which entity releases the buffer and how the buffer is referenced.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
         public MemoryFlags Flags { get { return (MemoryFlags)_flags; } set { _flags = (uint)value; } }
         /// <summary>
         /// The size of the buffer in bytes. Should always be an even number and wordaligned.
@@ -1939,7 +1954,7 @@ namespace NTwain.Data
         /// image, this field would hold 0x10001000. A CMYK image could hold
         /// 0x11111111.
         /// </summary>
-        public uint SubSampling { get { return _subSampling; } set { _subSampling = value; } }
+        public uint Subsampling { get { return _subSampling; } set { _subSampling = value; } }
         /// <summary>
         /// Number of color components in the image to be compressed.
         /// </summary>
@@ -2151,6 +2166,8 @@ namespace NTwain.Data
     /// </summary>
     public partial class TWSetupMemXfer
     {
+        internal TWSetupMemXfer() { }
+
         /// <summary>
         /// The size of the smallest transfer buffer, in bytes, that a Source can be
         /// successful with. This will typically be the number of bytes in an
@@ -2181,10 +2198,7 @@ namespace NTwain.Data
     /// </summary>
     public partial class TWStatus
     {
-        public TWStatus()
-        {
-
-        }
+        internal TWStatus() { }
         internal TWStatus(ushort code, ushort data)
         {
             _conditionCode = code;
@@ -2232,7 +2246,7 @@ namespace NTwain.Data
         /// Gets the actual string from the pointer. This may be incorrect.
         /// </summary>
         /// <returns></returns>
-        public string GetActualString()
+        public string TryGetString()
         {
             if (_uTF8string != IntPtr.Zero)
             {

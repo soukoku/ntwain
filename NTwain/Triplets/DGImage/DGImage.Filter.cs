@@ -17,6 +17,7 @@ namespace NTwain.Triplets
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
         public ReturnCode Get(out TWFilter filter)
         {
             Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.Filter, Message.Get);
@@ -29,6 +30,7 @@ namespace NTwain.Triplets
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
         public ReturnCode GetDefault(out TWFilter filter)
         {
             Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.Filter, Message.GetDefault);
@@ -53,6 +55,7 @@ namespace NTwain.Triplets
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
         public ReturnCode Reset(out TWFilter filter)
         {
             Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.Filter, Message.Reset);

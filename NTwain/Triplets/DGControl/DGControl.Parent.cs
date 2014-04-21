@@ -21,8 +21,8 @@ namespace NTwain.Triplets
         /// <returns></returns>
         public ReturnCode CloseDsm(IntPtr handle)
         {
-            Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.Parent, Message.CloseDsm);
-            var rc = Dsm.DsmEntry(Session.AppId, null, DataGroups.Control, DataArgumentType.Parent, Message.CloseDsm, ref handle);
+            Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.Parent, Message.CloseDSM);
+            var rc = Dsm.DsmEntry(Session.AppId, null, DataGroups.Control, DataArgumentType.Parent, Message.CloseDSM, ref handle);
             if (rc == ReturnCode.Success)
             {
                 Session.ChangeState(2, true);
@@ -39,8 +39,8 @@ namespace NTwain.Triplets
         /// <returns></returns>
         public ReturnCode OpenDsm(IntPtr handle)
         {
-            Session.VerifyState(1, 2, DataGroups.Control, DataArgumentType.Parent, Message.OpenDsm);
-            var rc = Dsm.DsmEntry(Session.AppId, null, DataGroups.Control, DataArgumentType.Parent, Message.OpenDsm, ref handle);
+            Session.VerifyState(1, 2, DataGroups.Control, DataArgumentType.Parent, Message.OpenDSM);
+            var rc = Dsm.DsmEntry(Session.AppId, null, DataGroups.Control, DataArgumentType.Parent, Message.OpenDSM, ref handle);
             if (rc == ReturnCode.Success)
             {
                 Session.ChangeState(3, true);

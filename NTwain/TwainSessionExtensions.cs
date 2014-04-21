@@ -1,4 +1,5 @@
 ﻿using NTwain.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,6 +18,8 @@ namespace NTwain
         /// <returns></returns>
         public static TWStatus GetManagerStatus(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             TWStatus stat;
             session.DGControl.Status.GetManager(out stat);
             return stat;
@@ -28,6 +31,8 @@ namespace NTwain
         /// <returns></returns>
         public static TWStatus GetSourceStatus(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             TWStatus stat;
             session.DGControl.Status.GetSource(out stat);
             return stat;
@@ -41,6 +46,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<TWIdentity> GetSources(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             List<TWIdentity> list = new List<TWIdentity>();
 
             // now enumerate
@@ -69,6 +76,8 @@ namespace NTwain
         /// <returns></returns>
         public static object GetCurrentCap(this ITwainOperation session, CapabilityId capId)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             using (TWCapability cap = new TWCapability(capId))
             {
                 var rc = session.DGControl.Capability.GetCurrent(cap);
@@ -109,6 +118,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<object> ReadMultiCapValues(this TWCapability capability, IList<object> toPopulate)
         {
+            if (capability == null) { throw new ArgumentNullException("capability"); }
+
             if (toPopulate == null) { toPopulate = new List<object>(); }
 
             var read = CapReadOut.ReadValue(capability);
@@ -149,6 +160,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<object> GetCapabilityValues(this ITwainOperation session, CapabilityId capabilityId)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             var list = new List<object>();
             using (TWCapability cap = new TWCapability(capabilityId))
             {
@@ -169,6 +182,8 @@ namespace NTwain
         /// <returns></returns>
         internal static IList<CapabilityId> GetCapabilities(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             return session.GetCapabilityValues(CapabilityId.CapSupportedCaps).CastToEnum<CapabilityId>(false);
         }
 
@@ -226,6 +241,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<FileFormat> CapGetImageFileFormat(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             return session.GetCapabilityValues(CapabilityId.ICapImageFileFormat).CastToEnum<FileFormat>(true);
         }
 
@@ -237,6 +254,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetImageFormat(this ITwainOperation session, FileFormat format)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             using (TWCapability formatCap = new TWCapability(CapabilityId.ICapImageFileFormat, new TWOneValue { Item = (uint)format, ItemType = ItemType.UInt16 }))
             {
                 return session.DGControl.Capability.Set(formatCap);
@@ -255,6 +274,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<PixelType> CapGetPixelTypes(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             return session.GetCapabilityValues(CapabilityId.ICapPixelType).CastToEnum<PixelType>(true);
         }
 
@@ -266,6 +287,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetPixelType(this ITwainOperation session, PixelType type)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             var one = new TWOneValue();
             one.Item = (uint)type;
             one.ItemType = ItemType.UInt16;
@@ -287,6 +310,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<XferMech> CapGetImageXferMechs(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             return session.GetCapabilityValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
         }
 
@@ -298,6 +323,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<XferMech> CapGetAudioXferMechs(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             return session.GetCapabilityValues(CapabilityId.ACapXferMech).CastToEnum<XferMech>(true);
         }
 
@@ -309,6 +336,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetImageXferMech(this ITwainOperation session, XferMech type)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             var one = new TWOneValue();
             one.Item = (uint)type;
             one.ItemType = ItemType.UInt16;
@@ -326,6 +355,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetAudioXferMech(this ITwainOperation session, XferMech type)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             var one = new TWOneValue();
             one.Item = (uint)type;
             one.ItemType = ItemType.UInt16;
@@ -347,6 +378,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<TWFix32> CapGetDPIs(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             var list = session.GetCapabilityValues(CapabilityId.ICapXResolution);
             return list.Select(o => o.ConvertToFix32()).ToList();
         }
@@ -359,6 +392,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetDPI(this ITwainOperation session, TWFix32 dpi)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             return CapSetDPI(session, dpi, dpi);
         }
 
@@ -371,6 +406,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetDPI(this ITwainOperation session, TWFix32 xDPI, TWFix32 yDPI)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             TWOneValue one = new TWOneValue();
             one.Item = (uint)xDPI;// ((uint)dpi) << 16;
             one.ItemType = ItemType.Fix32;
@@ -402,6 +439,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<SupportedSize> CapGetSupportedSizes(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             return session.GetCapabilityValues(CapabilityId.ICapSupportedSizes).CastToEnum<SupportedSize>(true);
         }
 
@@ -413,6 +452,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetSupportedSize(this ITwainOperation session, SupportedSize size)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             var one = new TWOneValue();
             one.Item = (uint)size;
             one.ItemType = ItemType.UInt16;
@@ -436,6 +477,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetAutoDeskew(this TwainSession session, bool useIt)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             var rc = ReturnCode.Failure;
             if (session.SupportedCaps.Contains(CapabilityId.ICapAutomaticDeskew))
             {
@@ -476,6 +519,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetAutoRotate(this ITwainSession session, bool useIt)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             var rc = ReturnCode.Failure;
             if (session.SupportedCaps.Contains(CapabilityId.ICapAutomaticRotate))
             {
@@ -514,6 +559,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetBorderDetection(this ITwainSession session, bool useIt)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             var rc = ReturnCode.Failure;
             if (session.SupportedCaps.Contains(CapabilityId.ICapAutomaticBorderDetection))
             {
@@ -562,6 +609,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetDuplex(this ITwainSession session, bool useIt)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             if (session.SourceId.ProtocolMajor >= 2)
             {
                 // twain 2 likes to use enum :(
@@ -596,6 +645,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetFeeder(this ITwainSession session, bool useIt)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             var rc = ReturnCode.Failure;
             if (session.SupportedCaps.Contains(CapabilityId.CapFeederEnabled))
             {

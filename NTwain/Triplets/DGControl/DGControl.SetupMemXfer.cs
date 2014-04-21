@@ -6,7 +6,8 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.SetupMemXfer"/>.
     /// </summary>
-	public sealed class SetupMemXfer : OpBase
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mem")]
+    public sealed class SetupMemXfer : OpBase
 	{
 		internal SetupMemXfer(ITwainSessionInternal session) : base(session) { }
 		/// <summary>
@@ -15,7 +16,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="setupMemXfer">The setup mem xfer.</param>
 		/// <returns></returns>
-		public ReturnCode Get(out TWSetupMemXfer setupMemXfer)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Get(out TWSetupMemXfer setupMemXfer)
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupMemXfer, Message.Get);
 			setupMemXfer = new TWSetupMemXfer();

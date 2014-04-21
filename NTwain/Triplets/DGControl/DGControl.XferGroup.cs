@@ -16,6 +16,7 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="value">The value.</param>
 		/// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "0#")]
         public ReturnCode Get(ref DataGroups value)
 		{
             Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.XferGroup, Message.Get);

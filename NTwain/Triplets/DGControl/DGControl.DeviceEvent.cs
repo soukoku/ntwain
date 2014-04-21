@@ -9,7 +9,8 @@ namespace NTwain.Triplets
 	public sealed class DeviceEvent : OpBase
 	{
 		internal DeviceEvent(ITwainSessionInternal session) : base(session) { }
-		public ReturnCode Get(out TWDeviceEvent sourceDeviceEvent)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        public ReturnCode Get(out TWDeviceEvent sourceDeviceEvent)
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.DeviceEvent, Message.Get);
 			sourceDeviceEvent = new TWDeviceEvent();
