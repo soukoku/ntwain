@@ -1,16 +1,17 @@
-﻿using NTwain.Properties;
+﻿using NTwain.Data;
+using NTwain.Properties;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace NTwain.Data
+namespace NTwain
 {
     /// <summary>
     /// The one-stop class for reading TWAIN cap values.
     /// This contains all the properties for the 4 container types.
     /// </summary>
-    public class CapReadOut
+    public class CapabilityReadOut
     {
         /// <summary>
         /// Reads the value from a <see cref="TWCapability"/> that was returned
@@ -24,7 +25,7 @@ namespace NTwain.Data
         /// or
         /// capability
         /// </exception>
-        public static CapReadOut ReadValue(TWCapability capability)
+        public static CapabilityReadOut ReadValue(TWCapability capability)
         {
             if (capability == null) { throw new ArgumentNullException("capability"); }
             if (capability.Container == IntPtr.Zero) { throw new ArgumentException(Resources.CapHasNoData, "capability"); }
@@ -36,22 +37,22 @@ namespace NTwain.Data
                 switch (capability.ContainerType)
                 {
                     case ContainerType.Array:
-                        return new CapReadOut
+                        return new CapabilityReadOut
                         {
                             ContainerType = capability.ContainerType,
                         }.ReadArrayValue(baseAddr);
                     case ContainerType.Enum:
-                        return new CapReadOut
+                        return new CapabilityReadOut
                         {
                             ContainerType = capability.ContainerType,
                         }.ReadEnumValue(baseAddr);
                     case ContainerType.OneValue:
-                        return new CapReadOut
+                        return new CapabilityReadOut
                         {
                             ContainerType = capability.ContainerType,
                         }.ReadOneValue(baseAddr);
                     case ContainerType.Range:
-                        return new CapReadOut
+                        return new CapabilityReadOut
                         {
                             ContainerType = capability.ContainerType,
                         }.ReadRangeValue(baseAddr);
@@ -160,7 +161,7 @@ namespace NTwain.Data
 
         #region reader methods
 
-        CapReadOut ReadOneValue(IntPtr baseAddr)
+        CapabilityReadOut ReadOneValue(IntPtr baseAddr)
         {
             int offset = 0;
             ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
@@ -169,7 +170,7 @@ namespace NTwain.Data
             return this;
         }
 
-        CapReadOut ReadArrayValue(IntPtr baseAddr)
+        CapabilityReadOut ReadArrayValue(IntPtr baseAddr)
         {
             int offset = 0;
             ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
@@ -187,7 +188,7 @@ namespace NTwain.Data
             return this;
         }
 
-        CapReadOut ReadEnumValue(IntPtr baseAddr)
+        CapabilityReadOut ReadEnumValue(IntPtr baseAddr)
         {
             int offset = 0;
             ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
@@ -209,7 +210,7 @@ namespace NTwain.Data
             return this;
         }
 
-        CapReadOut ReadRangeValue(IntPtr baseAddr)
+        CapabilityReadOut ReadRangeValue(IntPtr baseAddr)
         {
             int offset = 0;
             ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);

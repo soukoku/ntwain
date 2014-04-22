@@ -12,7 +12,8 @@ namespace NTwain
         /// Gets pointer to the complete data if the transfer was native.
         /// The data will be freed once the event handler ends
         /// so consumers must complete whatever processing before then.
-        /// For image type this data is DIB (Windows), PICT (old Mac), and TIFF (Linux/OSX).
+        /// For image type this data is DIB (Windows) or TIFF (Linux).
+        /// This pointer is already locked for the duration of this event.
         /// </summary>
         /// <value>The data pointer.</value>
         public IntPtr NativeData { get; internal set; }
@@ -33,6 +34,7 @@ namespace NTwain
         /// <value>
         /// The memory data.
         /// </value>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public byte[] MemData { get; internal set; }
 
         /// <summary>

@@ -7,7 +7,6 @@ namespace NTwain
 {
     /// <summary>
     /// Provides methods for managing memory on data exchanged with twain sources using old win32 methods.
-    /// This should only be used after the DSM has been opened.
     /// </summary>
     class WinMemoryManager : IMemoryManager
     {

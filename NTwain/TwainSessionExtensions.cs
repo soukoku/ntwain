@@ -74,7 +74,7 @@ namespace NTwain
         /// <param name="session">The session.</param>
         /// <param name="capId">The cap identifier.</param>
         /// <returns></returns>
-        public static QuerySupport GetCapSupport(this ITwainOperation session, CapabilityId capId)
+        public static QuerySupport GetCapabilitySupport(this ITwainOperation session, CapabilityId capId)
         {
             if (session == null) { throw new ArgumentNullException("session"); }
 
@@ -84,7 +84,7 @@ namespace NTwain
                 var rc = session.DGControl.Capability.QuerySupport(cap);
                 if (rc == ReturnCode.Success)
                 {
-                    var read = CapReadOut.ReadValue(cap);
+                    var read = CapabilityReadOut.ReadValue(cap);
 
                     if (read.ContainerType == ContainerType.OneValue)
                     {
@@ -110,7 +110,7 @@ namespace NTwain
                 var rc = session.DGControl.Capability.GetCurrent(cap);
                 if (rc == ReturnCode.Success)
                 {
-                    var read = CapReadOut.ReadValue(cap);
+                    var read = CapabilityReadOut.ReadValue(cap);
 
                     switch (read.ContainerType)
                     {
@@ -149,7 +149,7 @@ namespace NTwain
 
             if (toPopulate == null) { toPopulate = new List<object>(); }
 
-            var read = CapReadOut.ReadValue(capability);
+            var read = CapabilityReadOut.ReadValue(capability);
 
             switch (read.ContainerType)
             {
@@ -224,6 +224,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<XferMech> CapGetImageXferMech(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             return session.GetCapabilityValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
         }
 
@@ -239,6 +241,8 @@ namespace NTwain
         /// <returns></returns>
         public static IList<CompressionType> CapGetCompression(this ITwainOperation session)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             return session.GetCapabilityValues(CapabilityId.ICapCompression).CastToEnum<CompressionType>(true);
         }
 
@@ -250,6 +254,8 @@ namespace NTwain
         /// <returns></returns>
         public static ReturnCode CapSetImageCompression(this ITwainOperation session, CompressionType compression)
         {
+            if (session == null) { throw new ArgumentNullException("session"); }
+
             using (TWCapability compressCap = new TWCapability(CapabilityId.ICapCompression, new TWOneValue { Item = (uint)compression, ItemType = ItemType.UInt16 }))
             {
                 return session.DGControl.Capability.Set(compressCap);
@@ -500,7 +506,7 @@ namespace NTwain
         /// Change the auto deskew flag for the current source.
         /// </summary>
         /// <param name="session">The session.</param>
-        /// <param name="useIt">if set to <c>true</c> [use it].</param>
+        /// <param name="useIt">if set to <c>true</c> use it.</param>
         /// <returns></returns>
         public static ReturnCode CapSetAutoDeskew(this TwainSession session, bool useIt)
         {
@@ -542,7 +548,7 @@ namespace NTwain
         /// Change the auto rotate flag for the current source.
         /// </summary>
         /// <param name="session">The session.</param>
-        /// <param name="useIt">if set to <c>true</c> [use it].</param>
+        /// <param name="useIt">if set to <c>true</c> use it.</param>
         /// <returns></returns>
         public static ReturnCode CapSetAutoRotate(this ITwainSession session, bool useIt)
         {
@@ -582,7 +588,7 @@ namespace NTwain
         /// Change the auto border detection flag for the current source.
         /// </summary>
         /// <param name="session">The session.</param>
-        /// <param name="useIt">if set to <c>true</c> [use it].</param>
+        /// <param name="useIt">if set to <c>true</c> use it.</param>
         /// <returns></returns>
         public static ReturnCode CapSetBorderDetection(this ITwainSession session, bool useIt)
         {
@@ -632,7 +638,7 @@ namespace NTwain
         /// Change the duplex flag for the current source.
         /// </summary>
         /// <param name="session">The session.</param>
-        /// <param name="useIt">if set to <c>true</c> [use it].</param>
+        /// <param name="useIt">if set to <c>true</c> to use it.</param>
         /// <returns></returns>
         public static ReturnCode CapSetDuplex(this ITwainSession session, bool useIt)
         {
@@ -668,7 +674,7 @@ namespace NTwain
         /// Change the use feeder flag for the current source.
         /// </summary>
         /// <param name="session">The session.</param>
-        /// <param name="useIt">if set to <c>true</c> [use it].</param>
+        /// <param name="useIt">if set to <c>true</c> use it.</param>
         /// <returns></returns>
         public static ReturnCode CapSetFeeder(this ITwainSession session, bool useIt)
         {

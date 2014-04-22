@@ -11,14 +11,6 @@ namespace NTwain
     /// </summary>
     public static class Platform
     {
-        // Change pinvoke base on where running in 64bit mode.
-        // Theoretically [DllImport("twaindsm", EntryPoint = "#1")] 
-        // works on both 32 and 64 bit
-        // but it's not installed on either system by default.
-        // A proper 64 bit twain driver would've installed it so  
-        // in essence it only exists in 64 bit systems and thus
-        // the 2 sets of identical pinvokes for windows :(
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static Platform()
         {
@@ -69,6 +61,7 @@ namespace NTwain
 
         /// <summary>
         /// Gets the <see cref="IMemoryManager"/> for communicating with data sources.
+        /// This should only be used after the DSM has been opened.
         /// </summary>
         /// <value>
         /// The memory manager.

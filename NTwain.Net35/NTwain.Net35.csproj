@@ -43,14 +43,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\NTwain\CapabilityReadout.cs">
+      <Link>CapabilityReadout.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\DataTransferredEventArgs.cs">
       <Link>DataTransferredEventArgs.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\Data\CapReadOut.cs">
-      <Link>Data\CapReadOut.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\Data\SourceEnableMode.cs">
-      <Link>Data\SourceEnableMode.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Data\TwainTypes.cs">
       <Link>Data\TwainTypes.cs</Link>
@@ -64,8 +61,8 @@
     <Compile Include="..\NTwain\Data\TypeReader.cs">
       <Link>Data\TypeReader.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\Data\ValueConverter.cs">
-      <Link>Data\ValueConverter.cs</Link>
+    <Compile Include="..\NTwain\Data\ValueExtensions.cs">
+      <Link>Data\ValueExtensions.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\DeviceEventArgs.cs">
       <Link>DeviceEventArgs.cs</Link>
@@ -109,9 +106,6 @@
     <Compile Include="..\NTwain\ITwainSession.cs">
       <Link>ITwainSession.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\ITwainState.cs">
-      <Link>ITwainState.cs</Link>
-    </Compile>
     <Compile Include="..\NTwain\Platform.cs">
       <Link>Platform.cs</Link>
     </Compile>
@@ -126,6 +120,9 @@
     </Compile>
     <Compile Include="..\NTwain\Properties\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\SourceEnableMode.cs">
+      <Link>SourceEnableMode.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\TransferErrorEventArgs.cs">
       <Link>TransferErrorEventArgs.cs</Link>

@@ -52,7 +52,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\CapReadOut.cs" />
+    <Compile Include="CapabilityReadout.cs" />
     <Compile Include="Data\TypeReader.cs" />
     <Compile Include="Data\TwainTypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />
@@ -66,7 +66,6 @@
     <Compile Include="Internals\WrappedManualResetEvent.cs" />
     <Compile Include="ITwainOperation.cs" />
     <Compile Include="ITwainSession.cs" />
-    <Compile Include="ITwainState.cs" />
     <Compile Include="Internals\WinMemoryManager.cs" />
     <Compile Include="Internals\MessageLoop.cs" />
     <Compile Include="Internals\UnsafeNativeMethods.cs" />
@@ -130,8 +129,8 @@
     <Compile Include="Triplets\Dsm.cs" />
     <Compile Include="TwainException.cs" />
     <Compile Include="Data\TwainValues.cs" />
-    <Compile Include="Data\SourceEnableMode.cs" />
-    <Compile Include="Data\ValueConverter.cs" />
+    <Compile Include="SourceEnableMode.cs" />
+    <Compile Include="Data\ValueExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NTwain.nuspec" />

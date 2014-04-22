@@ -16,7 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Others", "Others", "{4CE0B9ED-2CD1-440F-B4EC-35ECA6D61EFE}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.txt = LICENSE.txt
-		README.markdown = README.markdown
+		README.md = README.md
 		Spec\twain2.3.h = Spec\twain2.3.h
 	EndProjectSection
 EndProject

@@ -17,12 +17,33 @@ namespace NTwain
         public TwainException() { }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="TwainException"/> class.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        public TwainException(string message)
+            : base(message)
+        {
+
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TwainException" /> class.
         /// </summary>
         /// <param name="returnCode">The return code.</param>
         /// <param name="message">The message.</param>
         public TwainException(ReturnCode returnCode, string message)
             : this(returnCode, message, null) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TwainException"/> class.
+        /// </summary>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        public TwainException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainException" /> class.

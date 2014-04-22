@@ -39,32 +39,6 @@ namespace NTwain
         TWIdentity _appId;
         TWUserInterface _twui;
 
-        static readonly CapabilityId[] _emptyCapList = new CapabilityId[0];
-
-        private IList<CapabilityId> _supportedCaps;
-        /// <summary>
-        /// Gets the supported caps for the currently open source.
-        /// </summary>
-        /// <value>
-        /// The supported caps.
-        /// </value>
-        public IList<CapabilityId> SupportedCaps
-        {
-            get
-            {
-                if (_supportedCaps == null && State > 3)
-                {
-                    _supportedCaps = this.GetCapabilities();
-                }
-                return _supportedCaps ?? _emptyCapList;
-            }
-            private set
-            {
-                _supportedCaps = value;
-                OnPropertyChanged("SupportedCaps");
-            }
-        }
-
         /// <summary>
         /// Gets or sets the optional synchronization context.
         /// This allows events to be raised on the thread
@@ -129,7 +103,7 @@ namespace NTwain
 
         #endregion
 
-        #region ITwainState Members
+        #region ITwainSession Members
 
         /// <summary>
         /// Gets the source id used for the session.
@@ -149,7 +123,7 @@ namespace NTwain
         public int State
         {
             get { return _state; }
-            internal protected set
+            private set
             {
                 if (value > 0 && value < 8)
                 {
@@ -157,6 +131,33 @@ namespace NTwain
                     OnPropertyChanged("State");
                     SafeAsyncSyncableRaiseOnEvent(OnStateChanged, StateChanged);
                 }
+            }
+        }
+
+
+        static readonly CapabilityId[] _emptyCapList = new CapabilityId[0];
+
+        private IList<CapabilityId> _supportedCaps;
+        /// <summary>
+        /// Gets the supported caps for the currently open source.
+        /// </summary>
+        /// <value>
+        /// The supported caps.
+        /// </value>
+        public IList<CapabilityId> SupportedCaps
+        {
+            get
+            {
+                if (_supportedCaps == null && State > 3)
+                {
+                    _supportedCaps = this.GetCapabilities();
+                }
+                return _supportedCaps ?? _emptyCapList;
+            }
+            private set
+            {
+                _supportedCaps = value;
+                OnPropertyChanged("SupportedCaps");
             }
         }
 
@@ -218,7 +219,8 @@ namespace NTwain
         /// <param name="propertyName">Name of the property.</param>
         protected void OnPropertyChanged(string propertyName)
         {
-            if (SynchronizationContext == null)
+            var syncer = SynchronizationContext;
+            if (syncer == null)
             {
                 try
                 {
@@ -229,7 +231,7 @@ namespace NTwain
             }
             else
             {
-                SynchronizationContext.Post(o =>
+                syncer.Post(o =>
                 {
                     try
                     {
@@ -292,6 +294,10 @@ namespace NTwain
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
 
                 rc = DGControl.Parent.CloseDsm(MessageLoop.Instance.LoopHandle);
+                if (rc == ReturnCode.Success)
+                {
+                    Platform.MemoryManager = null;
+                }
             });
             return rc;
         }
@@ -313,8 +319,10 @@ namespace NTwain
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
 
-                var source = new TWIdentity();
-                source.ProductName = sourceProductName;
+                var source = new TWIdentity
+                {
+                    ProductName = sourceProductName
+                };
 
                 rc = DGControl.Identity.OpenDS(source);
             });
@@ -351,7 +359,6 @@ namespace NTwain
         /// <param name="modal">if set to <c>true</c> any driver UI will display as modal.</param>
         /// <param name="windowHandle">The window handle if modal.</param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException">context</exception>
         public ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle)
         {
             var rc = ReturnCode.Failure;
@@ -397,6 +404,11 @@ namespace NTwain
                 else
                 {
                     rc = DGControl.UserInterface.EnableDS(_twui);
+                }
+
+                if (rc != ReturnCode.Success)
+                {
+                    _callbackObj = null;
                 }
             });
             return rc;
@@ -501,7 +513,6 @@ namespace NTwain
         /// Occurs when data has been transferred.
         /// </summary>
         public event EventHandler<DataTransferredEventArgs> DataTransferred;
-
         /// <summary>
         /// Occurs when an error has been encountered during transfer.
         /// </summary>
@@ -509,7 +520,8 @@ namespace NTwain
 
 
         /// <summary>
-        /// Raises event and if applicable marshal it asynchronously to the <see cref="SynchronizationContext"/> thread.
+        /// Raises event and if applicable marshal it asynchronously to the <see cref="SynchronizationContext"/> thread
+        /// without exceptions.
         /// </summary>
         /// <param name="onEventFunc">The on event function.</param>
         /// <param name="handler">The handler.</param>
@@ -540,7 +552,8 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Raises event and if applicable marshal it synchronously to the <see cref="SynchronizationContext" /> thread.
+        /// Raises event and if applicable marshal it synchronously to the <see cref="SynchronizationContext" /> thread
+        /// without exceptions.
         /// </summary>
         /// <typeparam name="TEventArgs">The type of the event arguments.</typeparam>
         /// <param name="onEventFunc">The on event function.</param>
@@ -597,19 +610,19 @@ namespace NTwain
         /// Called when a data transfer is ready.
         /// </summary>
         /// <param name="e">The <see cref="TransferReadyEventArgs"/> instance containing the event data.</param>
-        internal protected virtual void OnTransferReady(TransferReadyEventArgs e) { }
+        protected virtual void OnTransferReady(TransferReadyEventArgs e) { }
 
         /// <summary>
         /// Called when data has been transferred.
         /// </summary>
         /// <param name="e">The <see cref="DataTransferredEventArgs"/> instance containing the event data.</param>
-        internal protected virtual void OnDataTransferred(DataTransferredEventArgs e) { }
+        protected virtual void OnDataTransferred(DataTransferredEventArgs e) { }
 
         /// <summary>
         /// Called when an error has been encountered during transfer.
         /// </summary>
         /// <param name="e">The <see cref="TransferErrorEventArgs"/> instance containing the event data.</param>
-        internal protected virtual void OnTransferError(TransferErrorEventArgs e) { }
+        protected virtual void OnTransferError(TransferErrorEventArgs e) { }
 
         #endregion
 
@@ -661,7 +674,7 @@ namespace NTwain
             return ReturnCode.Failure;
         }
 
-        // method that handles msg from the source, whether it's from wndproc or callbacks
+        // final method that handles msg from the source, whether it's from wndproc or callbacks
         void HandleSourceMsg(Message msg)
         {
             switch (msg)

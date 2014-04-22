@@ -37,7 +37,7 @@
   <ItemGroup>
     <Reference Include="CommonWin32, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a0a4edcfe233918d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\CommonWin32.2.0.5\lib\net35-Client\CommonWin32.dll</HintPath>
+      <HintPath>..\..\packages\CommonWin32.2.0.5.2\lib\net35-Client\CommonWin32.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />

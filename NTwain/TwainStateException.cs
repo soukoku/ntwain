@@ -8,6 +8,7 @@ namespace NTwain
     /// <summary>
     /// Represents an exception from calling a TWAIN triplet operation in the wrong state.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
     [Serializable]
     public class TwainStateException : TwainException
     {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace NTwain.Data
@@ -67,7 +68,7 @@ namespace NTwain.Data
                     val = ReadString(baseAddress, offset, TwainConst.String64 - 2);
                     break;
                 case ItemType.Handle:
-                    val = new IntPtr(baseAddress.ToInt64() + offset);
+                    val = Marshal.ReadIntPtr(baseAddress, offset);
                     break;
             }
             offset += GetItemTypeSize(type);
@@ -93,6 +94,28 @@ namespace NTwain.Data
             //return sb.ToString();
         }
 
+        static readonly Dictionary<ItemType, int> __sizes = GenerateSizes();
+
+        private static Dictionary<ItemType, int> GenerateSizes()
+        {
+            var sizes = new Dictionary<ItemType, int>();
+            sizes[ItemType.Int8] = 1;
+            sizes[ItemType.UInt8] = 1;
+            sizes[ItemType.Int16] = 2;
+            sizes[ItemType.UInt16] = 2;
+            sizes[ItemType.Bool] = 2;
+            sizes[ItemType.Int32] = 4;
+            sizes[ItemType.UInt32] = 4;
+            sizes[ItemType.Fix32] = 4;
+            sizes[ItemType.Frame] = 16;
+            sizes[ItemType.String32] = TwainConst.String32;
+            sizes[ItemType.String64] = TwainConst.String64;
+            sizes[ItemType.String128] = TwainConst.String128;
+            sizes[ItemType.String255] = TwainConst.String255;
+            sizes[ItemType.Handle] = IntPtr.Size;
+
+            return sizes;
+        }
 
         /// <summary>
         /// Gets the byte size of the item type.
@@ -101,31 +124,9 @@ namespace NTwain.Data
         /// <returns></returns>
         public static int GetItemTypeSize(ItemType type)
         {
-            switch (type)
+            if (__sizes.ContainsKey(type))
             {
-                case ItemType.Int8:
-                case ItemType.UInt8:
-                    return 1;
-                case ItemType.UInt16:
-                case ItemType.Int16:
-                case ItemType.Bool:
-                    return 2;
-                case ItemType.Int32:
-                case ItemType.UInt32:
-                case ItemType.Fix32:
-                    return 4;
-                case ItemType.Frame:
-                    return 16;
-                case ItemType.String32:
-                    return TwainConst.String32;
-                case ItemType.String64:
-                    return TwainConst.String64;
-                case ItemType.String128:
-                    return TwainConst.String128;
-                case ItemType.String255:
-                    return TwainConst.String255;
-                case ItemType.Handle:
-                    return IntPtr.Size;
+                return __sizes[type];
             }
             return 0;
         }

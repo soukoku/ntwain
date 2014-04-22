@@ -8,24 +8,50 @@ namespace NTwain.Data
     /// <summary>
     /// Utility on converting (possibly bad) integer values to enum values.
     /// </summary>
-    public static class ValueConverter
+    public static class ValueExtensions
     {
-        public static IList<T> CastToEnum<T>(this IEnumerable<object> list) where T : struct,IConvertible
+        /// <summary>
+        /// Casts a list of objects to a list of specified enum.
+        /// </summary>
+        /// <typeparam name="TEnum">The type of the enum.</typeparam>
+        /// <param name="list">The list.</param>
+        /// <returns></returns>
+        public static IList<TEnum> CastToEnum<TEnum>(this IEnumerable<object> list) where TEnum : struct,IConvertible
         {
-            return list.CastToEnum<T>(true);
+            return list.CastToEnum<TEnum>(true);
         }
-        public static IList<T> CastToEnum<T>(this IEnumerable<object> list, bool tryUpperWord) where T : struct,IConvertible
+        /// <summary>
+        /// Casts a list of objects to a list of specified enum.
+        /// </summary>
+        /// <typeparam name="TEnum">The type of the enum.</typeparam>
+        /// <param name="list">The list.</param>
+        /// <param name="tryUpperWord">set to <c>true</c> for working with bad values.</param>
+        /// <returns></returns>
+        public static IList<TEnum> CastToEnum<TEnum>(this IEnumerable<object> list, bool tryUpperWord) where TEnum : struct,IConvertible
         {
-            return list.Select(o => o.ConvertToEnum<T>(tryUpperWord)).ToList();
+            return list.Select(o => o.ConvertToEnum<TEnum>(tryUpperWord)).ToList();
         }
 
-        public static T ConvertToEnum<T>(this object value) where T : struct,IConvertible
+        /// <summary>
+        /// Casts an objects to the specified enum.
+        /// </summary>
+        /// <typeparam name="TEnum">The type of the enum.</typeparam>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public static TEnum ConvertToEnum<TEnum>(this object value) where TEnum : struct,IConvertible
         {
-            return ConvertToEnum<T>(value, true);
+            return ConvertToEnum<TEnum>(value, true);
         }
-        public static T ConvertToEnum<T>(this object value, bool tryUpperWord) where T : struct,IConvertible
+        /// <summary>
+        /// Casts an objects to the specified enum.
+        /// </summary>
+        /// <typeparam name="TEnum">The type of the enum.</typeparam>
+        /// <param name="value">The value.</param>
+        /// <param name="tryUpperWord">if set to <c>true</c> [try upper word].</param>
+        /// <returns></returns>
+        public static TEnum ConvertToEnum<TEnum>(this object value, bool tryUpperWord) where TEnum : struct,IConvertible
         {
-            var returnType = typeof(T);
+            var returnType = typeof(TEnum);
 
             // standard int values
             if (returnType.IsEnum)
@@ -41,22 +67,22 @@ namespace NTwain.Data
                         var enumVal = GetLowerWord(intVal);
                         if (!Enum.IsDefined(returnType, enumVal))
                         {
-                            return (T)Enum.ToObject(returnType, GetUpperWord(intVal));
+                            return (TEnum)Enum.ToObject(returnType, GetUpperWord(intVal));
                         }
                     }
                 }
                 // this may work better?
-                return (T)Enum.ToObject(returnType, value);
+                return (TEnum)Enum.ToObject(returnType, value);
                 //// cast to underlying type first then to the enum
                 //return (T)Convert.ChangeType(value, rawType);
             }
             else if (typeof(IConvertible).IsAssignableFrom(returnType))
             {
                 // for regular integers and whatnot
-                return (T)Convert.ChangeType(value, returnType, CultureInfo.InvariantCulture);
+                return (TEnum)Convert.ChangeType(value, returnType, CultureInfo.InvariantCulture);
             }
             // return as-is from cap. if caller made a mistake then there should be exceptions
-            return (T)value;
+            return (TEnum)value;
         }
 
         static ushort GetLowerWord(uint value)

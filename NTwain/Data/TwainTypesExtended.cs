@@ -486,10 +486,12 @@ namespace NTwain.Data
         /// <summary>
         /// Channel-specific transform parameters.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public TWDecodeFunction[] Decode { get { return _decode; } }//set { _decode = value; } }
         /// <summary>
         /// Flattened 3x3 matrix that specifies how channels are mixed in.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public TWFix32[] Mix { get { return _mix; } }//set { _mix = value; } }
 
         /// <summary>
@@ -527,6 +529,7 @@ namespace NTwain.Data
         /// <summary>
         /// Array of ItemType values starts here.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] ItemList
         {
             get { return _itemList; }
@@ -1060,6 +1063,7 @@ namespace NTwain.Data
         /// Optional table look-up values used by the decode function. Samples
         /// are ordered sequentially and end-to-end as A, B, C, L, M, and N.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public TWFix32[] Samples { get { return _samples; } }
     }
 
@@ -1251,6 +1255,7 @@ namespace NTwain.Data
         /// <summary>
         /// The enumerated list: one value resides within each array element.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] ItemList
         {
             get { return _itemList; }
@@ -1352,6 +1357,7 @@ namespace NTwain.Data
         /// <summary>
         /// Array of information.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public TWInfo[] Info { get { return _info; } }
 
         #region IDisposable Members
@@ -1493,6 +1499,7 @@ namespace NTwain.Data
         /// Transfer curve descriptors. All three channels (Channel1, Channel2
         /// and Channel3) must contain the same value for every entry.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public TWElement8[] Response { get { return _response; } set { _response = value; } }
     }
 
@@ -1772,6 +1779,7 @@ namespace NTwain.Data
         /// bits. However, both the application and Source must simultaneously
         /// support sample sizes greater than 8 bits per color.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public short[] BitsPerSample { get { return _bitsPerSample; } }
         /// <summary>
         /// The number of bits in each image pixel (or bit depth). This value is
@@ -1969,23 +1977,28 @@ namespace NTwain.Data
         /// <summary>
         /// Mapping of components to Quantization tables.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public ushort[] QuantMap { get { return _quantMap; } set { _quantMap = value; } }
         /// <summary>
         /// Quantization tables.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public TWMemory[] QuantTable { get { return _quantTable; } set { _quantTable = value; } }
         /// <summary>
         /// Mapping of components to Huffman tables. Null entries signify
         /// selection of the default tables.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public ushort[] HuffmanMap { get { return _huffmanMap; } set { _huffmanMap = value; } }
         /// <summary>
         /// DC Huffman tables. Null entries signify selection of the default tables.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public TWMemory[] HuffmanDC { get { return _huffmanDC; } set { _huffmanDC = value; } }
         /// <summary>
         /// AC Huffman tables. Null entries signify selection of the default tables.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public TWMemory[] HuffmanAC { get { return _huffmanAC; } set { _huffmanAC = value; } }
     }
 
@@ -2023,6 +2036,7 @@ namespace NTwain.Data
         /// <summary>
         /// Array of palette values.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public TWElement8[] Colors { get { return _colors; } set { _colors = value; } }
     }
 
@@ -2134,6 +2148,7 @@ namespace NTwain.Data
         /// Transfer curve descriptors. To minimize color shift problems, writing the
         /// same values into each channel is desirable.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public TWElement8[] Response { get { return _response; } set { _response = value; } }
     }
 
