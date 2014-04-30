@@ -21,7 +21,7 @@ namespace NTwain
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSession" /> class.
         /// </summary>
-        /// <param name="appId">The app id.</param>
+        /// <param name="appId">The app id that represents calling application.</param>
         /// <exception cref="System.ArgumentNullException"></exception>
         public TwainSession(TWIdentity appId)
         {
