@@ -88,7 +88,7 @@ namespace NTwain
         public ItemType ItemType { get; private set; }
 
         /// <summary>
-        /// Gets the one value if container is <see cref="NTwain.ContainerType.Array"/>.
+        /// Gets the one value if container is <see cref="NTwain.Data.ContainerType.Array"/>.
         /// </summary>
         /// <value>
         /// The one value.
@@ -96,7 +96,7 @@ namespace NTwain
         public object OneValue { get; private set; }
 
         /// <summary>
-        /// Gets the collection values if container is <see cref="NTwain.ContainerType.Enum"/> or <see cref="NTwain.ContainerType.Range"/> .
+        /// Gets the collection values if container is <see cref="NTwain.Data.ContainerType.Enum"/> or <see cref="NTwain.Data.ContainerType.Range"/> .
         /// </summary>
         /// <value>
         /// The collection values.
@@ -108,11 +108,11 @@ namespace NTwain
         #region enum prop
 
         /// <summary>
-        /// Gets the current value index if container is <see cref="NTwain.ContainerType.Enum"/>.
+        /// Gets the current value index if container is <see cref="NTwain.Data.ContainerType.Enum"/>.
         /// </summary>
         public int EnumCurrentIndex { get; private set; }
         /// <summary>
-        /// Gets the default value index if container is <see cref="NTwain.ContainerType.Enum" />.
+        /// Gets the default value index if container is <see cref="NTwain.Data.ContainerType.Enum" />.
         /// </summary>
         public int EnumDefaultIndex { get; private set; }
 
@@ -121,14 +121,14 @@ namespace NTwain
         #region range prop
 
         /// <summary>
-        /// Gets the current value if container is <see cref="NTwain.ContainerType.Range" />.
+        /// Gets the current value if container is <see cref="NTwain.Data.ContainerType.Range" />.
         /// </summary>
         /// <value>
         /// The range current value.
         /// </value>
         public object RangeCurrentValue { get; private set; }
         /// <summary>
-        /// Gets the default value if container is <see cref="NTwain.ContainerType.Range" />.
+        /// Gets the default value if container is <see cref="NTwain.Data.ContainerType.Range" />.
         /// </summary>
         /// <value>
         /// The range default value.

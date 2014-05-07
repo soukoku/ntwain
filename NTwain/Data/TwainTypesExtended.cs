@@ -1440,8 +1440,8 @@ namespace NTwain.Data
         public FileType FileType { get { return (FileType)_fileType; } set { _fileType = (int)value; } }
 
         /// <summary>
-        /// If <see cref="NTwain.Values.FileType.Directory"/>, total size of media in bytes.
-        /// If <see cref="NTwain.Values.FileType.Image"/>, size of image in bytes.
+        /// If <see cref="NTwain.Data.FileType.Directory"/>, total size of media in bytes.
+        /// If <see cref="NTwain.Data.FileType.Image"/>, size of image in bytes.
         /// </summary>
         /// <value>
         /// The size.
@@ -1470,14 +1470,14 @@ namespace NTwain.Data
         /// </summary>
         public int NewImageSize { get { return _newImageSize; } set { _newImageSize = value; } }
         /// <summary>
-        /// If applicable, return the number of <see cref="NTwain.Values.FileType.Image"/> files on the file system including those in all sub-directories.
+        /// If applicable, return the number of <see cref="NTwain.Data.FileType.Image"/> files on the file system including those in all sub-directories.
         /// </summary>
         /// <value>
         /// The number of files.
         /// </value>
         public uint NumberOfFiles { get { return _numberOfFiles; } set { _numberOfFiles = value; } }
         /// <summary>
-        /// The number of audio snippets associated with a file of type <see cref="NTwain.Values.FileType.Image"/>.
+        /// The number of audio snippets associated with a file of type <see cref="NTwain.Data.FileType.Image"/>.
         /// </summary>
         /// <value>
         /// The number of snippets.
