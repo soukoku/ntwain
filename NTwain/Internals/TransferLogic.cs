@@ -65,14 +65,13 @@ namespace NTwain.Internals
                         xferGroup = DataGroups.None;
                     }
 
-                    if ((xferGroup & DataGroups.Image) == DataGroups.Image)
+                    // some DS end up getting none but we will assume it's image
+                    if (xferGroup == DataGroups.None ||
+                        (xferGroup & DataGroups.Image) == DataGroups.Image)
                     {
                         var mech = session.GetCurrentCap(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>();
                         switch (mech)
                         {
-                            case XferMech.Native:
-                                DoImageNativeXfer(session);
-                                break;
                             case XferMech.Memory:
                                 DoImageMemoryXfer(session);
                                 break;
@@ -82,6 +81,11 @@ namespace NTwain.Internals
                             case XferMech.MemFile:
                                 DoImageMemoryFileXfer(session);
                                 break;
+                            case XferMech.Native:
+                            default: // always assume native
+                                DoImageNativeXfer(session);
+                                break;
+
                         }
                     }
                     if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
@@ -89,11 +93,12 @@ namespace NTwain.Internals
                         var mech = session.GetCurrentCap(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
                         switch (mech)
                         {
-                            case XferMech.Native:
-                                DoAudioNativeXfer(session);
-                                break;
                             case XferMech.File:
                                 DoAudioFileXfer(session);
+                                break;
+                            case XferMech.Native:
+                            default: // always assume native
+                                DoAudioNativeXfer(session);
                                 break;
                         }
                     }

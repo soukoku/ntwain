@@ -631,7 +631,7 @@ namespace NTwain
         void HandleWndProcMessage(ref WindowsHook.MESSAGE winMsg, ref bool handled)
         {
             // this handles the message from a typical WndProc message loop and check if it's from the TWAIN source.
-            if (State >= 5)
+            if (_state >= 5)
             {
                 // transform it into a pointer for twain
                 IntPtr msgPtr = IntPtr.Zero;
@@ -659,7 +659,7 @@ namespace NTwain
 
         ReturnCode HandleCallback(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
         {
-            if (origin != null && SourceId != null && origin.Id == SourceId.Id)
+            if (origin != null && SourceId != null && origin.Id == SourceId.Id && _state >= 5)
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CallbackHandler at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg));
                 // spec says we must handle this on the thread that enabled the DS.
