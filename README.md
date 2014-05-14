@@ -76,7 +76,9 @@ example for handling DIB image in native transfer using the CommonWin32 lib.
 
 Because it hosts its own message thread, the events will likely be raised from another thread. 
 If you would like things marshalled to a UI thread then set the SynchronizationContext property
-to the one from the UI thread. 
+to the one from the UI thread. Note that on certain consumer-grade scanner drivers this may hang the 
+event, so if you find yourself in that position you'll have to find another way
+to synchronize data to UI threads.
 
 
 ```

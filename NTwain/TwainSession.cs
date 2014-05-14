@@ -564,6 +564,8 @@ namespace NTwain
             var syncer = SynchronizationContext;
             if (syncer == null)
             {
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Trying to raise event {0} on thread {1} without sync.", e.GetType().Name, Thread.CurrentThread.ManagedThreadId));
+
                 try
                 {
                     onEventFunc(e);
@@ -573,6 +575,8 @@ namespace NTwain
             }
             else
             {
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Trying to raise event {0} on thread {1} with sync.", e.GetType().Name, Thread.CurrentThread.ManagedThreadId));
+                // on some consumer desktop scanner with poor drivers this can frequently hang. there's nothing I can do here.
                 syncer.Send(o =>
                 {
                     try
