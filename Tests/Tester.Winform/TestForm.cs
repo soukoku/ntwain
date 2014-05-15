@@ -58,42 +58,44 @@ namespace Tester.Winform
             _twain = new TwainSession(appId);
             // either set this and don't worry about threads during events,
             // or don't and invoke during the events yourself
-            _twain.SynchronizationContext = SynchronizationContext.Current;
+            //_twain.SynchronizationContext = SynchronizationContext.Current;
             _twain.StateChanged += (s, e) =>
             {
                 Debug.WriteLine("State changed to " + _twain.State + " on thread " + Thread.CurrentThread.ManagedThreadId);
             };
             _twain.DataTransferred += (s, e) =>
             {
-                //this.Invoke(new Action(() =>
-                //{
-                if (pictureBox1.Image != null)
-                {
-                    pictureBox1.Image.Dispose();
-                    pictureBox1.Image = null;
-                }
+                Bitmap img = null;
                 if (e.NativeData != IntPtr.Zero)
                 {
-                    var img = e.NativeData.GetDrawingBitmap();
-                    if (img != null)
-                        pictureBox1.Image = img;
+                    img = e.NativeData.GetDrawingBitmap();
                 }
                 else if (!string.IsNullOrEmpty(e.FileDataPath))
                 {
-                    var img = new Bitmap(e.FileDataPath);
-                    pictureBox1.Image = img;
+                    img = new Bitmap(e.FileDataPath);
                 }
-                //}));
+                if (img != null)
+                {
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        if (pictureBox1.Image != null)
+                        {
+                            pictureBox1.Image.Dispose();
+                            pictureBox1.Image = null;
+                        }
+                        pictureBox1.Image = img;
+                    }));
+                }
             };
             _twain.SourceDisabled += (s, e) =>
             {
-                //this.Invoke(new Action(() =>
-                //{
-                btnStopScan.Enabled = false;
-                btnStartCapture.Enabled = true;
-                panelOptions.Enabled = true;
-                LoadSourceCaps();
-                //}));
+                this.BeginInvoke(new Action(() =>
+                {
+                    btnStopScan.Enabled = false;
+                    btnStartCapture.Enabled = true;
+                    panelOptions.Enabled = true;
+                    LoadSourceCaps();
+                }));
             };
             _twain.TransferReady += (s, e) =>
             {

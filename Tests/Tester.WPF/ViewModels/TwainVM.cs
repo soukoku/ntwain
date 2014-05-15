@@ -18,7 +18,7 @@ namespace Tester.WPF
         public TwainVM()
             : base(TWIdentity.CreateFromAssembly(DataGroups.Image | DataGroups.Audio, Assembly.GetEntryAssembly()))
         {
-            this.SynchronizationContext = SynchronizationContext.Current;
+            //this.SynchronizationContext = SynchronizationContext.Current;
         }
 
         private ImageSource _image;
@@ -41,24 +41,27 @@ namespace Tester.WPF
 
         protected override void OnTransferError(TransferErrorEventArgs e)
         {
-            if (e.Exception != null)
+            App.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
-                Messenger.Default.Send(new DialogMessage(e.Exception.Message, null)
+                if (e.Exception != null)
                 {
-                    Caption = "Transfer Error Exception",
-                    Icon = System.Windows.MessageBoxImage.Error,
-                    Button = System.Windows.MessageBoxButton.OK
-                });
-            }
-            else
-            {
-                Messenger.Default.Send(new DialogMessage(string.Format("Return Code: {0}\nCondition Code: {1}", e.ReturnCode, e.SourceStatus.ConditionCode), null)
+                    Messenger.Default.Send(new DialogMessage(e.Exception.Message, null)
+                    {
+                        Caption = "Transfer Error Exception",
+                        Icon = System.Windows.MessageBoxImage.Error,
+                        Button = System.Windows.MessageBoxButton.OK
+                    });
+                }
+                else
                 {
-                    Caption = "Transfer Error",
-                    Icon = System.Windows.MessageBoxImage.Error,
-                    Button = System.Windows.MessageBoxButton.OK
-                });
-            }
+                    Messenger.Default.Send(new DialogMessage(string.Format("Return Code: {0}\nCondition Code: {1}", e.ReturnCode, e.SourceStatus.ConditionCode), null)
+                    {
+                        Caption = "Transfer Error",
+                        Icon = System.Windows.MessageBoxImage.Error,
+                        Button = System.Windows.MessageBoxButton.OK
+                    });
+                }
+            }));
         }
 
         protected override void OnTransferReady(TransferReadyEventArgs e)
@@ -81,14 +84,25 @@ namespace Tester.WPF
 
         protected override void OnDataTransferred(DataTransferredEventArgs e)
         {
+            ImageSource img = null;
             if (e.NativeData != IntPtr.Zero)
             {
-                Image = e.NativeData.GetWPFBitmap();
+                img = e.NativeData.GetWPFBitmap();
             }
             else if (!string.IsNullOrEmpty(e.FileDataPath))
             {
-                var img = new BitmapImage(new Uri(e.FileDataPath));
-                Image = img;
+                img = new BitmapImage(new Uri(e.FileDataPath));
+            }
+            if (img != null)
+            {
+                if (img.CanFreeze)
+                {
+                    img.Freeze();
+                }
+                App.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    Image = img;
+                }));
             }
         }
 
