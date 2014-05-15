@@ -151,6 +151,9 @@
     <Compile Include="..\NTwain\Triplets\DGControl\DGControl.Capability.cs">
       <Link>Triplets\DGControl\DGControl.Capability.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\Triplets\DGControl\DGControl.CapabilityCustom.cs">
+      <Link>Triplets\DGControl\DGControl.CapabilityCustom.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\Triplets\DGControl\DGControl.cs">
       <Link>Triplets\DGControl\DGControl.cs</Link>
     </Compile>

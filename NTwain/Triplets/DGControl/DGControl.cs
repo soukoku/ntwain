@@ -42,7 +42,16 @@ namespace NTwain.Triplets
 				if (_capability == null) { _capability = new Capability(_session); }
 				return _capability;
 			}
-		}
+        }
+        CapabilityCustom _capabilityCust;
+        public CapabilityCustom CapabilityCustom
+        {
+            get
+            {
+                if (_capabilityCust == null) { _capabilityCust = new CapabilityCustom(_session); }
+                return _capabilityCust;
+            }
+        }
 		CustomDSData _customDSData;
 		public CustomDSData CustomDSData
 		{
