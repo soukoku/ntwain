@@ -204,6 +204,19 @@ namespace NTwain
             }
         }
 
+        DGCustom _dgCustom;
+        /// <summary>
+        /// Gets the direct triplet operation entry for custom values.
+        /// </summary>
+        public DGCustom DGCustom
+        {
+            get
+            {
+                if (_dgCustom == null) { _dgCustom = new DGCustom(this); }
+                return _dgCustom;
+            }
+        }
+
         #endregion
 
         #region INotifyPropertyChanged Members

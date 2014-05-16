@@ -25,6 +25,11 @@ namespace NTwain
         DGImage DGImage { get; }
 
         /// <summary>
+        /// Gets the direct triplet operation entry for custom values.
+        /// </summary>
+        DGCustom DGCustom { get; }
+
+        /// <summary>
         /// Opens the data source manager. This must be the first method used
         /// before using other TWAIN functions. Calls to this must be followed by <see cref="CloseManager"/> when done with a TWAIN session.
         /// </summary>

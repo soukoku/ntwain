@@ -202,6 +202,9 @@
     <Compile Include="..\NTwain\Triplets\DGControl\DGControl.XferGroup.cs">
       <Link>Triplets\DGControl\DGControl.XferGroup.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\Triplets\DGCustom.cs">
+      <Link>Triplets\DGCustom.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\Triplets\DGImage\DGImage.CieColor.cs">
       <Link>Triplets\DGImage\DGImage.CieColor.cs</Link>
     </Compile>
