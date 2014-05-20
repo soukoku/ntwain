@@ -68,9 +68,9 @@ namespace Tester.WPF
         {
             // set it up to use file xfer
 
-            if (this.Source.CapGetCurrent(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>() == XferMech.File)
+            if (this.CurrentSource.CapGetCurrent(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>() == XferMech.File)
             {
-                var formats = this.Source.CapGetImageFileFormat();
+                var formats = this.CurrentSource.CapGetImageFileFormat();
                 var wantFormat = formats.Contains(FileFormat.Tiff) ? FileFormat.Tiff : FileFormat.Bmp;
 
                 var fileSetup = new TWSetupFileXfer
@@ -110,17 +110,17 @@ namespace Tester.WPF
         {
             if (State == 4)
             {
-                if (this.Source.CapGetPixelTypes().Contains(PixelType.BlackWhite))
+                if (this.CurrentSource.CapGetPixelTypes().Contains(PixelType.BlackWhite))
                 {
-                    this.Source.CapSetPixelType(PixelType.BlackWhite);
+                    this.CurrentSource.CapSetPixelType(PixelType.BlackWhite);
                 }
 
-                if (this.Source.CapGetImageXferMechs().Contains(XferMech.File))
+                if (this.CurrentSource.CapGetImageXferMechs().Contains(XferMech.File))
                 {
-                    this.Source.CapSetImageXferMech(XferMech.File);
+                    this.CurrentSource.CapSetImageXferMech(XferMech.File);
                 }
 
-                var rc = this.Source.StartTransfer(SourceEnableMode.NoUI, false, hwnd);
+                var rc = this.CurrentSource.StartTransfer(SourceEnableMode.NoUI, false, hwnd);
             }
         }
     }

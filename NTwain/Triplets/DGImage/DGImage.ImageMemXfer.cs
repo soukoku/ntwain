@@ -16,7 +16,7 @@ namespace NTwain.Triplets
 		public ReturnCode Get(TWImageMemXfer xfer)
 		{
 			Session.VerifyState(6, 7, DataGroups.Image, DataArgumentType.ImageMemXfer, Message.Get);
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Get, xfer);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Get, xfer);
 		}
 	}
 }

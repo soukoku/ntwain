@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(6, 7, DataGroups.Image, DataArgumentType.IccProfile, Message.Get);
 			profile = new TWMemory();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, DataArgumentType.IccProfile, Message.Get, ref profile);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, DataArgumentType.IccProfile, Message.Get, ref profile);
 		}
 	}
 }

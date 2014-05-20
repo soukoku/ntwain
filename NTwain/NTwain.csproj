@@ -64,7 +64,6 @@
     <Compile Include="Internals\TransferLogic.cs" />
     <Compile Include="Internals\WindowsHook.cs" />
     <Compile Include="Internals\WrappedManualResetEvent.cs" />
-    <Compile Include="ITwainOperation.cs" />
     <Compile Include="ITwainSession.cs" />
     <Compile Include="Internals\WinMemoryManager.cs" />
     <Compile Include="Internals\MessageLoop.cs" />

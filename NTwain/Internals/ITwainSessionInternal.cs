@@ -1,6 +1,7 @@
 ﻿using NTwain.Data;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace NTwain.Internals
 {
@@ -44,5 +45,6 @@ namespace NTwain.Internals
         void SafeSyncableRaiseEvent(TransferReadyEventArgs e);
 
         ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle);
+        SynchronizationContext SynchronizationContext { get; set; }
     }
 }

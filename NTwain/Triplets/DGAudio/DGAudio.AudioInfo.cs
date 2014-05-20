@@ -19,7 +19,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(6, 7, DataGroups.Audio, DataArgumentType.AudioInfo, Message.Get);
 			info = new TWAudioInfo();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Get, info);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Get, info);
 		}
 	}
 }

@@ -100,9 +100,6 @@
     <Compile Include="..\NTwain\Internals\WrappedManualResetEvent.cs">
       <Link>Internals\WrappedManualResetEvent.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\ITwainOperation.cs">
-      <Link>ITwainOperation.cs</Link>
-    </Compile>
     <Compile Include="..\NTwain\ITwainSession.cs">
       <Link>ITwainSession.cs</Link>
     </Compile>

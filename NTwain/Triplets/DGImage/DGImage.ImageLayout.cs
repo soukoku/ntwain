@@ -15,7 +15,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.ImageLayout, Message.Get);
 			layout = new TWImageLayout();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Get, layout);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Get, layout);
 		}
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
@@ -23,7 +23,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.ImageLayout, Message.GetDefault);
 			layout = new TWImageLayout();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.GetDefault, layout);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.GetDefault, layout);
 		}
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
@@ -31,13 +31,13 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.ImageLayout, Message.Reset);
 			layout = new TWImageLayout();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Reset, layout);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Reset, layout);
 		}
 
 		public ReturnCode Set(TWImageLayout layout)
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.ImageLayout, Message.Set);
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Set, layout);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Set, layout);
 		}
 	}
 }

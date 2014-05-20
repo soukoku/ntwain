@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.Get);
 			setupFileXfer = new TWSetupFileXfer();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Get, setupFileXfer);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Get, setupFileXfer);
 		}
 
 		/// <summary>
@@ -34,7 +34,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.GetDefault);
 			setupFileXfer = new TWSetupFileXfer();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.GetDefault, setupFileXfer);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.GetDefault, setupFileXfer);
 		}
 
 		/// <summary>
@@ -48,7 +48,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.Reset);
 			setupFileXfer = new TWSetupFileXfer();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Reset, setupFileXfer);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Reset, setupFileXfer);
 		}
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace NTwain.Triplets
 		public ReturnCode Set(TWSetupFileXfer setupFileXfer)
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.Set);
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Set, setupFileXfer);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Set, setupFileXfer);
 		}
 
 	}

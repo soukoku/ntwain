@@ -70,7 +70,7 @@ namespace NTwain.Internals
                     if (xferGroup == DataGroups.None ||
                         (xferGroup & DataGroups.Image) == DataGroups.Image)
                     {
-                        var mech = session.Source.CapGetCurrent(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>();
+                        var mech = session.CurrentSource.CapGetCurrent(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>();
                         switch (mech)
                         {
                             case XferMech.Memory:
@@ -91,7 +91,7 @@ namespace NTwain.Internals
                     }
                     if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
                     {
-                        var mech = session.Source.CapGetCurrent(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
+                        var mech = session.CurrentSource.CapGetCurrent(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
                         switch (mech)
                         {
                             case XferMech.File:
@@ -136,7 +136,7 @@ namespace NTwain.Internals
                 }
                 else
                 {
-                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.Source.GetStatus() });
+                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
                 }
             }
             catch (Exception ex)
@@ -176,7 +176,7 @@ namespace NTwain.Internals
             }
             else
             {
-                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.Source.GetStatus() });
+                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
             }
         }
 
@@ -202,7 +202,7 @@ namespace NTwain.Internals
                 }
                 else
                 {
-                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.Source.GetStatus() });
+                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
                 }
             }
             catch (Exception ex)
@@ -242,7 +242,7 @@ namespace NTwain.Internals
             }
             else
             {
-                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.Source.GetStatus() });
+                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
             }
         }
 
@@ -305,7 +305,7 @@ namespace NTwain.Internals
                         }
                         else
                         {
-                            session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.Source.GetStatus() });
+                            session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
                         }
                     }
                 }
@@ -384,7 +384,7 @@ namespace NTwain.Internals
                     }
                     else
                     {
-                        session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.Source.GetStatus() });
+                        session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
                     }
                 }
                 catch (Exception ex)
@@ -415,7 +415,7 @@ namespace NTwain.Internals
         {
             TWImageInfo imgInfo;
             TWExtImageInfo extInfo = null;
-            if (session.Source.SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
+            if (session.CurrentSource.SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
             {
                 if (session.DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
                 {

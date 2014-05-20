@@ -187,12 +187,28 @@ namespace NTwain
         /// <param name="propertyName">Name of the property.</param>
         protected void OnPropertyChanged(string propertyName)
         {
-            try
+            var syncer = _session.SynchronizationContext;
+            if (syncer == null)
             {
-                var hand = PropertyChanged;
-                if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+                try
+                {
+                    var hand = PropertyChanged;
+                    if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+                }
+                catch { }
             }
-            catch { }
+            else
+            {
+                syncer.Post(o =>
+                {
+                    try
+                    {
+                        var hand = PropertyChanged;
+                        if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+                    }
+                    catch { }
+                }, null);
+            }
         }
 
         #endregion

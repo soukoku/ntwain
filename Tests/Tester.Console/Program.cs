@@ -72,7 +72,7 @@ namespace Tester
         static void twain_SourceDisabled(object sender, EventArgs e)
         {
             Console.WriteLine("Source disabled on thread {0}.", Thread.CurrentThread.ManagedThreadId);
-            var rc = twain.Source.Close();
+            var rc = twain.CurrentSource.Close();
             rc = twain.Close();
         }
 

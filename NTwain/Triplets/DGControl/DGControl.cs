@@ -98,7 +98,7 @@ namespace NTwain.Triplets
 			}
 		}
 		Identity _identity;
-		public Identity Identity
+		internal Identity Identity
 		{
 			get
 			{
@@ -154,7 +154,7 @@ namespace NTwain.Triplets
 			}
 		}
 		Status _status;
-		public Status Status
+		internal Status Status
 		{
 			get
 			{

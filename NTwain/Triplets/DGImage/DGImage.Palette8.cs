@@ -20,7 +20,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.Palette8, Message.Get);
 			palette = new TWPalette8();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Get, palette);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Get, palette);
 		}
 
 		/// <summary>
@@ -33,7 +33,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.Palette8, Message.GetDefault);
 			palette = new TWPalette8();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.GetDefault, palette);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.GetDefault, palette);
 		}
 
 		/// <summary>
@@ -47,7 +47,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.Palette8, Message.Reset);
 			palette = new TWPalette8();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Reset, palette);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Reset, palette);
 		}
 
 		/// <summary>
@@ -61,7 +61,7 @@ namespace NTwain.Triplets
 		public ReturnCode Set(TWPalette8 palette)
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.Palette8, Message.Set);
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Set, palette);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Set, palette);
 		}
 	}
 }

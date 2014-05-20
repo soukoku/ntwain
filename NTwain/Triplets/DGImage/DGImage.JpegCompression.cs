@@ -21,7 +21,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.JpegCompression, Message.Get);
 			compression = new TWJpegCompression();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Get, compression);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Get, compression);
 		}
 
 		/// <summary>
@@ -35,7 +35,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.JpegCompression, Message.GetDefault);
 			compression = new TWJpegCompression();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.GetDefault, compression);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.GetDefault, compression);
 		}
 
 		/// <summary>
@@ -48,7 +48,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.JpegCompression, Message.Reset);
 			compression = new TWJpegCompression();
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Reset, compression);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Reset, compression);
 		}
 
 		/// <summary>
@@ -61,7 +61,7 @@ namespace NTwain.Triplets
 		public ReturnCode Set(TWJpegCompression compression)
 		{
 			Session.VerifyState(4, 4, DataGroups.Image, DataArgumentType.JpegCompression, Message.Set);
-			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Set, compression);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Set, compression);
 		}
 	}
 }

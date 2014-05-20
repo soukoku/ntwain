@@ -94,7 +94,7 @@ namespace NTwain
 
         void ITwainSessionInternal.ChangeSourceId(TwainSource source)
         {
-            Source = source;
+            CurrentSource = source;
             OnPropertyChanged("SourceId");
             SafeAsyncSyncableRaiseOnEvent(OnSourceChanged, SourceChanged);
         }
@@ -122,7 +122,50 @@ namespace NTwain
         /// <value>
         /// The current source.
         /// </value>
-        public TwainSource Source { get; private set; }
+        public TwainSource CurrentSource { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the default source for this application.
+        /// While this can be get as long as the session is open,
+        /// it can only be set at State 3.
+        /// </summary>
+        /// <value>
+        /// The default source.
+        /// </value>
+        public TwainSource DefaultSource
+        {
+            get
+            {
+                TWIdentity id;
+                if (DGControl.Identity.GetDefault(out id) == ReturnCode.Success)
+                {
+                    return new TwainSource(this, id);
+                }
+                return null;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    DGControl.Identity.Set(value.Identity);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Try to show the built-in source selector dialog and return the selected source.
+        /// This is not recommended and is only included for completeness.
+        /// </summary>
+        /// <returns></returns>
+        public TwainSource ShowSourceSelector()
+        {
+            TWIdentity id;
+            if (DGControl.Identity.UserSelect(out id) == ReturnCode.Success)
+            {
+                return new TwainSource(this, id);
+            }
+            return null;
+        }
 
         int _state;
         /// <summary>
@@ -450,9 +493,9 @@ namespace NTwain
                 {
                     ((ITwainSessionInternal)this).DisableSource();
                 }
-                if (targetState < 4 && Source != null)
+                if (targetState < 4 && CurrentSource != null)
                 {
-                    Source.Close();
+                    CurrentSource.Close();
                 }
                 if (targetState < 3)
                 {
@@ -471,7 +514,7 @@ namespace NTwain
         /// </summary>
         public event EventHandler StateChanged;
         /// <summary>
-        /// Occurs when <see cref="Source"/> has changed.
+        /// Occurs when <see cref="CurrentSource"/> has changed.
         /// </summary>
         public event EventHandler SourceChanged;
         /// <summary>
@@ -572,7 +615,7 @@ namespace NTwain
         protected virtual void OnStateChanged() { }
 
         /// <summary>
-        /// Called when <see cref="Source"/> changed.
+        /// Called when <see cref="CurrentSource"/> changed.
         /// </summary>
         protected virtual void OnSourceChanged() { }
 
@@ -640,7 +683,7 @@ namespace NTwain
 
         ReturnCode HandleCallback(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
         {
-            if (origin != null && Source != null && origin.Id == Source.Identity.Id && _state >= 5)
+            if (origin != null && CurrentSource != null && origin.Id == CurrentSource.Identity.Id && _state >= 5)
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CallbackHandler at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg));
                 // spec says we must handle this on the thread that enabled the DS.
