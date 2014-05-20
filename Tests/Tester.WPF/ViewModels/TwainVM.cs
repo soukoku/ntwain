@@ -68,7 +68,7 @@ namespace Tester.WPF
         {
             // set it up to use file xfer
 
-            if (this.Source.GetCurrentCap(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>() == XferMech.File)
+            if (this.Source.CapGetCurrent(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>() == XferMech.File)
             {
                 var formats = this.Source.CapGetImageFileFormat();
                 var wantFormat = formats.Contains(FileFormat.Tiff) ? FileFormat.Tiff : FileFormat.Bmp;

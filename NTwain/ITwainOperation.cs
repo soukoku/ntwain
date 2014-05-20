@@ -32,16 +32,16 @@ namespace NTwain
 
         /// <summary>
         /// Opens the data source manager. This must be the first method used
-        /// before using other TWAIN functions. Calls to this must be followed by <see cref="CloseManager"/> when done with a TWAIN session.
+        /// before using other TWAIN functions. Calls to this must be followed by <see cref="Close"/> when done with a TWAIN session.
         /// </summary>
         /// <returns></returns>
-        ReturnCode OpenManager();
+        ReturnCode Open();
 
         /// <summary>
         /// Closes the data source manager.
         /// </summary>
         /// <returns></returns>
-        ReturnCode CloseManager();
+        ReturnCode Close();
 
         /// <summary>
         /// Forces the stepping down of an opened source when things gets out of control.
@@ -54,7 +54,7 @@ namespace NTwain
         /// Gets list of sources available in the system.
         /// </summary>
         /// <returns></returns>
-        IList<TwainSource> GetSources();
+        IEnumerable<TwainSource> GetSources();
 
         /// <summary>
         /// Gets the manager status. Only call this at state 2 or higher.

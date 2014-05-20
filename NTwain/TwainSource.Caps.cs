@@ -13,7 +13,7 @@ namespace NTwain
         /// </summary>
         /// <param name="capId">The cap identifier.</param>
         /// <returns></returns>
-        public QuerySupport GetCapabilitySupport(CapabilityId capId)
+        public QuerySupport CapQuerySupport(CapabilityId capId)
         {
             QuerySupport retVal = QuerySupport.None;
             using (TWCapability cap = new TWCapability(capId))
@@ -37,7 +37,7 @@ namespace NTwain
         /// </summary>
         /// <param name="capId">The cap id.</param>
         /// <returns></returns>
-        public object GetCurrentCap(CapabilityId capId)
+        public object CapGetCurrent(CapabilityId capId)
         {
             using (TWCapability cap = new TWCapability(capId))
             {
@@ -77,7 +77,7 @@ namespace NTwain
         /// </summary>
         /// <param name="capabilityId">The capability unique identifier.</param>
         /// <returns></returns>
-        public IList<object> GetCapabilityValues(CapabilityId capabilityId)
+        public IList<object> CapGetValues(CapabilityId capabilityId)
         {
             var list = new List<object>();
             using (TWCapability cap = new TWCapability(capabilityId))
@@ -100,9 +100,7 @@ namespace NTwain
         /// <returns></returns>
         public IList<XferMech> CapGetImageXferMech()
         {
-
-
-            return GetCapabilityValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
+            return CapGetValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
         }
 
         #endregion
@@ -116,7 +114,7 @@ namespace NTwain
         /// <returns></returns>
         public IList<CompressionType> CapGetCompression()
         {
-            return GetCapabilityValues(CapabilityId.ICapCompression).CastToEnum<CompressionType>(true);
+            return CapGetValues(CapabilityId.ICapCompression).CastToEnum<CompressionType>(true);
         }
 
         /// <summary>
@@ -143,7 +141,7 @@ namespace NTwain
         /// <returns></returns>
         public IList<FileFormat> CapGetImageFileFormat()
         {
-            return GetCapabilityValues(CapabilityId.ICapImageFileFormat).CastToEnum<FileFormat>(true);
+            return CapGetValues(CapabilityId.ICapImageFileFormat).CastToEnum<FileFormat>(true);
         }
 
         /// <summary>
@@ -170,7 +168,7 @@ namespace NTwain
         /// <returns></returns>
         public IList<PixelType> CapGetPixelTypes()
         {
-            return GetCapabilityValues(CapabilityId.ICapPixelType).CastToEnum<PixelType>(true);
+            return CapGetValues(CapabilityId.ICapPixelType).CastToEnum<PixelType>(true);
         }
 
         /// <summary>
@@ -200,7 +198,7 @@ namespace NTwain
         /// <returns></returns>
         public IList<XferMech> CapGetImageXferMechs()
         {
-            return GetCapabilityValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
+            return CapGetValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
         }
 
         /// <summary>
@@ -210,7 +208,7 @@ namespace NTwain
         /// <returns></returns>
         public IList<XferMech> CapGetAudioXferMechs()
         {
-            return GetCapabilityValues(CapabilityId.ACapXferMech).CastToEnum<XferMech>(true);
+            return CapGetValues(CapabilityId.ACapXferMech).CastToEnum<XferMech>(true);
         }
 
         /// <summary>
@@ -256,7 +254,7 @@ namespace NTwain
         /// <returns></returns>
         public IList<TWFix32> CapGetDPIs()
         {
-            var list = GetCapabilityValues(CapabilityId.ICapXResolution);
+            var list = CapGetValues(CapabilityId.ICapXResolution);
             return list.Select(o => o.ConvertToFix32()).ToList();
         }
 
@@ -308,7 +306,7 @@ namespace NTwain
         /// <returns></returns>
         public IList<SupportedSize> CapGetSupportedSizes()
         {
-            return GetCapabilityValues(CapabilityId.ICapSupportedSizes).CastToEnum<SupportedSize>(true);
+            return CapGetValues(CapabilityId.ICapSupportedSizes).CastToEnum<SupportedSize>(true);
         }
 
         /// <summary>

@@ -145,44 +145,6 @@ namespace NTwain
             }
         }
 
-
-        /// <summary>
-        /// Gets list of sources available in the system.
-        /// Only call this at state 2 or higher.
-        /// </summary>
-        /// <param name="session">The session.</param>
-        /// <returns></returns>
-        public IList<TwainSource> GetSources()
-        {
-            List<TwainSource> list = new List<TwainSource>();
-
-            // now enumerate
-            TWIdentity srcId;
-            var rc = DGControl.Identity.GetFirst(out srcId);
-            if (rc == ReturnCode.Success) { list.Add(new TwainSource(this, srcId)); }
-            do
-            {
-                rc = DGControl.Identity.GetNext(out srcId);
-                if (rc == ReturnCode.Success)
-                {
-                    list.Add(new TwainSource(this, srcId));
-                }
-            } while (rc == ReturnCode.Success);
-
-            return list;
-        }
-        /// <summary>
-        /// Gets the manager status. Only call this at state 2 or higher.
-        /// </summary>
-        /// <param name="session">The session.</param>
-        /// <returns></returns>
-        public TWStatus GetStatus()
-        {
-            TWStatus stat;
-            DGControl.Status.GetManager(out stat);
-            return stat;
-        }
-
         #endregion
 
         #region ITwainOperation Members
@@ -238,6 +200,90 @@ namespace NTwain
                 return _dgCustom;
             }
         }
+        /// <summary>
+        /// Opens the data source manager. This must be the first method used
+        /// before using other TWAIN functions. Calls to this must be followed by <see cref="Close"/> when done with a TWAIN session.
+        /// </summary>
+        /// <returns></returns>
+        public ReturnCode Open()
+        {
+            var rc = ReturnCode.Failure;
+            MessageLoop.Instance.Invoke(() =>
+            {
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
+
+                rc = DGControl.Parent.OpenDsm(MessageLoop.Instance.LoopHandle);
+                if (rc == ReturnCode.Success)
+                {
+                    // if twain2 then get memory management functions
+                    if ((_appId.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
+                    {
+                        TWEntryPoint entry;
+                        rc = DGControl.EntryPoint.Get(out entry);
+                        if (rc == ReturnCode.Success)
+                        {
+                            Platform.MemoryManager = entry;
+                            Debug.WriteLine("Using TWAIN2 memory functions.");
+                        }
+                        else
+                        {
+                            Close();
+                        }
+                    }
+                }
+            });
+            return rc;
+        }
+
+        /// <summary>
+        /// Closes the data source manager.
+        /// </summary>
+        /// <returns></returns>
+        public ReturnCode Close()
+        {
+            var rc = ReturnCode.Failure;
+            MessageLoop.Instance.Invoke(() =>
+            {
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
+
+                rc = DGControl.Parent.CloseDsm(MessageLoop.Instance.LoopHandle);
+                if (rc == ReturnCode.Success)
+                {
+                    Platform.MemoryManager = null;
+                }
+            });
+            return rc;
+        }
+
+
+        /// <summary>
+        /// Gets list of sources available in the system.
+        /// Only call this at state 2 or higher.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <returns></returns>
+        public IEnumerable<TwainSource> GetSources()
+        {
+            TWIdentity srcId;
+            var rc = DGControl.Identity.GetFirst(out srcId);
+            while (rc == ReturnCode.Success)
+            {
+                yield return new TwainSource(this, srcId);
+                rc = DGControl.Identity.GetNext(out srcId);
+            }
+        }
+        /// <summary>
+        /// Gets the manager status. Only call this at state 2 or higher.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <returns></returns>
+        public TWStatus GetStatus()
+        {
+            TWStatus stat;
+            DGControl.Status.GetManager(out stat);
+            return stat;
+        }
+
 
         #endregion
 
@@ -281,61 +327,6 @@ namespace NTwain
         #endregion
 
         #region privileged calls that causes state change in TWAIN
-
-        /// <summary>
-        /// Opens the data source manager. This must be the first method used
-        /// before using other TWAIN functions. Calls to this must be followed by <see cref="CloseManager"/> when done with a TWAIN session.
-        /// </summary>
-        /// <returns></returns>
-        public ReturnCode OpenManager()
-        {
-            var rc = ReturnCode.Failure;
-            MessageLoop.Instance.Invoke(() =>
-            {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
-
-                rc = DGControl.Parent.OpenDsm(MessageLoop.Instance.LoopHandle);
-                if (rc == ReturnCode.Success)
-                {
-                    // if twain2 then get memory management functions
-                    if ((_appId.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
-                    {
-                        TWEntryPoint entry;
-                        rc = DGControl.EntryPoint.Get(out entry);
-                        if (rc == ReturnCode.Success)
-                        {
-                            Platform.MemoryManager = entry;
-                            Debug.WriteLine("Using TWAIN2 memory functions.");
-                        }
-                        else
-                        {
-                            CloseManager();
-                        }
-                    }
-                }
-            });
-            return rc;
-        }
-
-        /// <summary>
-        /// Closes the data source manager.
-        /// </summary>
-        /// <returns></returns>
-        public ReturnCode CloseManager()
-        {
-            var rc = ReturnCode.Failure;
-            MessageLoop.Instance.Invoke(() =>
-            {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
-
-                rc = DGControl.Parent.CloseDsm(MessageLoop.Instance.LoopHandle);
-                if (rc == ReturnCode.Success)
-                {
-                    Platform.MemoryManager = null;
-                }
-            });
-            return rc;
-        }
 
 
         /// <summary>
@@ -459,13 +450,13 @@ namespace NTwain
                 {
                     ((ITwainSessionInternal)this).DisableSource();
                 }
-                if (targetState < 4)
+                if (targetState < 4 && Source != null)
                 {
                     Source.Close();
                 }
                 if (targetState < 3)
                 {
-                    CloseManager();
+                    Close();
                 }
             });
             EnforceState = origFlag;

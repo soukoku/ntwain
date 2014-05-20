@@ -11,6 +11,9 @@ using System.Threading;
 
 namespace NTwain
 {
+    /// <summary>
+    /// Represents a TWAIN data source.
+    /// </summary>
     public partial class TwainSource : INotifyPropertyChanged
     {
         ITwainSessionInternal _session;
@@ -81,6 +84,8 @@ namespace NTwain
             _session.DGControl.Status.GetSource(out stat);
             return stat;
         }
+
+        #region properties
 
         internal TWIdentity Identity { get; private set; }
 
@@ -156,7 +161,7 @@ namespace NTwain
             {
                 if (_supportedCaps == null && _session.State > 3)
                 {
-                    _supportedCaps = GetCapabilityValues(CapabilityId.CapSupportedCaps).CastToEnum<CapabilityId>(false);
+                    _supportedCaps = CapGetValues(CapabilityId.CapSupportedCaps).CastToEnum<CapabilityId>(false);
                 }
                 return _supportedCaps ?? _emptyCapList;
             }
@@ -166,6 +171,8 @@ namespace NTwain
                 OnPropertyChanged("SupportedCaps");
             }
         }
+
+        #endregion
 
         #region INotifyPropertyChanged Members
 

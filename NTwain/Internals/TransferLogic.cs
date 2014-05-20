@@ -70,7 +70,7 @@ namespace NTwain.Internals
                     if (xferGroup == DataGroups.None ||
                         (xferGroup & DataGroups.Image) == DataGroups.Image)
                     {
-                        var mech = session.Source.GetCurrentCap(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>();
+                        var mech = session.Source.CapGetCurrent(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>();
                         switch (mech)
                         {
                             case XferMech.Memory:
@@ -91,7 +91,7 @@ namespace NTwain.Internals
                     }
                     if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
                     {
-                        var mech = session.Source.GetCurrentCap(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
+                        var mech = session.Source.CapGetCurrent(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
                         switch (mech)
                         {
                             case XferMech.File:

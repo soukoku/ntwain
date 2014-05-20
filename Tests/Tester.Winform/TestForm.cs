@@ -111,7 +111,7 @@ namespace Tester.Winform
             }
             if (_twain.State == 3)
             {
-                _twain.CloseManager();
+                _twain.Close();
             }
 
             if (_twain.State > 2)
@@ -239,7 +239,7 @@ namespace Tester.Winform
             }
             if (_twain.State < 3)
             {
-                _twain.OpenManager();
+                _twain.Open();
             }
 
             if (_twain.State >= 3)
@@ -294,7 +294,7 @@ namespace Tester.Winform
         {
             var list = _twain.Source.CapGetSupportedSizes();
             comboSize.DataSource = list;
-            var cur = _twain.Source.GetCurrentCap(CapabilityId.ICapSupportedSizes).ConvertToEnum<SupportedSize>();
+            var cur = _twain.Source.CapGetCurrent(CapabilityId.ICapSupportedSizes).ConvertToEnum<SupportedSize>();
             if (list.Contains(cur))
             {
                 comboSize.SelectedItem = cur;
@@ -303,7 +303,7 @@ namespace Tester.Winform
 
         private void LoadDuplex()
         {
-            ckDuplex.Checked = _twain.Source.GetCurrentCap(CapabilityId.CapDuplexEnabled).ConvertToEnum<uint>() != 0;
+            ckDuplex.Checked = _twain.Source.CapGetCurrent(CapabilityId.CapDuplexEnabled).ConvertToEnum<uint>() != 0;
         }
 
         private void LoadDPI()
@@ -311,7 +311,7 @@ namespace Tester.Winform
             // only allow dpi of certain values for those source that lists everything
             var list = _twain.Source.CapGetDPIs().Where(dpi => (dpi % 50) == 0).ToList();
             comboDPI.DataSource = list;
-            var cur = (TWFix32)_twain.Source.GetCurrentCap(CapabilityId.ICapXResolution);
+            var cur = (TWFix32)_twain.Source.CapGetCurrent(CapabilityId.ICapXResolution);
             if (list.Contains(cur))
             {
                 comboDPI.SelectedItem = cur;
@@ -322,7 +322,7 @@ namespace Tester.Winform
         {
             var list = _twain.Source.CapGetPixelTypes();
             comboDepth.DataSource = list;
-            var cur = _twain.Source.GetCurrentCap(CapabilityId.ICapPixelType).ConvertToEnum<PixelType>();
+            var cur = _twain.Source.CapGetCurrent(CapabilityId.ICapPixelType).ConvertToEnum<PixelType>();
             if (list.Contains(cur))
             {
                 comboDepth.SelectedItem = cur;
