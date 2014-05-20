@@ -1,6 +1,7 @@
 ﻿using NTwain.Internals;
 using NTwain.Properties;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
@@ -913,6 +914,48 @@ namespace NTwain.Data
             Dispose(false);
         }
         #endregion
+
+
+
+        /// <summary>
+        /// A general method that returns the data in a <see cref="TWCapability" />.
+        /// </summary>
+        /// <param name="toPopulate">The list to populate if necessary.</param>
+        /// <returns></returns>
+        public IList<object> ReadMultiCapValues(IList<object> toPopulate)
+        {
+            if (toPopulate == null) { toPopulate = new List<object>(); }
+
+            var read = CapabilityReadOut.ReadValue(this);
+
+            switch (read.ContainerType)
+            {
+                case ContainerType.OneValue:
+                    if (read.OneValue != null)
+                    {
+                        toPopulate.Add(read.OneValue);
+                    }
+                    break;
+                case ContainerType.Array:
+                case ContainerType.Enum:
+                    if (read.CollectionValues != null)
+                    {
+                        foreach (var o in read.CollectionValues)
+                        {
+                            toPopulate.Add(o);
+                        }
+                    }
+                    break;
+                case ContainerType.Range:
+                    for (var i = read.RangeMinValue; i <= read.RangeMaxValue; i += read.RangeStepSize)
+                    {
+                        toPopulate.Add(i);
+                    }
+                    break;
+            }
+            return toPopulate;
+        }
+
     }
 
     /// <summary>

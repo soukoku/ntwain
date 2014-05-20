@@ -32,7 +32,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.Status, Message.Get);
 			status = new TWStatus();
-			return Dsm.DsmEntry(Session.AppId, Session.SourceId, Message.Get, status);
+			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Get, status);
 		}
 	}
 }

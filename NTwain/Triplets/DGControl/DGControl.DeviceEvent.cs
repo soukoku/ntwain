@@ -14,7 +14,7 @@ namespace NTwain.Triplets
 		{
 			Session.VerifyState(4, 7, DataGroups.Control, DataArgumentType.DeviceEvent, Message.Get);
 			sourceDeviceEvent = new TWDeviceEvent();
-			return Dsm.DsmEntry(Session.AppId, Session.SourceId, Message.Get, sourceDeviceEvent);
+			return Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.Get, sourceDeviceEvent);
 		}
 	}
 }

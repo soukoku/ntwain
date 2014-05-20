@@ -42,7 +42,7 @@ namespace Tester
 
             if (rc == ReturnCode.Success)
             {
-                var hit = twain.GetSources().Where(s => string.Equals(s.ProductName, "TWAIN2 FreeImage Software Scanner")).FirstOrDefault();
+                var hit = twain.GetSources().Where(s => string.Equals(s.Name, "TWAIN2 FreeImage Software Scanner")).FirstOrDefault();
                 if (hit == null)
                 {
                     Console.WriteLine("The sample source \"TWAIN2 FreeImage Software Scanner\" is not installed.");
@@ -50,12 +50,12 @@ namespace Tester
                 }
                 else
                 {
-                    rc = twain.OpenSource(hit.ProductName);
+                    rc = hit.Open();
 
                     if (rc == ReturnCode.Success)
                     {
                         Console.WriteLine("Start capture from the sample source.");
-                        rc = twain.EnableSource(SourceEnableMode.NoUI, false, IntPtr.Zero);
+                        rc = hit.StartTransfer(SourceEnableMode.NoUI, false, IntPtr.Zero);
                     }
                     else
                     {
@@ -72,7 +72,7 @@ namespace Tester
         static void twain_SourceDisabled(object sender, EventArgs e)
         {
             Console.WriteLine("Source disabled on thread {0}.", Thread.CurrentThread.ManagedThreadId);
-            var rc = twain.CloseSource();
+            var rc = twain.Source.Close();
             rc = twain.CloseManager();
         }
 

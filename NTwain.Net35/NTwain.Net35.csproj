@@ -271,8 +271,11 @@
     <Compile Include="..\NTwain\TwainSession.cs">
       <Link>TwainSession.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\TwainSessionExtensions.cs">
-      <Link>TwainSessionExtensions.cs</Link>
+    <Compile Include="..\NTwain\TwainSource.Caps.cs">
+      <Link>TwainSource.Caps.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\TwainSource.cs">
+      <Link>TwainSource.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\TwainStateException.cs">
       <Link>TwainStateException.cs</Link>

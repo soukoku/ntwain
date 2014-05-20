@@ -107,7 +107,7 @@ namespace Tester.Winform
         {
             if (_twain.State == 4)
             {
-                _twain.CloseSource();
+                _twain.Source.Close();
             }
             if (_twain.State == 3)
             {
@@ -143,7 +143,7 @@ namespace Tester.Winform
             // do nothing if source is enabled
             if (_twain.State > 4) { return; }
 
-            if (_twain.State == 4) { _twain.CloseSource(); }
+            if (_twain.State == 4) { _twain.Source.Close(); }
 
             foreach (var btn in btnSources.DropDownItems)
             {
@@ -152,8 +152,8 @@ namespace Tester.Winform
             }
 
             var curBtn = (sender as ToolStripMenuItem);
-            var src = curBtn.Tag as TWIdentity;
-            if (_twain.OpenSource(src.ProductName) == ReturnCode.Success)
+            var src = curBtn.Tag as TwainSource;
+            if (src.Open() == ReturnCode.Success)
             {
                 curBtn.Checked = true;
                 btnStartCapture.Enabled = true;
@@ -167,10 +167,10 @@ namespace Tester.Winform
             {
                 _stopScan = false;
 
-                if (_twain.SupportedCaps.Contains(CapabilityId.CapUIControllable))
+                if (_twain.Source.SupportedCaps.Contains(CapabilityId.CapUIControllable))
                 {
                     // hide scanner ui if possible
-                    if (_twain.EnableSource(SourceEnableMode.NoUI, false, this.Handle) == ReturnCode.Success)
+                    if (_twain.Source.StartTransfer(SourceEnableMode.NoUI, false, this.Handle) == ReturnCode.Success)
                     {
                         btnStopScan.Enabled = true;
                         btnStartCapture.Enabled = false;
@@ -179,7 +179,7 @@ namespace Tester.Winform
                 }
                 else
                 {
-                    if (_twain.EnableSource(SourceEnableMode.ShowUI, true, this.Handle) == ReturnCode.Success)
+                    if (_twain.Source.StartTransfer(SourceEnableMode.ShowUI, true, this.Handle) == ReturnCode.Success)
                     {
                         btnStopScan.Enabled = true;
                         btnStartCapture.Enabled = false;
@@ -252,10 +252,10 @@ namespace Tester.Winform
                 }
                 foreach (var src in _twain.GetSources())
                 {
-                    var srcBtn = new ToolStripMenuItem(src.ProductName);
+                    var srcBtn = new ToolStripMenuItem(src.Name);
                     srcBtn.Tag = src;
                     srcBtn.Click += SourceMenuItem_Click;
-                    srcBtn.Checked = _twain.SourceId != null && _twain.SourceId.Id == src.Id;
+                    srcBtn.Checked = _twain.Source != null && _twain.Source.Name == src.Name;
                     btnSources.DropDownItems.Insert(0, srcBtn);
                 }
             }
@@ -267,7 +267,7 @@ namespace Tester.Winform
 
         private void LoadSourceCaps()
         {
-            var caps = _twain.SupportedCaps;
+            var caps = _twain.Source.SupportedCaps;
             _loadingCaps = true;
             if (groupDepth.Enabled = caps.Contains(CapabilityId.ICapPixelType))
             {
@@ -292,9 +292,9 @@ namespace Tester.Winform
 
         private void LoadPaperSize()
         {
-            var list = _twain.CapGetSupportedSizes();
+            var list = _twain.Source.CapGetSupportedSizes();
             comboSize.DataSource = list;
-            var cur = _twain.GetCurrentCap(CapabilityId.ICapSupportedSizes).ConvertToEnum<SupportedSize>();
+            var cur = _twain.Source.GetCurrentCap(CapabilityId.ICapSupportedSizes).ConvertToEnum<SupportedSize>();
             if (list.Contains(cur))
             {
                 comboSize.SelectedItem = cur;
@@ -303,15 +303,15 @@ namespace Tester.Winform
 
         private void LoadDuplex()
         {
-            ckDuplex.Checked = _twain.GetCurrentCap(CapabilityId.CapDuplexEnabled).ConvertToEnum<uint>() != 0;
+            ckDuplex.Checked = _twain.Source.GetCurrentCap(CapabilityId.CapDuplexEnabled).ConvertToEnum<uint>() != 0;
         }
 
         private void LoadDPI()
         {
             // only allow dpi of certain values for those source that lists everything
-            var list = _twain.CapGetDPIs().Where(dpi => (dpi % 50) == 0).ToList();
+            var list = _twain.Source.CapGetDPIs().Where(dpi => (dpi % 50) == 0).ToList();
             comboDPI.DataSource = list;
-            var cur = (TWFix32)_twain.GetCurrentCap(CapabilityId.ICapXResolution);
+            var cur = (TWFix32)_twain.Source.GetCurrentCap(CapabilityId.ICapXResolution);
             if (list.Contains(cur))
             {
                 comboDPI.SelectedItem = cur;
@@ -320,9 +320,9 @@ namespace Tester.Winform
 
         private void LoadDepth()
         {
-            var list = _twain.CapGetPixelTypes();
+            var list = _twain.Source.CapGetPixelTypes();
             comboDepth.DataSource = list;
-            var cur = _twain.GetCurrentCap(CapabilityId.ICapPixelType).ConvertToEnum<PixelType>();
+            var cur = _twain.Source.GetCurrentCap(CapabilityId.ICapPixelType).ConvertToEnum<PixelType>();
             if (list.Contains(cur))
             {
                 comboDepth.SelectedItem = cur;
@@ -334,7 +334,7 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (SupportedSize)comboSize.SelectedItem;
-                _twain.CapSetSupportedSize(sel);
+                _twain.Source.CapSetSupportedSize(sel);
             }
         }
 
@@ -343,7 +343,7 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (PixelType)comboDepth.SelectedItem;
-                _twain.CapSetPixelType(sel);
+                _twain.Source.CapSetPixelType(sel);
             }
         }
 
@@ -352,7 +352,7 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (TWFix32)comboDPI.SelectedItem;
-                _twain.CapSetDPI(sel);
+                _twain.Source.CapSetDPI(sel);
             }
         }
 
@@ -360,13 +360,13 @@ namespace Tester.Winform
         {
             if (!_loadingCaps && _twain.State == 4)
             {
-                _twain.CapSetDuplex(ckDuplex.Checked);
+                _twain.Source.CapSetDuplex(ckDuplex.Checked);
             }
         }
 
         private void btnAllSettings_Click(object sender, EventArgs e)
         {
-            _twain.EnableSource(SourceEnableMode.ShowUIOnly, true, this.Handle);
+            _twain.Source.StartTransfer(SourceEnableMode.ShowUIOnly, true, this.Handle);
         }
 
         #endregion

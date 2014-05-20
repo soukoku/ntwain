@@ -169,18 +169,17 @@ namespace NTwain.Triplets
 
         public static ReturnCode DsmEntry(
             TWIdentity origin,
-            TWIdentity destination,
             Message msg,
             TWEntryPoint data)
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
-                else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
+                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, null, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
+                else { return NativeMethods.DsmWinOld(origin, null, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
             }
             else if (Platform.IsLinux)
             {
-                return NativeMethods.DsmLinux(origin, destination, DataGroups.Control, DataArgumentType.EntryPoint, msg, data);
+                return NativeMethods.DsmLinux(origin, null, DataGroups.Control, DataArgumentType.EntryPoint, msg, data);
             }
             throw new PlatformNotSupportedException();
         }

@@ -19,7 +19,7 @@ namespace NTwain.Triplets
 		internal ReturnCode CloseDS()
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.Identity, Message.CloseDS);
-			var rc = Dsm.DsmEntry(Session.AppId, Message.CloseDS, Session.SourceId);
+			var rc = Dsm.DsmEntry(Session.AppId, Message.CloseDS, Session.Source.Identity);
 			if (rc == ReturnCode.Success)
             {
                 Session.ChangeSourceId(null);
@@ -75,10 +75,10 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="source">The source.</param>
 		/// <returns></returns>
-		internal ReturnCode OpenDS(TWIdentity source)
+		internal ReturnCode OpenDS(TwainSource source)
 		{
 			Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.Identity, Message.OpenDS);
-			var rc = Dsm.DsmEntry(Session.AppId, Message.OpenDS, source);
+			var rc = Dsm.DsmEntry(Session.AppId, Message.OpenDS, source.Identity);
 			if (rc == ReturnCode.Success)
             {
                 Session.ChangeSourceId(source);

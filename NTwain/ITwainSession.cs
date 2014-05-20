@@ -13,23 +13,17 @@ namespace NTwain
     public interface ITwainSession : INotifyPropertyChanged, ITwainOperation
     {
         /// <summary>
-        /// Gets the source id used for the session.
+        /// Gets the currently open source.
         /// </summary>
-        /// <value>The source id.</value>
-        TWIdentity SourceId { get; }
+        /// <value>
+        /// The current source.
+        /// </value>
+        TwainSource Source { get; }
 
         /// <summary>
         /// Gets the current state number as defined by the TWAIN spec.
         /// </summary>
         /// <value>The state.</value>
         int State { get; }
-
-        /// <summary>
-        /// Gets the supported caps for the currently open source.
-        /// </summary>
-        /// <value>
-        /// The supported caps.
-        /// </value>
-        IList<CapabilityId> SupportedCaps { get; }
     }
 }

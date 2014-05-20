@@ -22,7 +22,7 @@ namespace NTwain.Triplets
         public ReturnCode DisableDS(TWUserInterface userInterface)
         {
             Session.VerifyState(5, 5, DataGroups.Control, DataArgumentType.UserInterface, Message.DisableDS);
-            var rc = Dsm.DsmEntry(Session.AppId, Session.SourceId, Message.DisableDS, userInterface);
+            var rc = Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.DisableDS, userInterface);
             if (rc == ReturnCode.Success)
             {
                 Session.ChangeState(4, true);
@@ -40,7 +40,7 @@ namespace NTwain.Triplets
             Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.UserInterface, Message.EnableDS);
             using (var pending = Session.GetPendingStateChanger(5))
             {
-                var rc = Dsm.DsmEntry(Session.AppId, Session.SourceId, Message.EnableDS, userInterface);
+                var rc = Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.EnableDS, userInterface);
                 if (rc == ReturnCode.Success ||
                     (!userInterface.ShowUI && rc == ReturnCode.CheckStatus))
                 {
@@ -62,7 +62,7 @@ namespace NTwain.Triplets
             Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.UserInterface, Message.EnableDSUIOnly);
             using (var pending = Session.GetPendingStateChanger(5))
             {
-                var rc = Dsm.DsmEntry(Session.AppId, Session.SourceId, Message.EnableDSUIOnly, userInterface);
+                var rc = Dsm.DsmEntry(Session.AppId, Session.Source.Identity, Message.EnableDSUIOnly, userInterface);
                 if (rc == ReturnCode.Success)
                 {
                     pending.Commit();

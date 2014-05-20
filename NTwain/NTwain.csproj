@@ -87,8 +87,9 @@
     <Compile Include="Triplets\Dsm.Linux.cs" />
     <Compile Include="Triplets\Dsm.WinOld.cs" />
     <Compile Include="Triplets\Dsm.WinNew.cs" />
-    <Compile Include="TwainSessionExtensions.cs" />
+    <Compile Include="TwainSource.Caps.cs" />
     <Compile Include="TwainSession.cs" />
+    <Compile Include="TwainSource.cs" />
     <Compile Include="TwainStateException.cs" />
     <Compile Include="Data\TwainTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
