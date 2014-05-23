@@ -139,7 +139,7 @@ namespace NTwain
                 TWIdentity id;
                 if (DGControl.Identity.GetDefault(out id) == ReturnCode.Success)
                 {
-                    return new TwainSource(this, id);
+                    return TwainSource.GetInstance(this, id);
                 }
                 return null;
             }
@@ -162,7 +162,7 @@ namespace NTwain
             TWIdentity id;
             if (DGControl.Identity.UserSelect(out id) == ReturnCode.Success)
             {
-                return new TwainSource(this, id);
+                return TwainSource.GetInstance(this, id);
             }
             return null;
         }
@@ -311,7 +311,7 @@ namespace NTwain
             var rc = DGControl.Identity.GetFirst(out srcId);
             while (rc == ReturnCode.Success)
             {
-                yield return new TwainSource(this, srcId);
+                yield return TwainSource.GetInstance(this, srcId);
                 rc = DGControl.Identity.GetNext(out srcId);
             }
         }
@@ -324,6 +324,18 @@ namespace NTwain
         {
             TWStatus stat;
             DGControl.Status.GetManager(out stat);
+            return stat;
+        }
+
+        /// <summary>
+        /// Gets the manager status. Only call this at state 3 or higher.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <returns></returns>
+        public TWStatusUtf8 GetStatusUtf8()
+        {
+            TWStatusUtf8 stat;
+            DGControl.StatusUtf8.GetManager(out stat);
             return stat;
         }
 

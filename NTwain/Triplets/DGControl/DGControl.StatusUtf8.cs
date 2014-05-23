@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.StatusUtf8"/>.
     /// </summary>
-	public sealed class StatusUtf8 : OpBase
+	sealed class StatusUtf8 : OpBase
 	{
 		internal StatusUtf8(ITwainSessionInternal session) : base(session) { }
 
@@ -16,8 +16,9 @@ namespace NTwain.Triplets
         /// </summary>
         /// <param name="status">The status.</param>
         /// <returns></returns>
-        public ReturnCode GetManager(TWStatusUtf8 status)
+        public ReturnCode GetManager(out TWStatusUtf8 status)
         {
+            status = new TWStatusUtf8();
             Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get);
             return Dsm.DsmEntry(Session.AppId, null, Message.Get, status);
         }
@@ -28,8 +29,9 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="status">The status.</param>
 		/// <returns></returns>
-		public ReturnCode GetSource(TWStatusUtf8 status)
+		public ReturnCode GetSource(out TWStatusUtf8 status)
 		{
+            status = new TWStatusUtf8();
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get);
 			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Get, status);
 		}

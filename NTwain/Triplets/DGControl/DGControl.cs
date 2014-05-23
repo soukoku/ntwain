@@ -62,7 +62,7 @@ namespace NTwain.Triplets
 			}
 		}
 		DeviceEvent _deviceEvent;
-		public DeviceEvent DeviceEvent
+		internal DeviceEvent DeviceEvent
 		{
 			get
 			{
@@ -163,7 +163,7 @@ namespace NTwain.Triplets
 			}
 		}
 		StatusUtf8 _statusUtf8;
-		public StatusUtf8 StatusUtf8
+		internal StatusUtf8 StatusUtf8
 		{
 			get
 			{
