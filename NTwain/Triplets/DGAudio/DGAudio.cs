@@ -27,7 +27,7 @@ namespace NTwain.Triplets
 		}
 
 		AudioInfo _audioInfo;
-		public AudioInfo AudioInfo
+		internal AudioInfo AudioInfo
 		{
 			get
 			{

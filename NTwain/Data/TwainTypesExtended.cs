@@ -499,12 +499,12 @@ namespace NTwain.Data
         /// Gets the <see cref="Mix"/> value as matrix.
         /// </summary>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body"), 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body"),
         System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Return")]
         public TWFix32[,] GetMixMatrix()
         {
             // from http://stackoverflow.com/questions/3845235/convert-array-to-matrix, haven't tested it
-            TWFix32[,] mat = new TWFix32[3, 3]; 
+            TWFix32[,] mat = new TWFix32[3, 3];
             Buffer.BlockCopy(_mix, 0, mat, 0, _mix.Length * 4);
             return mat;
         }
@@ -1348,11 +1348,11 @@ namespace NTwain.Data
         /// <summary>
         /// Tag identifying an information.
         /// </summary>
-        public ExtendedImageInfo InfoID { get { return (ExtendedImageInfo)_infoID; } }
+        public ExtendedImageInfo InfoID { get { return (ExtendedImageInfo)_infoID; } set { _infoID = (ushort)value; } }
         /// <summary>
         /// Item data type.
         /// </summary>
-        public ItemType ItemType { get { return (ItemType)_itemType; } }
+        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
         /// <summary>
         /// Number of items.
         /// </summary>
@@ -1388,7 +1388,10 @@ namespace NTwain.Data
     /// </summary>
     public sealed partial class TWExtImageInfo : IDisposable
     {
-        internal TWExtImageInfo() { }
+        internal TWExtImageInfo()
+        {
+            _info = new TWInfo[200];
+        }
 
         /// <summary>
         /// Number of information that application is requesting. This is filled by the
@@ -1396,7 +1399,7 @@ namespace NTwain.Data
         /// image information. The application should allocate memory and fill in the
         /// attribute tag for image information.
         /// </summary>
-        public uint NumInfos { get { return _numInfos; } }
+        public uint NumInfos { get { return _numInfos; } set { _numInfos = value; } }
         /// <summary>
         /// Array of information.
         /// </summary>

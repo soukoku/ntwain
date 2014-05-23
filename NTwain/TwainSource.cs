@@ -16,21 +16,9 @@ namespace NTwain
     /// </summary>
     public partial class TwainSource : INotifyPropertyChanged
     {
-        static readonly Dictionary<string, TwainSource> __globalInstances = new Dictionary<string, TwainSource>();
-
-        internal static TwainSource GetInstance(ITwainSessionInternal session, TWIdentity sourceId)
-        {
-            var key = string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2}", sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
-            if (__globalInstances.ContainsKey(key))
-            {
-                return __globalInstances[key];
-            }
-            return __globalInstances[key] = new TwainSource(session, sourceId);
-        }
-
         ITwainSessionInternal _session;
 
-        private TwainSource(ITwainSessionInternal session, TWIdentity sourceId)
+        internal TwainSource(ITwainSessionInternal session, TWIdentity sourceId)
         {
             _session = session;
             Identity = sourceId;

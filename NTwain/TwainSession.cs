@@ -50,6 +50,20 @@ namespace NTwain
         TWIdentity _appId;
         TWUserInterface _twui;
 
+        static readonly Dictionary<string, TwainSource> __ownedSources = new Dictionary<string, TwainSource>();
+
+        internal static TwainSource GetSourceInstance(ITwainSessionInternal session, TWIdentity sourceId)
+        {
+            var key = string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2}", sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
+            if (__ownedSources.ContainsKey(key))
+            {
+                return __ownedSources[key];
+            }
+            return __ownedSources[key] = new TwainSource(session, sourceId);
+        }
+
+        
+
         /// <summary>
         /// Gets or sets the optional synchronization context.
         /// This allows events to be raised on the thread
@@ -139,7 +153,7 @@ namespace NTwain
                 TWIdentity id;
                 if (DGControl.Identity.GetDefault(out id) == ReturnCode.Success)
                 {
-                    return TwainSource.GetInstance(this, id);
+                    return GetSourceInstance(this, id);
                 }
                 return null;
             }
@@ -162,7 +176,7 @@ namespace NTwain
             TWIdentity id;
             if (DGControl.Identity.UserSelect(out id) == ReturnCode.Success)
             {
-                return TwainSource.GetInstance(this, id);
+                return GetSourceInstance(this, id);
             }
             return null;
         }
@@ -303,7 +317,6 @@ namespace NTwain
         /// Gets list of sources available in the system.
         /// Only call this at state 2 or higher.
         /// </summary>
-        /// <param name="session">The session.</param>
         /// <returns></returns>
         public IEnumerable<TwainSource> GetSources()
         {
@@ -311,7 +324,7 @@ namespace NTwain
             var rc = DGControl.Identity.GetFirst(out srcId);
             while (rc == ReturnCode.Success)
             {
-                yield return TwainSource.GetInstance(this, srcId);
+                yield return GetSourceInstance(this, srcId);
                 rc = DGControl.Identity.GetNext(out srcId);
             }
         }

@@ -6,16 +6,20 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.ExtImageInfo"/>.
     /// </summary>
-	public sealed class ExtImageInfo : OpBase
-	{
-		internal ExtImageInfo(ITwainSessionInternal session) : base(session) { }
+    public sealed class ExtImageInfo : OpBase
+    {
+        internal ExtImageInfo(ITwainSessionInternal session) : base(session) { }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
-        public ReturnCode Get(out TWExtImageInfo info)
-		{
-			Session.VerifyState(7, 7, DataGroups.Image, DataArgumentType.ExtImageInfo, Message.Get);
-            info = new TWExtImageInfo();
+        /// <summary>
+        /// This operation is used by the application to query the data source for extended image attributes.
+        /// The application is responsible for creating and disiposing the info object.
+        /// </summary>
+        /// <param name="info">The information.</param>
+        /// <returns></returns>
+        public ReturnCode Get(TWExtImageInfo info)
+        {
+            Session.VerifyState(7, 7, DataGroups.Image, DataArgumentType.ExtImageInfo, Message.Get);
             return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Get, info);
-		}
-	}
+        }
+    }
 }

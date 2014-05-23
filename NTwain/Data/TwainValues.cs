@@ -17,6 +17,9 @@ namespace NTwain.Data
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum ContainerType : ushort
     {
+        /// <summary>
+        /// The default value for this enum.
+        /// </summary>
         Invalid = 0,
         /// <summary>
         /// The container is <see cref="TWArray"/>.
@@ -34,6 +37,9 @@ namespace NTwain.Data
         /// The container is <see cref="TWRange"/>.
         /// </summary>
         Range = 6,
+        /// <summary>
+        /// The don't care value.
+        /// </summary>
         DontCare = TwainConst.DontCare16,
     }
 

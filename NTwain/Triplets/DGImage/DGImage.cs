@@ -16,6 +16,9 @@ namespace NTwain.Triplets
         }
 
         CieColor _cieColor;
+        /// <summary>
+        /// Gets the operations defined for DAT_CIECOLOR.
+        /// </summary>
         public CieColor CieColor
         {
             get
@@ -27,6 +30,9 @@ namespace NTwain.Triplets
 
 
         ExtImageInfo _extImgInfo;
+        /// <summary>
+        /// Gets the operations defined for DAT_EXTIMAGEINFO.
+        /// </summary>
         public ExtImageInfo ExtImageInfo
         {
             get
@@ -38,6 +44,9 @@ namespace NTwain.Triplets
 
 
         Filter _filter;
+        /// <summary>
+        /// Gets the operations defined for DAT_FILTER.
+        /// </summary>
         public Filter Filter
         {
             get
@@ -48,6 +57,9 @@ namespace NTwain.Triplets
         }
 
         GrayResponse _grayResponse;
+        /// <summary>
+        /// Gets the operations defined for DAT_GRAYRESPONSE.
+        /// </summary>
         public GrayResponse GrayResponse
         {
             get
@@ -58,6 +70,9 @@ namespace NTwain.Triplets
         }
 
         IccProfile _iccProfile;
+        /// <summary>
+        /// Gets the operations defined for DAT_ICCPROFILE.
+        /// </summary>
         public IccProfile IccProfile
         {
             get
@@ -88,6 +103,9 @@ namespace NTwain.Triplets
         }
 
         ImageLayout _imgLayout;
+        /// <summary>
+        /// Gets the operations defined for DAT_IMAGELAYOUT.
+        /// </summary>
         public ImageLayout ImageLayout
         {
             get
@@ -128,6 +146,9 @@ namespace NTwain.Triplets
         }
 
         JpegCompression _jpegComp;
+        /// <summary>
+        /// Gets the operations defined for DAT_JPEGCOMPRESSION.
+        /// </summary>
         public JpegCompression JpegCompression
         {
             get
@@ -138,6 +159,9 @@ namespace NTwain.Triplets
         }
 
         Palette8 _palette8;
+        /// <summary>
+        /// Gets the operations defined for DAT_PALETTE8.
+        /// </summary>
         public Palette8 Palette8
         {
             get
@@ -148,6 +172,9 @@ namespace NTwain.Triplets
         }
 
         RgbResponse _rgbResp;
+        /// <summary>
+        /// Gets the operations defined for DAT_RGBRESPONSE.
+        /// </summary>
         public RgbResponse RgbResponse
         {
             get

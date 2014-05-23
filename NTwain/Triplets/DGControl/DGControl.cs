@@ -34,7 +34,10 @@ namespace NTwain.Triplets
 				return _callback2;
 			}
 		}
-		Capability _capability;
+        Capability _capability;
+        /// <summary>
+        /// Gets the operations defined for DAT_CAPABILITY.
+        /// </summary>
 		public Capability Capability
 		{
 			get
@@ -44,6 +47,9 @@ namespace NTwain.Triplets
 			}
         }
         CapabilityCustom _capabilityCust;
+        /// <summary>
+        /// Gets the operations defined for a custom DAT_* value with capability data.
+        /// </summary>
         public CapabilityCustom CapabilityCustom
         {
             get
@@ -52,7 +58,10 @@ namespace NTwain.Triplets
                 return _capabilityCust;
             }
         }
-		CustomDSData _customDSData;
+        CustomDSData _customDSData;
+        /// <summary>
+        /// Gets the operations defined for DAT_CUSTOMDSDATA.
+        /// </summary>
 		public CustomDSData CustomDSData
 		{
 			get
@@ -88,7 +97,10 @@ namespace NTwain.Triplets
 				return _event;
 			}
 		}
-		FileSystem _fileSys;
+        FileSystem _fileSys;
+        /// <summary>
+        /// Gets the operations defined for DAT_FILESYSTEM.
+        /// </summary>
 		public FileSystem FileSystem
 		{
 			get
@@ -115,7 +127,10 @@ namespace NTwain.Triplets
 				return _parent;
 			}
 		}
-		PassThru _passThru;
+        PassThru _passThru;
+        /// <summary>
+        /// Gets the operations defined for DAT_PASSTHRU.
+        /// </summary>
 		public PassThru PassThru
 		{
 			get
@@ -133,7 +148,10 @@ namespace NTwain.Triplets
 				return _pendingXfers;
 			}
 		}
-		SetupFileXfer _setupFileXfer;
+        SetupFileXfer _setupFileXfer;
+        /// <summary>
+        /// Gets the operations defined for DAT_SETUPFILEXFER.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer")]
         public SetupFileXfer SetupFileXfer
 		{
@@ -143,7 +161,10 @@ namespace NTwain.Triplets
 				return _setupFileXfer;
 			}
 		}
-		SetupMemXfer _setupMemXfer;
+        SetupMemXfer _setupMemXfer;
+        /// <summary>
+        /// Gets the operations defined for DAT_SETUPMEMXFER.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mem")]
         public SetupMemXfer SetupMemXfer
 		{
@@ -180,7 +201,10 @@ namespace NTwain.Triplets
 				return _userInterface;
 			}
 		}
-		XferGroup _xferGroup;
+        XferGroup _xferGroup;
+        /// <summary>
+        /// Gets the operations defined for DAT_XFERGROUP.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer")]
         public XferGroup XferGroup
 		{

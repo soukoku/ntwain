@@ -414,14 +414,14 @@ namespace NTwain.Internals
         static void DoImageXferredEventRoutine(ITwainSessionInternal session, IntPtr dataPtr, byte[] dataArray, string filePath)
         {
             TWImageInfo imgInfo;
-            TWExtImageInfo extInfo = null;
-            if (session.CurrentSource.SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
-            {
-                if (session.DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
-                {
-                    extInfo = null;
-                }
-            }
+            //TWExtImageInfo extInfo = null;
+            //if (session.CurrentSource.SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
+            //{
+            //    if (session.DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
+            //    {
+            //        extInfo = null;
+            //    }
+            //}
             if (session.DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
             {
                 imgInfo = null;
@@ -432,9 +432,9 @@ namespace NTwain.Internals
                 MemData = dataArray,
                 FileDataPath = filePath,
                 ImageInfo = imgInfo,
-                ExImageInfo = extInfo
+                //ExImageInfo = extInfo
             });
-            if (extInfo != null) { extInfo.Dispose(); }
+            //if (extInfo != null) { extInfo.Dispose(); }
         }
 
         #endregion
