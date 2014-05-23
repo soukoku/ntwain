@@ -21,7 +21,7 @@ namespace NTwain
                 var rc = _session.DGControl.Capability.QuerySupport(cap);
                 if (rc == ReturnCode.Success)
                 {
-                    var read = CapabilityReadOut.ReadValue(cap);
+                    var read = CapabilityReader.ReadValue(cap);
 
                     if (read.ContainerType == ContainerType.OneValue)
                     {
@@ -44,7 +44,7 @@ namespace NTwain
                 var rc = _session.DGControl.Capability.GetCurrent(cap);
                 if (rc == ReturnCode.Success)
                 {
-                    var read = CapabilityReadOut.ReadValue(cap);
+                    var read = CapabilityReader.ReadValue(cap);
 
                     switch (read.ContainerType)
                     {

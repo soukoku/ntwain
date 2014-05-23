@@ -93,14 +93,12 @@ namespace NTwain
         /// <summary>
         /// Gets the manager status. Only call this at state 2 or higher.
         /// </summary>
-        /// <param name="session">The session.</param>
         /// <returns></returns>
         TWStatus GetStatus();
 
         /// <summary>
         /// Gets the manager status. Only call this at state 3 or higher.
         /// </summary>
-        /// <param name="session">The session.</param>
         /// <returns></returns>
         TWStatusUtf8 GetStatusUtf8();
     }

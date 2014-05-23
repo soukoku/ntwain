@@ -926,7 +926,7 @@ namespace NTwain.Data
         {
             if (toPopulate == null) { toPopulate = new List<object>(); }
 
-            var read = CapabilityReadOut.ReadValue(this);
+            var read = CapabilityReader.ReadValue(this);
 
             switch (read.ContainerType)
             {

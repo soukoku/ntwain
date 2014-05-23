@@ -20,7 +20,7 @@ namespace NTwain
 
         internal static TwainSource GetInstance(ITwainSessionInternal session, TWIdentity sourceId)
         {
-            var key = string.Format("{0}|{1}", sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
+            var key = string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2}", sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
             if (__globalInstances.ContainsKey(key))
             {
                 return __globalInstances[key];
@@ -88,7 +88,6 @@ namespace NTwain
         /// <summary>
         /// Gets the source status. Only call this at state 4 or higher.
         /// </summary>
-        /// <param name="session">The session.</param>
         /// <returns></returns>
         public TWStatus GetStatus()
         {
@@ -99,7 +98,6 @@ namespace NTwain
         /// <summary>
         /// Gets the source status. Only call this at state 4 or higher.
         /// </summary>
-        /// <param name="session">The session.</param>
         /// <returns></returns>
         public TWStatusUtf8 GetStatusUtf8()
         {
