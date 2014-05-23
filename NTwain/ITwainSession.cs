@@ -38,26 +38,6 @@ namespace NTwain
         int State { get; }
 
         /// <summary>
-        /// Gets the triplet operations defined for audio data group.
-        /// </summary>
-        DGAudio DGAudio { get; }
-
-        /// <summary>
-        /// Gets the triplet operations defined for control data group.
-        /// </summary>
-        DGControl DGControl { get; }
-
-        /// <summary>
-        /// Gets the triplet operations defined for image data group.
-        /// </summary>
-        DGImage DGImage { get; }
-
-        /// <summary>
-        /// Gets the direct triplet operation entry for custom values.
-        /// </summary>
-        DGCustom DGCustom { get; }
-
-        /// <summary>
         /// Try to show the built-in source selector dialog and return the selected source.
         /// This is not recommended and is only included for completeness.
         /// </summary>

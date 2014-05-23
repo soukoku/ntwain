@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataGroups.Audio"/>.
 	/// </summary>
-	public sealed class DGAudio
+	sealed class DGAudio
 	{
         ITwainSessionInternal _session;
         internal DGAudio(ITwainSessionInternal session)

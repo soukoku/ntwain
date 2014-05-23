@@ -1,4 +1,5 @@
 ﻿using NTwain.Data;
+using NTwain.Triplets;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -46,5 +47,25 @@ namespace NTwain.Internals
 
         ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle);
         SynchronizationContext SynchronizationContext { get; set; }
+
+        /// <summary>
+        /// Gets the triplet operations defined for audio data group.
+        /// </summary>
+        DGAudio DGAudio { get; }
+
+        /// <summary>
+        /// Gets the triplet operations defined for control data group.
+        /// </summary>
+        DGControl DGControl { get; }
+
+        /// <summary>
+        /// Gets the triplet operations defined for image data group.
+        /// </summary>
+        DGImage DGImage { get; }
+
+        /// <summary>
+        /// Gets the direct triplet operation entry for custom values.
+        /// </summary>
+        DGCustom DGCustom { get; }
     }
 }

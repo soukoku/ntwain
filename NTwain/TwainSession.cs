@@ -62,7 +62,7 @@ namespace NTwain
             return __ownedSources[key] = new TwainSource(session, sourceId);
         }
 
-        
+
 
         /// <summary>
         /// Gets or sets the optional synchronization context.
@@ -151,7 +151,7 @@ namespace NTwain
             get
             {
                 TWIdentity id;
-                if (DGControl.Identity.GetDefault(out id) == ReturnCode.Success)
+                if (((ITwainSessionInternal)this).DGControl.Identity.GetDefault(out id) == ReturnCode.Success)
                 {
                     return GetSourceInstance(this, id);
                 }
@@ -161,7 +161,7 @@ namespace NTwain
             {
                 if (value != null)
                 {
-                    DGControl.Identity.Set(value.Identity);
+                    ((ITwainSessionInternal)this).DGControl.Identity.Set(value.Identity);
                 }
             }
         }
@@ -174,7 +174,7 @@ namespace NTwain
         public TwainSource ShowSourceSelector()
         {
             TWIdentity id;
-            if (DGControl.Identity.UserSelect(out id) == ReturnCode.Success)
+            if (((ITwainSessionInternal)this).DGControl.Identity.UserSelect(out id) == ReturnCode.Success)
             {
                 return GetSourceInstance(this, id);
             }
@@ -210,7 +210,7 @@ namespace NTwain
         /// <summary>
         /// Gets the triplet operations defined for audio data group.
         /// </summary>
-        public DGAudio DGAudio
+        DGAudio ITwainSessionInternal.DGAudio
         {
             get
             {
@@ -220,10 +220,7 @@ namespace NTwain
         }
 
         DGControl _dgControl;
-        /// <summary>
-        /// Gets the triplet operations defined for control data group.
-        /// </summary>
-        public DGControl DGControl
+        DGControl ITwainSessionInternal.DGControl
         {
             get
             {
@@ -233,10 +230,7 @@ namespace NTwain
         }
 
         DGImage _dgImage;
-        /// <summary>
-        /// Gets the triplet operations defined for image data group.
-        /// </summary>
-        public DGImage DGImage
+        DGImage ITwainSessionInternal.DGImage
         {
             get
             {
@@ -246,10 +240,7 @@ namespace NTwain
         }
 
         DGCustom _dgCustom;
-        /// <summary>
-        /// Gets the direct triplet operation entry for custom values.
-        /// </summary>
-        public DGCustom DGCustom
+        DGCustom ITwainSessionInternal.DGCustom
         {
             get
             {
@@ -257,6 +248,7 @@ namespace NTwain
                 return _dgCustom;
             }
         }
+
         /// <summary>
         /// Opens the data source manager. This must be the first method used
         /// before using other TWAIN functions. Calls to this must be followed by <see cref="Close"/> when done with a TWAIN session.
@@ -269,14 +261,14 @@ namespace NTwain
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
 
-                rc = DGControl.Parent.OpenDsm(MessageLoop.Instance.LoopHandle);
+                rc = ((ITwainSessionInternal)this).DGControl.Parent.OpenDsm(MessageLoop.Instance.LoopHandle);
                 if (rc == ReturnCode.Success)
                 {
                     // if twain2 then get memory management functions
                     if ((_appId.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
                     {
                         TWEntryPoint entry;
-                        rc = DGControl.EntryPoint.Get(out entry);
+                        rc = ((ITwainSessionInternal)this).DGControl.EntryPoint.Get(out entry);
                         if (rc == ReturnCode.Success)
                         {
                             Platform.MemoryManager = entry;
@@ -303,7 +295,7 @@ namespace NTwain
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
 
-                rc = DGControl.Parent.CloseDsm(MessageLoop.Instance.LoopHandle);
+                rc = ((ITwainSessionInternal)this).DGControl.Parent.CloseDsm(MessageLoop.Instance.LoopHandle);
                 if (rc == ReturnCode.Success)
                 {
                     Platform.MemoryManager = null;
@@ -321,13 +313,14 @@ namespace NTwain
         public IEnumerable<TwainSource> GetSources()
         {
             TWIdentity srcId;
-            var rc = DGControl.Identity.GetFirst(out srcId);
+            var rc = ((ITwainSessionInternal)this).DGControl.Identity.GetFirst(out srcId);
             while (rc == ReturnCode.Success)
             {
                 yield return GetSourceInstance(this, srcId);
-                rc = DGControl.Identity.GetNext(out srcId);
+                rc = ((ITwainSessionInternal)this).DGControl.Identity.GetNext(out srcId);
             }
         }
+
         /// <summary>
         /// Gets the manager status. Only call this at state 2 or higher.
         /// </summary>
@@ -335,7 +328,7 @@ namespace NTwain
         public TWStatus GetStatus()
         {
             TWStatus stat;
-            DGControl.Status.GetManager(out stat);
+            ((ITwainSessionInternal)this).DGControl.Status.GetManager(out stat);
             return stat;
         }
 
@@ -346,7 +339,7 @@ namespace NTwain
         public TWStatusUtf8 GetStatusUtf8()
         {
             TWStatusUtf8 stat;
-            DGControl.StatusUtf8.GetManager(out stat);
+            ((ITwainSessionInternal)this).DGControl.StatusUtf8.GetManager(out stat);
             return stat;
         }
 
@@ -414,7 +407,7 @@ namespace NTwain
                 if (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2)
                 {
                     var cb = new TWCallback2(HandleCallback);
-                    var rc2 = DGControl.Callback2.RegisterCallback(cb);
+                    var rc2 = ((ITwainSessionInternal)this).DGControl.Callback2.RegisterCallback(cb);
 
                     if (rc2 == ReturnCode.Success)
                     {
@@ -426,7 +419,7 @@ namespace NTwain
                 {
                     var cb = new TWCallback(HandleCallback);
 
-                    var rc2 = DGControl.Callback.RegisterCallback(cb);
+                    var rc2 = ((ITwainSessionInternal)this).DGControl.Callback.RegisterCallback(cb);
 
                     if (rc2 == ReturnCode.Success)
                     {
@@ -442,11 +435,11 @@ namespace NTwain
 
                 if (mode == SourceEnableMode.ShowUIOnly)
                 {
-                    rc = DGControl.UserInterface.EnableDSUIOnly(_twui);
+                    rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDSUIOnly(_twui);
                 }
                 else
                 {
-                    rc = DGControl.UserInterface.EnableDS(_twui);
+                    rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDS(_twui);
                 }
 
                 if (rc != ReturnCode.Success)
@@ -465,7 +458,7 @@ namespace NTwain
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
 
-                rc = DGControl.UserInterface.DisableDS(_twui);
+                rc = ((ITwainSessionInternal)this).DGControl.UserInterface.DisableDS(_twui);
                 if (rc == ReturnCode.Success)
                 {
                     _callbackObj = null;
@@ -506,11 +499,11 @@ namespace NTwain
             {
                 if (targetState < 7)
                 {
-                    DGControl.PendingXfers.EndXfer(new TWPendingXfers());
+                    ((ITwainSessionInternal)this).DGControl.PendingXfers.EndXfer(new TWPendingXfers());
                 }
                 if (targetState < 6)
                 {
-                    DGControl.PendingXfers.Reset(new TWPendingXfers());
+                    ((ITwainSessionInternal)this).DGControl.PendingXfers.Reset(new TWPendingXfers());
                 }
                 if (targetState < 5)
                 {
@@ -690,7 +683,7 @@ namespace NTwain
 
                     var evt = new TWEvent();
                     evt.pEvent = msgPtr;
-                    if (handled = (DGControl.Event.ProcessEvent(evt) == ReturnCode.DSEvent))
+                    if (handled = (((ITwainSessionInternal)this).DGControl.Event.ProcessEvent(evt) == ReturnCode.DSEvent))
                     {
                         Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: HandleWndProcMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, evt.TWMessage));
 
@@ -735,7 +728,7 @@ namespace NTwain
                     break;
                 case Message.DeviceEvent:
                     TWDeviceEvent de;
-                    var rc = DGControl.DeviceEvent.Get(out de);
+                    var rc = ((ITwainSessionInternal)this).DGControl.DeviceEvent.Get(out de);
                     if (rc == ReturnCode.Success)
                     {
                         SafeSyncableRaiseOnEvent(OnDeviceEvent, DeviceEvent, new DeviceEventArgs(de));

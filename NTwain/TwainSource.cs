@@ -1,5 +1,6 @@
 ﻿using NTwain.Data;
 using NTwain.Internals;
+using NTwain.Triplets;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -179,6 +180,40 @@ namespace NTwain
             {
                 _supportedCaps = value;
                 OnPropertyChanged("SupportedCaps");
+            }
+        }
+
+
+        /// <summary>
+        /// Gets the triplet operations defined for control data group.
+        /// </summary>
+        public DGControl DGControl
+        {
+            get
+            {
+                return _session.DGControl;
+            }
+        }
+
+        /// <summary>
+        /// Gets the triplet operations defined for image data group.
+        /// </summary>
+        public DGImage DGImage
+        {
+            get
+            {
+                return _session.DGImage;
+            }
+        }
+
+        /// <summary>
+        /// Gets the direct triplet operation entry for custom values.
+        /// </summary>
+        public DGCustom DGCustom
+        {
+            get
+            {
+                return _session.DGCustom;
             }
         }
 
