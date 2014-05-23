@@ -19,10 +19,9 @@ To properly use this lib you will need to be reasonably familiar with the TWAIN 
 and how it works in general (especially capability). 
 The spec can be downloaded from [twain.org](http://twain.org/). 
 
-Except for certain "important" state-changing calls that have been 
-abstract away, most triplet operations are 
+Except for those that have been abstracted away with .net equivalents, most triplet operations are 
 provided as-is so you will need to know when and how to use them. 
-There are no high-level, single-line scan-a-page-for-me-now functions.
+There are no high-level, single-line scan-a-page-for-me-now functions yet.
 
 The main class to use is TwainSession. You can either use it directly by subscribing
 to the important events or sub-class it and override the OnMethods related to those events.
@@ -40,6 +39,9 @@ var session = new TwainSession(appId);
 session.TransferReady += ...
 session.DataTransferred += ...
 
+// finally open it
+session.Open();
+
 ```
 
 TwainSession class provides many events, but these 2 are the most important
@@ -50,23 +52,44 @@ or all subsequent transfers using the event object.
 what you've specified using the TWAIN API before starting the transfer.
 
 
-To get into transfer mode, you'll have to call these methods after setting up the session:
-
-1. OpenManager() - opens the TWAIN data source manager (DSM). You can really keep this open throughout the app life time with no ill effect.
-2. OpenSource() - opens a target device. You can continue to open and close sources as long as DSM is open.
-3. EnableSource() - starts transferring
-
-After transfer has completed (you are notified of this with the SourceDisabled event) 
-and you're done with TWAIN, you can call their equivalents in correct hierarchical order like html
-
-1. CloseSource()
-2. CloseManager()
+Once you've setup and opened the session, you can get available sources, pick one to use,
+and call Open() to start using it.
 
 
-While most TWAIN APIs are done via the low-level triplet calls, this lib does provide some
-commonly used functions as extension methods to TwainSession (especially capability functions).
-This should make setting simple things such as DPI, bitdepth, or paper size easier. 
-More of these extensions may come in later versions.
+```
+#!c#
+
+// choose and open a source
+IEnumerable<TwainSources> sources = session.GetSources();
+var myDS = sources.First();
+myDS.Open();
+
+```
+
+At this point you can negotiate with the source using all the typical TWAIN triplet API.
+The TwainSource class itself has some handy pre-defined methods for common capability negotiation
+such as DPI, bitdepth, or paper size to get you started.
+
+When you're ready to get into transfer mode, just call StartTransfer() on the source object.
+
+```
+#!c#
+
+var myDS = sources.StartTransfer(...);
+
+```
+
+After transfer has completed (you are notified of this with the SourceDisabled event from session) 
+and you're done with TWAIN, you can close the source and the session in sequence to clean things up.
+
+```
+#!c#
+
+myDS.Close();
+session.Close();
+
+```
+
 
 Caveats
 --------------------------------------
@@ -74,12 +97,9 @@ At the moment this lib does not provide ways to parse transferred image data and
 consumers to do the conversion themselves. The winform project contains one such 
 example for handling DIB image in native transfer using the CommonWin32 lib.
 
-Because it hosts its own message thread, the events will likely be raised from another thread. 
+Because it hosts its own message thread, the events will be raised from another thread. 
 If you would like things marshalled to a UI thread then set the SynchronizationContext property
-to the one from the UI thread. Note that on certain consumer-grade scanner drivers this may hang the 
-event, so if you find yourself in that position you'll have to find another way
-to synchronize data to UI threads.
-
+to the one from the UI thread. 
 
 ```
 #!c#
@@ -87,17 +107,18 @@ to synchronize data to UI threads.
 session.SynchronizationContext = SynchronizationContext.Current;
 
 ```
+Note that on certain scanner drivers this may hang the 
+application due to their use of modal dialogs, so if you find yourself in that position 
+you'll have to find another way to synchronize data to UI threads. 
+
 
 64-bit OS
 --------------------------------------
 If the application process is running in 64-bit then you will need to make sure you have the 
 newer data source manager (twaindsm.dll) from below installed. 
+
 [DSM from TWAIN.org](http://sourceforge.net/projects/twain-dsm/files/TWAIN%20DSM%202%20Win/)
 
 Otherwise just compile and run the app as x86 and it'll use the 32-bit version (twain_32.dll) that comes with Windows.
-
-Note that there are no known 64-bit TWAIN DS drivers at the time of writing, so most likely you will have to
-compile the application as x86 or run on 32-bit OS to work with a real device.
-If you really want to test in 64-bit for whatever reason, you can use 
-the test one from TWAIN.org below.
-[Sample DS from TWAIN.org](http://sourceforge.net/projects/twain-samples/files/TWAIN%202%20Sample%20Data%20Source/TWAIN%20DS%202.1.3/)
+If your scanner driver is still 32-bit (and most likely it will be) you'll have no choice but to
+compile as x86 anyway, even if you have installed the newer dsm dll.
