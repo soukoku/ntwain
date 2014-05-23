@@ -20,7 +20,7 @@ namespace NTwain.Triplets
 		public ReturnCode Get(ref IntPtr handle)
 		{
 			Session.VerifyState(6, 6, DataGroups.Image, DataArgumentType.ImageNativeXfer, Message.Get);
-			return Dsm.DsmEntry(Session.AppId, Session.SourceId, DataGroups.Image, DataArgumentType.ImageNativeXfer, Message.Get, ref handle);
+			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, DataGroups.Image, DataArgumentType.ImageNativeXfer, Message.Get, ref handle);
 		}
 	}
 }

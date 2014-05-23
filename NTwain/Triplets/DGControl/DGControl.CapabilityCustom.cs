@@ -19,7 +19,7 @@ namespace NTwain.Triplets
         public ReturnCode Get(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 7, DataGroups.Control, (DataArgumentType)customDAT, Message.Get);
-            return Dsm.DsmEntry(Session.AppId, Session.SourceId, (DataArgumentType)customDAT, Message.Get, capability);
+            return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, (DataArgumentType)customDAT, Message.Get, capability);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace NTwain.Triplets
         public ReturnCode GetCurrent(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 7, DataGroups.Control, (DataArgumentType)customDAT, Message.GetCurrent);
-            return Dsm.DsmEntry(Session.AppId, Session.SourceId, (DataArgumentType)customDAT, Message.GetCurrent, capability);
+            return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, (DataArgumentType)customDAT, Message.GetCurrent, capability);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace NTwain.Triplets
         public ReturnCode GetDefault(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 7, DataGroups.Control, (DataArgumentType)customDAT, Message.GetDefault);
-            return Dsm.DsmEntry(Session.AppId, Session.SourceId, (DataArgumentType)customDAT, Message.GetDefault, capability);
+            return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, (DataArgumentType)customDAT, Message.GetDefault, capability);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace NTwain.Triplets
         public ReturnCode GetHelp(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 4, DataGroups.Control, (DataArgumentType)customDAT, Message.GetHelp);
-            return Dsm.DsmEntry(Session.AppId, Session.SourceId, (DataArgumentType)customDAT, Message.GetHelp, capability);
+            return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, (DataArgumentType)customDAT, Message.GetHelp, capability);
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace NTwain.Triplets
         public ReturnCode GetLabel(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 4, DataGroups.Control, (DataArgumentType)customDAT, Message.GetLabel);
-            return Dsm.DsmEntry(Session.AppId, Session.SourceId, (DataArgumentType)customDAT, Message.GetLabel, capability);
+            return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, (DataArgumentType)customDAT, Message.GetLabel, capability);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace NTwain.Triplets
         public ReturnCode GetLabelEnum(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 4, DataGroups.Control, (DataArgumentType)customDAT, Message.GetLabelEnum);
-            return Dsm.DsmEntry(Session.AppId, Session.SourceId, (DataArgumentType)customDAT, Message.GetLabelEnum, capability);
+            return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, (DataArgumentType)customDAT, Message.GetLabelEnum, capability);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace NTwain.Triplets
         public ReturnCode QuerySupport(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 7, DataGroups.Control, (DataArgumentType)customDAT, Message.QuerySupport);
-            return Dsm.DsmEntry(Session.AppId, Session.SourceId, (DataArgumentType)customDAT, Message.QuerySupport, capability);
+            return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, (DataArgumentType)customDAT, Message.QuerySupport, capability);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace NTwain.Triplets
         public ReturnCode Reset(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 4, DataGroups.Control, (DataArgumentType)customDAT, Message.Reset);
-            return Dsm.DsmEntry(Session.AppId, Session.SourceId, (DataArgumentType)customDAT, Message.Reset, capability);
+            return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, (DataArgumentType)customDAT, Message.Reset, capability);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace NTwain.Triplets
         public ReturnCode ResetAll(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 4, DataGroups.Control, (DataArgumentType)customDAT, Message.ResetAll);
-            return Dsm.DsmEntry(Session.AppId, Session.SourceId, (DataArgumentType)customDAT, Message.ResetAll, capability);
+            return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, (DataArgumentType)customDAT, Message.ResetAll, capability);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace NTwain.Triplets
         public ReturnCode Set(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 6, DataGroups.Control, (DataArgumentType)customDAT, Message.Set);
-            return Dsm.DsmEntry(Session.AppId, Session.SourceId, (DataArgumentType)customDAT, Message.Set, capability);
+            return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, (DataArgumentType)customDAT, Message.Set, capability);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace NTwain.Triplets
         public ReturnCode SetConstraint(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 7, DataGroups.Control, (DataArgumentType)customDAT, Message.SetConstraint);
-            return Dsm.DsmEntry(Session.AppId, Session.SourceId, (DataArgumentType)customDAT, Message.SetConstraint, capability);
+            return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, (DataArgumentType)customDAT, Message.SetConstraint, capability);
         }
     }
 }

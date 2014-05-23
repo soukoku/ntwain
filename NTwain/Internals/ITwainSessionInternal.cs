@@ -1,5 +1,7 @@
 ﻿using NTwain.Data;
+using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace NTwain.Internals
 {
@@ -34,12 +36,15 @@ namespace NTwain.Internals
         /// <returns></returns>
         ICommittable GetPendingStateChanger(int newState);
 
-        void ChangeSourceId(TWIdentity sourceId);
+        void ChangeSourceId(TwainSource source);
 
         ReturnCode DisableSource();
 
         void SafeSyncableRaiseEvent(DataTransferredEventArgs e);
         void SafeSyncableRaiseEvent(TransferErrorEventArgs e);
         void SafeSyncableRaiseEvent(TransferReadyEventArgs e);
+
+        ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle);
+        SynchronizationContext SynchronizationContext { get; set; }
     }
 }

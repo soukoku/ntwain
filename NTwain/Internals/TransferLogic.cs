@@ -70,7 +70,7 @@ namespace NTwain.Internals
                     if (xferGroup == DataGroups.None ||
                         (xferGroup & DataGroups.Image) == DataGroups.Image)
                     {
-                        var mech = session.GetCurrentCap(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>();
+                        var mech = session.CurrentSource.CapGetCurrent(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>();
                         switch (mech)
                         {
                             case XferMech.Memory:
@@ -91,7 +91,7 @@ namespace NTwain.Internals
                     }
                     if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
                     {
-                        var mech = session.GetCurrentCap(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
+                        var mech = session.CurrentSource.CapGetCurrent(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
                         switch (mech)
                         {
                             case XferMech.File:
@@ -136,7 +136,7 @@ namespace NTwain.Internals
                 }
                 else
                 {
-                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.GetSourceStatus() });
+                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
                 }
             }
             catch (Exception ex)
@@ -176,7 +176,7 @@ namespace NTwain.Internals
             }
             else
             {
-                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.GetSourceStatus() });
+                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
             }
         }
 
@@ -202,7 +202,7 @@ namespace NTwain.Internals
                 }
                 else
                 {
-                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.GetSourceStatus() });
+                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
                 }
             }
             catch (Exception ex)
@@ -242,7 +242,7 @@ namespace NTwain.Internals
             }
             else
             {
-                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.GetSourceStatus() });
+                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
             }
         }
 
@@ -305,7 +305,7 @@ namespace NTwain.Internals
                         }
                         else
                         {
-                            session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.GetSourceStatus() });
+                            session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
                         }
                     }
                 }
@@ -384,7 +384,7 @@ namespace NTwain.Internals
                     }
                     else
                     {
-                        session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.GetSourceStatus() });
+                        session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
                     }
                 }
                 catch (Exception ex)
@@ -414,14 +414,14 @@ namespace NTwain.Internals
         static void DoImageXferredEventRoutine(ITwainSessionInternal session, IntPtr dataPtr, byte[] dataArray, string filePath)
         {
             TWImageInfo imgInfo;
-            TWExtImageInfo extInfo = null;
-            if (session.SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
-            {
-                if (session.DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
-                {
-                    extInfo = null;
-                }
-            }
+            //TWExtImageInfo extInfo = null;
+            //if (session.CurrentSource.SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
+            //{
+            //    if (session.DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
+            //    {
+            //        extInfo = null;
+            //    }
+            //}
             if (session.DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
             {
                 imgInfo = null;
@@ -432,9 +432,9 @@ namespace NTwain.Internals
                 MemData = dataArray,
                 FileDataPath = filePath,
                 ImageInfo = imgInfo,
-                ExImageInfo = extInfo
+                //ExImageInfo = extInfo
             });
-            if (extInfo != null) { extInfo.Dispose(); }
+            //if (extInfo != null) { extInfo.Dispose(); }
         }
 
         #endregion

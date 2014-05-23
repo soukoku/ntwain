@@ -45,12 +45,12 @@ namespace NTwain
         /// </value>
         public TWImageInfo ImageInfo { get; internal set; }
 
-        /// <summary>
-        /// Gets the extended image information if applicable.
-        /// </summary>
-        /// <value>
-        /// The extended image information.
-        /// </value>
-        public TWExtImageInfo ExImageInfo { get; internal set; }
+        ///// <summary>
+        ///// Gets the extended image information if applicable.
+        ///// </summary>
+        ///// <value>
+        ///// The extended image information.
+        ///// </value>
+        //public TWExtImageInfo ExImageInfo { get; internal set; }
     }
 }

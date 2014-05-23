@@ -38,28 +38,28 @@ namespace Tester
             Console.WriteLine("Getting ready to do twain stuff on thread {0}.", Thread.CurrentThread.ManagedThreadId);
             Thread.Sleep(1000);
 
-            var rc = twain.OpenManager();
+            var rc = twain.Open();
 
             if (rc == ReturnCode.Success)
             {
-                var hit = twain.GetSources().Where(s => string.Equals(s.ProductName, "TWAIN2 FreeImage Software Scanner")).FirstOrDefault();
+                var hit = twain.GetSources().Where(s => string.Equals(s.Name, "TWAIN2 FreeImage Software Scanner")).FirstOrDefault();
                 if (hit == null)
                 {
                     Console.WriteLine("The sample source \"TWAIN2 FreeImage Software Scanner\" is not installed.");
-                    twain.CloseManager();
+                    twain.Close();
                 }
                 else
                 {
-                    rc = twain.OpenSource(hit.ProductName);
+                    rc = hit.Open();
 
                     if (rc == ReturnCode.Success)
                     {
                         Console.WriteLine("Start capture from the sample source.");
-                        rc = twain.EnableSource(SourceEnableMode.NoUI, false, IntPtr.Zero);
+                        rc = hit.StartTransfer(SourceEnableMode.NoUI, false, IntPtr.Zero);
                     }
                     else
                     {
-                        twain.CloseManager();
+                        twain.Close();
                     }
                 }
             }
@@ -72,8 +72,8 @@ namespace Tester
         static void twain_SourceDisabled(object sender, EventArgs e)
         {
             Console.WriteLine("Source disabled on thread {0}.", Thread.CurrentThread.ManagedThreadId);
-            var rc = twain.CloseSource();
-            rc = twain.CloseManager();
+            var rc = twain.CurrentSource.Close();
+            rc = twain.Close();
         }
 
         static void twain_TransferReady(object sender, TransferReadyEventArgs e)

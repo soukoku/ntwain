@@ -6,9 +6,10 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.Identity"/>.
     /// </summary>
-	public sealed class Identity : OpBase
+	sealed class Identity : OpBase
 	{
 		internal Identity(ITwainSessionInternal session) : base(session) { }
+
 		/// <summary>
 		/// When an application is finished with a Source, it must formally close the session between them
 		/// using this operation. This is necessary in case the Source only supports connection with a single
@@ -16,10 +17,10 @@ namespace NTwain.Triplets
 		/// accessed by other applications until its current session is terminated.
 		/// </summary>
 		/// <returns></returns>
-		internal ReturnCode CloseDS()
+		public ReturnCode CloseDS()
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.Identity, Message.CloseDS);
-			var rc = Dsm.DsmEntry(Session.AppId, Message.CloseDS, Session.SourceId);
+			var rc = Dsm.DsmEntry(Session.AppId, Message.CloseDS, Session.CurrentSource.Identity);
 			if (rc == ReturnCode.Success)
             {
                 Session.ChangeSourceId(null);
@@ -33,7 +34,6 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="source">The source.</param>
 		/// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
         public ReturnCode GetDefault(out TWIdentity source)
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetDefault);
@@ -48,7 +48,6 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="source">The source.</param>
 		/// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
         public ReturnCode GetFirst(out TWIdentity source)
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetFirst);
@@ -62,7 +61,6 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="source">The source.</param>
 		/// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
         public ReturnCode GetNext(out TWIdentity source)
 		{
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.Identity, Message.GetNext);
@@ -75,10 +73,10 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="source">The source.</param>
 		/// <returns></returns>
-		internal ReturnCode OpenDS(TWIdentity source)
+		public ReturnCode OpenDS(TwainSource source)
 		{
 			Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.Identity, Message.OpenDS);
-			var rc = Dsm.DsmEntry(Session.AppId, Message.OpenDS, source);
+			var rc = Dsm.DsmEntry(Session.AppId, Message.OpenDS, source.Identity);
 			if (rc == ReturnCode.Success)
             {
                 Session.ChangeSourceId(source);

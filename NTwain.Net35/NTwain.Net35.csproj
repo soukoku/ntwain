@@ -43,8 +43,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\NTwain\CapabilityReadout.cs">
-      <Link>CapabilityReadout.cs</Link>
+    <Compile Include="..\NTwain\CapabilityReader.cs">
+      <Link>CapabilityReader.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\DataTransferredEventArgs.cs">
       <Link>DataTransferredEventArgs.cs</Link>
@@ -99,9 +99,6 @@
     </Compile>
     <Compile Include="..\NTwain\Internals\WrappedManualResetEvent.cs">
       <Link>Internals\WrappedManualResetEvent.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\ITwainOperation.cs">
-      <Link>ITwainOperation.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\ITwainSession.cs">
       <Link>ITwainSession.cs</Link>
@@ -271,8 +268,11 @@
     <Compile Include="..\NTwain\TwainSession.cs">
       <Link>TwainSession.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\TwainSessionExtensions.cs">
-      <Link>TwainSessionExtensions.cs</Link>
+    <Compile Include="..\NTwain\TwainSource.Caps.cs">
+      <Link>TwainSource.Caps.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\TwainSource.cs">
+      <Link>TwainSource.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\TwainStateException.cs">
       <Link>TwainStateException.cs</Link>

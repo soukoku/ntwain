@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -18,6 +19,16 @@ namespace NTwain
     /// </summary>
     public class TwainSession : ITwainSessionInternal
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TwainSession"/> class.
+        /// </summary>
+        /// <param name="supportedGroups">The supported groups.</param>
+        public TwainSession(DataGroups supportedGroups)
+            : this(TWIdentity.CreateFromAssembly(supportedGroups, Assembly.GetEntryAssembly()))
+        {
+
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSession" /> class.
         /// </summary>
@@ -38,6 +49,20 @@ namespace NTwain
         object _callbackObj; // kept around so it doesn't get gc'ed
         TWIdentity _appId;
         TWUserInterface _twui;
+
+        static readonly Dictionary<string, TwainSource> __ownedSources = new Dictionary<string, TwainSource>();
+
+        internal static TwainSource GetSourceInstance(ITwainSessionInternal session, TWIdentity sourceId)
+        {
+            var key = string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2}", sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
+            if (__ownedSources.ContainsKey(key))
+            {
+                return __ownedSources[key];
+            }
+            return __ownedSources[key] = new TwainSource(session, sourceId);
+        }
+
+        
 
         /// <summary>
         /// Gets or sets the optional synchronization context.
@@ -81,9 +106,9 @@ namespace NTwain
             return new TentativeStateCommitable(this, newState);
         }
 
-        void ITwainSessionInternal.ChangeSourceId(TWIdentity sourceId)
+        void ITwainSessionInternal.ChangeSourceId(TwainSource source)
         {
-            SourceId = sourceId;
+            CurrentSource = source;
             OnPropertyChanged("SourceId");
             SafeAsyncSyncableRaiseOnEvent(OnSourceChanged, SourceChanged);
         }
@@ -106,12 +131,55 @@ namespace NTwain
         #region ITwainSession Members
 
         /// <summary>
-        /// Gets the source id used for the session.
+        /// Gets the currently open source.
         /// </summary>
         /// <value>
-        /// The source id.
+        /// The current source.
         /// </value>
-        public TWIdentity SourceId { get; private set; }
+        public TwainSource CurrentSource { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the default source for this application.
+        /// While this can be get as long as the session is open,
+        /// it can only be set at State 3.
+        /// </summary>
+        /// <value>
+        /// The default source.
+        /// </value>
+        public TwainSource DefaultSource
+        {
+            get
+            {
+                TWIdentity id;
+                if (DGControl.Identity.GetDefault(out id) == ReturnCode.Success)
+                {
+                    return GetSourceInstance(this, id);
+                }
+                return null;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    DGControl.Identity.Set(value.Identity);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Try to show the built-in source selector dialog and return the selected source.
+        /// This is not recommended and is only included for completeness.
+        /// </summary>
+        /// <returns></returns>
+        public TwainSource ShowSourceSelector()
+        {
+            TWIdentity id;
+            if (DGControl.Identity.UserSelect(out id) == ReturnCode.Success)
+            {
+                return GetSourceInstance(this, id);
+            }
+            return null;
+        }
 
         int _state;
         /// <summary>
@@ -131,33 +199,6 @@ namespace NTwain
                     OnPropertyChanged("State");
                     SafeAsyncSyncableRaiseOnEvent(OnStateChanged, StateChanged);
                 }
-            }
-        }
-
-
-        static readonly CapabilityId[] _emptyCapList = new CapabilityId[0];
-
-        private IList<CapabilityId> _supportedCaps;
-        /// <summary>
-        /// Gets the supported caps for the currently open source.
-        /// </summary>
-        /// <value>
-        /// The supported caps.
-        /// </value>
-        public IList<CapabilityId> SupportedCaps
-        {
-            get
-            {
-                if (_supportedCaps == null && State > 3)
-                {
-                    _supportedCaps = this.GetCapabilities();
-                }
-                return _supportedCaps ?? _emptyCapList;
-            }
-            private set
-            {
-                _supportedCaps = value;
-                OnPropertyChanged("SupportedCaps");
             }
         }
 
@@ -216,6 +257,99 @@ namespace NTwain
                 return _dgCustom;
             }
         }
+        /// <summary>
+        /// Opens the data source manager. This must be the first method used
+        /// before using other TWAIN functions. Calls to this must be followed by <see cref="Close"/> when done with a TWAIN session.
+        /// </summary>
+        /// <returns></returns>
+        public ReturnCode Open()
+        {
+            var rc = ReturnCode.Failure;
+            MessageLoop.Instance.Invoke(() =>
+            {
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
+
+                rc = DGControl.Parent.OpenDsm(MessageLoop.Instance.LoopHandle);
+                if (rc == ReturnCode.Success)
+                {
+                    // if twain2 then get memory management functions
+                    if ((_appId.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
+                    {
+                        TWEntryPoint entry;
+                        rc = DGControl.EntryPoint.Get(out entry);
+                        if (rc == ReturnCode.Success)
+                        {
+                            Platform.MemoryManager = entry;
+                            Debug.WriteLine("Using TWAIN2 memory functions.");
+                        }
+                        else
+                        {
+                            Close();
+                        }
+                    }
+                }
+            });
+            return rc;
+        }
+
+        /// <summary>
+        /// Closes the data source manager.
+        /// </summary>
+        /// <returns></returns>
+        public ReturnCode Close()
+        {
+            var rc = ReturnCode.Failure;
+            MessageLoop.Instance.Invoke(() =>
+            {
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
+
+                rc = DGControl.Parent.CloseDsm(MessageLoop.Instance.LoopHandle);
+                if (rc == ReturnCode.Success)
+                {
+                    Platform.MemoryManager = null;
+                }
+            });
+            return rc;
+        }
+
+
+        /// <summary>
+        /// Gets list of sources available in the system.
+        /// Only call this at state 2 or higher.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<TwainSource> GetSources()
+        {
+            TWIdentity srcId;
+            var rc = DGControl.Identity.GetFirst(out srcId);
+            while (rc == ReturnCode.Success)
+            {
+                yield return GetSourceInstance(this, srcId);
+                rc = DGControl.Identity.GetNext(out srcId);
+            }
+        }
+        /// <summary>
+        /// Gets the manager status. Only call this at state 2 or higher.
+        /// </summary>
+        /// <returns></returns>
+        public TWStatus GetStatus()
+        {
+            TWStatus stat;
+            DGControl.Status.GetManager(out stat);
+            return stat;
+        }
+
+        /// <summary>
+        /// Gets the manager status. Only call this at state 3 or higher.
+        /// </summary>
+        /// <returns></returns>
+        public TWStatusUtf8 GetStatusUtf8()
+        {
+            TWStatusUtf8 stat;
+            DGControl.StatusUtf8.GetManager(out stat);
+            return stat;
+        }
+
 
         #endregion
 
@@ -260,110 +394,6 @@ namespace NTwain
 
         #region privileged calls that causes state change in TWAIN
 
-        /// <summary>
-        /// Opens the data source manager. This must be the first method used
-        /// before using other TWAIN functions. Calls to this must be followed by <see cref="CloseManager"/> when done with a TWAIN session.
-        /// </summary>
-        /// <returns></returns>
-        public ReturnCode OpenManager()
-        {
-            var rc = ReturnCode.Failure;
-            MessageLoop.Instance.Invoke(() =>
-            {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
-
-                rc = DGControl.Parent.OpenDsm(MessageLoop.Instance.LoopHandle);
-                if (rc == ReturnCode.Success)
-                {
-                    // if twain2 then get memory management functions
-                    if ((_appId.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
-                    {
-                        TWEntryPoint entry;
-                        rc = DGControl.EntryPoint.Get(out entry);
-                        if (rc == ReturnCode.Success)
-                        {
-                            Platform.MemoryManager = entry;
-                            Debug.WriteLine("Using TWAIN2 memory functions.");
-                        }
-                        else
-                        {
-                            CloseManager();
-                        }
-                    }
-                }
-            });
-            return rc;
-        }
-
-        /// <summary>
-        /// Closes the data source manager.
-        /// </summary>
-        /// <returns></returns>
-        public ReturnCode CloseManager()
-        {
-            var rc = ReturnCode.Failure;
-            MessageLoop.Instance.Invoke(() =>
-            {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
-
-                rc = DGControl.Parent.CloseDsm(MessageLoop.Instance.LoopHandle);
-                if (rc == ReturnCode.Success)
-                {
-                    Platform.MemoryManager = null;
-                }
-            });
-            return rc;
-        }
-
-        /// <summary>
-        /// Loads the specified source into main memory and causes its initialization.
-        /// Calls to this must be followed by
-        /// <see cref="CloseSource" /> when not using it anymore.
-        /// </summary>
-        /// <param name="sourceProductName">Name of the source.</param>
-        /// <returns></returns>
-        /// <exception cref="System.ArgumentException">sourceProductName</exception>
-        public ReturnCode OpenSource(string sourceProductName)
-        {
-            if (string.IsNullOrEmpty(sourceProductName)) { throw new ArgumentException(Resources.SourceRequired, "sourceProductName"); }
-
-            var rc = ReturnCode.Failure;
-            MessageLoop.Instance.Invoke(() =>
-            {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
-
-                var source = new TWIdentity
-                {
-                    ProductName = sourceProductName
-                };
-
-                rc = DGControl.Identity.OpenDS(source);
-            });
-            return rc;
-        }
-
-        /// <summary>
-        /// When an application is finished with a Source, it must formally close the session between them
-        /// using this operation. This is necessary in case the Source only supports connection with a single
-        /// application (many desktop scanners will behave this way). A Source such as this cannot be
-        /// accessed by other applications until its current session is terminated
-        /// </summary>
-        /// <returns></returns>
-        public ReturnCode CloseSource()
-        {
-            var rc = ReturnCode.Failure;
-            MessageLoop.Instance.Invoke(() =>
-            {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseSource.", Thread.CurrentThread.ManagedThreadId));
-
-                rc = DGControl.Identity.CloseDS();
-                if (rc == ReturnCode.Success)
-                {
-                    SupportedCaps = null;
-                }
-            });
-            return rc;
-        }
 
         /// <summary>
         /// Enables the source to start transferring.
@@ -372,7 +402,7 @@ namespace NTwain
         /// <param name="modal">if set to <c>true</c> any driver UI will display as modal.</param>
         /// <param name="windowHandle">The window handle if modal.</param>
         /// <returns></returns>
-        public ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle)
+        ReturnCode ITwainSessionInternal.EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle)
         {
             var rc = ReturnCode.Failure;
 
@@ -486,13 +516,13 @@ namespace NTwain
                 {
                     ((ITwainSessionInternal)this).DisableSource();
                 }
-                if (targetState < 4)
+                if (targetState < 4 && CurrentSource != null)
                 {
-                    CloseSource();
+                    CurrentSource.Close();
                 }
                 if (targetState < 3)
                 {
-                    CloseManager();
+                    Close();
                 }
             });
             EnforceState = origFlag;
@@ -507,7 +537,7 @@ namespace NTwain
         /// </summary>
         public event EventHandler StateChanged;
         /// <summary>
-        /// Occurs when <see cref="SourceId"/> has changed.
+        /// Occurs when <see cref="CurrentSource"/> has changed.
         /// </summary>
         public event EventHandler SourceChanged;
         /// <summary>
@@ -608,7 +638,7 @@ namespace NTwain
         protected virtual void OnStateChanged() { }
 
         /// <summary>
-        /// Called when <see cref="SourceId"/> changed.
+        /// Called when <see cref="CurrentSource"/> changed.
         /// </summary>
         protected virtual void OnSourceChanged() { }
 
@@ -676,7 +706,7 @@ namespace NTwain
 
         ReturnCode HandleCallback(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
         {
-            if (origin != null && SourceId != null && origin.Id == SourceId.Id && _state >= 5)
+            if (origin != null && CurrentSource != null && origin.Id == CurrentSource.Identity.Id && _state >= 5)
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CallbackHandler at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg));
                 // spec says we must handle this on the thread that enabled the DS.

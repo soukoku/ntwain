@@ -35,7 +35,7 @@ namespace NTwain.Triplets
             ref IntPtr data)
         {
             _session.VerifyState(3, 7, group, dat, message);
-            return Dsm.DsmEntry(_session.AppId, _session.SourceId, group, dat, message, ref data);
+            return Dsm.DsmEntry(_session.AppId, _session.CurrentSource.Identity, group, dat, message, ref data);
         }
 
         // todo: add other data value types?

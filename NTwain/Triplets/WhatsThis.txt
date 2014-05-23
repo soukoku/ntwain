@@ -15,5 +15,9 @@ or better explained in code:
 
 DGControl.Status.Get(...)
 
-and that's the triplet at-a-glance. Only triplets used by the
-application are explicitly defined this way.
+and that's the triplet at-a-glance. Only triplets usable by the
+application-side are explicitly defined this way.
+
+Also some of the operations are marked as internal when there are
+better wrapped managed version available. Goal is to
+eventually keep the exposed triplets to a minimum.
