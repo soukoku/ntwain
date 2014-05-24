@@ -78,7 +78,7 @@ namespace Tester.WPF
                     Format = wantFormat,
                     FileName = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.tif")
                 };
-                var rc = this.DGControl.SetupFileXfer.Set(fileSetup);
+                var rc = this.CurrentSource.DGControl.SetupFileXfer.Set(fileSetup);
             }
         }
 

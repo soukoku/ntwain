@@ -14,6 +14,8 @@ namespace NTwain.Internals
         /// <returns></returns>
         TWIdentity AppId { get; }
 
+        MessageLoop SelfMessageLoop { get; }
+
         /// <summary>
         /// Gets or sets a value indicating whether calls to triplets will verify the current twain session state.
         /// </summary>

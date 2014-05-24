@@ -61,6 +61,7 @@
     <Compile Include="IMemoryManager.cs" />
     <Compile Include="Internals\ICommittable.cs" />
     <Compile Include="Internals\ITwainSessionInternal.cs" />
+    <Compile Include="Internals\MESSAGE.cs" />
     <Compile Include="Internals\TransferLogic.cs" />
     <Compile Include="Internals\WindowsHook.cs" />
     <Compile Include="Internals\WrappedManualResetEvent.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Internals\WinMemoryManager.cs" />
     <Compile Include="Internals\MessageLoop.cs" />
     <Compile Include="Internals\UnsafeNativeMethods.cs" />
+    <Compile Include="IWinMessageFilter.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
