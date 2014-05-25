@@ -8,7 +8,7 @@ This project has these features/goals:
 
 * Targets latest TWAIN version (2.3 at this writing)
 * Supports all the TWAIN functions in the spec
-* Hosts an internal message loop so there's no need to hook into application UI thread
+* Optionally hosts an internal message loop so there's no need to hook into application UI thread
  
 The solution contains tester projects in winform, wpf, and even (gasp!) console. 
 A nuget package is also [available here](https://www.nuget.org/packages/ntwain)
@@ -97,8 +97,9 @@ At the moment this lib does not provide ways to parse transferred image data and
 consumers to do the conversion themselves. The winform project contains one such 
 example for handling DIB image in native transfer using the CommonWin32 lib.
 
-Because it hosts its own message thread, the events will be raised from another thread. 
-If you would like things marshalled to a UI thread then set the SynchronizationContext property
+If you call session.Open() without passing a message loop hook argument, it will run an 
+internal message loop behind the scenes. When this happens the events will be raised from another thread. 
+If you would like things marshalled to a UI thread then set the experimental SynchronizationContext property
 to the one from the UI thread. 
 
 ```

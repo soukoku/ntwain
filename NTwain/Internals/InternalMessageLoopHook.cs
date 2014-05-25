@@ -1,29 +1,31 @@
 ﻿using NTwain.Properties;
-using NTwain.Triplets;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Threading;
 
 namespace NTwain.Internals
 {
-    /// <summary>
-    /// Provides a message loop for old TWAIN to post or new TWAIN to synchronize callbacks.
-    /// </summary>
-    class MessageLoop
+    sealed class InternalMessageLoopHook : MessageLoopHook
     {
-        static MessageLoop _instance = new MessageLoop();
-        public static MessageLoop Instance { get { return _instance; } }
-
         Dispatcher _dispatcher;
         WindowsHook _hook;
-        private MessageLoop() { }
 
-        public void EnsureStarted(WindowsHook.WndProcHook hook)
+        internal override void Stop()
+        {
+            if (_dispatcher != null)
+            {
+                _dispatcher.InvokeShutdown();
+            }
+        }
+        internal override void Start(IWinMessageFilter filter)
         {
             if (_dispatcher == null)
             {
-                // using this terrible hack so the new thread will start running before this function returns
+                // using this hack so the new thread will start running before this function returns
                 using (var hack = new WrappedManualResetEvent())
                 {
                     var loopThread = new Thread(new ThreadStart(() =>
@@ -32,11 +34,12 @@ namespace NTwain.Internals
                         _dispatcher = Dispatcher.CurrentDispatcher;
                         if (!Platform.IsOnMono)
                         {
-                            _hook = new WindowsHook(hook);
+                            _hook = new WindowsHook(filter);
+                            Handle = _hook.Handle;
                         }
                         hack.Set();
                         Dispatcher.Run();
-                        // if for whatever reason it ever gets here make everything uninitialized
+                        // if dispatcher shutsdown we'll get here so make everything uninitialized
                         _dispatcher = null;
                         if (_hook != null)
                         {
@@ -52,22 +55,14 @@ namespace NTwain.Internals
             }
         }
 
-        public IntPtr LoopHandle
-        {
-            get
-            {
-                return _hook == null ? IntPtr.Zero : _hook.Handle;
-            }
-        }
-
-        public void BeginInvoke(Action action)
+        internal override void BeginInvoke(Action action)
         {
             if (_dispatcher == null) { throw new InvalidOperationException(Resources.MsgLoopUnavailble); }
 
             _dispatcher.BeginInvoke(DispatcherPriority.Normal, action);
         }
 
-        public void Invoke(Action action)
+        internal override void Invoke(Action action)
         {
             if (_dispatcher == null) { throw new InvalidOperationException(Resources.MsgLoopUnavailble); }
 

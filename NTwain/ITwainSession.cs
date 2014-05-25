@@ -44,12 +44,23 @@ namespace NTwain
         /// <returns></returns>
         TwainSource ShowSourceSelector();
 
+
         /// <summary>
         /// Opens the data source manager. This must be the first method used
-        /// before using other TWAIN functions. Calls to this must be followed by <see cref="Close"/> when done with a TWAIN session.
+        /// before using other TWAIN functions. Calls to this must be followed by 
+        /// <see cref="Close" /> when done with a TWAIN session.
         /// </summary>
         /// <returns></returns>
         ReturnCode Open();
+
+        /// <summary>
+        /// Opens the data source manager. This must be the first method used
+        /// before using other TWAIN functions. Calls to this must be followed by 
+        /// <see cref="Close" /> when done with a TWAIN session.
+        /// </summary>
+        /// <param name="messageLoopHook">The message loop hook.</param>
+        /// <returns></returns>
+        ReturnCode Open(MessageLoopHook messageLoopHook);
 
         /// <summary>
         /// Closes the data source manager.
