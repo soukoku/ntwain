@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace NTwain
+namespace NTwain.Internals
 {
     /// <summary>
     /// Interface for checking whether messages from WndProc is a TWAIN message and is handled

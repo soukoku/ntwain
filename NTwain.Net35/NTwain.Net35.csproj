@@ -39,7 +39,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -76,14 +78,17 @@
     <Compile Include="..\NTwain\Internals\ICommittable.cs">
       <Link>Internals\ICommittable.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\Internals\InternalMessageLoopHook.cs">
+      <Link>Internals\InternalMessageLoopHook.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\Internals\ITwainSessionInternal.cs">
       <Link>Internals\ITwainSessionInternal.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\Internals\IWinMessageFilter.cs">
+      <Link>Internals\IWinMessageFilter.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\Internals\MESSAGE.cs">
       <Link>Internals\MESSAGE.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\Internals\MessageLoop.cs">
-      <Link>Internals\MessageLoop.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Internals\TentativeStateCommitable.cs">
       <Link>Internals\TentativeStateCommitable.cs</Link>
@@ -106,8 +111,8 @@
     <Compile Include="..\NTwain\ITwainSession.cs">
       <Link>ITwainSession.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\IWinMessageFilter.cs">
-      <Link>IWinMessageFilter.cs</Link>
+    <Compile Include="..\NTwain\MessageLoopHooks.cs">
+      <Link>MessageLoopHooks.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Platform.cs">
       <Link>Platform.cs</Link>

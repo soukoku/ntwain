@@ -41,15 +41,13 @@ namespace NTwain
             _appId = appId;
             ((ITwainSessionInternal)this).ChangeState(1, false);
             EnforceState = true;
-
-            _selfMsgLoop = new MessageLoop();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
         object _callbackObj; // kept around so it doesn't get gc'ed
         TWIdentity _appId;
         TWUserInterface _twui;
-        
+
 
         static readonly Dictionary<string, TwainSource> __ownedSources = new Dictionary<string, TwainSource>();
 
@@ -64,9 +62,8 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Gets or sets the optional synchronization context.
-        /// This allows events to be raised on the thread
-        /// associated with the context.
+        /// Gets or sets the optional synchronization context when not specifying a <see cref="MessageLoopHook"/> on <see cref="Open"/>.
+        /// This allows events to be raised on the thread associated with the context. This is experimental is not recommended for use.
         /// </summary>
         /// <value>
         /// The synchronization context.
@@ -76,8 +73,8 @@ namespace NTwain
 
         #region ITwainSessionInternal Members
 
-        MessageLoop _selfMsgLoop;
-        MessageLoop ITwainSessionInternal.SelfMessageLoop { get { return _selfMsgLoop; } }
+        MessageLoopHook _msgLoopHook;
+        MessageLoopHook ITwainSessionInternal.MessageLoopHook { get { return _msgLoopHook; } }
 
         /// <summary>
         /// Gets the app id used for the session.
@@ -246,18 +243,35 @@ namespace NTwain
 
         /// <summary>
         /// Opens the data source manager. This must be the first method used
-        /// before using other TWAIN functions. Calls to this must be followed by <see cref="Close"/> when done with a TWAIN session.
+        /// before using other TWAIN functions. Calls to this must be followed by 
+        /// <see cref="Close" /> when done with a TWAIN session.
         /// </summary>
-        /// <returns></returns>
+        /// <returns></returns
         public ReturnCode Open()
         {
-            _selfMsgLoop.Start(this);
+            return Open(new InternalMessageLoopHook());
+        }
+
+        /// <summary>
+        /// Opens the data source manager. This must be the first method used
+        /// before using other TWAIN functions. Calls to this must be followed by
+        /// <see cref="Close" /> when done with a TWAIN session.
+        /// </summary>
+        /// <param name="messageLoopHook">The message loop hook.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">messageLoopHook</exception>
+        public ReturnCode Open(MessageLoopHook messageLoopHook)
+        {
+            if (messageLoopHook == null) { throw new ArgumentNullException("messageLoopHook"); }
+
+            _msgLoopHook = messageLoopHook;
+            _msgLoopHook.Start(this);
             var rc = ReturnCode.Failure;
-            _selfMsgLoop.Invoke(() =>
+            _msgLoopHook.Invoke(() =>
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
 
-                rc = ((ITwainSessionInternal)this).DGControl.Parent.OpenDsm(_selfMsgLoop.LoopHandle);
+                rc = ((ITwainSessionInternal)this).DGControl.Parent.OpenDsm(_msgLoopHook.Handle);
                 if (rc == ReturnCode.Success)
                 {
                     // if twain2 then get memory management functions
@@ -287,15 +301,15 @@ namespace NTwain
         public ReturnCode Close()
         {
             var rc = ReturnCode.Failure;
-            _selfMsgLoop.Invoke(() =>
+            _msgLoopHook.Invoke(() =>
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
 
-                rc = ((ITwainSessionInternal)this).DGControl.Parent.CloseDsm(_selfMsgLoop.LoopHandle);
+                rc = ((ITwainSessionInternal)this).DGControl.Parent.CloseDsm(_msgLoopHook.Handle);
                 if (rc == ReturnCode.Success)
                 {
                     Platform.MemoryManager = null;
-                    _selfMsgLoop.Stop();
+                    _msgLoopHook.Stop();
                 }
             });
             return rc;
@@ -396,7 +410,7 @@ namespace NTwain
         {
             var rc = ReturnCode.Failure;
 
-            _selfMsgLoop.Invoke(() =>
+            _msgLoopHook.Invoke(() =>
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: EnableSource.", Thread.CurrentThread.ManagedThreadId));
 
@@ -451,7 +465,7 @@ namespace NTwain
         {
             var rc = ReturnCode.Failure;
 
-            _selfMsgLoop.Invoke(() =>
+            _msgLoopHook.Invoke(() =>
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
 
@@ -492,7 +506,7 @@ namespace NTwain
             // success, the return status from DG_CONTROL / DAT_PENDINGXFERS / MSG_ENDXFER may
             // be ignored.
 
-            _selfMsgLoop.Invoke(() =>
+            _msgLoopHook.Invoke(() =>
             {
                 if (targetState < 7)
                 {
@@ -721,7 +735,7 @@ namespace NTwain
                 // spec says we must handle this on the thread that enabled the DS.
                 // by using the internal dispatcher this will be the case.
 
-                _selfMsgLoop.BeginInvoke(() =>
+                _msgLoopHook.BeginInvoke(() =>
                 {
                     HandleSourceMsg(msg);
                 });

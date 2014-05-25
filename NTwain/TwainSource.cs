@@ -32,7 +32,7 @@ namespace NTwain
         public ReturnCode Open()
         {
             var rc = ReturnCode.Failure;
-            _session.SelfMessageLoop.Invoke(() =>
+            _session.MessageLoopHook.Invoke(() =>
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
 
@@ -48,7 +48,7 @@ namespace NTwain
         public ReturnCode Close()
         {
             var rc = ReturnCode.Failure;
-            _session.SelfMessageLoop.Invoke(() =>
+            _session.MessageLoopHook.Invoke(() =>
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseSource.", Thread.CurrentThread.ManagedThreadId));
 

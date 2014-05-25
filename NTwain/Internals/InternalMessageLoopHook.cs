@@ -1,28 +1,27 @@
 ﻿using NTwain.Properties;
-using NTwain.Triplets;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Threading;
 
 namespace NTwain.Internals
 {
-    /// <summary>
-    /// Provides a message loop for old TWAIN to post or new TWAIN to synchronize callbacks.
-    /// </summary>
-    class MessageLoop
+    sealed class InternalMessageLoopHook : MessageLoopHook
     {
         Dispatcher _dispatcher;
         WindowsHook _hook;
 
-        public void Stop()
+        internal override void Stop()
         {
             if (_dispatcher != null)
             {
                 _dispatcher.InvokeShutdown();
             }
         }
-        public void Start(IWinMessageFilter filter)
+        internal override void Start(IWinMessageFilter filter)
         {
             if (_dispatcher == null)
             {
@@ -36,6 +35,7 @@ namespace NTwain.Internals
                         if (!Platform.IsOnMono)
                         {
                             _hook = new WindowsHook(filter);
+                            Handle = _hook.Handle;
                         }
                         hack.Set();
                         Dispatcher.Run();
@@ -55,22 +55,14 @@ namespace NTwain.Internals
             }
         }
 
-        public IntPtr LoopHandle
-        {
-            get
-            {
-                return _hook == null ? IntPtr.Zero : _hook.Handle;
-            }
-        }
-
-        public void BeginInvoke(Action action)
+        internal override void BeginInvoke(Action action)
         {
             if (_dispatcher == null) { throw new InvalidOperationException(Resources.MsgLoopUnavailble); }
 
             _dispatcher.BeginInvoke(DispatcherPriority.Normal, action);
         }
 
-        public void Invoke(Action action)
+        internal override void Invoke(Action action)
         {
             if (_dispatcher == null) { throw new InvalidOperationException(Resources.MsgLoopUnavailble); }
 

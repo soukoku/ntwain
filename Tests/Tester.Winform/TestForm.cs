@@ -239,7 +239,10 @@ namespace Tester.Winform
             }
             if (_twain.State < 3)
             {
+                // use this for internal msg loop
                 _twain.Open();
+                // use this to hook into current app loop
+                //_twain.Open(new WinformMessageLoopHook(this.Handle));
             }
 
             if (_twain.State >= 3)
