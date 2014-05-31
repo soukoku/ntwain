@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -330,6 +331,21 @@ namespace NTwain
                 yield return GetSourceInstance(this, srcId);
                 rc = ((ITwainSessionInternal)this).DGControl.Identity.GetNext(out srcId);
             }
+        }
+
+        /// <summary>
+        /// Quick shortcut to open a source.
+        /// </summary>
+        /// <param name="sourceName">Name of the source.</param>
+        /// <returns></returns>
+        public ReturnCode OpenSource(string sourceName)
+        {
+            var hit = GetSources().Where(s => string.Equals(s.Name, sourceName)).FirstOrDefault();
+            if (hit != null)
+            {
+                return hit.Open();
+            }
+            return ReturnCode.Failure;
         }
 
         /// <summary>
