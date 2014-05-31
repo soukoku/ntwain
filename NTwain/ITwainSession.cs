@@ -82,6 +82,13 @@ namespace NTwain
         IEnumerable<TwainSource> GetSources();
 
         /// <summary>
+        /// Quick shortcut to open a source.
+        /// </summary>
+        /// <param name="sourceName">Name of the source.</param>
+        /// <returns></returns>
+        ReturnCode OpenSource(string sourceName);
+
+        /// <summary>
         /// Gets the manager status. Only call this at state 2 or higher.
         /// </summary>
         /// <returns></returns>
