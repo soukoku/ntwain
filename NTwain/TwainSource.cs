@@ -15,7 +15,7 @@ namespace NTwain
     /// <summary>
     /// Represents a TWAIN data source.
     /// </summary>
-    public partial class TwainSource : INotifyPropertyChanged
+    public partial class TwainSource
     {
         ITwainSessionInternal _session;
 
@@ -254,6 +254,47 @@ namespace NTwain
                     catch { }
                 }, null);
             }
+        }
+
+        #endregion
+
+        #region cameras
+
+        /// <summary>
+        /// Gets the cameras supported by the source.
+        /// </summary>
+        /// <returns></returns>
+        public IList<string> GetCameras()
+        {
+            TWFileSystem fs = new TWFileSystem();
+            List<string> cams = new List<string>();
+            var rc = DGControl.FileSystem.GetFirstFile(fs);
+            while (rc == ReturnCode.Success)
+            {
+                switch (fs.FileType)
+                {
+                    case FileType.Camera:
+                    case FileType.CameraBottom:
+                    case FileType.CameraTop:
+                    case FileType.CameraPreview:
+                        cams.Add(fs.OutputName);
+                        break;
+                }
+                rc = DGControl.FileSystem.GetNextFile(fs);
+            }
+            return cams;
+        }
+
+        /// <summary>
+        /// Sets the target camera for cap negotiation that can be set per camera.
+        /// </summary>
+        /// <param name="cameraName"></param>
+        /// <returns></returns>
+        public ReturnCode SetCamera(string cameraName)
+        {
+            TWFileSystem fs = new TWFileSystem();
+            fs.InputName = cameraName;
+            return DGControl.FileSystem.ChangeDirectory(fs);
         }
 
         #endregion
