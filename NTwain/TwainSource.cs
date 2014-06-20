@@ -179,7 +179,7 @@ namespace NTwain
             private set
             {
                 _supportedCaps = value;
-                OnPropertyChanged("SupportedCaps");
+                //OnPropertyChanged("SupportedCaps");
             }
         }
 
@@ -219,44 +219,44 @@ namespace NTwain
 
         #endregion
 
-        #region INotifyPropertyChanged Members
+        //#region INotifyPropertyChanged Members
 
-        /// <summary>
-        /// Occurs when a property value changes.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        ///// <summary>
+        ///// Occurs when a property value changes.
+        ///// </summary>
+        //public event PropertyChangedEventHandler PropertyChanged;
 
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        /// <param name="propertyName">Name of the property.</param>
-        protected void OnPropertyChanged(string propertyName)
-        {
-            var syncer = _session.SynchronizationContext;
-            if (syncer == null)
-            {
-                try
-                {
-                    var hand = PropertyChanged;
-                    if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
-                }
-                catch { }
-            }
-            else
-            {
-                syncer.Post(o =>
-                {
-                    try
-                    {
-                        var hand = PropertyChanged;
-                        if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
-                    }
-                    catch { }
-                }, null);
-            }
-        }
+        ///// <summary>
+        ///// Raises the <see cref="PropertyChanged"/> event.
+        ///// </summary>
+        ///// <param name="propertyName">Name of the property.</param>
+        //protected void OnPropertyChanged(string propertyName)
+        //{
+        //    var syncer = _session.SynchronizationContext;
+        //    if (syncer == null)
+        //    {
+        //        try
+        //        {
+        //            var hand = PropertyChanged;
+        //            if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+        //        }
+        //        catch { }
+        //    }
+        //    else
+        //    {
+        //        syncer.Post(o =>
+        //        {
+        //            try
+        //            {
+        //                var hand = PropertyChanged;
+        //                if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+        //            }
+        //            catch { }
+        //        }, null);
+        //    }
+        //}
 
-        #endregion
+        //#endregion
 
         #region cameras
 
