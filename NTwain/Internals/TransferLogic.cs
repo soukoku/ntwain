@@ -70,7 +70,15 @@ namespace NTwain.Internals
                     if (xferGroup == DataGroups.None ||
                         (xferGroup & DataGroups.Image) == DataGroups.Image)
                     {
-                        var mech = session.CurrentSource.CapGetCurrent(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>();
+                        // default to memory
+                        var mech = XferMech.Memory;
+
+                        object mechRaw = session.CurrentSource.CapGetCurrent(CapabilityId.ICapXferMech);
+                        if (mechRaw != null)
+                        {
+                            mech = mechRaw.ConvertToEnum<XferMech>();
+                        }
+
                         switch (mech)
                         {
                             case XferMech.Memory:
@@ -108,7 +116,9 @@ namespace NTwain.Internals
 
                 #endregion
 
-            } while (rc == ReturnCode.Success && pending.Count != 0);
+                // some poorly written scanner drivers return failure on EndXfer so only check for pending count now
+                //} while (rc == ReturnCode.Success && pending.Count != 0);
+            } while (pending.Count != 0);
 
             session.ChangeState(5, true);
             session.DisableSource();
