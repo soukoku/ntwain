@@ -116,13 +116,15 @@ namespace NTwain.Internals
 
                 #endregion
 
-                // some poorly written scanner drivers return failure on EndXfer so only check for pending count now
-                //} while (rc == ReturnCode.Success && pending.Count != 0);
-            } while (pending.Count != 0);
+            } while (rc == ReturnCode.Success && pending.Count != 0);
 
-            session.ChangeState(5, true);
-            session.DisableSource();
-
+            // some poorly written scanner drivers return failure on EndXfer so also check for pending count now
+            // this may break with other sources but we'll see
+            if (pending.Count == 0)
+            {
+                session.ChangeState(5, true);
+                session.DisableSource();
+            }
         }
 
         #region audio xfers
