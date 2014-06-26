@@ -105,19 +105,22 @@ namespace Tester.Winform
 
         private void CleanupTwain()
         {
-            if (_twain.State == 4)
+            if (_twain != null)
             {
-                _twain.CurrentSource.Close();
-            }
-            if (_twain.State == 3)
-            {
-                _twain.Close();
-            }
+                if (_twain.State == 4)
+                {
+                    _twain.CurrentSource.Close();
+                }
+                if (_twain.State == 3)
+                {
+                    _twain.Close();
+                }
 
-            if (_twain.State > 2)
-            {
-                // normal close down didn't work, do hard kill
-                _twain.ForceStepDown(2);
+                if (_twain.State > 2)
+                {
+                    // normal close down didn't work, do hard kill
+                    _twain.ForceStepDown(2);
+                }
             }
         }
 
