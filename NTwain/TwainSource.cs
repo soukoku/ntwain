@@ -15,7 +15,7 @@ namespace NTwain
     /// <summary>
     /// Represents a TWAIN data source.
     /// </summary>
-    public partial class TwainSource : INotifyPropertyChanged
+    public partial class TwainSource
     {
         ITwainSessionInternal _session;
 
@@ -179,7 +179,7 @@ namespace NTwain
             private set
             {
                 _supportedCaps = value;
-                OnPropertyChanged("SupportedCaps");
+                //OnPropertyChanged("SupportedCaps");
             }
         }
 
@@ -219,41 +219,82 @@ namespace NTwain
 
         #endregion
 
-        #region INotifyPropertyChanged Members
+        //#region INotifyPropertyChanged Members
+
+        ///// <summary>
+        ///// Occurs when a property value changes.
+        ///// </summary>
+        //public event PropertyChangedEventHandler PropertyChanged;
+
+        ///// <summary>
+        ///// Raises the <see cref="PropertyChanged"/> event.
+        ///// </summary>
+        ///// <param name="propertyName">Name of the property.</param>
+        //protected void OnPropertyChanged(string propertyName)
+        //{
+        //    var syncer = _session.SynchronizationContext;
+        //    if (syncer == null)
+        //    {
+        //        try
+        //        {
+        //            var hand = PropertyChanged;
+        //            if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+        //        }
+        //        catch { }
+        //    }
+        //    else
+        //    {
+        //        syncer.Post(o =>
+        //        {
+        //            try
+        //            {
+        //                var hand = PropertyChanged;
+        //                if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+        //            }
+        //            catch { }
+        //        }, null);
+        //    }
+        //}
+
+        //#endregion
+
+        #region cameras
 
         /// <summary>
-        /// Occurs when a property value changes.
+        /// Gets the cameras supported by the source.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        /// <param name="propertyName">Name of the property.</param>
-        protected void OnPropertyChanged(string propertyName)
+        /// <returns></returns>
+        public IList<string> GetCameras()
         {
-            var syncer = _session.SynchronizationContext;
-            if (syncer == null)
+            TWFileSystem fs = new TWFileSystem();
+            List<string> cams = new List<string>();
+            var rc = DGControl.FileSystem.GetFirstFile(fs);
+            while (rc == ReturnCode.Success)
             {
-                try
+                switch (fs.FileType)
                 {
-                    var hand = PropertyChanged;
-                    if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+                    case FileType.Camera:
+                    case FileType.CameraBottom:
+                    case FileType.CameraTop:
+                    case FileType.CameraPreview:
+                        cams.Add(fs.OutputName);
+                        break;
                 }
-                catch { }
+                rc = DGControl.FileSystem.GetNextFile(fs);
             }
-            else
-            {
-                syncer.Post(o =>
-                {
-                    try
-                    {
-                        var hand = PropertyChanged;
-                        if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
-                    }
-                    catch { }
-                }, null);
-            }
+            return cams;
+        }
+
+        /// <summary>
+        /// Sets the target camera for cap negotiation that can be set per camera.
+        /// </summary>
+        /// <param name="cameraName"></param>
+        /// <returns></returns>
+        public ReturnCode SetCamera(string cameraName)
+        {
+            TWFileSystem fs = new TWFileSystem();
+            fs.InputName = cameraName;
+            return DGControl.FileSystem.ChangeDirectory(fs);
         }
 
         #endregion

@@ -2056,7 +2056,20 @@ namespace NTwain.Data
         Constrainable = 0x40,
         GetHelp = 0x100,
         GetLabel = 0x200,
-        GetLabelEnum = 0x400
+        GetLabelEnum = 0x400,
+
+        /// <summary>
+        /// Cap applies to entire session/machine.
+        /// </summary>
+        Machine = 0x1000,
+        /// <summary>
+        /// Cap applies to bitonal cameras.
+        /// </summary>
+        Bitonal = 0x2000,
+        /// <summary>
+        /// Cap applies to color cameras.
+        /// </summary>
+        Color = 0x4000
     }
 
     /// <summary>
