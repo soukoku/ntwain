@@ -41,13 +41,16 @@ namespace Tester.Winform
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing && _twain.State > 4)
+            if (_twain != null)
             {
-                e.Cancel = true;
-            }
-            else
-            {
-                CleanupTwain();
+                if (e.CloseReason == CloseReason.UserClosing && _twain.State > 4)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    CleanupTwain();
+                }
             }
             base.OnFormClosing(e);
         }
@@ -105,22 +108,19 @@ namespace Tester.Winform
 
         private void CleanupTwain()
         {
-            if (_twain != null)
+            if (_twain.State == 4)
             {
-                if (_twain.State == 4)
-                {
-                    _twain.CurrentSource.Close();
-                }
-                if (_twain.State == 3)
-                {
-                    _twain.Close();
-                }
+                _twain.CurrentSource.Close();
+            }
+            if (_twain.State == 3)
+            {
+                _twain.Close();
+            }
 
-                if (_twain.State > 2)
-                {
-                    // normal close down didn't work, do hard kill
-                    _twain.ForceStepDown(2);
-                }
+            if (_twain.State > 2)
+            {
+                // normal close down didn't work, do hard kill
+                _twain.ForceStepDown(2);
             }
         }
 
