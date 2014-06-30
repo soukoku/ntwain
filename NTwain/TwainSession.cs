@@ -524,15 +524,15 @@ namespace NTwain
 
             _msgLoopHook.Invoke(() =>
             {
-                if (targetState < 7)
+                if (targetState < 7 && CurrentSource != null)
                 {
                     ((ITwainSessionInternal)this).DGControl.PendingXfers.EndXfer(new TWPendingXfers());
                 }
-                if (targetState < 6)
+                if (targetState < 6 && CurrentSource != null)
                 {
                     ((ITwainSessionInternal)this).DGControl.PendingXfers.Reset(new TWPendingXfers());
                 }
-                if (targetState < 5)
+                if (targetState < 5 && CurrentSource != null)
                 {
                     ((ITwainSessionInternal)this).DisableSource();
                 }
