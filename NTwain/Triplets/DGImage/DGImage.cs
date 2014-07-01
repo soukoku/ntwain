@@ -19,6 +19,7 @@ namespace NTwain.Triplets
         /// <summary>
         /// Gets the operations defined for DAT_CIECOLOR.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cie")]
         public CieColor CieColor
         {
             get
@@ -73,6 +74,7 @@ namespace NTwain.Triplets
         /// <summary>
         /// Gets the operations defined for DAT_ICCPROFILE.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Icc")]
         public IccProfile IccProfile
         {
             get
@@ -175,6 +177,7 @@ namespace NTwain.Triplets
         /// <summary>
         /// Gets the operations defined for DAT_RGBRESPONSE.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Rgb")]
         public RgbResponse RgbResponse
         {
             get

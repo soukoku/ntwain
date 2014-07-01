@@ -6,7 +6,8 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.CieColor"/>.
     /// </summary>
-	public sealed class CieColor : OpBase
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cie")]
+    public sealed class CieColor : OpBase
 	{
 		internal CieColor(ITwainSessionInternal session) : base(session) { }
 
@@ -16,7 +17,7 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="cieColor">Color data.</param>
 		/// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "cie"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
         public ReturnCode Get(out TWCieColor cieColor)
 		{
 			Session.VerifyState(4, 6, DataGroups.Image, DataArgumentType.CieColor, Message.Get);

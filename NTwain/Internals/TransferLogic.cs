@@ -441,7 +441,7 @@ namespace NTwain.Internals
             session.SafeSyncableRaiseEvent(new DataTransferredEventArgs
             {
                 NativeData = dataPtr,
-                MemData = dataArray,
+                MemoryData = dataArray,
                 FileDataPath = filePath,
                 ImageInfo = imgInfo,
                 //ExImageInfo = extInfo
