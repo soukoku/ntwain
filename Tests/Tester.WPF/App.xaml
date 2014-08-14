@@ -1,7 +1,7 @@
 ﻿<Application x:Class="Tester.WPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Dummy.xaml">
 	<Application.Resources>
         <ResourceDictionary>
             <!-- Dummy Style, anything you won't use goes -->

@@ -16,7 +16,11 @@ namespace NTwain
         internal abstract void Start(IWinMessageFilter filter);
         internal abstract void Stop();
 
-        internal virtual void BeginInvoke(Action action)
+        /// <summary>
+        /// Asynchronously invokes the specified action on the message loop thread.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        public virtual void BeginInvoke(Action action)
         {
             if (SyncContext == null)
             {
@@ -30,7 +34,12 @@ namespace NTwain
                 }, null);
             }
         }
-        internal virtual void Invoke(Action action)
+
+        /// <summary>
+        /// Synchronously invokes the specified action on the message loop thread.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        public virtual void Invoke(Action action)
         {
             if (SyncContext == null)
             {

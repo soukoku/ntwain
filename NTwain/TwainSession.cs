@@ -54,12 +54,18 @@ namespace NTwain
 
         internal static TwainSource GetSourceInstance(ITwainSessionInternal session, TWIdentity sourceId)
         {
+            TwainSource source = null;
             var key = string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2}", sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
             if (__ownedSources.ContainsKey(key))
             {
-                return __ownedSources[key];
+                source = __ownedSources[key];
+                source.Session = session;
             }
-            return __ownedSources[key] = new TwainSource(session, sourceId);
+            else
+            {
+                __ownedSources[key] = source = new TwainSource(session, sourceId);
+            }
+            return source;
         }
 
         /// <summary>

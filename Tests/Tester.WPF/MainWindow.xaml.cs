@@ -4,6 +4,7 @@ using NTwain;
 using NTwain.Data;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -51,13 +52,18 @@ namespace Tester.WPF
                 });
             }
         }
-
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = _twainVM.State > 4;
+            base.OnClosing(e);
+        }
         protected override void OnClosed(EventArgs e)
         {
             if (_twainVM.State == 4)
             {
                 _twainVM.CurrentSource.Close();
             }
+            _twainVM.Close();
             base.OnClosed(e);
         }
 
@@ -68,6 +74,8 @@ namespace Tester.WPF
             // use this for internal msg loop
             //var rc = _twainVM.Open();
             // use this to hook into current app loop
+
+
             var rc = _twainVM.Open(new WpfMessageLoopHook(new WindowInteropHelper(this).Handle));
 
             if (rc == ReturnCode.Success)
@@ -82,6 +90,15 @@ namespace Tester.WPF
 
         private void SrcList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+
+            //var test = new NTwain.Internals.InternalMessageLoopHook();
+            //test.StartTest();
+            //test.BeginInvoke(() =>
+            //{
+            //    Debug.WriteLine("doodle");
+            //    test.StopTest();
+            //});
+
             if (_twainVM.State == 4)
             {
                 _twainVM.CurrentSource.Close();
