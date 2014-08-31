@@ -118,9 +118,9 @@ namespace NTwain.Internals
 
             } while (rc == ReturnCode.Success && pending.Count != 0);
 
-            // some poorly written scanner drivers return failure on EndXfer so also check for pending count now
+            // some poorly written scanner drivers return failure on EndXfer so also check for pending count now.
             // this may break with other sources but we'll see
-            if (pending.Count == 0)
+            if (pending.Count == 0 && session.State > 5)
             {
                 session.ChangeState(5, true);
                 session.DisableSource();
