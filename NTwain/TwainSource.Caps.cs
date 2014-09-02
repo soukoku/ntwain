@@ -18,7 +18,7 @@ namespace NTwain
             QuerySupport retVal = QuerySupport.None;
             using (TWCapability cap = new TWCapability(capId))
             {
-                var rc = _session.DGControl.Capability.QuerySupport(cap);
+                var rc = Session.DGControl.Capability.QuerySupport(cap);
                 if (rc == ReturnCode.Success)
                 {
                     var read = CapabilityReader.ReadValue(cap);
@@ -41,7 +41,7 @@ namespace NTwain
         {
             using (TWCapability cap = new TWCapability(capId))
             {
-                var rc = _session.DGControl.Capability.GetCurrent(cap);
+                var rc = Session.DGControl.Capability.GetCurrent(cap);
                 if (rc == ReturnCode.Success)
                 {
                     var read = CapabilityReader.ReadValue(cap);
@@ -82,7 +82,7 @@ namespace NTwain
             var list = new List<object>();
             using (TWCapability cap = new TWCapability(capabilityId))
             {
-                var rc = _session.DGControl.Capability.Get(cap);
+                var rc = Session.DGControl.Capability.Get(cap);
                 if (rc == ReturnCode.Success)
                 {
                     cap.ReadMultiCapValues(list);
@@ -126,7 +126,7 @@ namespace NTwain
         {
             using (TWCapability compressCap = new TWCapability(CapabilityId.ICapCompression, new TWOneValue { Item = (uint)compression, ItemType = ItemType.UInt16 }))
             {
-                return _session.DGControl.Capability.Set(compressCap);
+                return Session.DGControl.Capability.Set(compressCap);
             }
         }
 
@@ -153,7 +153,7 @@ namespace NTwain
         {
             using (TWCapability formatCap = new TWCapability(CapabilityId.ICapImageFileFormat, new TWOneValue { Item = (uint)format, ItemType = ItemType.UInt16 }))
             {
-                return _session.DGControl.Capability.Set(formatCap);
+                return Session.DGControl.Capability.Set(formatCap);
             }
         }
 
@@ -183,7 +183,7 @@ namespace NTwain
             one.ItemType = ItemType.UInt16;
             using (TWCapability dx = new TWCapability(CapabilityId.ICapPixelType, one))
             {
-                return _session.DGControl.Capability.Set(dx);
+                return Session.DGControl.Capability.Set(dx);
             }
         }
 
@@ -223,7 +223,7 @@ namespace NTwain
             one.ItemType = ItemType.UInt16;
             using (TWCapability dx = new TWCapability(CapabilityId.ICapXferMech, one))
             {
-                return _session.DGControl.Capability.Set(dx);
+                return Session.DGControl.Capability.Set(dx);
             }
         }
 
@@ -239,7 +239,7 @@ namespace NTwain
             one.ItemType = ItemType.UInt16;
             using (TWCapability dx = new TWCapability(CapabilityId.ACapXferMech, one))
             {
-                return _session.DGControl.Capability.Set(dx);
+                return Session.DGControl.Capability.Set(dx);
             }
         }
 
@@ -282,13 +282,13 @@ namespace NTwain
 
             using (TWCapability xres = new TWCapability(CapabilityId.ICapXResolution, one))
             {
-                var rc = _session.DGControl.Capability.Set(xres);
+                var rc = Session.DGControl.Capability.Set(xres);
                 if (rc == ReturnCode.Success)
                 {
                     one.Item = (uint)yDPI;
                     using (TWCapability yres = new TWCapability(CapabilityId.ICapYResolution, one))
                     {
-                        rc = _session.DGControl.Capability.Set(yres);
+                        rc = Session.DGControl.Capability.Set(yres);
                     }
                 }
                 return rc;
@@ -322,7 +322,7 @@ namespace NTwain
 
             using (TWCapability xres = new TWCapability(CapabilityId.ICapSupportedSizes, one))
             {
-                var rc = _session.DGControl.Capability.Set(xres);
+                var rc = Session.DGControl.Capability.Set(xres);
                 return rc;
             }
         }
@@ -351,7 +351,7 @@ namespace NTwain
 
                     using (TWCapability dx = new TWCapability(CapabilityId.ICapAutomaticDeskew, en))
                     {
-                        rc = _session.DGControl.Capability.Set(dx);
+                        rc = Session.DGControl.Capability.Set(dx);
                     }
                 }
                 else
@@ -362,7 +362,7 @@ namespace NTwain
 
                     using (TWCapability capValue = new TWCapability(CapabilityId.ICapAutomaticDeskew, one))
                     {
-                        rc = _session.DGControl.Capability.Set(capValue);
+                        rc = Session.DGControl.Capability.Set(capValue);
                     }
                 }
             }
@@ -389,7 +389,7 @@ namespace NTwain
 
                     using (TWCapability dx = new TWCapability(CapabilityId.ICapAutomaticRotate, en))
                     {
-                        rc = _session.DGControl.Capability.Set(dx);
+                        rc = Session.DGControl.Capability.Set(dx);
                     }
                 }
                 else
@@ -400,7 +400,7 @@ namespace NTwain
 
                     using (TWCapability capValue = new TWCapability(CapabilityId.ICapAutomaticRotate, one))
                     {
-                        rc = _session.DGControl.Capability.Set(capValue);
+                        rc = Session.DGControl.Capability.Set(capValue);
                     }
                 }
             }
@@ -428,11 +428,11 @@ namespace NTwain
 
                     using (TWCapability dx = new TWCapability(CapabilityId.ICapUndefinedImageSize, en))
                     {
-                        rc = _session.DGControl.Capability.Set(dx);
+                        rc = Session.DGControl.Capability.Set(dx);
                     }
                     using (TWCapability dx = new TWCapability(CapabilityId.ICapAutomaticBorderDetection, en))
                     {
-                        rc = _session.DGControl.Capability.Set(dx);
+                        rc = Session.DGControl.Capability.Set(dx);
                     }
                 }
                 else
@@ -443,11 +443,11 @@ namespace NTwain
 
                     using (TWCapability capValue = new TWCapability(CapabilityId.ICapUndefinedImageSize, one))
                     {
-                        rc = _session.DGControl.Capability.Set(capValue);
+                        rc = Session.DGControl.Capability.Set(capValue);
                     }
                     using (TWCapability capValue = new TWCapability(CapabilityId.ICapAutomaticBorderDetection, one))
                     {
-                        rc = _session.DGControl.Capability.Set(capValue);
+                        rc = Session.DGControl.Capability.Set(capValue);
                     }
                 }
             }
@@ -471,7 +471,7 @@ namespace NTwain
 
                 using (TWCapability dx = new TWCapability(CapabilityId.CapDuplexEnabled, en))
                 {
-                    return _session.DGControl.Capability.Set(dx);
+                    return Session.DGControl.Capability.Set(dx);
                 }
             }
             else
@@ -482,7 +482,7 @@ namespace NTwain
 
                 using (TWCapability dx = new TWCapability(CapabilityId.CapDuplexEnabled, one))
                 {
-                    return _session.DGControl.Capability.Set(dx);
+                    return Session.DGControl.Capability.Set(dx);
                 }
             }
         }
@@ -512,7 +512,7 @@ namespace NTwain
                     {
                         using (TWCapability dx = new TWCapability(CapabilityId.CapFeederEnabled, en))
                         {
-                            rc = _session.DGControl.Capability.Set(dx);
+                            rc = Session.DGControl.Capability.Set(dx);
                         }
                     }
 
@@ -522,14 +522,14 @@ namespace NTwain
                     {
                         using (TWCapability dx = new TWCapability(CapabilityId.CapAutoScan, en))
                         {
-                            rc = _session.DGControl.Capability.Set(dx);
+                            rc = Session.DGControl.Capability.Set(dx);
                         }
                     }
                     else if (SupportedCaps.Contains(CapabilityId.CapAutoFeed))
                     {
                         using (TWCapability dx = new TWCapability(CapabilityId.CapAutoFeed, en))
                         {
-                            rc = _session.DGControl.Capability.Set(dx);
+                            rc = Session.DGControl.Capability.Set(dx);
                         }
                     }
                 }
@@ -543,7 +543,7 @@ namespace NTwain
                     {
                         using (TWCapability enabled = new TWCapability(CapabilityId.CapFeederEnabled, one))
                         {
-                            rc = _session.DGControl.Capability.Set(enabled);
+                            rc = Session.DGControl.Capability.Set(enabled);
                         }
                     }
                     // to really use feeder we must also set autofeed or autoscan, but only
@@ -552,14 +552,14 @@ namespace NTwain
                     {
                         using (TWCapability autoScan = new TWCapability(CapabilityId.CapAutoScan, one))
                         {
-                            rc = _session.DGControl.Capability.Set(autoScan);
+                            rc = Session.DGControl.Capability.Set(autoScan);
                         }
                     }
                     else if (SupportedCaps.Contains(CapabilityId.CapAutoFeed))
                     {
                         using (TWCapability autoScan = new TWCapability(CapabilityId.CapAutoFeed, one))
                         {
-                            rc = _session.DGControl.Capability.Set(autoScan);
+                            rc = Session.DGControl.Capability.Set(autoScan);
                         }
                     }
                 }

@@ -17,11 +17,11 @@ namespace NTwain
     /// </summary>
     public partial class TwainSource
     {
-        ITwainSessionInternal _session;
+        internal ITwainSessionInternal Session { get; set; }
 
         internal TwainSource(ITwainSessionInternal session, TWIdentity sourceId)
         {
-            _session = session;
+            Session = session;
             Identity = sourceId;
         }
 
@@ -32,11 +32,11 @@ namespace NTwain
         public ReturnCode Open()
         {
             var rc = ReturnCode.Failure;
-            _session.MessageLoopHook.Invoke(() =>
+            Session.MessageLoopHook.Invoke(() =>
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
 
-                rc = _session.DGControl.Identity.OpenDS(this);
+                rc = Session.DGControl.Identity.OpenDS(this);
             });
             return rc;
         }
@@ -48,11 +48,11 @@ namespace NTwain
         public ReturnCode Close()
         {
             var rc = ReturnCode.Failure;
-            _session.MessageLoopHook.Invoke(() =>
+            Session.MessageLoopHook.Invoke(() =>
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseSource.", Thread.CurrentThread.ManagedThreadId));
 
-                rc = _session.DGControl.Identity.CloseDS();
+                rc = Session.DGControl.Identity.CloseDS();
                 if (rc == ReturnCode.Success)
                 {
                     SupportedCaps = null;
@@ -71,7 +71,7 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode StartTransfer(SourceEnableMode mode, bool modal, IntPtr windowHandle)
         {
-            return _session.EnableSource(mode, modal, windowHandle);
+            return Session.EnableSource(mode, modal, windowHandle);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace NTwain
         public TWStatus GetStatus()
         {
             TWStatus stat;
-            _session.DGControl.Status.GetSource(out stat);
+            Session.DGControl.Status.GetSource(out stat);
             return stat;
         }
         /// <summary>
@@ -91,7 +91,7 @@ namespace NTwain
         public TWStatusUtf8 GetStatusUtf8()
         {
             TWStatusUtf8 stat;
-            _session.DGControl.StatusUtf8.GetSource(out stat);
+            Session.DGControl.StatusUtf8.GetSource(out stat);
             return stat;
         }
 
@@ -170,7 +170,7 @@ namespace NTwain
         {
             get
             {
-                if (_supportedCaps == null && _session.State > 3)
+                if (_supportedCaps == null && Session.State > 3)
                 {
                     _supportedCaps = CapGetValues(CapabilityId.CapSupportedCaps).CastToEnum<CapabilityId>(false);
                 }
@@ -191,7 +191,7 @@ namespace NTwain
         {
             get
             {
-                return _session.DGControl;
+                return Session.DGControl;
             }
         }
 
@@ -202,7 +202,7 @@ namespace NTwain
         {
             get
             {
-                return _session.DGImage;
+                return Session.DGImage;
             }
         }
 
@@ -213,7 +213,7 @@ namespace NTwain
         {
             get
             {
-                return _session.DGCustom;
+                return Session.DGCustom;
             }
         }
 
@@ -232,7 +232,7 @@ namespace NTwain
         ///// <param name="propertyName">Name of the property.</param>
         //protected void OnPropertyChanged(string propertyName)
         //{
-        //    var syncer = _session.SynchronizationContext;
+        //    var syncer = Session.SynchronizationContext;
         //    if (syncer == null)
         //    {
         //        try

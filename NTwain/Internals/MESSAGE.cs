@@ -12,7 +12,7 @@ namespace NTwain.Internals
     /// The MSG structure in Windows for TWAIN use.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct MESSAGE
+    struct MESSAGE
     {
         public MESSAGE(IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam)
         {

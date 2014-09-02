@@ -16,7 +16,11 @@ namespace NTwain
         internal abstract void Start(IWinMessageFilter filter);
         internal abstract void Stop();
 
-        internal virtual void BeginInvoke(Action action)
+        /// <summary>
+        /// Asynchronously invokes the specified action on the message loop thread.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        public virtual void BeginInvoke(Action action)
         {
             if (SyncContext == null)
             {
@@ -30,7 +34,12 @@ namespace NTwain
                 }, null);
             }
         }
-        internal virtual void Invoke(Action action)
+
+        /// <summary>
+        /// Synchronously invokes the specified action on the message loop thread.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        public virtual void Invoke(Action action)
         {
             if (SyncContext == null)
             {
@@ -63,11 +72,11 @@ namespace NTwain
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowsFormsMessageLoopHook"/> class.
         /// </summary>
-        /// <param name="hwnd">The handle to the app window.</param>
+        /// <param name="windowHandle">The handle to the app window.</param>
         /// <exception cref="System.ArgumentException">A valid window handle is required.</exception>
-        public WindowsFormsMessageLoopHook(IntPtr hwnd)
+        public WindowsFormsMessageLoopHook(IntPtr windowHandle)
         {
-            if (hwnd == IntPtr.Zero) { throw new ArgumentException("A valid window handle is required."); }
+            if (windowHandle == IntPtr.Zero) { throw new ArgumentException("A valid window handle is required."); }
 
             if (!System.Windows.Forms.Application.MessageLoop)
             {
@@ -78,7 +87,7 @@ namespace NTwain
             {
                 ThrowInvalidOp();
             }
-            Handle = hwnd;
+            Handle = windowHandle;
             SyncContext = sync;
         }
         internal override string InvalidMessage
@@ -133,11 +142,11 @@ namespace NTwain
         /// <summary>
         /// Initializes a new instance of the <see cref="WpfMessageLoopHook"/> class.
         /// </summary>
-        /// <param name="hwnd">The handle to the app window.</param>
+        /// <param name="windowHandle">The handle to the app window.</param>
         /// <exception cref="System.ArgumentException">A valid window handle is required.</exception>
-        public WpfMessageLoopHook(IntPtr hwnd)
+        public WpfMessageLoopHook(IntPtr windowHandle)
         {
-            if (hwnd == IntPtr.Zero) { throw new ArgumentException("A valid window handle is required."); }
+            if (windowHandle == IntPtr.Zero) { throw new ArgumentException("A valid window handle is required."); }
 
             if (System.Windows.Application.Current == null ||
                 !System.Windows.Application.Current.Dispatcher.CheckAccess())
@@ -149,7 +158,7 @@ namespace NTwain
             {
                 ThrowInvalidOp();
             }
-            Handle = hwnd;
+            Handle = windowHandle;
             SyncContext = sync;
         }
         internal override string InvalidMessage

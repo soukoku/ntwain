@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Messaging;
 using NTwain;
 using NTwain.Data;
 using System;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Media;
@@ -76,10 +77,21 @@ namespace Tester.WPF
                 var fileSetup = new TWSetupFileXfer
                 {
                     Format = wantFormat,
-                    FileName = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.tif")
+                    FileName = GetUniqueName(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test", ".tif")
                 };
                 var rc = this.CurrentSource.DGControl.SetupFileXfer.Set(fileSetup);
             }
+        }
+
+        private string GetUniqueName(string dir, string name, string ext)
+        {
+            var filePath = Path.Combine(dir, name + ext);
+            int next = 1;
+            while (File.Exists(filePath))
+            {
+                filePath = Path.Combine(dir, string.Format("{0} ({1}){2}", name, next++, ext));
+            }
+            return filePath;
         }
 
         protected override void OnDataTransferred(DataTransferredEventArgs e)

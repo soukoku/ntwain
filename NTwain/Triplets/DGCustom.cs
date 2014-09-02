@@ -28,6 +28,7 @@ namespace NTwain.Triplets
         /// <param name="message">The message.</param>
         /// <param name="data">The data.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "3#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "dat"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Dsm")]
         public ReturnCode DsmEntry(
             DataGroups group,
             DataArgumentType dat,

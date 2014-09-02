@@ -35,7 +35,7 @@ namespace NTwain
         /// The memory data.
         /// </value>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public byte[] MemData { get; internal set; }
+        public byte[] MemoryData { get; internal set; }
 
         /// <summary>
         /// Gets the final image information if applicable.

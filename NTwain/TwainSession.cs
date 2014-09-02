@@ -41,7 +41,10 @@ namespace NTwain
 
             _appId = appId;
             ((ITwainSessionInternal)this).ChangeState(1, false);
+#if DEBUG
+            // defaults to false on release since it's only useful during dev
             EnforceState = true;
+#endif
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
@@ -54,12 +57,18 @@ namespace NTwain
 
         internal static TwainSource GetSourceInstance(ITwainSessionInternal session, TWIdentity sourceId)
         {
+            TwainSource source = null;
             var key = string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2}", sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
             if (__ownedSources.ContainsKey(key))
             {
-                return __ownedSources[key];
+                source = __ownedSources[key];
+                source.Session = session;
             }
-            return __ownedSources[key] = new TwainSource(session, sourceId);
+            else
+            {
+                __ownedSources[key] = source = new TwainSource(session, sourceId);
+            }
+            return source;
         }
 
         /// <summary>
@@ -428,7 +437,7 @@ namespace NTwain
 
             _msgLoopHook.Invoke(() =>
             {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: EnableSource.", Thread.CurrentThread.ManagedThreadId));
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: EnableSource with {1}.", Thread.CurrentThread.ManagedThreadId, mode));
 
                 // app v2.2 or higher uses callback2
                 if (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2)
@@ -477,21 +486,32 @@ namespace NTwain
             return rc;
         }
 
+        bool _disabling;
         ReturnCode ITwainSessionInternal.DisableSource()
         {
             var rc = ReturnCode.Failure;
-
-            _msgLoopHook.Invoke(() =>
+            if (!_disabling) // temp hack as a workaround to this being called from multiple threads (xfer logic & closedsreq msg)
             {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
-
-                rc = ((ITwainSessionInternal)this).DGControl.UserInterface.DisableDS(_twui);
-                if (rc == ReturnCode.Success)
+                _disabling = true;
+                try
                 {
-                    _callbackObj = null;
-                    SafeAsyncSyncableRaiseOnEvent(OnSourceDisabled, SourceDisabled);
+                    _msgLoopHook.Invoke(() =>
+                    {
+                        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
+
+                        rc = ((ITwainSessionInternal)this).DGControl.UserInterface.DisableDS(_twui);
+                        if (rc == ReturnCode.Success)
+                        {
+                            _callbackObj = null;
+                            SafeAsyncSyncableRaiseOnEvent(OnSourceDisabled, SourceDisabled);
+                        }
+                    });
                 }
-            });
+                finally
+                {
+                    _disabling = false;
+                }
+            }
             return rc;
         }
 
@@ -524,15 +544,15 @@ namespace NTwain
 
             _msgLoopHook.Invoke(() =>
             {
-                if (targetState < 7)
+                if (targetState < 7 && CurrentSource != null)
                 {
                     ((ITwainSessionInternal)this).DGControl.PendingXfers.EndXfer(new TWPendingXfers());
                 }
-                if (targetState < 6)
+                if (targetState < 6 && CurrentSource != null)
                 {
                     ((ITwainSessionInternal)this).DGControl.PendingXfers.Reset(new TWPendingXfers());
                 }
-                if (targetState < 5)
+                if (targetState < 5 && CurrentSource != null)
                 {
                     ((ITwainSessionInternal)this).DisableSource();
                 }
@@ -782,6 +802,7 @@ namespace NTwain
                     break;
                 case Message.CloseDSReq:
                 case Message.CloseDSOK:
+                    Debug.WriteLine("Got msg " + msg);
                     // even though it says closeDS it's really disable.
                     // dsok is sent if source is enabled with uionly
 

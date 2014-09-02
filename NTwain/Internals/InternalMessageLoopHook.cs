@@ -9,7 +9,7 @@ using System.Windows.Threading;
 
 namespace NTwain.Internals
 {
-    sealed class InternalMessageLoopHook : MessageLoopHook
+   sealed class InternalMessageLoopHook : MessageLoopHook
     {
         Dispatcher _dispatcher;
         WindowsHook _hook;
@@ -55,14 +55,14 @@ namespace NTwain.Internals
             }
         }
 
-        internal override void BeginInvoke(Action action)
+        public override void BeginInvoke(Action action)
         {
             if (_dispatcher == null) { throw new InvalidOperationException(Resources.MsgLoopUnavailble); }
 
             _dispatcher.BeginInvoke(DispatcherPriority.Normal, action);
         }
 
-        internal override void Invoke(Action action)
+        public override void Invoke(Action action)
         {
             if (_dispatcher == null) { throw new InvalidOperationException(Resources.MsgLoopUnavailble); }
 

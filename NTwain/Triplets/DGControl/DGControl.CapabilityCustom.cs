@@ -16,6 +16,7 @@ namespace NTwain.Triplets
         /// <param name="customDAT">The custom DAT_* value from manufacturer.</param>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAT")]
         public ReturnCode Get(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 7, DataGroups.Control, (DataArgumentType)customDAT, Message.Get);
@@ -28,6 +29,7 @@ namespace NTwain.Triplets
         /// <param name="customDAT">The custom DAT_* value from manufacturer.</param>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAT")]
         public ReturnCode GetCurrent(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 7, DataGroups.Control, (DataArgumentType)customDAT, Message.GetCurrent);
@@ -40,6 +42,7 @@ namespace NTwain.Triplets
         /// <param name="customDAT">The custom DAT_* value from manufacturer.</param>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAT")]
         public ReturnCode GetDefault(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 7, DataGroups.Control, (DataArgumentType)customDAT, Message.GetDefault);
@@ -53,6 +56,7 @@ namespace NTwain.Triplets
         /// <param name="customDAT">The custom DAT_* value from manufacturer.</param>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAT")]
         public ReturnCode GetHelp(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 4, DataGroups.Control, (DataArgumentType)customDAT, Message.GetHelp);
@@ -66,6 +70,7 @@ namespace NTwain.Triplets
         /// <param name="customDAT">The custom DAT_* value from manufacturer.</param>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAT")]
         public ReturnCode GetLabel(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 4, DataGroups.Control, (DataArgumentType)customDAT, Message.GetLabel);
@@ -79,6 +84,7 @@ namespace NTwain.Triplets
         /// <param name="customDAT">The custom DAT_* value from manufacturer.</param>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAT")]
         public ReturnCode GetLabelEnum(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 4, DataGroups.Control, (DataArgumentType)customDAT, Message.GetLabelEnum);
@@ -91,6 +97,7 @@ namespace NTwain.Triplets
         /// <param name="customDAT">The custom DAT_* value from manufacturer.</param>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAT")]
         public ReturnCode QuerySupport(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 7, DataGroups.Control, (DataArgumentType)customDAT, Message.QuerySupport);
@@ -104,6 +111,7 @@ namespace NTwain.Triplets
         /// <param name="customDAT">The custom DAT_* value from manufacturer.</param>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAT")]
         public ReturnCode Reset(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 4, DataGroups.Control, (DataArgumentType)customDAT, Message.Reset);
@@ -117,6 +125,7 @@ namespace NTwain.Triplets
         /// <param name="customDAT">The custom DAT_* value from manufacturer.</param>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAT")]
         public ReturnCode ResetAll(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 4, DataGroups.Control, (DataArgumentType)customDAT, Message.ResetAll);
@@ -133,6 +142,7 @@ namespace NTwain.Triplets
         /// <param name="customDAT">The custom DAT_* value from manufacturer.</param>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAT")]
         public ReturnCode Set(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 6, DataGroups.Control, (DataArgumentType)customDAT, Message.Set);
@@ -148,6 +158,7 @@ namespace NTwain.Triplets
         /// <param name="customDAT">The custom DAT_* value from manufacturer.</param>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAT")]
         public ReturnCode SetConstraint(ushort customDAT, TWCapability capability)
         {
             Session.VerifyState(4, 7, DataGroups.Control, (DataArgumentType)customDAT, Message.SetConstraint);

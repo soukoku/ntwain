@@ -16,7 +16,7 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="setupFileXfer">The setup file xfer.</param>
 		/// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
         public ReturnCode Get(out TWSetupFileXfer setupFileXfer)
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.Get);
@@ -29,7 +29,7 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="setupFileXfer">The setup file xfer.</param>
 		/// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
         public ReturnCode GetDefault(out TWSetupFileXfer setupFileXfer)
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.GetDefault);
@@ -43,7 +43,7 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="setupFileXfer">The setup file xfer.</param>
 		/// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#")]
         public ReturnCode Reset(out TWSetupFileXfer setupFileXfer)
 		{
 			Session.VerifyState(4, 4, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.Reset);
@@ -60,7 +60,8 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="setupFileXfer">The setup file xfer.</param>
 		/// <returns></returns>
-		public ReturnCode Set(TWSetupFileXfer setupFileXfer)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer")]
+        public ReturnCode Set(TWSetupFileXfer setupFileXfer)
 		{
 			Session.VerifyState(4, 6, DataGroups.Control, DataArgumentType.SetupFileXfer, Message.Set);
 			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Set, setupFileXfer);
