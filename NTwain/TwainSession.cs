@@ -53,20 +53,19 @@ namespace NTwain
         TWUserInterface _twui;
 
 
-        static readonly Dictionary<string, TwainSource> __ownedSources = new Dictionary<string, TwainSource>();
+        readonly Dictionary<string, TwainSource> _ownedSources = new Dictionary<string, TwainSource>();
 
-        internal static TwainSource GetSourceInstance(ITwainSessionInternal session, TWIdentity sourceId)
+        TwainSource GetSourceInstance(ITwainSessionInternal session, TWIdentity sourceId)
         {
             TwainSource source = null;
             var key = string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2}", sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
-            if (__ownedSources.ContainsKey(key))
+            if (_ownedSources.ContainsKey(key))
             {
-                source = __ownedSources[key];
-                source.Session = session;
+                source = _ownedSources[key];
             }
             else
             {
-                __ownedSources[key] = source = new TwainSource(session, sourceId);
+                _ownedSources[key] = source = new TwainSource(session, sourceId);
             }
             return source;
         }

@@ -6,9 +6,8 @@ namespace NTwain.Internals
 {
 
     /// <summary>
-    /// Abstracts out wnd proc hook on Windows from MessageLoop class.
+    /// Abstracts out wnd proc hook on Windows from InternalMessageLoopHook class.
     /// This allows things to not depend on PresentationCore.dll at runtime on mono.
-    /// Not that everything works yet in mono but it's something.
     /// </summary>
     class WindowsHook : IDisposable
     {
