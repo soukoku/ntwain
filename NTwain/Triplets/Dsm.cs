@@ -22,7 +22,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, dg, dat, msg, ref data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, dg, dat, msg, ref data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, dg, dat, msg, ref data); }
             }
             else if (Platform.IsLinux)
@@ -42,7 +42,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, dg, dat, msg, ref data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, dg, dat, msg, ref data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, dg, dat, msg, ref data); }
             }
             else if (Platform.IsLinux)
@@ -60,7 +60,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Audio, DataArgumentType.AudioInfo, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Audio, DataArgumentType.AudioInfo, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Audio, DataArgumentType.AudioInfo, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -80,7 +80,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, dat, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, dat, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, dat, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -99,7 +99,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.CustomDSData, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.CustomDSData, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.CustomDSData, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -118,7 +118,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.DeviceEvent, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.DeviceEvent, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.DeviceEvent, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -137,7 +137,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -156,7 +156,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -174,7 +174,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, null, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, null, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, null, DataGroups.Control, DataArgumentType.EntryPoint, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -193,7 +193,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.Event, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.Event, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.Event, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -212,7 +212,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.FileSystem, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.FileSystem, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.FileSystem, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -229,7 +229,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, IntPtr.Zero, DataGroups.Control, DataArgumentType.Identity, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, IntPtr.Zero, DataGroups.Control, DataArgumentType.Identity, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, IntPtr.Zero, DataGroups.Control, DataArgumentType.Identity, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -248,7 +248,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.PassThru, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.PassThru, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.PassThru, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -267,7 +267,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.PendingXfers, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.PendingXfers, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.PendingXfers, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -286,7 +286,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.SetupFileXfer, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.SetupFileXfer, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.SetupFileXfer, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -305,7 +305,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.SetupMemXfer, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.SetupMemXfer, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.SetupMemXfer, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -324,7 +324,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.StatusUtf8, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.StatusUtf8, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.StatusUtf8, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -343,7 +343,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.UserInterface, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.UserInterface, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.UserInterface, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -362,7 +362,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.CieColor, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.CieColor, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Image, DataArgumentType.CieColor, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -381,7 +381,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Image, DataArgumentType.ExtImageInfo, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -399,7 +399,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Image, DataArgumentType.Filter, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -417,7 +417,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.GrayResponse, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.GrayResponse, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Image, DataArgumentType.GrayResponse, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -436,7 +436,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.ImageInfo, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.ImageInfo, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Image, DataArgumentType.ImageInfo, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -455,7 +455,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.ImageLayout, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.ImageLayout, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Image, DataArgumentType.ImageLayout, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -474,7 +474,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.ImageMemXfer, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.ImageMemXfer, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Image, DataArgumentType.ImageMemXfer, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -493,7 +493,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.JpegCompression, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.JpegCompression, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Image, DataArgumentType.JpegCompression, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -512,7 +512,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.Palette8, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.Palette8, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Image, DataArgumentType.Palette8, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -531,7 +531,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.RgbResponse, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Image, DataArgumentType.RgbResponse, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Image, DataArgumentType.RgbResponse, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -550,7 +550,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.Status, msg, data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.Status, msg, data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.Status, msg, data); }
             }
             else if (Platform.IsLinux)
@@ -570,7 +570,7 @@ namespace NTwain.Triplets
         {
             if (Platform.IsWin)
             {
-                if (Platform.UseNewDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, dat, msg, ref data); }
+                if (Platform.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, dat, msg, ref data); }
                 else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, dat, msg, ref data); }
             }
             else if (Platform.IsLinux)
