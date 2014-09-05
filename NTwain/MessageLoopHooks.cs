@@ -113,6 +113,7 @@ namespace NTwain
             //{
             System.Windows.Forms.Application.RemoveMessageFilter(this);
             _filter = null;
+            Handle = IntPtr.Zero;
             //});
         }
 
@@ -192,6 +193,7 @@ namespace NTwain
                 _hooker.RemoveHook(FilterMessage);
                 _hooker.Dispose();
                 _hooker = null;
+                Handle = IntPtr.Zero;
             }
         }
     }
