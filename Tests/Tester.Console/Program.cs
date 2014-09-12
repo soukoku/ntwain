@@ -55,7 +55,7 @@ namespace Tester
                     if (rc == ReturnCode.Success)
                     {
                         Console.WriteLine("Start capture from the sample source.");
-                        rc = hit.StartTransfer(SourceEnableMode.NoUI, false, IntPtr.Zero);
+                        rc = hit.Enable(SourceEnableMode.NoUI, false, IntPtr.Zero);
                     }
                     else
                     {

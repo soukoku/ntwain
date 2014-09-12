@@ -132,7 +132,7 @@ namespace Tester.WPF
                     this.CurrentSource.CapSetImageXferMech(XferMech.File);
                 }
 
-                var rc = this.CurrentSource.StartTransfer(SourceEnableMode.NoUI, false, hwnd);
+                var rc = this.CurrentSource.Enable(SourceEnableMode.NoUI, false, hwnd);
             }
         }
     }

@@ -13,13 +13,15 @@ namespace NTwain.Data
 {
 
     //// This file contains custom logic added to the twain types.
-    //// Separating the field definitions out makes finding all the
-    //// custom code logic easier. Mostly this is just making the fields
+    //// Separating the raw field definitions out makes finding all the
+    //// custom code logic easier. Mostly this just makes the fields
     //// into .net friendly properties.
 
     //// potentially unit tests for the twain types only need to target 
     //// code in this file since everything else is just interop and 
-    //// field definitions (pretty much have to hope it's correct).
+    //// field definitions.
+
+    //// most of the doc text are copied from the twain spec pdf. 
 
 
     /// <summary>

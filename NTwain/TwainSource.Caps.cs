@@ -6,6 +6,9 @@ using System.Text;
 
 namespace NTwain
 {
+    // this contains all cap-related methods prefixed with Cap
+
+
     partial class TwainSource
     {
         /// <summary>

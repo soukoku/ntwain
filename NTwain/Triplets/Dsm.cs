@@ -10,6 +10,11 @@ namespace NTwain.Triplets
     /// </summary>
     static partial class Dsm
     {
+        internal const string DSM_ENTRY = "DSM_Entry";
+        internal const string LINUX_DSM_PATH = "/usr/local/lib/libtwaindsm.so";
+        internal const string WIN_NEW_DSM_NAME = "twaindsm.dll";
+        internal const string WIN_OLD_DSM_NAME = "twain_32.dll";
+
         #region wrapped calls
 
         public static ReturnCode DsmEntry(

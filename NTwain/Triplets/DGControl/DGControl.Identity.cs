@@ -23,7 +23,7 @@ namespace NTwain.Triplets
 			var rc = Dsm.DsmEntry(Session.AppId, Message.CloseDS, Session.CurrentSource.Identity);
 			if (rc == ReturnCode.Success)
             {
-                Session.ChangeSourceId(null);
+                Session.ChangeCurrentSource(null);
                 Session.ChangeState(3, true);
 			}
 			return rc;
@@ -79,7 +79,7 @@ namespace NTwain.Triplets
 			var rc = Dsm.DsmEntry(Session.AppId, Message.OpenDS, source.Identity);
 			if (rc == ReturnCode.Success)
             {
-                Session.ChangeSourceId(source);
+                Session.ChangeCurrentSource(source);
                 Session.ChangeState(4, true);
 			}
 			return rc;

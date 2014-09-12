@@ -114,10 +114,10 @@ namespace NTwain
             return new TentativeStateCommitable(this, newState);
         }
 
-        void ITwainSessionInternal.ChangeSourceId(TwainSource source)
+        void ITwainSessionInternal.ChangeCurrentSource(TwainSource source)
         {
             CurrentSource = source;
-            OnPropertyChanged("SourceId");
+            OnPropertyChanged("CurrentSource");
             SafeAsyncSyncableRaiseOnEvent(OnSourceChanged, SourceChanged);
         }
 

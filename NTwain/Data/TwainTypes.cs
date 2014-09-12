@@ -2,32 +2,33 @@
 
 using System;
 using System.Runtime.InteropServices;
-using TW_BOOL = System.UInt16; // unsigned short
+
 // The following TWAIN basic types are mapped with "using"
 // to aid in mapping against the twain.h file using copy-paste.
 // Consumers will not see those names.
 
+using TW_BOOL = System.UInt16; // unsigned short
 
 // use HandleRef instead?
 using TW_HANDLE = System.IntPtr; // HANDLE, todo: should really be uintptr?
+using TW_MEMREF = System.IntPtr; // LPVOID
+using TW_UINTPTR = System.UIntPtr; // UINT_PTR
+
 using TW_INT16 = System.Int16; // short
 using TW_INT32 = System.Int32; // long
 using TW_INT8 = System.SByte;  // char
-using TW_MEMREF = System.IntPtr; // LPVOID
+
 using TW_UINT16 = System.UInt16; // unsigned short
 using TW_UINT32 = System.UInt32; // unsigned long
 using TW_UINT8 = System.Byte;    // unsigned char
-// iffy
-using TW_UINTPTR = System.UIntPtr; // UINT_PTR
-
 
 
 // This mono doc is awesome. An interop must-read
-// http://www.mono-project.com/Interop_with_Native_Libraries
+// http://www.mono-project.com/Interop_with_Native_Libraries (old)
+// http://www.mono-project.com/docs/advanced/pinvoke/ (new url)
 
 //////////////////////////////////
-// most of the doc text are copied 
-// from the twain pdf. Data that
+// Data structures that
 // are passed to the TWAIN method
 // are defined as classes to reduce
 // ref/out in the low-level calls. 
@@ -321,7 +322,7 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TWMemory
     {
-        // not a class due to being embedded next
+        // this is not a class due to being embedded by other classes
 
         TW_UINT32 _flags;
         TW_UINT32 _length;
@@ -448,8 +449,8 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial class TWStatusUtf8
     {
-        // NOTE: rather than embedding the twstatus directly use its fields instead
-        // so the twstatus could become a class object. If twstatus changes
+        // NOTE: rather than embedding the TWStatus directly I'm using its fields instead
+        // so the TWStatus could become a class object. If TWStatus changes
         // definition remember to change it here
         TW_UINT16 _conditionCode;
         TW_UINT16 _data;

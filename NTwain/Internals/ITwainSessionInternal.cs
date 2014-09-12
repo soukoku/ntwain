@@ -39,7 +39,7 @@ namespace NTwain.Internals
         /// <returns></returns>
         ICommittable GetPendingStateChanger(int newState);
 
-        void ChangeSourceId(TwainSource source);
+        void ChangeCurrentSource(TwainSource source);
 
         ReturnCode DisableSource();
 
@@ -48,6 +48,7 @@ namespace NTwain.Internals
         void SafeSyncableRaiseEvent(TransferReadyEventArgs e);
 
         ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle);
+
         SynchronizationContext SynchronizationContext { get; set; }
 
         /// <summary>
