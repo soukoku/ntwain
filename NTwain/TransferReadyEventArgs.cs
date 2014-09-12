@@ -9,6 +9,21 @@ namespace NTwain
     public class TransferReadyEventArgs : EventArgs
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="TransferReadyEventArgs"/> class.
+        /// </summary>
+        /// <param name="pendingCount">The pending count.</param>
+        /// <param name="endOfJob">if set to <c>true</c> [end of job].</param>
+        /// <param name="imageInfo">The image information.</param>
+        /// <param name="audioInfo">The audio information.</param>
+        public TransferReadyEventArgs(int pendingCount, bool endOfJob, TWImageInfo imageInfo, TWAudioInfo audioInfo)
+        {
+            PendingTransferCount = pendingCount;
+            EndOfJob = endOfJob;
+            PendingImageInfo = imageInfo;
+            AudioInfo = audioInfo;
+        }
+
+        /// <summary>
         /// Gets or sets a value indicating whether the current transfer should be canceled
         /// and continue next transfer if there are more data.
         /// </summary>
@@ -25,14 +40,14 @@ namespace NTwain
         /// Gets a value indicating whether current transfer signifies an end of job in TWAIN world.
         /// </summary>
         /// <value><c>true</c> if transfer is end of job; otherwise, <c>false</c>.</value>
-        public bool EndOfJob { get; internal set; }
+        public bool EndOfJob { get; private set; }
 
         /// <summary>
         /// Gets the known pending transfer count. This may not be appilicable 
         /// for certain scanning modes.
         /// </summary>
         /// <value>The pending count.</value>
-        public int PendingTransferCount { get; internal set; }
+        public int PendingTransferCount { get; private set; }
 
         /// <summary>
         /// Gets the tentative image information for the current transfer if applicable.
@@ -41,7 +56,7 @@ namespace NTwain
         /// <value>
         /// The image info.
         /// </value>
-        public TWImageInfo PendingImageInfo { get; internal set; }
+        public TWImageInfo PendingImageInfo { get; private set; }
 
         /// <summary>
         /// Gets the audio information for the current transfer if applicable.
@@ -49,7 +64,7 @@ namespace NTwain
         /// <value>
         /// The audio information.
         /// </value>
-        public TWAudioInfo AudioInfo { get; internal set; }
+        public TWAudioInfo AudioInfo { get; private set; }
 
     }
 }

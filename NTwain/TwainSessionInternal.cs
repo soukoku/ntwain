@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
@@ -13,7 +14,7 @@ namespace NTwain
 {
     // for internal pieces since the main twain session file is getting too long
 
-    partial class TwainSession
+    partial class TwainSession : ITwainSessionInternal, IWinMessageFilter
     {
         #region ITwainSessionInternal Members
 
@@ -193,6 +194,115 @@ namespace NTwain
             return rc;
         }
 
+
+        #endregion
+
+        #region IWinMessageFilter Members
+
+        /// <summary>
+        /// Checks and handle the message if it's a TWAIN message.
+        /// </summary>
+        /// <param name="hwnd">The window handle.</param>
+        /// <param name="msg">The message.</param>
+        /// <param name="wParam">The w parameter.</param>
+        /// <param name="lParam">The l parameter.</param>
+        /// <returns>
+        /// true if handled internally.
+        /// </returns>
+        public bool IsTwainMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam)
+        {
+            bool handled = false;
+            // this handles the message from a typical WndProc message loop and check if it's from the TWAIN source.
+            if (_state >= 5)
+            {
+                // transform it into a pointer for twain
+                IntPtr msgPtr = IntPtr.Zero;
+                try
+                {
+                    var winMsg = new NTwain.Internals.MESSAGE(hwnd, msg, wParam, lParam);
+
+                    // no need to do another lock call when using marshal alloc
+                    msgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(winMsg));
+                    Marshal.StructureToPtr(winMsg, msgPtr, false);
+
+                    var evt = new TWEvent();
+                    evt.pEvent = msgPtr;
+                    if (handled = (((ITwainSessionInternal)this).DGControl.Event.ProcessEvent(evt) == ReturnCode.DSEvent))
+                    {
+                        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: HandleWndProcMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, evt.TWMessage));
+
+                        HandleSourceMsg(evt.TWMessage);
+                    }
+                }
+                finally
+                {
+                    if (msgPtr != IntPtr.Zero) { Marshal.FreeHGlobal(msgPtr); }
+                }
+            }
+            return handled;
+        }
+
+        #endregion
+
+        #region handle twain ds message
+
+
+        ReturnCode HandleCallback(TWIdentity origin, TWIdentity destination, DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
+        {
+            if (origin != null && CurrentSource != null && origin.Id == CurrentSource.Identity.Id && _state >= 5)
+            {
+                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CallbackHandler at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg));
+                // spec says we must handle this on the thread that enabled the DS.
+                // by using the internal dispatcher this will be the case.
+
+                _msgLoopHook.BeginInvoke(() =>
+                {
+                    HandleSourceMsg(msg);
+                });
+                return ReturnCode.Success;
+            }
+            return ReturnCode.Failure;
+        }
+
+        // final method that handles msg from the source, whether it's from wndproc or callbacks
+        void HandleSourceMsg(Message msg)
+        {
+            switch (msg)
+            {
+                case Message.XferReady:
+                    if (State < 6)
+                    {
+                        State = 6;
+                    }
+                    TransferLogic.DoTransferRoutine(this);
+                    break;
+                case Message.DeviceEvent:
+                    TWDeviceEvent de;
+                    var rc = ((ITwainSessionInternal)this).DGControl.DeviceEvent.Get(out de);
+                    if (rc == ReturnCode.Success)
+                    {
+                        SafeSyncableRaiseOnEvent(OnDeviceEvent, DeviceEvent, new DeviceEventArgs(de));
+                    }
+                    break;
+                case Message.CloseDSReq:
+                case Message.CloseDSOK:
+                    Debug.WriteLine("Got msg " + msg);
+                    // even though it says closeDS it's really disable.
+                    // dsok is sent if source is enabled with uionly
+
+                    // some sources send this at other states so do a step down
+                    if (State > 5)
+                    {
+                        ForceStepDown(4);
+                    }
+                    else if (State == 5)
+                    {
+                        // needs this state check since some source sends this more than once
+                        ((ITwainSessionInternal)this).DisableSource();
+                    }
+                    break;
+            }
+        }
 
         #endregion
 

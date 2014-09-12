@@ -39,14 +39,7 @@ namespace NTwain.Internals
                 }
 
                 // ask consumer for xfer details
-                var preXferArgs = new TransferReadyEventArgs
-                {
-                    AudioInfo = audInfo,
-                    PendingImageInfo = imgInfo,
-                    PendingTransferCount = pending.Count,
-                    EndOfJob = pending.EndOfJob == 0
-                };
-
+                var preXferArgs = new TransferReadyEventArgs(pending.Count, pending.EndOfJob == 0, imgInfo, audInfo); ;
                 session.SafeSyncableRaiseEvent(preXferArgs);
 
                 #endregion
@@ -144,16 +137,16 @@ namespace NTwain.Internals
                         lockedPtr = Platform.MemoryManager.Lock(dataPtr);
                     }
 
-                    session.SafeSyncableRaiseEvent(new DataTransferredEventArgs { NativeData = lockedPtr });
+                    session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(lockedPtr, null));
                 }
                 else
                 {
-                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
+                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
                 }
             }
             catch (Exception ex)
             {
-                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { Exception = ex });
+                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(ex));
             }
             finally
             {
@@ -184,11 +177,11 @@ namespace NTwain.Internals
             var xrc = session.DGAudio.AudioFileXfer.Get();
             if (xrc == ReturnCode.XferDone)
             {
-                session.SafeSyncableRaiseEvent(new DataTransferredEventArgs { FileDataPath = filePath });
+                session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(filePath, null));
             }
             else
             {
-                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
+                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
             }
         }
 
@@ -214,12 +207,12 @@ namespace NTwain.Internals
                 }
                 else
                 {
-                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
+                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
                 }
             }
             catch (Exception ex)
             {
-                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { Exception = ex });
+                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(ex));
             }
             finally
             {
@@ -254,7 +247,7 @@ namespace NTwain.Internals
             }
             else
             {
-                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
+                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
             }
         }
 
@@ -317,13 +310,13 @@ namespace NTwain.Internals
                         }
                         else
                         {
-                            session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
+                            session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { Exception = ex });
+                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(ex));
                 }
                 finally
                 {
@@ -396,12 +389,12 @@ namespace NTwain.Internals
                     }
                     else
                     {
-                        session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { ReturnCode = xrc, SourceStatus = session.CurrentSource.GetStatus() });
+                        session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
                     }
                 }
                 catch (Exception ex)
                 {
-                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs { Exception = ex });
+                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(ex));
                 }
                 finally
                 {
@@ -425,6 +418,7 @@ namespace NTwain.Internals
 
         static void DoImageXferredEventRoutine(ITwainSessionInternal session, IntPtr dataPtr, byte[] dataArray, string filePath)
         {
+            DataTransferredEventArgs args = null;
             TWImageInfo imgInfo;
             //TWExtImageInfo extInfo = null;
             //if (session.CurrentSource.SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
@@ -438,14 +432,19 @@ namespace NTwain.Internals
             {
                 imgInfo = null;
             }
-            session.SafeSyncableRaiseEvent(new DataTransferredEventArgs
+            if (dataPtr != IntPtr.Zero)
             {
-                NativeData = dataPtr,
-                MemoryData = dataArray,
-                FileDataPath = filePath,
-                ImageInfo = imgInfo,
-                //ExImageInfo = extInfo
-            });
+                args = new DataTransferredEventArgs(dataPtr, imgInfo);
+            }
+            else if (dataArray != null)
+            {
+                args = new DataTransferredEventArgs(dataArray, imgInfo);
+            }
+            else
+            {
+                args = new DataTransferredEventArgs(filePath, imgInfo);
+            }
+            session.SafeSyncableRaiseEvent(args);
             //if (extInfo != null) { extInfo.Dispose(); }
         }
 
