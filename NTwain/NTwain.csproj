@@ -92,6 +92,7 @@
     <Compile Include="Triplets\Dsm.Linux.cs" />
     <Compile Include="Triplets\Dsm.WinOld.cs" />
     <Compile Include="Triplets\Dsm.WinNew.cs" />
+    <Compile Include="TwainSessionInternal.cs" />
     <Compile Include="TwainSource.Caps.cs" />
     <Compile Include="TwainSession.cs" />
     <Compile Include="TwainSource.cs" />

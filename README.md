@@ -75,7 +75,7 @@ When you're ready to get into transfer mode, just call Enable() on the source ob
 ```
 #!c#
 
-sources.Enable(...);
+myDS.Enable(...);
 
 ```
 

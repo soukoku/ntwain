@@ -279,6 +279,9 @@
     <Compile Include="..\NTwain\TwainSession.cs">
       <Link>TwainSession.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\TwainSessionInternal.cs">
+      <Link>TwainSessionInternal.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\TwainSource.Caps.cs">
       <Link>TwainSource.Caps.cs</Link>
     </Compile>

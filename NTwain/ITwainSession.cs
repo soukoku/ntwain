@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace NTwain
 {
@@ -13,6 +14,25 @@ namespace NTwain
     /// </summary>
     public interface ITwainSession : INotifyPropertyChanged
     {
+
+        /// <summary>
+        /// [Experimental] Gets or sets the optional synchronization context when not specifying a <see cref="MessageLoopHook"/> on <see cref="Open"/>.
+        /// This allows events to be raised on the thread associated with the context. This is experimental is not recommended for use.
+        /// </summary>
+        /// <value>
+        /// The synchronization context.
+        /// </value>
+        SynchronizationContext SynchronizationContext { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether calls to triplets will verify the current twain session state.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if state value is enforced; otherwise, <c>false</c>.
+        /// </value>
+        bool EnforceState { get; set; }
+
+
         /// <summary>
         /// Gets the currently open source.
         /// </summary>
@@ -36,6 +56,27 @@ namespace NTwain
         /// </summary>
         /// <value>The state.</value>
         int State { get; }
+
+
+        /// <summary>
+        /// Quick flag to check if the DSM has been opened.
+        /// </summary>
+        bool IsDsmOpen { get; }
+
+        /// <summary>
+        /// Quick flag to check if a source has been opened.
+        /// </summary>
+        bool IsSourceOpen { get; }
+
+        /// <summary>
+        /// Quick flag to check if a source has been enabled.
+        /// </summary>
+        bool IsSourceEnabled { get; }
+
+        /// <summary>
+        /// Quick flag to check if a source is in the transferring state.
+        /// </summary>
+        bool IsTransferring { get; }
 
         /// <summary>
         /// Try to show the built-in source selector dialog and return the selected source.
@@ -99,5 +140,36 @@ namespace NTwain
         /// </summary>
         /// <returns></returns>
         TWStatusUtf8 GetStatusUtf8();
+
+
+        /// <summary>
+        /// Occurs when <see cref="State"/> has changed.
+        /// </summary>
+        event EventHandler StateChanged;
+        /// <summary>
+        /// Occurs when <see cref="CurrentSource"/> has changed.
+        /// </summary>
+        event EventHandler SourceChanged;
+        /// <summary>
+        /// Occurs when source has been disabled (back to state 4).
+        /// </summary>
+        event EventHandler SourceDisabled;
+        /// <summary>
+        /// Occurs when the source has generated an event.
+        /// </summary>
+        event EventHandler<DeviceEventArgs> DeviceEvent;
+        /// <summary>
+        /// Occurs when a data transfer is ready.
+        /// </summary>
+        event EventHandler<TransferReadyEventArgs> TransferReady;
+        /// <summary>
+        /// Occurs when data has been transferred.
+        /// </summary>
+        event EventHandler<DataTransferredEventArgs> DataTransferred;
+        /// <summary>
+        /// Occurs when an error has been encountered during transfer.
+        /// </summary>
+        event EventHandler<TransferErrorEventArgs> TransferError;
+
     }
 }

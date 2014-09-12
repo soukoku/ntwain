@@ -18,7 +18,7 @@ namespace NTwain
     /// <summary>
     /// Basic class for interfacing with TWAIN. You should only have one of this per application process.
     /// </summary>
-    public class TwainSession : ITwainSessionInternal, IWinMessageFilter
+    public partial class TwainSession : ITwainSessionInternal, IWinMessageFilter
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSession"/> class.
@@ -40,6 +40,7 @@ namespace NTwain
             if (appId == null) { throw new ArgumentNullException("appId"); }
 
             _appId = appId;
+            _ownedSources = new Dictionary<string, TwainSource>();
             ((ITwainSessionInternal)this).ChangeState(1, false);
 #if DEBUG
             // defaults to false on release since it's only useful during dev
@@ -52,13 +53,14 @@ namespace NTwain
         TWIdentity _appId;
         TWUserInterface _twui;
 
-
-        readonly Dictionary<string, TwainSource> _ownedSources = new Dictionary<string, TwainSource>();
+        // cache generated twain sources so if you get same source from one session it'll return the same object
+        readonly Dictionary<string, TwainSource> _ownedSources;
 
         TwainSource GetSourceInstance(ITwainSessionInternal session, TWIdentity sourceId)
         {
             TwainSource source = null;
-            var key = string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2}", sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
+            Debug.WriteLine("Source id = " + sourceId.Id);
+            var key = string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2}|{3}", sourceId.Id, sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
             if (_ownedSources.ContainsKey(key))
             {
                 source = _ownedSources[key];
@@ -69,27 +71,9 @@ namespace NTwain
             }
             return source;
         }
+        
+        #region ITwainSession Members
 
-        /// <summary>
-        /// Gets or sets the optional synchronization context when not specifying a <see cref="MessageLoopHook"/> on <see cref="Open"/>.
-        /// This allows events to be raised on the thread associated with the context. This is experimental is not recommended for use.
-        /// </summary>
-        /// <value>
-        /// The synchronization context.
-        /// </value>
-        public SynchronizationContext SynchronizationContext { get; set; }
-
-
-        #region ITwainSessionInternal Members
-
-        MessageLoopHook _msgLoopHook;
-        MessageLoopHook ITwainSessionInternal.MessageLoopHook { get { return _msgLoopHook; } }
-
-        /// <summary>
-        /// Gets the app id used for the session.
-        /// </summary>
-        /// <value>The app id.</value>
-        TWIdentity ITwainSessionInternal.AppId { get { return _appId; } }
 
         /// <summary>
         /// Gets or sets a value indicating whether calls to triplets will verify the current twain session state.
@@ -99,84 +83,15 @@ namespace NTwain
         /// </value>
         public bool EnforceState { get; set; }
 
-        void ITwainSessionInternal.ChangeState(int newState, bool notifyChange)
-        {
-            _state = newState;
-            if (notifyChange)
-            {
-                OnPropertyChanged("State");
-                SafeAsyncSyncableRaiseOnEvent(OnStateChanged, StateChanged);
-            }
-        }
+        /// <summary>
+        /// [Experimental] Gets or sets the optional synchronization context when not specifying a <see cref="MessageLoopHook"/> on <see cref="Open"/>.
+        /// This allows events to be raised on the thread associated with the context. This is experimental is not recommended for use.
+        /// </summary>
+        /// <value>
+        /// The synchronization context.
+        /// </value>
+        public SynchronizationContext SynchronizationContext { get; set; }
 
-        ICommittable ITwainSessionInternal.GetPendingStateChanger(int newState)
-        {
-            return new TentativeStateCommitable(this, newState);
-        }
-
-        void ITwainSessionInternal.ChangeCurrentSource(TwainSource source)
-        {
-            CurrentSource = source;
-            OnPropertyChanged("CurrentSource");
-            SafeAsyncSyncableRaiseOnEvent(OnSourceChanged, SourceChanged);
-        }
-
-        void ITwainSessionInternal.SafeSyncableRaiseEvent(DataTransferredEventArgs e)
-        {
-            SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, e);
-        }
-        void ITwainSessionInternal.SafeSyncableRaiseEvent(TransferErrorEventArgs e)
-        {
-            SafeSyncableRaiseOnEvent(OnTransferError, TransferError, e);
-        }
-        void ITwainSessionInternal.SafeSyncableRaiseEvent(TransferReadyEventArgs e)
-        {
-            SafeSyncableRaiseOnEvent(OnTransferReady, TransferReady, e);
-        }
-
-        DGAudio _dgAudio;
-        DGAudio ITwainSessionInternal.DGAudio
-        {
-            get
-            {
-                if (_dgAudio == null) { _dgAudio = new DGAudio(this); }
-                return _dgAudio;
-            }
-        }
-
-        DGControl _dgControl;
-        DGControl ITwainSessionInternal.DGControl
-        {
-            get
-            {
-                if (_dgControl == null) { _dgControl = new DGControl(this); }
-                return _dgControl;
-            }
-        }
-
-        DGImage _dgImage;
-        DGImage ITwainSessionInternal.DGImage
-        {
-            get
-            {
-                if (_dgImage == null) { _dgImage = new DGImage(this); }
-                return _dgImage;
-            }
-        }
-
-        DGCustom _dgCustom;
-        DGCustom ITwainSessionInternal.DGCustom
-        {
-            get
-            {
-                if (_dgCustom == null) { _dgCustom = new DGCustom(this); }
-                return _dgCustom;
-            }
-        }
-
-        #endregion
-
-        #region ITwainSession Members
 
         /// <summary>
         /// Gets the currently open source.
@@ -249,6 +164,26 @@ namespace NTwain
                 }
             }
         }
+
+        /// <summary>
+        /// Quick flag to check if the DSM has been opened.
+        /// </summary>
+        public bool IsDsmOpen { get { return State > 2; } }
+
+        /// <summary>
+        /// Quick flag to check if a source has been opened.
+        /// </summary>
+        public bool IsSourceOpen { get { return State > 3; } }
+
+        /// <summary>
+        /// Quick flag to check if a source has been enabled.
+        /// </summary>
+        public bool IsSourceEnabled { get { return State > 4; } }
+
+        /// <summary>
+        /// Quick flag to check if a source is in the transferring state.
+        /// </summary>
+        public bool IsTransferring { get { return State > 5; } }
 
         /// <summary>
         /// Opens the data source manager. This must be the first method used
@@ -348,6 +283,13 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode OpenSource(string sourceName)
         {
+            var curSrc = CurrentSource;
+            if (curSrc != null)
+            {
+                // TODO: close any open sources first
+
+            }
+
             var hit = GetSources().Where(s => string.Equals(s.Name, sourceName)).FirstOrDefault();
             if (hit != null)
             {
@@ -376,142 +318,6 @@ namespace NTwain
             TWStatusUtf8 stat;
             ((ITwainSessionInternal)this).DGControl.StatusUtf8.GetManager(out stat);
             return stat;
-        }
-
-
-        #endregion
-
-        #region INotifyPropertyChanged Members
-
-        /// <summary>
-        /// Occurs when a property value changes.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        /// <param name="propertyName">Name of the property.</param>
-        protected void OnPropertyChanged(string propertyName)
-        {
-            var syncer = SynchronizationContext;
-            if (syncer == null)
-            {
-                try
-                {
-                    var hand = PropertyChanged;
-                    if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
-                }
-                catch { }
-            }
-            else
-            {
-                syncer.Post(o =>
-                {
-                    try
-                    {
-                        var hand = PropertyChanged;
-                        if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
-                    }
-                    catch { }
-                }, null);
-            }
-        }
-
-        #endregion
-
-        #region privileged calls that causes state change in TWAIN
-
-
-        /// <summary>
-        /// Enables the source to start transferring.
-        /// </summary>
-        /// <param name="mode">The mode.</param>
-        /// <param name="modal">if set to <c>true</c> any driver UI will display as modal.</param>
-        /// <param name="windowHandle">The window handle if modal.</param>
-        /// <returns></returns>
-        ReturnCode ITwainSessionInternal.EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle)
-        {
-            var rc = ReturnCode.Failure;
-
-            _msgLoopHook.Invoke(() =>
-            {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: EnableSource with {1}.", Thread.CurrentThread.ManagedThreadId, mode));
-
-                // app v2.2 or higher uses callback2
-                if (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2)
-                {
-                    var cb = new TWCallback2(HandleCallback);
-                    var rc2 = ((ITwainSessionInternal)this).DGControl.Callback2.RegisterCallback(cb);
-
-                    if (rc2 == ReturnCode.Success)
-                    {
-                        Debug.WriteLine("Registered callback2 OK.");
-                        _callbackObj = cb;
-                    }
-                }
-                else
-                {
-                    var cb = new TWCallback(HandleCallback);
-
-                    var rc2 = ((ITwainSessionInternal)this).DGControl.Callback.RegisterCallback(cb);
-
-                    if (rc2 == ReturnCode.Success)
-                    {
-                        Debug.WriteLine("Registered callback OK.");
-                        _callbackObj = cb;
-                    }
-                }
-
-                _twui = new TWUserInterface();
-                _twui.ShowUI = mode == SourceEnableMode.ShowUI;
-                _twui.ModalUI = modal;
-                _twui.hParent = windowHandle;
-
-                if (mode == SourceEnableMode.ShowUIOnly)
-                {
-                    rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDSUIOnly(_twui);
-                }
-                else
-                {
-                    rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDS(_twui);
-                }
-
-                if (rc != ReturnCode.Success)
-                {
-                    _callbackObj = null;
-                }
-            });
-            return rc;
-        }
-
-        bool _disabling;
-        ReturnCode ITwainSessionInternal.DisableSource()
-        {
-            var rc = ReturnCode.Failure;
-            if (!_disabling) // temp hack as a workaround to this being called from multiple threads (xfer logic & closedsreq msg)
-            {
-                _disabling = true;
-                try
-                {
-                    _msgLoopHook.Invoke(() =>
-                    {
-                        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
-
-                        rc = ((ITwainSessionInternal)this).DGControl.UserInterface.DisableDS(_twui);
-                        if (rc == ReturnCode.Success)
-                        {
-                            _callbackObj = null;
-                            SafeAsyncSyncableRaiseOnEvent(OnSourceDisabled, SourceDisabled);
-                        }
-                    });
-                }
-                finally
-                {
-                    _disabling = false;
-                }
-            }
-            return rc;
         }
 
         /// <summary>
@@ -567,9 +373,6 @@ namespace NTwain
             EnforceState = origFlag;
         }
 
-        #endregion
-
-        #region custom events and overridables
 
         /// <summary>
         /// Occurs when <see cref="State"/> has changed.
@@ -600,6 +403,49 @@ namespace NTwain
         /// </summary>
         public event EventHandler<TransferErrorEventArgs> TransferError;
 
+
+        #endregion
+
+        #region INotifyPropertyChanged Members
+
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
+        protected void OnPropertyChanged(string propertyName)
+        {
+            var syncer = SynchronizationContext;
+            if (syncer == null)
+            {
+                try
+                {
+                    var hand = PropertyChanged;
+                    if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+                }
+                catch { }
+            }
+            else
+            {
+                syncer.Post(o =>
+                {
+                    try
+                    {
+                        var hand = PropertyChanged;
+                        if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
+                    }
+                    catch { }
+                }, null);
+            }
+        }
+
+        #endregion
+
+        #region events overridables
 
         /// <summary>
         /// Raises event and if applicable marshal it asynchronously to the <see cref="SynchronizationContext"/> thread
