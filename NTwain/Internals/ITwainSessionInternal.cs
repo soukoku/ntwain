@@ -17,14 +17,6 @@ namespace NTwain.Internals
         MessageLoopHook MessageLoopHook { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether calls to triplets will verify the current twain session state.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if state value is enforced; otherwise, <c>false</c>.
-        /// </value>
-        bool EnforceState { get; set; }
-
-        /// <summary>
         /// Changes the state right away.
         /// </summary>
         /// <param name="newState">The new state.</param>
@@ -39,7 +31,7 @@ namespace NTwain.Internals
         /// <returns></returns>
         ICommittable GetPendingStateChanger(int newState);
 
-        void ChangeSourceId(TwainSource source);
+        void ChangeCurrentSource(TwainSource source);
 
         ReturnCode DisableSource();
 
@@ -48,6 +40,7 @@ namespace NTwain.Internals
         void SafeSyncableRaiseEvent(TransferReadyEventArgs e);
 
         ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle);
+
         SynchronizationContext SynchronizationContext { get; set; }
 
         /// <summary>

@@ -16,7 +16,7 @@ A nuget package is also [available here](https://www.nuget.org/packages/ntwain)
 Using the lib
 --------------------------------------
 To properly use this lib you will need to be reasonably familiar with the TWAIN spec
-and how it works in general (especially capability). 
+and understand how it works in general (especially capability). 
 The spec can be downloaded from [twain.org](http://twain.org/). 
 
 Except for those that have been abstracted away with .net equivalents, most triplet operations are 
@@ -24,9 +24,9 @@ provided as-is so you will need to know when and how to use them.
 There are no high-level, single-line scan-a-page-for-me-now functions yet.
 
 The main class to use is TwainSession. You can either use it directly by subscribing
-to the important events or sub-class it and override the OnMethods related to those events.
+to the important events or sub-class it and override the On* methods related to those events.
 The sample projects contain both usages. Note that an application process should only
-have one TwainSession, unless you really know what you're doing.
+have one active (open) TwainSession at a time.
 
 ```
 #!c#
@@ -59,7 +59,7 @@ and call Open() to start using it.
 ```
 #!c#
 
-// choose and open a source
+// choose and open the first source found
 IEnumerable<TwainSources> sources = session.GetSources();
 var myDS = sources.First();
 myDS.Open();
@@ -70,16 +70,16 @@ At this point you can negotiate with the source using all the typical TWAIN trip
 The TwainSource class itself has some handy pre-defined methods for common capability negotiation
 such as DPI, bitdepth, or paper size to get you started.
 
-When you're ready to get into transfer mode, just call StartTransfer() on the source object.
+When you're ready to get into transfer mode, just call Enable() on the source object.
 
 ```
 #!c#
 
-var myDS = sources.StartTransfer(...);
+myDS.Enable(...);
 
 ```
 
-After transfer has completed (you are notified of this with the SourceDisabled event from session) 
+After transfer has completed (remember you are notified of this with the SourceDisabled event from session) 
 and you're done with TWAIN, you can close the source and the session in sequence to clean things up.
 
 ```
@@ -120,6 +120,7 @@ newer data source manager (twaindsm.dll) from below installed.
 
 [DSM from TWAIN.org](http://sourceforge.net/projects/twain-dsm/files/TWAIN%20DSM%202%20Win/)
 
-Otherwise just compile and run the app as x86 and it'll use the 32-bit version (twain_32.dll) that comes with Windows.
-If your scanner driver is still 32-bit (and most likely it will be) you'll have no choice but to
-compile as x86 anyway, even if you have installed the newer dsm dll.
+In fact, installing the new DSM is recommended whether you're running in 64-bit or not.
+
+If the scanner's TWAIN driver is still 32-bit (and most likely it will be) then you'll have no choice but to
+compile the app as x86.

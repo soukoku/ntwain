@@ -74,8 +74,6 @@ namespace Tester.WPF
             // use this for internal msg loop
             //var rc = _twainVM.Open();
             // use this to hook into current app loop
-
-
             var rc = _twainVM.Open(new WpfMessageLoopHook(new WindowInteropHelper(this).Handle));
 
             if (rc == ReturnCode.Success)

@@ -24,4 +24,11 @@ namespace NTwain.Internals
 
         #endregion
     }
+
+    static class NativeMethods
+    {
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+    }
 }

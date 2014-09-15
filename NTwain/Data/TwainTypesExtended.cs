@@ -13,13 +13,15 @@ namespace NTwain.Data
 {
 
     //// This file contains custom logic added to the twain types.
-    //// Separating the field definitions out makes finding all the
-    //// custom code logic easier. Mostly this is just making the fields
+    //// Separating the raw field definitions out makes finding all the
+    //// custom code logic easier. Mostly this just makes the fields
     //// into .net friendly properties.
 
     //// potentially unit tests for the twain types only need to target 
     //// code in this file since everything else is just interop and 
-    //// field definitions (pretty much have to hope it's correct).
+    //// field definitions.
+
+    //// most of the doc text are copied from the twain spec pdf. 
 
 
     /// <summary>
@@ -1728,12 +1730,13 @@ namespace NTwain.Data
         public string ProductName { get { return _productName; } set { value.VerifyLengthUnder(TwainConst.String32 - 1); _productName = value; } }
 
         /// <summary>
-        /// Creates a <see cref="TWIdentity"/> from assembly values.
+        /// Creates a <see cref="TWIdentity" /> from assembly values.
         /// </summary>
         /// <param name="supportedGroups">The supported groups.</param>
         /// <param name="assembly">The assembly.</param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException">assembly</exception>
+        /// <exception cref="System.ArgumentNullException">assembly</exception>
+        /// <exception cref="System.ArgumentException"></exception>
         public static TWIdentity CreateFromAssembly(DataGroups supportedGroups, Assembly assembly)
         {
             if (assembly == null) { throw new ArgumentNullException("assembly"); }
@@ -1753,10 +1756,16 @@ namespace NTwain.Data
         /// <param name="productName">Name of the product.</param>
         /// <param name="productDescription">The product description.</param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException">version</exception>
+        /// <exception cref="System.ArgumentNullException">assembly</exception>
+        /// <exception cref="System.ArgumentException"></exception>
         public static TWIdentity Create(DataGroups supportedGroups, Version version,
             string manufacturer, string productFamily, string productName, string productDescription)
         {
+            if ((supportedGroups & DataGroups.Image) == 0 &&
+                (supportedGroups & DataGroups.Audio) == 0)
+            {
+                throw new ArgumentException(Resources.BadDataGroupsForAppId);
+            }
             if (version == null) { throw new ArgumentNullException("version"); }
 
             return new TWIdentity

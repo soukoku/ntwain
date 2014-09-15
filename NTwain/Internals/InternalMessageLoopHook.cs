@@ -45,6 +45,7 @@ namespace NTwain.Internals
                         {
                             _hook.Dispose();
                             _hook = null;
+                            Handle = IntPtr.Zero;
                         }
                     }));
                     loopThread.IsBackground = true;

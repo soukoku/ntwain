@@ -173,7 +173,7 @@ namespace Tester.Winform
                 if (_twain.CurrentSource.SupportedCaps.Contains(CapabilityId.CapUIControllable))
                 {
                     // hide scanner ui if possible
-                    if (_twain.CurrentSource.StartTransfer(SourceEnableMode.NoUI, false, this.Handle) == ReturnCode.Success)
+                    if (_twain.CurrentSource.Enable(SourceEnableMode.NoUI, false, this.Handle) == ReturnCode.Success)
                     {
                         btnStopScan.Enabled = true;
                         btnStartCapture.Enabled = false;
@@ -182,7 +182,7 @@ namespace Tester.Winform
                 }
                 else
                 {
-                    if (_twain.CurrentSource.StartTransfer(SourceEnableMode.ShowUI, true, this.Handle) == ReturnCode.Success)
+                    if (_twain.CurrentSource.Enable(SourceEnableMode.ShowUI, true, this.Handle) == ReturnCode.Success)
                     {
                         btnStopScan.Enabled = true;
                         btnStartCapture.Enabled = false;
@@ -372,7 +372,7 @@ namespace Tester.Winform
 
         private void btnAllSettings_Click(object sender, EventArgs e)
         {
-            _twain.CurrentSource.StartTransfer(SourceEnableMode.ShowUIOnly, true, this.Handle);
+            _twain.CurrentSource.Enable(SourceEnableMode.ShowUIOnly, true, this.Handle);
         }
 
         #endregion

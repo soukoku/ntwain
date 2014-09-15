@@ -190,7 +190,8 @@ namespace NTwain
             if (_hooker != null)
             {
                 _hooker.RemoveHook(FilterMessage);
-                _hooker.Dispose();
+                // cannot really dispose _hook or the window will also dispose
+                //_hooker.Dispose();
                 _hooker = null;
             }
         }

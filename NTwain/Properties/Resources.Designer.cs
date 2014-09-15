@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NTwain.Properties
-{
-
-
+namespace NTwain.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -57,6 +57,15 @@ namespace NTwain.Properties
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data group for application must contain either Image or Audio..
+        /// </summary>
+        internal static string BadDataGroupsForAppId {
+            get {
+                return ResourceManager.GetString("BadDataGroupsForAppId", resourceCulture);
             }
         }
         

@@ -69,7 +69,20 @@ namespace NTwain
         /// <param name="modal">if set to <c>true</c> any driver UI will display as modal.</param>
         /// <param name="windowHandle">The window handle if modal.</param>
         /// <returns></returns>
+        [Obsolete("Use Enable() instead.")]
         public ReturnCode StartTransfer(SourceEnableMode mode, bool modal, IntPtr windowHandle)
+        {
+            return Enable(mode, modal, windowHandle);
+        }
+
+        /// <summary>
+        /// Enables the source to start transferring.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="modal">if set to <c>true</c> any driver UI will display as modal.</param>
+        /// <param name="windowHandle">The window handle if modal.</param>
+        /// <returns></returns>
+        public ReturnCode Enable(SourceEnableMode mode, bool modal, IntPtr windowHandle)
         {
             return _session.EnableSource(mode, modal, windowHandle);
         }
@@ -261,7 +274,7 @@ namespace NTwain
         #region cameras
 
         /// <summary>
-        /// Gets the cameras supported by the source.
+        /// [Experimental] Gets the cameras supported by the source.
         /// </summary>
         /// <returns></returns>
         public IList<string> GetCameras()
@@ -286,7 +299,7 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Sets the target camera for cap negotiation that can be set per camera.
+        /// [Experimental] Sets the target camera for cap negotiation that can be set per camera.
         /// </summary>
         /// <param name="cameraName"></param>
         /// <returns></returns>

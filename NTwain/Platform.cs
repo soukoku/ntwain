@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Triplets;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,8 +23,8 @@ namespace NTwain
 
             if (IsWin)
             {
-                var newDsmPath = Path.Combine(Environment.SystemDirectory, "twaindsm.dll");
-                var oldDsmPath = Path.Combine(Environment.SystemDirectory, "twain_32.dll");
+                var newDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_NEW_DSM_NAME);
+                var oldDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_OLD_DSM_NAME);
 
                 if (IsApp64bit)
                 {
@@ -44,11 +45,12 @@ namespace NTwain
             }
             else if (IsLinux)
             {
-                DsmExists = File.Exists(Triplets.Dsm.LINUX_DSM_PATH);
+                DsmExists = File.Exists(Dsm.LINUX_DSM_PATH);
                 IsSupported = DsmExists && IsOnMono;
             }
             else
             {
+                // mac? not gonna happen
             }
 
             _defaultMemManager = new WinMemoryManager();
@@ -56,8 +58,17 @@ namespace NTwain
 
         // prefer the use of the twain dsm on windows.
         internal static readonly bool UseNewWinDSM;
+        internal static readonly bool IsOnMono;
+        internal static readonly bool IsWin;
+        internal static readonly bool IsLinux;
 
-        internal static readonly bool IsApp64bit;
+        /// <summary>
+        /// Gets a value indicating whether the application is running in 64-bit.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if the application is 64-bit; otherwise, <c>false</c>.
+        /// </value>
+        public static bool IsApp64bit { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether the applicable TWAIN DSM library exists in the operating system.
@@ -67,13 +78,9 @@ namespace NTwain
         /// </value>
         public static bool DsmExists { get; private set; }
 
-        internal static readonly bool IsOnMono;
-
-        internal static readonly bool IsWin;
-        internal static readonly bool IsLinux;
-
         /// <summary>
         /// Gets a value indicating whether this library is supported on current OS.
+        /// Check the other platform properties to determine the reason if this is false.
         /// </summary>
         /// <value>
         /// <c>true</c> if this library is supported; otherwise, <c>false</c>.
@@ -86,7 +93,7 @@ namespace NTwain
 
         /// <summary>
         /// Gets the <see cref="IMemoryManager"/> for communicating with data sources.
-        /// This should only be used after the DSM has been opened.
+        /// This should only be used when a <see cref="TwainSession"/> is open.
         /// </summary>
         /// <value>
         /// The memory manager.
