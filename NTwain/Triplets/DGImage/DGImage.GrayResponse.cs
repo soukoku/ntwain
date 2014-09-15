@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.GrayResponse"/>.
     /// </summary>
-	public sealed class GrayResponse : OpBase
+	public sealed class GrayResponse : TripletBase
 	{
 		internal GrayResponse(ITwainSessionInternal session) : base(session) { }
 

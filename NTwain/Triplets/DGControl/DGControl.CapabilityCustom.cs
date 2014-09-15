@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// This is to support custom DAT value for custom capability defined by some manufacturers.
     /// </summary>
-    public sealed class CapabilityCustom : OpBase
+    public sealed class CapabilityCustom : TripletBase
     {
         internal CapabilityCustom(ITwainSessionInternal session) : base(session) { }
 

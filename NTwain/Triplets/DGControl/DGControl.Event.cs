@@ -3,7 +3,7 @@ using NTwain.Internals;
 
 namespace NTwain.Triplets
 {
-	sealed class Event : OpBase
+	sealed class Event : TripletBase
 	{
 		internal Event(ITwainSessionInternal session) : base(session) { }
 

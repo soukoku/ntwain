@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.UserInterface"/>.
     /// </summary>
-    sealed class UserInterface : OpBase
+    sealed class UserInterface : TripletBase
     {
         internal UserInterface(ITwainSessionInternal session) : base(session) { }
         /// <summary>

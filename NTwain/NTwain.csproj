@@ -59,6 +59,7 @@
     <Compile Include="Data\TypeReader.cs" />
     <Compile Include="Data\TwainTypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />
+    <Compile Include="IDataSource.cs" />
     <Compile Include="Internals\Extensions.cs" />
     <Compile Include="DataTransferredEventArgs.cs" />
     <Compile Include="IMemoryManager.cs" />
@@ -69,12 +70,13 @@
     <Compile Include="Internals\TransferLogic.cs" />
     <Compile Include="Internals\WindowsHook.cs" />
     <Compile Include="Internals\WrappedManualResetEvent.cs" />
+    <Compile Include="IPlatformInfo.cs" />
     <Compile Include="ITwainSession.cs" />
     <Compile Include="Internals\WinMemoryManager.cs" />
     <Compile Include="Internals\UnsafeNativeMethods.cs" />
     <Compile Include="Internals\IWinMessageFilter.cs" />
     <Compile Include="MessageLoopHooks.cs" />
-    <Compile Include="Platform.cs" />
+    <Compile Include="PlatformInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -88,14 +90,14 @@
     <Compile Include="Triplets\DGControl\DGControl.CapabilityCustom.cs" />
     <Compile Include="Triplets\DGImage\DGImage.Filter.cs" />
     <Compile Include="Triplets\DGCustom.cs" />
-    <Compile Include="Triplets\OpBase.cs" />
+    <Compile Include="Triplets\TripletBase.cs" />
     <Compile Include="Triplets\Dsm.Linux.cs" />
     <Compile Include="Triplets\Dsm.WinOld.cs" />
     <Compile Include="Triplets\Dsm.WinNew.cs" />
     <Compile Include="TwainSessionInternal.cs" />
-    <Compile Include="TwainSource.Caps.cs" />
+    <Compile Include="DataSource.Caps.cs" />
     <Compile Include="TwainSession.cs" />
-    <Compile Include="TwainSource.cs" />
+    <Compile Include="DataSource.cs" />
     <Compile Include="TwainStateException.cs" />
     <Compile Include="Data\TwainTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

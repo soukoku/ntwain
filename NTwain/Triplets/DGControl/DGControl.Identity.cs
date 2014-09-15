@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.Identity"/>.
     /// </summary>
-	sealed class Identity : OpBase
+	sealed class Identity : TripletBase
 	{
 		internal Identity(ITwainSessionInternal session) : base(session) { }
 
@@ -73,7 +73,7 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="source">The source.</param>
 		/// <returns></returns>
-		public ReturnCode OpenDS(TwainSource source)
+		public ReturnCode OpenDS(DataSource source)
 		{
 			Session.VerifyState(3, 3, DataGroups.Control, DataArgumentType.Identity, Message.OpenDS);
 			var rc = Dsm.DsmEntry(Session.AppId, Message.OpenDS, source.Identity);

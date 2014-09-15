@@ -48,6 +48,12 @@
     <Compile Include="..\NTwain\CapabilityReader.cs">
       <Link>CapabilityReader.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\DataSource.Caps.cs">
+      <Link>DataSource.Caps.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\DataSource.cs">
+      <Link>DataSource.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\DataTransferredEventArgs.cs">
       <Link>DataTransferredEventArgs.cs</Link>
     </Compile>
@@ -68,6 +74,9 @@
     </Compile>
     <Compile Include="..\NTwain\DeviceEventArgs.cs">
       <Link>DeviceEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\IDataSource.cs">
+      <Link>IDataSource.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\IMemoryManager.cs">
       <Link>IMemoryManager.cs</Link>
@@ -108,14 +117,17 @@
     <Compile Include="..\NTwain\Internals\WrappedManualResetEvent.cs">
       <Link>Internals\WrappedManualResetEvent.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\IPlatformInfo.cs">
+      <Link>IPlatformInfo.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\ITwainSession.cs">
       <Link>ITwainSession.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\MessageLoopHooks.cs">
       <Link>MessageLoopHooks.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\Platform.cs">
-      <Link>Platform.cs</Link>
+    <Compile Include="..\NTwain\PlatformInfo.cs">
+      <Link>PlatformInfo.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
@@ -270,8 +282,8 @@
     <Compile Include="..\NTwain\Triplets\Dsm.WinOld.cs">
       <Link>Triplets\Dsm.WinOld.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\Triplets\OpBase.cs">
-      <Link>Triplets\OpBase.cs</Link>
+    <Compile Include="..\NTwain\Triplets\TripletBase.cs">
+      <Link>Triplets\TripletBase.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\TwainException.cs">
       <Link>TwainException.cs</Link>
@@ -281,12 +293,6 @@
     </Compile>
     <Compile Include="..\NTwain\TwainSessionInternal.cs">
       <Link>TwainSessionInternal.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\TwainSource.Caps.cs">
-      <Link>TwainSource.Caps.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\TwainSource.cs">
-      <Link>TwainSource.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\TwainStateException.cs">
       <Link>TwainStateException.cs</Link>

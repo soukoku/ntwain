@@ -4,7 +4,7 @@ using System;
 
 namespace NTwain.Triplets
 {
-	sealed class ImageNativeXfer : OpBase
+	sealed class ImageNativeXfer : TripletBase
 	{
 		internal ImageNativeXfer(ITwainSessionInternal session) : base(session) { }
 

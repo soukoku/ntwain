@@ -7,7 +7,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.ImageFileXfer"/>.
     /// </summary>
-	sealed class ImageFileXfer : OpBase
+	sealed class ImageFileXfer : TripletBase
 	{
 		internal ImageFileXfer(ITwainSessionInternal session) : base(session) { }
 

@@ -155,7 +155,7 @@ namespace Tester.Winform
             }
 
             var curBtn = (sender as ToolStripMenuItem);
-            var src = curBtn.Tag as TwainSource;
+            var src = curBtn.Tag as DataSource;
             if (src.Open() == ReturnCode.Success)
             {
                 curBtn.Checked = true;
@@ -256,7 +256,7 @@ namespace Tester.Winform
                     first.Click -= SourceMenuItem_Click;
                     btnSources.DropDownItems.Remove(first);
                 }
-                foreach (var src in _twain.GetSources())
+                foreach (var src in _twain)
                 {
                     var srcBtn = new ToolStripMenuItem(src.Name);
                     srcBtn.Tag = src;

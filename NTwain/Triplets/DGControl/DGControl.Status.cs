@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.Status"/>.
     /// </summary>
-	sealed class Status : OpBase
+	sealed class Status : TripletBase
 	{
 		internal Status(ITwainSessionInternal session) : base(session) { }
 		/// <summary>

@@ -7,7 +7,7 @@ namespace NTwain.Triplets
     /// Represents <see cref="DataArgumentType.SetupFileXfer"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer")]
-    public sealed class SetupFileXfer : OpBase
+    public sealed class SetupFileXfer : TripletBase
 	{
 		internal SetupFileXfer(ITwainSessionInternal session) : base(session) { }
 		/// <summary>

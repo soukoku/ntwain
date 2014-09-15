@@ -3,7 +3,7 @@ using NTwain.Internals;
 
 namespace NTwain.Triplets
 {
-	sealed class ImageMemFileXfer : OpBase
+	sealed class ImageMemFileXfer : TripletBase
 	{
 		internal ImageMemFileXfer(ITwainSessionInternal session) : base(session) { }
 

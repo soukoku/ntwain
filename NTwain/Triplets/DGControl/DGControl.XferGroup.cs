@@ -7,7 +7,7 @@ namespace NTwain.Triplets
     /// Represents <see cref="DataArgumentType.XferGroup"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer")]
-    public sealed class XferGroup : OpBase
+    public sealed class XferGroup : TripletBase
 	{
 		internal XferGroup(ITwainSessionInternal session) : base(session) { }
 

@@ -7,7 +7,7 @@ namespace NTwain.Triplets
     /// Represents <see cref="DataArgumentType.IccProfile"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Icc")]
-    public sealed class IccProfile : OpBase
+    public sealed class IccProfile : TripletBase
 	{
 		internal IccProfile(ITwainSessionInternal session) : base(session) { }
 

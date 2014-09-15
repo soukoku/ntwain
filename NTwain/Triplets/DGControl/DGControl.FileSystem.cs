@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.FileSystem"/>.
     /// </summary>
-	public sealed class FileSystem : OpBase
+	public sealed class FileSystem : TripletBase
 	{
 		internal FileSystem(ITwainSessionInternal session) : base(session) { }
 		/// <summary>

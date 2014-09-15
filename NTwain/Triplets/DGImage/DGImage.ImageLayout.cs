@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.ImageLayout"/>.
     /// </summary>
-	public sealed class ImageLayout : OpBase
+	public sealed class ImageLayout : TripletBase
 	{
 		internal ImageLayout(ITwainSessionInternal session) : base(session) { }
 

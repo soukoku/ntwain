@@ -42,7 +42,7 @@ namespace Tester
 
             if (rc == ReturnCode.Success)
             {
-                var hit = twain.GetSources().Where(s => string.Equals(s.Name, "TWAIN2 FreeImage Software Scanner")).FirstOrDefault();
+                var hit = twain.Where(s => string.Equals(s.Name, "TWAIN2 FreeImage Software Scanner")).FirstOrDefault();
                 if (hit == null)
                 {
                     Console.WriteLine("The sample source \"TWAIN2 FreeImage Software Scanner\" is not installed.");

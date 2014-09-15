@@ -9,16 +9,16 @@ namespace NTwain
     // this contains all cap-related methods prefixed with Cap
 
 
-    partial class TwainSource
+    partial class DataSource
     {
         /// <summary>
         /// Gets the actual supported operations for a capability.
         /// </summary>
         /// <param name="capId">The cap identifier.</param>
         /// <returns></returns>
-        public QuerySupport CapQuerySupport(CapabilityId capId)
+        public QuerySupports CapQuerySupport(CapabilityId capId)
         {
-            QuerySupport retVal = QuerySupport.None;
+            QuerySupports retVal = QuerySupports.None;
             using (TWCapability cap = new TWCapability(capId))
             {
                 var rc = _session.DGControl.Capability.QuerySupport(cap);
@@ -28,7 +28,7 @@ namespace NTwain
 
                     if (read.ContainerType == ContainerType.OneValue)
                     {
-                        retVal = read.OneValue.ConvertToEnum<QuerySupport>();
+                        retVal = read.OneValue.ConvertToEnum<QuerySupports>();
                     }
                 }
             }
@@ -76,7 +76,7 @@ namespace NTwain
 
 
         /// <summary>
-        /// A general method that tries to get capability values from current <see cref="TwainSource" />.
+        /// A general method that tries to get capability values from current <see cref="DataSource" />.
         /// </summary>
         /// <param name="capabilityId">The capability unique identifier.</param>
         /// <returns></returns>

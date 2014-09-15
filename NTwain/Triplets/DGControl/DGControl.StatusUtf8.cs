@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.StatusUtf8"/>.
     /// </summary>
-	sealed class StatusUtf8 : OpBase
+	sealed class StatusUtf8 : TripletBase
 	{
 		internal StatusUtf8(ITwainSessionInternal session) : base(session) { }
 

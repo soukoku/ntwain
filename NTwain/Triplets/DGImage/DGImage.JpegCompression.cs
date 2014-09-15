@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.JpegCompression"/>.
     /// </summary>
-	public sealed class JpegCompression : OpBase
+	public sealed class JpegCompression : TripletBase
 	{
 		internal JpegCompression(ITwainSessionInternal session) : base(session) { }
 

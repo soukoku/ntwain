@@ -12,11 +12,11 @@ namespace NTwain
     /// <summary>
     /// General interface for a TWAIN session.
     /// </summary>
-    public interface ITwainSession : INotifyPropertyChanged
+    public interface ITwainSession : IEnumerable<DataSource>, INotifyPropertyChanged
     {
 
         /// <summary>
-        /// [Experimental] Gets or sets the optional synchronization context when not specifying a <see cref="MessageLoopHook"/> on <see cref="Open"/>.
+        /// [Experimental] Gets or sets the optional synchronization context when not specifying a <see cref="MessageLoopHook"/> on <see cref="Open()"/>.
         /// This allows events to be raised on the thread associated with the context. This is experimental is not recommended for use.
         /// </summary>
         /// <value>
@@ -39,7 +39,7 @@ namespace NTwain
         /// <value>
         /// The current source.
         /// </value>
-        TwainSource CurrentSource { get; }
+        DataSource CurrentSource { get; }
 
         /// <summary>
         /// Gets or sets the default source for this application.
@@ -49,7 +49,7 @@ namespace NTwain
         /// <value>
         /// The default source.
         /// </value>
-        TwainSource DefaultSource { get; set; }
+        DataSource DefaultSource { get; set; }
 
         /// <summary>
         /// Gets the current state number as defined by the TWAIN spec.
@@ -83,7 +83,7 @@ namespace NTwain
         /// This is not recommended and is only included for completeness.
         /// </summary>
         /// <returns></returns>
-        TwainSource ShowSourceSelector();
+        DataSource ShowSourceSelector();
 
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace NTwain
         /// Gets list of sources available in the system.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<TwainSource> GetSources();
+        IEnumerable<DataSource> GetSources();
 
         /// <summary>
         /// Quick shortcut to open a source.

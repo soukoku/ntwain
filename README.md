@@ -11,7 +11,8 @@ This project has these features/goals:
 * Optionally hosts an internal message loop so there's no need to hook into application UI thread
  
 The solution contains tester projects in winform, wpf, and even (gasp!) console. 
-A nuget package is also [available here](https://www.nuget.org/packages/ntwain)
+A nuget package is also [available here](https://www.nuget.org/packages/ntwain) 
+(NOTE: this doc describes v3. For older version go to Source and choose v2 branch.)
 
 Using the lib
 --------------------------------------
@@ -60,14 +61,14 @@ and call Open() to start using it.
 #!c#
 
 // choose and open the first source found
-IEnumerable<TwainSources> sources = session.GetSources();
-var myDS = sources.First();
+// note that TwainSession implements IEnumerable<DataSource> so we can do this
+DataSource myDS = session.FirstOrDefault();
 myDS.Open();
 
 ```
 
 At this point you can negotiate with the source using all the typical TWAIN triplet API.
-The TwainSource class itself has some handy pre-defined methods for common capability negotiation
+The DataSource class itself has some handy pre-defined methods for common capability negotiation
 such as DPI, bitdepth, or paper size to get you started.
 
 When you're ready to get into transfer mode, just call Enable() on the source object.

@@ -8,7 +8,7 @@ namespace Tester.WPF
     /// </summary>
     class DSVM
     {
-        public TwainSource DS { get; set; }
+        public DataSource DS { get; set; }
 
         public string Name { get { return DS.Name; } }
         public string Version { get { return DS.Version.Info; } }

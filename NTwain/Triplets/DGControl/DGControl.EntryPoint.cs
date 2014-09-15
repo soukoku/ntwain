@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.EntryPoint"/>.
     /// </summary>
-	sealed class EntryPoint : OpBase
+	sealed class EntryPoint : TripletBase
 	{
 		internal EntryPoint(ITwainSessionInternal session) : base(session) { }
 		/// <summary>

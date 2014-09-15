@@ -6,6 +6,9 @@ using System.Threading;
 
 namespace NTwain.Internals
 {
+    /// <summary>
+    /// Extends <see cref="ITwainSession"/> with extra stuff for internal use.
+    /// </summary>
     interface ITwainSessionInternal : ITwainSession
     {
         /// <summary>
@@ -31,7 +34,7 @@ namespace NTwain.Internals
         /// <returns></returns>
         ICommittable GetPendingStateChanger(int newState);
 
-        void ChangeCurrentSource(TwainSource source);
+        void ChangeCurrentSource(DataSource source);
 
         ReturnCode DisableSource();
 
@@ -40,8 +43,6 @@ namespace NTwain.Internals
         void SafeSyncableRaiseEvent(TransferReadyEventArgs e);
 
         ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle);
-
-        SynchronizationContext SynchronizationContext { get; set; }
 
         /// <summary>
         /// Gets the triplet operations defined for audio data group.

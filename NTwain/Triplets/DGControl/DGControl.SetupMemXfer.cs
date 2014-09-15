@@ -7,7 +7,7 @@ namespace NTwain.Triplets
     /// Represents <see cref="DataArgumentType.SetupMemXfer"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Xfer"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mem")]
-    public sealed class SetupMemXfer : OpBase
+    public sealed class SetupMemXfer : TripletBase
 	{
 		internal SetupMemXfer(ITwainSessionInternal session) : base(session) { }
 		/// <summary>

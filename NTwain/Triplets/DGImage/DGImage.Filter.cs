@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.Filter"/>.
     /// </summary>
-	public sealed class Filter : OpBase
+	public sealed class Filter : TripletBase
 	{
         internal Filter(ITwainSessionInternal session) : base(session) { }
 

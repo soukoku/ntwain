@@ -7,7 +7,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.AudioFileXfer"/>.
     /// </summary>
-	sealed class AudioFileXfer : OpBase
+	sealed class AudioFileXfer : TripletBase
 	{
         internal AudioFileXfer(ITwainSessionInternal session) : base(session) { }
 		/// <summary>

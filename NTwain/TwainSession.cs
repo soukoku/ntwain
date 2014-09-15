@@ -40,7 +40,7 @@ namespace NTwain
             if (appId == null) { throw new ArgumentNullException("appId"); }
 
             _appId = appId;
-            _ownedSources = new Dictionary<string, TwainSource>();
+            _ownedSources = new Dictionary<string, DataSource>();
             ((ITwainSessionInternal)this).ChangeState(1, false);
 #if DEBUG
             // defaults to false on release since it's only useful during dev
@@ -54,11 +54,11 @@ namespace NTwain
         TWUserInterface _twui;
 
         // cache generated twain sources so if you get same source from one session it'll return the same object
-        readonly Dictionary<string, TwainSource> _ownedSources;
+        readonly Dictionary<string, DataSource> _ownedSources;
 
-        TwainSource GetSourceInstance(ITwainSessionInternal session, TWIdentity sourceId)
+        DataSource GetSourceInstance(ITwainSessionInternal session, TWIdentity sourceId)
         {
-            TwainSource source = null;
+            DataSource source = null;
             Debug.WriteLine("Source id = " + sourceId.Id);
             var key = string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2}|{3}", sourceId.Id, sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
             if (_ownedSources.ContainsKey(key))
@@ -67,7 +67,7 @@ namespace NTwain
             }
             else
             {
-                _ownedSources[key] = source = new TwainSource(session, sourceId);
+                _ownedSources[key] = source = new DataSource(session, sourceId);
             }
             return source;
         }
@@ -84,7 +84,7 @@ namespace NTwain
         public bool EnforceState { get; set; }
 
         /// <summary>
-        /// [Experimental] Gets or sets the optional synchronization context when not specifying a <see cref="MessageLoopHook"/> on <see cref="Open"/>.
+        /// [Experimental] Gets or sets the optional synchronization context when not specifying a <see cref="MessageLoopHook"/> on <see cref="Open()"/>.
         /// This allows events to be raised on the thread associated with the context. This is experimental is not recommended for use.
         /// </summary>
         /// <value>
@@ -99,7 +99,7 @@ namespace NTwain
         /// <value>
         /// The current source.
         /// </value>
-        public TwainSource CurrentSource { get; private set; }
+        public DataSource CurrentSource { get; private set; }
 
         /// <summary>
         /// Gets or sets the default source for this application.
@@ -109,7 +109,7 @@ namespace NTwain
         /// <value>
         /// The default source.
         /// </value>
-        public TwainSource DefaultSource
+        public DataSource DefaultSource
         {
             get
             {
@@ -134,7 +134,7 @@ namespace NTwain
         /// This is not recommended and is only included for completeness.
         /// </summary>
         /// <returns></returns>
-        public TwainSource ShowSourceSelector()
+        public DataSource ShowSourceSelector()
         {
             TWIdentity id;
             if (((ITwainSessionInternal)this).DGControl.Identity.UserSelect(out id) == ReturnCode.Success)
@@ -187,10 +187,10 @@ namespace NTwain
 
         /// <summary>
         /// Opens the data source manager. This must be the first method used
-        /// before using other TWAIN functions. Calls to this must be followed by 
+        /// before using other TWAIN functions. Calls to this must be followed by
         /// <see cref="Close" /> when done with a TWAIN session.
         /// </summary>
-        /// <returns></returns
+        /// <returns></returns>
         public ReturnCode Open()
         {
             return Open(new InternalMessageLoopHook());
@@ -225,7 +225,7 @@ namespace NTwain
                         rc = ((ITwainSessionInternal)this).DGControl.EntryPoint.Get(out entry);
                         if (rc == ReturnCode.Success)
                         {
-                            Platform.MemoryManager = entry;
+                            PlatformInfo.__global.MemoryManager = entry;
                             Debug.WriteLine("Using TWAIN2 memory functions.");
                         }
                         else
@@ -252,7 +252,7 @@ namespace NTwain
                 rc = ((ITwainSessionInternal)this).DGControl.Parent.CloseDsm(_msgLoopHook.Handle);
                 if (rc == ReturnCode.Success)
                 {
-                    Platform.MemoryManager = null;
+                    PlatformInfo.__global.MemoryManager = null;
                     _msgLoopHook.Stop();
                 }
             });
@@ -265,15 +265,9 @@ namespace NTwain
         /// Only call this at state 2 or higher.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<TwainSource> GetSources()
+        public IEnumerable<DataSource> GetSources()
         {
-            TWIdentity srcId;
-            var rc = ((ITwainSessionInternal)this).DGControl.Identity.GetFirst(out srcId);
-            while (rc == ReturnCode.Success)
-            {
-                yield return GetSourceInstance(this, srcId);
-                rc = ((ITwainSessionInternal)this).DGControl.Identity.GetNext(out srcId);
-            }
+            return this;
         }
 
         /// <summary>
@@ -290,7 +284,7 @@ namespace NTwain
 
             }
 
-            var hit = GetSources().Where(s => string.Equals(s.Name, sourceName)).FirstOrDefault();
+            var hit = this.Where(s => string.Equals(s.Name, sourceName)).FirstOrDefault();
             if (hit != null)
             {
                 return hit.Open();
@@ -441,6 +435,35 @@ namespace NTwain
                     catch { }
                 }, null);
             }
+        }
+
+        #endregion
+
+
+        #region IEnumerable<DataSource> Members
+
+        /// <summary>
+        /// Gets the enumerator.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<DataSource> GetEnumerator()
+        {
+            TWIdentity srcId;
+            var rc = ((ITwainSessionInternal)this).DGControl.Identity.GetFirst(out srcId);
+            while (rc == ReturnCode.Success)
+            {
+                yield return GetSourceInstance(this, srcId);
+                rc = ((ITwainSessionInternal)this).DGControl.Identity.GetNext(out srcId);
+            }
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         #endregion

@@ -15,11 +15,11 @@ namespace NTwain
     /// <summary>
     /// Represents a TWAIN data source.
     /// </summary>
-    public partial class TwainSource
+    public partial class DataSource : IDataSource
     {
         ITwainSessionInternal _session;
 
-        internal TwainSource(ITwainSessionInternal session, TWIdentity sourceId)
+        internal DataSource(ITwainSessionInternal session, TWIdentity sourceId)
         {
             _session = session;
             Identity = sourceId;

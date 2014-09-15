@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.PendingXfers"/>.
     /// </summary>
-	sealed class PendingXfers : OpBase
+	sealed class PendingXfers : TripletBase
 	{
 		internal PendingXfers(ITwainSessionInternal session) : base(session) { }
 		/// <summary>

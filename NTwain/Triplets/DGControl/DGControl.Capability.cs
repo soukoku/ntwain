@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.Capability"/>.
     /// </summary>
-	public sealed class Capability : OpBase
+	public sealed class Capability : TripletBase
 	{
 		internal Capability(ITwainSessionInternal session) : base(session) { }
 		/// <summary>

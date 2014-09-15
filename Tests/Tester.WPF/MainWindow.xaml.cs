@@ -78,7 +78,7 @@ namespace Tester.WPF
 
             if (rc == ReturnCode.Success)
             {
-                SrcList.ItemsSource = _twainVM.GetSources().Select(s => new DSVM { DS = s });
+                SrcList.ItemsSource = _twainVM.Select(s => new DSVM { DS = s });
             }
         }
         private void Button_Click_1(object sender, RoutedEventArgs e)

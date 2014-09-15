@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.ImageInfo"/>.
     /// </summary>
-    sealed class ImageInfo : OpBase
+    sealed class ImageInfo : TripletBase
     {
         internal ImageInfo(ITwainSessionInternal session) : base(session) { }
 

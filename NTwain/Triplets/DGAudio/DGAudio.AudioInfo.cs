@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.AudioInfo"/>.
     /// </summary>
-	sealed class AudioInfo : OpBase
+	sealed class AudioInfo : TripletBase
 	{
 		internal AudioInfo(ITwainSessionInternal session) : base(session) { }
 	

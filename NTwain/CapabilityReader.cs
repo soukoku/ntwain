@@ -14,26 +14,45 @@ namespace NTwain
     public class CapabilityReader
     {
         /// <summary>
-        /// Reads the value from a <see cref="TWCapability"/> that was returned
+        /// Reads the value from a <see cref="TWCapability" /> that was returned
         /// from a TWAIN source.
         /// </summary>
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">capability</exception>
-        /// <exception cref="System.ArgumentException">
-        /// Capability contains no data.;capability
+        /// <exception cref="System.ArgumentException">Capability contains no data.;capability
         /// or
-        /// capability
-        /// </exception>
+        /// capability</exception>
         public static CapabilityReader ReadValue(TWCapability capability)
+        {
+            return ReadValue(capability, PlatformInfo.Current);
+        }
+
+        /// <summary>
+        /// Reads the value from a <see cref="TWCapability" /> that was returned
+        /// from a TWAIN source.
+        /// </summary>
+        /// <param name="capability">The capability.</param>
+        /// <param name="platformInfo">The platform information.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// capability
+        /// or
+        /// platformInfo
+        /// </exception>
+        /// <exception cref="System.ArgumentException">Capability contains no data.;capability
+        /// or
+        /// capability</exception>
+        public static CapabilityReader ReadValue(TWCapability capability, IPlatformInfo platformInfo)
         {
             if (capability == null) { throw new ArgumentNullException("capability"); }
             if (capability.Container == IntPtr.Zero) { throw new ArgumentException(Resources.CapHasNoData, "capability"); }
+            if (platformInfo == null) { throw new ArgumentNullException("platformInfo"); }
 
             IntPtr baseAddr = IntPtr.Zero;
             try
             {
-                baseAddr = Platform.MemoryManager.Lock(capability.Container);
+                baseAddr = platformInfo.MemoryManager.Lock(capability.Container);
                 switch (capability.ContainerType)
                 {
                     case ContainerType.Array:
@@ -64,7 +83,7 @@ namespace NTwain
             {
                 if (baseAddr != IntPtr.Zero)
                 {
-                    Platform.MemoryManager.Unlock(baseAddr);
+                    platformInfo.MemoryManager.Unlock(baseAddr);
                 }
             }
         }

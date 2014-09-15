@@ -7,7 +7,7 @@ namespace NTwain.Triplets
     /// Represents <see cref="DataArgumentType.CieColor"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cie")]
-    public sealed class CieColor : OpBase
+    public sealed class CieColor : TripletBase
 	{
 		internal CieColor(ITwainSessionInternal session) : base(session) { }
 

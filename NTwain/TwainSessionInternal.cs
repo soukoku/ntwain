@@ -42,7 +42,7 @@ namespace NTwain
             return new TentativeStateCommitable(this, newState);
         }
 
-        void ITwainSessionInternal.ChangeCurrentSource(TwainSource source)
+        void ITwainSessionInternal.ChangeCurrentSource(DataSource source)
         {
             CurrentSource = source;
             OnPropertyChanged("CurrentSource");
@@ -148,18 +148,23 @@ namespace NTwain
                 _twui.ModalUI = modal;
                 _twui.hParent = windowHandle;
 
-                if (mode == SourceEnableMode.ShowUIOnly)
+                try
                 {
-                    rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDSUIOnly(_twui);
+                    if (mode == SourceEnableMode.ShowUIOnly)
+                    {
+                        rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDSUIOnly(_twui);
+                    }
+                    else
+                    {
+                        rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDS(_twui);
+                    }
                 }
-                else
+                finally
                 {
-                    rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDS(_twui);
-                }
-
-                if (rc != ReturnCode.Success)
-                {
-                    _callbackObj = null;
+                    if (rc != ReturnCode.Success)
+                    {
+                        _callbackObj = null;
+                    }
                 }
             });
             return rc;
@@ -305,6 +310,5 @@ namespace NTwain
         }
 
         #endregion
-
     }
 }

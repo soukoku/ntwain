@@ -3,7 +3,7 @@ using NTwain.Internals;
 
 namespace NTwain.Triplets
 {
-	sealed class Callback : OpBase
+	sealed class Callback : TripletBase
 	{
 		internal Callback(ITwainSessionInternal session) : base(session) { }
 		/// <summary>

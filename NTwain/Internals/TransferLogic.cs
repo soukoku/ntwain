@@ -134,7 +134,7 @@ namespace NTwain.Internals
                     session.ChangeState(7, true);
                     if (dataPtr != IntPtr.Zero)
                     {
-                        lockedPtr = Platform.MemoryManager.Lock(dataPtr);
+                        lockedPtr = PlatformInfo.Current.MemoryManager.Lock(dataPtr);
                     }
 
                     session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(lockedPtr, null));
@@ -154,12 +154,12 @@ namespace NTwain.Internals
                 // data here is allocated by source so needs to use shared mem calls
                 if (lockedPtr != IntPtr.Zero)
                 {
-                    Platform.MemoryManager.Unlock(lockedPtr);
+                    PlatformInfo.Current.MemoryManager.Unlock(lockedPtr);
                     lockedPtr = IntPtr.Zero;
                 }
                 if (dataPtr != IntPtr.Zero)
                 {
-                    Platform.MemoryManager.Free(dataPtr);
+                    PlatformInfo.Current.MemoryManager.Free(dataPtr);
                     dataPtr = IntPtr.Zero;
                 }
             }
@@ -201,7 +201,7 @@ namespace NTwain.Internals
                     session.ChangeState(7, true);
                     if (dataPtr != IntPtr.Zero)
                     {
-                        lockedPtr = Platform.MemoryManager.Lock(dataPtr);
+                        lockedPtr = PlatformInfo.Current.MemoryManager.Lock(dataPtr);
                     }
                     DoImageXferredEventRoutine(session, lockedPtr, null, null);
                 }
@@ -220,12 +220,12 @@ namespace NTwain.Internals
                 // data here is allocated by source so needs to use shared mem calls
                 if (lockedPtr != IntPtr.Zero)
                 {
-                    Platform.MemoryManager.Unlock(lockedPtr);
+                    PlatformInfo.Current.MemoryManager.Unlock(lockedPtr);
                     lockedPtr = IntPtr.Zero;
                 }
                 if (dataPtr != IntPtr.Zero)
                 {
-                    Platform.MemoryManager.Free(dataPtr);
+                    PlatformInfo.Current.MemoryManager.Free(dataPtr);
                     dataPtr = IntPtr.Zero;
                 }
             }
@@ -266,7 +266,7 @@ namespace NTwain.Internals
                     {
                         Flags = MemoryFlags.AppOwns | MemoryFlags.Pointer,
                         Length = memInfo.Preferred,
-                        TheMem = Platform.MemoryManager.Allocate(memInfo.Preferred)
+                        TheMem = PlatformInfo.Current.MemoryManager.Allocate(memInfo.Preferred)
                     };
 
                     // do the unthinkable and keep all xferred batches in memory, 
@@ -290,7 +290,7 @@ namespace NTwain.Internals
                                 IntPtr lockPtr = IntPtr.Zero;
                                 try
                                 {
-                                    lockPtr = Platform.MemoryManager.Lock(xferInfo.Memory.TheMem);
+                                    lockPtr = PlatformInfo.Current.MemoryManager.Lock(xferInfo.Memory.TheMem);
                                     Marshal.Copy(lockPtr, buffer, 0, buffer.Length);
                                     xferredData.Write(buffer, 0, buffer.Length);
                                 }
@@ -298,7 +298,7 @@ namespace NTwain.Internals
                                 {
                                     if (lockPtr != IntPtr.Zero)
                                     {
-                                        Platform.MemoryManager.Unlock(lockPtr);
+                                        PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
                                     }
                                 }
                             }
@@ -323,7 +323,7 @@ namespace NTwain.Internals
                     session.ChangeState(6, true);
                     if (xferInfo.Memory.TheMem != IntPtr.Zero)
                     {
-                        Platform.MemoryManager.Free(xferInfo.Memory.TheMem);
+                        PlatformInfo.Current.MemoryManager.Free(xferInfo.Memory.TheMem);
                     }
                 }
 
@@ -348,7 +348,7 @@ namespace NTwain.Internals
                     {
                         Flags = MemoryFlags.AppOwns | MemoryFlags.Pointer,
                         Length = memInfo.Preferred,
-                        TheMem = Platform.MemoryManager.Allocate(memInfo.Preferred)
+                        TheMem = PlatformInfo.Current.MemoryManager.Allocate(memInfo.Preferred)
                     };
 
                     var xrc = ReturnCode.Success;
@@ -367,14 +367,14 @@ namespace NTwain.Internals
                                 IntPtr lockPtr = IntPtr.Zero;
                                 try
                                 {
-                                    lockPtr = Platform.MemoryManager.Lock(xferInfo.Memory.TheMem);
+                                    lockPtr = PlatformInfo.Current.MemoryManager.Lock(xferInfo.Memory.TheMem);
                                     Marshal.Copy(lockPtr, buffer, 0, buffer.Length);
                                 }
                                 finally
                                 {
                                     if (lockPtr != IntPtr.Zero)
                                     {
-                                        Platform.MemoryManager.Unlock(lockPtr);
+                                        PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
                                     }
                                 }
                                 outStream.Write(buffer, 0, buffer.Length);
@@ -401,7 +401,7 @@ namespace NTwain.Internals
                     session.ChangeState(6, true);
                     if (xferInfo.Memory.TheMem != IntPtr.Zero)
                     {
-                        Platform.MemoryManager.Free(xferInfo.Memory.TheMem);
+                        PlatformInfo.Current.MemoryManager.Free(xferInfo.Memory.TheMem);
                     }
                     if (File.Exists(tempFile))
                     {

@@ -40,7 +40,7 @@ namespace NTwain.Data
         /// <summary>
         /// The don't care value.
         /// </summary>
-        DontCare = TwainConst.DontCare16,
+        DoNotCare = TwainConst.DoNotCare16,
     }
 
     /// <summary>
@@ -2044,7 +2044,7 @@ namespace NTwain.Data
     /// Corresponds to TWQC_*.
     /// </summary>
     [Flags]
-    public enum QuerySupport
+    public enum QuerySupports
     {
         None = 0,
         Get = 0x1,
@@ -2120,15 +2120,15 @@ namespace NTwain.Data
         /// <summary>
         /// Don't care value for 8 bit types.
         /// </summary>
-        public const byte DontCare8 = 0xff;
+        public const byte DoNotCare8 = 0xff;
         /// <summary>
         /// Don't care value for 16 bit types.
         /// </summary>
-        public const ushort DontCare16 = 0xffff;
+        public const ushort DoNotCare16 = 0xffff;
         /// <summary>
         /// Don't care value for 32 bit types.
         /// </summary>
-        public const uint DontCare32 = 0xffffffff;
+        public const uint DoNotCare32 = 0xffffffff;
 
         /// <summary>
         /// The major version number of TWAIN supported by this library.

@@ -7,7 +7,7 @@ namespace NTwain.Triplets
     /// Represents <see cref="DataArgumentType.RgbResponse"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Rgb")]
-    public sealed class RgbResponse : OpBase
+    public sealed class RgbResponse : TripletBase
 	{
 		internal RgbResponse(ITwainSessionInternal session) : base(session) { }
 

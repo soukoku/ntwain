@@ -9,7 +9,11 @@ using System.Windows.Threading;
 
 namespace NTwain.Internals
 {
-   sealed class InternalMessageLoopHook : MessageLoopHook
+    /// <summary>
+    /// This is the self-hosted message loop for TWAIN communication.
+    /// It utilizes the wpf Dispatcher to do all the hard work.
+    /// </summary>
+    sealed class InternalMessageLoopHook : MessageLoopHook
     {
         Dispatcher _dispatcher;
         WindowsHook _hook;
@@ -32,7 +36,7 @@ namespace NTwain.Internals
                     {
                         Debug.WriteLine("NTwain message loop is starting.");
                         _dispatcher = Dispatcher.CurrentDispatcher;
-                        if (!Platform.IsOnMono)
+                        if (!PlatformInfo.__global.IsOnMono)
                         {
                             _hook = new WindowsHook(filter);
                             Handle = _hook.Handle;
@@ -71,7 +75,7 @@ namespace NTwain.Internals
             {
                 action();
             }
-            else if (Platform.IsOnMono)
+            else if (PlatformInfo.__global.IsOnMono)
             {
                 using (var man = new WrappedManualResetEvent())
                 {

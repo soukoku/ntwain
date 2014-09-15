@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.Palette8"/>.
     /// </summary>
-	public sealed class Palette8 : OpBase
+	public sealed class Palette8 : TripletBase
 	{
 		internal Palette8(ITwainSessionInternal session) : base(session) { }
 

@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.CustomDSData"/>.
     /// </summary>
-	public sealed class CustomDSData : OpBase
+	public sealed class CustomDSData : TripletBase
 	{
 		internal CustomDSData(ITwainSessionInternal session) : base(session) { }
 		/// <summary>

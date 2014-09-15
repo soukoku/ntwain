@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.PassThru"/>.
     /// </summary>
-	public sealed class PassThru : OpBase
+	public sealed class PassThru : TripletBase
 	{
 		internal PassThru(ITwainSessionInternal session) : base(session) { }
 		/// <summary>

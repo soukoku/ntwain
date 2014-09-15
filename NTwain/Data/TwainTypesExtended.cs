@@ -635,7 +635,7 @@ namespace NTwain.Data
         public TWCapability(CapabilityId capability)
         {
             Capability = capability;
-            ContainerType = ContainerType.DontCare;
+            ContainerType = ContainerType.DoNotCare;
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="TWCapability" /> class.
@@ -699,7 +699,7 @@ namespace NTwain.Data
             // since one value can only house UInt32 we will not allow type size > 4
             if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWOneValue")); }
 
-            _hContainer = Platform.MemoryManager.Allocate((uint)Marshal.SizeOf(value));
+            _hContainer = PlatformInfo.Current.MemoryManager.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
             {
                 Marshal.StructureToPtr(value, _hContainer, false);
@@ -715,8 +715,8 @@ namespace NTwain.Data
             Int32 valueSize = TWEnumeration.ItemOffset + value.ItemList.Length * TypeReader.GetItemTypeSize(value.ItemType);
 
             int offset = 0;
-            _hContainer = Platform.MemoryManager.Allocate((uint)valueSize);
-            IntPtr baseAddr = Platform.MemoryManager.Lock(_hContainer);
+            _hContainer = PlatformInfo.Current.MemoryManager.Allocate((uint)valueSize);
+            IntPtr baseAddr = PlatformInfo.Current.MemoryManager.Lock(_hContainer);
 
             // can't safely use StructureToPtr here so write it our own
             WriteValue(baseAddr, ref offset, ItemType.UInt16, value.ItemType);
@@ -727,7 +727,7 @@ namespace NTwain.Data
             {
                 WriteValue(baseAddr, ref offset, value.ItemType, item);
             }
-            Platform.MemoryManager.Unlock(baseAddr);
+            PlatformInfo.Current.MemoryManager.Unlock(baseAddr);
         }
 
 
@@ -739,7 +739,7 @@ namespace NTwain.Data
             // since range value can only house UInt32 we will not allow type size > 4
             if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWRange")); }
 
-            _hContainer = Platform.MemoryManager.Allocate((uint)Marshal.SizeOf(value));
+            _hContainer = PlatformInfo.Current.MemoryManager.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
             {
                 Marshal.StructureToPtr(value, _hContainer, false);
@@ -903,7 +903,7 @@ namespace NTwain.Data
             if (disposing) { }
             if (_hContainer != IntPtr.Zero)
             {
-                Platform.MemoryManager.Free(_hContainer);
+                PlatformInfo.Current.MemoryManager.Free(_hContainer);
                 _hContainer = IntPtr.Zero;
             }
         }
@@ -1435,7 +1435,7 @@ namespace NTwain.Data
                         {
                             // uintptr to intptr could be bad
                             var ptr = new IntPtr(BitConverter.ToInt64(BitConverter.GetBytes(it.Item.ToUInt64()), 0));
-                            Platform.MemoryManager.Free(ptr);
+                            PlatformInfo.Current.MemoryManager.Free(ptr);
                         }
                     }
                     it.Item = UIntPtr.Zero;
@@ -2138,7 +2138,7 @@ namespace NTwain.Data
         /// </summary>
         public TWPendingXfers()
         {
-            _count = TwainConst.DontCare16;
+            _count = TwainConst.DoNotCare16;
         }
 
         /// <summary>
@@ -2146,7 +2146,7 @@ namespace NTwain.Data
         /// connected to. If no more transfers are available, set to zero. If an unknown and
         /// non-zero number of transfers are available, set to -1.
         /// </summary>
-        public int Count { get { return _count == TwainConst.DontCare16 ? -1 : (int)_count; } }
+        public int Count { get { return _count == TwainConst.DoNotCare16 ? -1 : (int)_count; } }
         /// <summary>
         /// The application should check this field if the CapJobControl is set to other
         /// than None. If this is not 0, the application should expect more data
@@ -2181,7 +2181,7 @@ namespace NTwain.Data
         /// <summary>
         /// The device’s "power-on" value for the capability. If the application is
         /// performing a MSG_SET operation and isn’t sure what the default
-        /// value is, set this field to <see cref="TwainConst.DontCare32"/>.
+        /// value is, set this field to <see cref="TwainConst.DoNotCare32"/>.
         /// </summary>
         public uint DefaultValue { get { return _defaultValue; } set { _defaultValue = value; } }
         /// <summary>
@@ -2352,7 +2352,7 @@ namespace NTwain.Data
             }
             if (_uTF8string != IntPtr.Zero)
             {
-                Platform.MemoryManager.Free(_uTF8string);
+                PlatformInfo.Current.MemoryManager.Free(_uTF8string);
                 _uTF8string = IntPtr.Zero;
             }
         }

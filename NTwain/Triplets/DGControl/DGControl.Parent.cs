@@ -7,7 +7,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.Parent"/>.
     /// </summary>
-    sealed class Parent : OpBase
+    sealed class Parent : TripletBase
     {
         internal Parent(ITwainSessionInternal session) : base(session) { }
 

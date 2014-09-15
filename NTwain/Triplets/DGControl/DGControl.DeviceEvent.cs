@@ -6,7 +6,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Represents <see cref="DataArgumentType.DeviceEvent"/>.
     /// </summary>
-	sealed class DeviceEvent : OpBase
+	sealed class DeviceEvent : TripletBase
 	{
 		internal DeviceEvent(ITwainSessionInternal session) : base(session) { }
     

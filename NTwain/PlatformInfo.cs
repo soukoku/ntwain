@@ -8,44 +8,57 @@ using System.Text;
 namespace NTwain
 {
     /// <summary>
-    /// Class for checking various platform requirements and conditions.
+    /// Contains various platform requirements and conditions for TWAIN.
     /// </summary>
-    public static class Platform
+    public class PlatformInfo : IPlatformInfo
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
-        static Platform()
+        internal static readonly PlatformInfo __global = new PlatformInfo();
+        /// <summary>
+        /// Gets the current platform info related to TWAIN.
+        /// </summary>
+        /// <value>
+        /// The current info.
+        /// </value>
+        public static IPlatformInfo Current { get { return __global; } }
+
+
+        PlatformInfo()
         {
             IsApp64bit = IntPtr.Size == 8;
 
             IsOnMono = Type.GetType("Mono.Runtime") != null;
-            IsWin = Environment.OSVersion.Platform == PlatformID.Win32NT;
+            IsWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
             IsLinux = Environment.OSVersion.Platform == PlatformID.Unix;
 
-            if (IsWin)
+            if (IsWindows)
             {
                 var newDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_NEW_DSM_NAME);
                 var oldDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_OLD_DSM_NAME);
 
                 if (IsApp64bit)
                 {
-                    IsSupported = DsmExists = File.Exists(newDsmPath);
+                    ExpectedDsmPath = newDsmPath;
+                    IsSupported = DsmExists = File.Exists(ExpectedDsmPath);
                     UseNewWinDSM = true;
                 }
                 else
                 {
                     if (File.Exists(newDsmPath))
                     {
+                        ExpectedDsmPath = newDsmPath;
                         UseNewWinDSM = IsSupported = DsmExists = true;
                     }
                     else
                     {
-                        IsSupported = DsmExists = File.Exists(oldDsmPath);
+                        ExpectedDsmPath = oldDsmPath;
+                        IsSupported = DsmExists = File.Exists(ExpectedDsmPath);
                     }
                 }
             }
             else if (IsLinux)
             {
-                DsmExists = File.Exists(Dsm.LINUX_DSM_PATH);
+                ExpectedDsmPath = Dsm.LINUX_DSM_PATH;
+                DsmExists = File.Exists(ExpectedDsmPath);
                 IsSupported = DsmExists && IsOnMono;
             }
             else
@@ -56,11 +69,10 @@ namespace NTwain
             _defaultMemManager = new WinMemoryManager();
         }
 
-        // prefer the use of the twain dsm on windows.
-        internal static readonly bool UseNewWinDSM;
-        internal static readonly bool IsOnMono;
-        internal static readonly bool IsWin;
-        internal static readonly bool IsLinux;
+        internal readonly bool UseNewWinDSM;
+        internal readonly bool IsOnMono;
+        internal readonly bool IsWindows;
+        internal readonly bool IsLinux;
 
         /// <summary>
         /// Gets a value indicating whether the application is running in 64-bit.
@@ -68,7 +80,7 @@ namespace NTwain
         /// <value>
         /// <c>true</c> if the application is 64-bit; otherwise, <c>false</c>.
         /// </value>
-        public static bool IsApp64bit { get; private set; }
+        public bool IsApp64bit { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether the applicable TWAIN DSM library exists in the operating system.
@@ -76,7 +88,15 @@ namespace NTwain
         /// <value>
         ///   <c>true</c> if the TWAIN DSM; otherwise, <c>false</c>.
         /// </value>
-        public static bool DsmExists { get; private set; }
+        public bool DsmExists { get; private set; }
+
+        /// <summary>
+        /// Gets the expected TWAIN DSM dll path.
+        /// </summary>
+        /// <value>
+        /// The expected DSM path.
+        /// </value>
+        public string ExpectedDsmPath { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether this library is supported on current OS.
@@ -85,11 +105,11 @@ namespace NTwain
         /// <value>
         /// <c>true</c> if this library is supported; otherwise, <c>false</c>.
         /// </value>
-        public static bool IsSupported { get; private set; }
+        public bool IsSupported { get; private set; }
 
 
-        static readonly IMemoryManager _defaultMemManager;
-        static IMemoryManager _specifiedMemManager;
+        readonly IMemoryManager _defaultMemManager;
+        IMemoryManager _specifiedMemManager;
 
         /// <summary>
         /// Gets the <see cref="IMemoryManager"/> for communicating with data sources.
@@ -98,7 +118,7 @@ namespace NTwain
         /// <value>
         /// The memory manager.
         /// </value>
-        public static IMemoryManager MemoryManager
+        public IMemoryManager MemoryManager
         {
             get
             {
