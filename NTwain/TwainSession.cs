@@ -18,7 +18,7 @@ namespace NTwain
     /// <summary>
     /// Basic class for interfacing with TWAIN. You should only have one of this per application process.
     /// </summary>
-    public partial class TwainSession 
+    public partial class TwainSession
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSession"/> class.
@@ -71,7 +71,7 @@ namespace NTwain
             }
             return source;
         }
-        
+
         #region ITwainSession Members
 
 
@@ -421,7 +421,10 @@ namespace NTwain
                     var hand = PropertyChanged;
                     if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("PropertyChanged event error: " + ex.ToString());
+                }
             }
             else
             {
@@ -432,7 +435,10 @@ namespace NTwain
                         var hand = PropertyChanged;
                         if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("PropertyChanged event error: " + ex.ToString());
+                    }
                 }, null);
             }
         }
@@ -486,7 +492,10 @@ namespace NTwain
                     onEventFunc();
                     if (handler != null) { handler(this, EventArgs.Empty); }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                }
             }
             else
             {
@@ -497,7 +506,10 @@ namespace NTwain
                         onEventFunc();
                         if (handler != null) { handler(this, EventArgs.Empty); }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                    }
                 }, null);
             }
         }
@@ -522,7 +534,10 @@ namespace NTwain
                     onEventFunc(e);
                     if (handler != null) { handler(this, e); }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                }
             }
             else
             {
@@ -535,7 +550,10 @@ namespace NTwain
                         onEventFunc(e);
                         if (handler != null) { handler(this, e); }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                    }
                 }, null);
             }
         }
