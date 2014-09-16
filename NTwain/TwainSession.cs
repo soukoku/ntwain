@@ -18,7 +18,7 @@ namespace NTwain
     /// <summary>
     /// Basic class for interfacing with TWAIN. You should only have one of this per application process.
     /// </summary>
-    public partial class TwainSession 
+    public partial class TwainSession
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TwainSession"/> class.
@@ -71,7 +71,7 @@ namespace NTwain
             }
             return source;
         }
-        
+
         #region ITwainSession Members
 
 
@@ -267,13 +267,7 @@ namespace NTwain
         /// <returns></returns>
         public IEnumerable<TwainSource> GetSources()
         {
-            TWIdentity srcId;
-            var rc = ((ITwainSessionInternal)this).DGControl.Identity.GetFirst(out srcId);
-            while (rc == ReturnCode.Success)
-            {
-                yield return GetSourceInstance(this, srcId);
-                rc = ((ITwainSessionInternal)this).DGControl.Identity.GetNext(out srcId);
-            }
+            return this;
         }
 
         /// <summary>
@@ -427,7 +421,10 @@ namespace NTwain
                     var hand = PropertyChanged;
                     if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("PropertyChanged event error: " + ex.ToString());
+                }
             }
             else
             {
@@ -438,9 +435,40 @@ namespace NTwain
                         var hand = PropertyChanged;
                         if (hand != null) { hand(this, new PropertyChangedEventArgs(propertyName)); }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("PropertyChanged event error: " + ex.ToString());
+                    }
                 }, null);
             }
+        }
+
+        #endregion
+
+        #region IEnumerable<TwainSource> Members
+
+        /// <summary>
+        /// Gets the enumerator.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<TwainSource> GetEnumerator()
+        {
+            TWIdentity srcId;
+            var rc = ((ITwainSessionInternal)this).DGControl.Identity.GetFirst(out srcId);
+            while (rc == ReturnCode.Success)
+            {
+                yield return GetSourceInstance(this, srcId);
+                rc = ((ITwainSessionInternal)this).DGControl.Identity.GetNext(out srcId);
+            }
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         #endregion
@@ -463,7 +491,10 @@ namespace NTwain
                     onEventFunc();
                     if (handler != null) { handler(this, EventArgs.Empty); }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                }
             }
             else
             {
@@ -474,7 +505,10 @@ namespace NTwain
                         onEventFunc();
                         if (handler != null) { handler(this, EventArgs.Empty); }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                    }
                 }, null);
             }
         }
@@ -499,7 +533,10 @@ namespace NTwain
                     onEventFunc(e);
                     if (handler != null) { handler(this, e); }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                }
             }
             else
             {
@@ -512,7 +549,10 @@ namespace NTwain
                         onEventFunc(e);
                         if (handler != null) { handler(this, e); }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                    }
                 }, null);
             }
         }

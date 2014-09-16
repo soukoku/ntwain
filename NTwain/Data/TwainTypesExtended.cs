@@ -949,7 +949,7 @@ namespace NTwain.Data
                     }
                     break;
                 case ContainerType.Range:
-                    for (var i = read.RangeMinValue; i <= read.RangeMaxValue; i += read.RangeStepSize)
+                    for (var i = read.RangeMinValue; i >= read.RangeMinValue && i <= read.RangeMaxValue; i += read.RangeStepSize)
                     {
                         toPopulate.Add(i);
                     }
@@ -1390,7 +1390,10 @@ namespace NTwain.Data
     /// </summary>
     public sealed partial class TWExtImageInfo : IDisposable
     {
-        internal TWExtImageInfo()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWExtImageInfo"/> class.
+        /// </summary>
+        public TWExtImageInfo()
         {
             _info = new TWInfo[200];
         }

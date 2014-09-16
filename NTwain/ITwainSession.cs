@@ -12,7 +12,7 @@ namespace NTwain
     /// <summary>
     /// General interface for a TWAIN session.
     /// </summary>
-    public interface ITwainSession : INotifyPropertyChanged
+    public interface ITwainSession : IEnumerable<TwainSource>, INotifyPropertyChanged
     {
 
         /// <summary>

@@ -60,7 +60,7 @@ and call Open() to start using it.
 #!c#
 
 // choose and open the first source found
-IEnumerable<TwainSources> sources = session.GetSources();
+IEnumerable<TwainSource> sources = session.GetSources();
 var myDS = sources.First();
 myDS.Open();
 

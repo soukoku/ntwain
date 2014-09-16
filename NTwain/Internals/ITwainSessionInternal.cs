@@ -41,8 +41,6 @@ namespace NTwain.Internals
 
         ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle);
 
-        SynchronizationContext SynchronizationContext { get; set; }
-
         /// <summary>
         /// Gets the triplet operations defined for audio data group.
         /// </summary>

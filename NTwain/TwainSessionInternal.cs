@@ -305,6 +305,5 @@ namespace NTwain
         }
 
         #endregion
-
     }
 }
