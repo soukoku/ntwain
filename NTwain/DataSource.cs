@@ -185,7 +185,7 @@ namespace NTwain
             {
                 if (_supportedCaps == null && _session.State > 3)
                 {
-                    _supportedCaps = CapGetValues(CapabilityId.CapSupportedCaps).CastToEnum<CapabilityId>(false);
+                    _supportedCaps = CapGet(CapabilityId.CapSupportedCaps).CastToEnum<CapabilityId>(false);
                 }
                 return _supportedCaps ?? _emptyCapList;
             }

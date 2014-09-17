@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Messaging;
 using NTwain;
 using NTwain.Data;
 using System;
+using System.Linq;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -71,7 +72,7 @@ namespace Tester.WPF
 
             if (this.CurrentSource.CapGetCurrent(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>() == XferMech.File)
             {
-                var formats = this.CurrentSource.CapGetImageFileFormat();
+                var formats = this.CurrentSource.CapImageFileFormat.Get();
                 var wantFormat = formats.Contains(FileFormat.Tiff) ? FileFormat.Tiff : FileFormat.Bmp;
 
                 var fileSetup = new TWSetupFileXfer
@@ -122,14 +123,14 @@ namespace Tester.WPF
         {
             if (State == 4)
             {
-                if (this.CurrentSource.CapGetPixelTypes().Contains(PixelType.BlackWhite))
+                if (this.CurrentSource.CapImagePixelType.Get().Contains(PixelType.BlackWhite))
                 {
-                    this.CurrentSource.CapSetPixelType(PixelType.BlackWhite);
+                    this.CurrentSource.CapImagePixelType.Set(PixelType.BlackWhite);
                 }
 
-                if (this.CurrentSource.CapGetImageXferMechs().Contains(XferMech.File))
+                if (this.CurrentSource.CapImageXferMech.Get().Contains(XferMech.File))
                 {
-                    this.CurrentSource.CapSetImageXferMech(XferMech.File);
+                    this.CurrentSource.CapImageXferMech.Set(XferMech.File);
                 }
 
                 var rc = this.CurrentSource.Enable(SourceEnableMode.NoUI, false, hwnd);

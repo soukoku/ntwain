@@ -1345,6 +1345,7 @@ namespace NTwain.Data
     /// This structure is used to pass specific information between the data source and the application
     /// through <see cref="TWExtImageInfo"/>.
     /// </summary>
+    [DebuggerDisplay("Type = {ItemType}")]
     public partial struct TWInfo
     {
         /// <summary>

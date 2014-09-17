@@ -273,11 +273,12 @@ namespace Tester.Winform
 
         private void LoadSourceCaps()
         {
-            var caps = _twain.CurrentSource.SupportedCaps;
+            var src = _twain.CurrentSource;
+            var caps = src.SupportedCaps;
             _loadingCaps = true;
-            if (groupDepth.Enabled = caps.Contains(CapabilityId.ICapPixelType))
+            if (groupDepth.Enabled = src.CapImagePixelType.IsSupported)
             {
-                LoadDepth();
+                LoadDepth(src.CapImagePixelType);
             }
             if (groupDPI.Enabled = caps.Contains(CapabilityId.ICapXResolution) && caps.Contains(CapabilityId.ICapYResolution))
             {
@@ -288,22 +289,27 @@ namespace Tester.Winform
             {
                 LoadDuplex();
             }
-            if (groupSize.Enabled = caps.Contains(CapabilityId.ICapSupportedSizes))
+            if (groupSize.Enabled = src.CapImageSupportedSize.IsSupported)
             {
-                LoadPaperSize();
+                LoadPaperSize(src.CapImageSupportedSize);
             }
             btnAllSettings.Enabled = caps.Contains(CapabilityId.CapEnableDSUIOnly);
             _loadingCaps = false;
         }
 
-        private void LoadPaperSize()
+        private void LoadPaperSize(CapabilityControl<SupportedSize> cap)
         {
-            var list = _twain.CurrentSource.CapGetSupportedSizes();
+            var list = cap.Get();
             comboSize.DataSource = list;
-            var cur = _twain.CurrentSource.CapGetCurrent(CapabilityId.ICapSupportedSizes).ConvertToEnum<SupportedSize>();
+            var cur = cap.GetCurrent();
             if (list.Contains(cur))
             {
                 comboSize.SelectedItem = cur;
+            }
+            var labelTest = cap.GetLabel();
+            if (!string.IsNullOrEmpty(labelTest))
+            {
+                groupSize.Text = labelTest;
             }
         }
 
@@ -324,14 +330,19 @@ namespace Tester.Winform
             }
         }
 
-        private void LoadDepth()
+        private void LoadDepth(CapabilityControl<PixelType> cap)
         {
-            var list = _twain.CurrentSource.CapGetPixelTypes();
+            var list = cap.Get();
             comboDepth.DataSource = list;
-            var cur = _twain.CurrentSource.CapGetCurrent(CapabilityId.ICapPixelType).ConvertToEnum<PixelType>();
+            var cur = cap.GetCurrent();
             if (list.Contains(cur))
             {
                 comboDepth.SelectedItem = cur;
+            }
+            var labelTest = cap.GetLabel();
+            if (!string.IsNullOrEmpty(labelTest))
+            {
+                groupDepth.Text = labelTest;
             }
         }
 
@@ -340,7 +351,7 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (SupportedSize)comboSize.SelectedItem;
-                _twain.CurrentSource.CapSetSupportedSize(sel);
+                _twain.CurrentSource.CapImageSupportedSize.Set(sel);
             }
         }
 
@@ -349,7 +360,7 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (PixelType)comboDepth.SelectedItem;
-                _twain.CurrentSource.CapSetPixelType(sel);
+                _twain.CurrentSource.CapImagePixelType.Set(sel);
             }
         }
 

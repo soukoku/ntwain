@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace NTwain
 {
     /// <summary>
-    /// The one-stop class for reading raw TWAIN cap values.
+    /// The one-stop class for reading raw TWAIN cap values from the cap container.
     /// This contains all the properties for the 4 container types.
     /// </summary>
     public class CapabilityReader

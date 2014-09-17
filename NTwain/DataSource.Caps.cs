@@ -11,6 +11,8 @@ namespace NTwain
 
     partial class DataSource
     {
+        #region low-level cap stuff
+
         /// <summary>
         /// Gets the actual supported operations for a capability.
         /// </summary>
@@ -52,7 +54,7 @@ namespace NTwain
                     switch (read.ContainerType)
                     {
                         case ContainerType.Enum:
-                            if (read.CollectionValues != null)
+                            if (read.CollectionValues != null && read.CollectionValues.Count > read.EnumCurrentIndex)
                             {
                                 return read.CollectionValues[read.EnumCurrentIndex];
                             }
@@ -74,13 +76,51 @@ namespace NTwain
             return null;
         }
 
+        /// <summary>
+        /// Gets the default value for a capability.
+        /// </summary>
+        /// <param name="capId">The cap id.</param>
+        /// <returns></returns>
+        public object CapGetDefault(CapabilityId capId)
+        {
+            using (TWCapability cap = new TWCapability(capId))
+            {
+                var rc = _session.DGControl.Capability.GetDefault(cap);
+                if (rc == ReturnCode.Success)
+                {
+                    var read = CapabilityReader.ReadValue(cap);
+
+                    switch (read.ContainerType)
+                    {
+                        case ContainerType.Enum:
+                            if (read.CollectionValues != null && read.CollectionValues.Count > read.EnumDefaultIndex)
+                            {
+                                return read.CollectionValues[read.EnumDefaultIndex];
+                            }
+                            break;
+                        case ContainerType.OneValue:
+                            return read.OneValue;
+                        case ContainerType.Range:
+                            return read.RangeDefaultValue;
+                        case ContainerType.Array:
+                            // no source should ever return an array but anyway
+                            if (read.CollectionValues != null)
+                            {
+                                return read.CollectionValues.FirstOrDefault();
+                            }
+                            break;
+                    }
+                }
+            }
+            return null;
+        }
 
         /// <summary>
         /// A general method that tries to get capability values from current <see cref="DataSource" />.
         /// </summary>
         /// <param name="capabilityId">The capability unique identifier.</param>
         /// <returns></returns>
-        public IList<object> CapGetValues(CapabilityId capabilityId)
+        public IList<object> CapGet(CapabilityId capabilityId)
         {
             var list = new List<object>();
             using (TWCapability cap = new TWCapability(capabilityId))
@@ -94,155 +134,217 @@ namespace NTwain
             return list;
         }
 
-        #region xfer mech
-
         /// <summary>
-        /// Gets the supported image <see cref="XferMech"/> for the current source.
-        /// Only call this at state 4 or higher.
+        /// Resets all values and constraint to power-on defaults.
         /// </summary>
+        /// <param name="capabilityId">The capability identifier.</param>
         /// <returns></returns>
-        public IList<XferMech> CapGetImageXferMech()
+        public ReturnCode ResetAll(CapabilityId capabilityId)
         {
-            return CapGetValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
-        }
-
-        #endregion
-
-        #region compression
-
-        /// <summary>
-        /// Gets the supported <see cref="CompressionType"/> for the current source.
-        /// Only call this at state 4 or higher.
-        /// </summary>
-        /// <returns></returns>
-        public IList<CompressionType> CapGetCompression()
-        {
-            return CapGetValues(CapabilityId.ICapCompression).CastToEnum<CompressionType>(true);
-        }
-
-        /// <summary>
-        /// Change the image compression for the current source.
-        /// </summary>
-        /// <param name="compression">The compression.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetImageCompression(CompressionType compression)
-        {
-            using (TWCapability compressCap = new TWCapability(CapabilityId.ICapCompression, new TWOneValue { Item = (uint)compression, ItemType = ItemType.UInt16 }))
+            using (TWCapability cap = new TWCapability(capabilityId)
             {
-                return _session.DGControl.Capability.Set(compressCap);
+                ContainerType = ContainerType.DoNotCare
+            })
+            {
+                var rc = DGControl.Capability.ResetAll(cap);
+                return rc;
+            }
+        }
+
+        /// <summary>
+        /// Resets the current value to power-on default.
+        /// </summary>
+        /// <param name="capabilityId">The capability identifier.</param>
+        /// <returns></returns>
+        public ReturnCode Reset(CapabilityId capabilityId)
+        {
+            using (TWCapability cap = new TWCapability(capabilityId)
+            {
+                ContainerType = ContainerType.DoNotCare
+            })
+            {
+                var rc = DGControl.Capability.Reset(cap);
+                return rc;
             }
         }
 
         #endregion
 
-        #region image format
+        #region high-level caps
+
+        private CapabilityControl<XferMech> _imgXferMech;
 
         /// <summary>
-        /// Gets the supported <see cref="FileFormat"/> for the current source.
-        /// Only call this at state 4 or higher.
+        /// Gets the property to work with image <see cref="XferMech"/> for the current source.
         /// </summary>
-        /// <returns></returns>
-        public IList<FileFormat> CapGetImageFileFormat()
+        /// <value>
+        /// The image xfer mech.
+        /// </value>
+        public CapabilityControl<XferMech> CapImageXferMech
         {
-            return CapGetValues(CapabilityId.ICapImageFileFormat).CastToEnum<FileFormat>(true);
-        }
-
-        /// <summary>
-        /// Change the image format for the current source.
-        /// </summary>
-        /// <param name="format">The format.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetImageFormat(FileFormat format)
-        {
-            using (TWCapability formatCap = new TWCapability(CapabilityId.ICapImageFileFormat, new TWOneValue { Item = (uint)format, ItemType = ItemType.UInt16 }))
+            get
             {
-                return _session.DGControl.Capability.Set(formatCap);
+                if (_imgXferMech == null)
+                {
+                    _imgXferMech = new CapabilityControl<XferMech>(this, CapabilityId.ICapXferMech, CapRoutines.EnumRoutine<XferMech>,
+                        value => new TWCapability(CapabilityId.ICapXferMech, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+                }
+                return _imgXferMech;
             }
         }
 
-        #endregion
 
-        #region pixel type
-
-        /// <summary>
-        /// Gets the supported <see cref="PixelType"/> for the current source.
-        /// Only call this at state 4 or higher.
-        /// </summary>
-        /// <returns></returns>
-        public IList<PixelType> CapGetPixelTypes()
-        {
-            return CapGetValues(CapabilityId.ICapPixelType).CastToEnum<PixelType>(true);
-        }
+        private CapabilityControl<XferMech> _audXferMech;
 
         /// <summary>
-        /// Change the pixel type for the current source.
+        /// Gets the property to work with audio <see cref="XferMech"/> for the current source.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetPixelType(PixelType type)
+        /// <value>
+        /// The audio xfer mech.
+        /// </value>
+        public CapabilityControl<XferMech> CapAudioXferMech
         {
-            var one = new TWOneValue();
-            one.Item = (uint)type;
-            one.ItemType = ItemType.UInt16;
-            using (TWCapability dx = new TWCapability(CapabilityId.ICapPixelType, one))
+            get
             {
-                return _session.DGControl.Capability.Set(dx);
+                if (_audXferMech == null)
+                {
+                    _audXferMech = new CapabilityControl<XferMech>(this, CapabilityId.ACapXferMech, CapRoutines.EnumRoutine<XferMech>,
+                        value => new TWCapability(CapabilityId.ACapXferMech, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+                }
+                return _audXferMech;
             }
         }
 
-        #endregion
 
-        #region xfer mech
-
-        /// <summary>
-        /// Gets the supported image <see cref="XferMech"/> for the current source.
-        /// Only call this at state 4 or higher.
-        /// </summary>
-        /// <returns></returns>
-        public IList<XferMech> CapGetImageXferMechs()
-        {
-            return CapGetValues(CapabilityId.ICapXferMech).CastToEnum<XferMech>(true);
-        }
+        private CapabilityControl<CompressionType> _compression;
 
         /// <summary>
-        /// Gets the supported audio <see cref="XferMech"/> for the current source.
-        /// Only call this at state 4 or higher.
+        /// Gets the property to work with image <see cref="CompressionType"/> for the current source.
         /// </summary>
-        /// <returns></returns>
-        public IList<XferMech> CapGetAudioXferMechs()
+        /// <value>
+        /// The image compression.
+        /// </value>
+        public CapabilityControl<CompressionType> CapImageCompression
         {
-            return CapGetValues(CapabilityId.ACapXferMech).CastToEnum<XferMech>(true);
-        }
-
-        /// <summary>
-        /// Change the image xfer type for the current source.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetImageXferMech(XferMech type)
-        {
-            var one = new TWOneValue();
-            one.Item = (uint)type;
-            one.ItemType = ItemType.UInt16;
-            using (TWCapability dx = new TWCapability(CapabilityId.ICapXferMech, one))
+            get
             {
-                return _session.DGControl.Capability.Set(dx);
+                if (_compression == null)
+                {
+                    _compression = new CapabilityControl<CompressionType>(this, CapabilityId.ICapCompression, CapRoutines.EnumRoutine<CompressionType>,
+                        value => new TWCapability(CapabilityId.ICapCompression, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+                }
+                return _compression;
             }
         }
 
+
+        private CapabilityControl<FileFormat> _fileFormat;
+
         /// <summary>
-        /// Change the audio xfer type for the current source.
+        /// Gets the property to work with image <see cref="FileFormat"/> for the current source.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetAudioXferMech(XferMech type)
+        /// <value>
+        /// The image file format.
+        /// </value>
+        public CapabilityControl<FileFormat> CapImageFileFormat
         {
-            var one = new TWOneValue();
-            one.Item = (uint)type;
-            one.ItemType = ItemType.UInt16;
-            using (TWCapability dx = new TWCapability(CapabilityId.ACapXferMech, one))
+            get
             {
-                return _session.DGControl.Capability.Set(dx);
+                if (_fileFormat == null)
+                {
+                    _fileFormat = new CapabilityControl<FileFormat>(this, CapabilityId.ICapImageFileFormat, CapRoutines.EnumRoutine<FileFormat>,
+                        value => new TWCapability(CapabilityId.ICapImageFileFormat, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+                }
+                return _fileFormat;
+            }
+        }
+
+
+        private CapabilityControl<PixelType> _pixelType;
+
+        /// <summary>
+        /// Gets the property to work with image <see cref="PixelType"/> for the current source.
+        /// </summary>
+        /// <value>
+        /// The image pixel type.
+        /// </value>
+        public CapabilityControl<PixelType> CapImagePixelType
+        {
+            get
+            {
+                if (_pixelType == null)
+                {
+                    _pixelType = new CapabilityControl<PixelType>(this, CapabilityId.ICapPixelType, CapRoutines.EnumRoutine<PixelType>,
+                        value => new TWCapability(CapabilityId.ICapPixelType, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+                }
+                return _pixelType;
+            }
+        }
+
+
+        private CapabilityControl<SupportedSize> _supportSize;
+
+        /// <summary>
+        /// Gets the property to work with image <see cref="SupportedSize"/> for the current source.
+        /// </summary>
+        /// <value>
+        /// The image supported size.
+        /// </value>
+        public CapabilityControl<SupportedSize> CapImageSupportedSize
+        {
+            get
+            {
+                if (_supportSize == null)
+                {
+                    _supportSize = new CapabilityControl<SupportedSize>(this, CapabilityId.ICapSupportedSizes, CapRoutines.EnumRoutine<SupportedSize>,
+                        value => new TWCapability(CapabilityId.ICapSupportedSizes, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+                }
+                return _supportSize;
+            }
+        }
+
+
+        private CapabilityControl<BoolType> _autoDeskew;
+
+        /// <summary>
+        /// Gets the property to work with image auto deskew flag for the current source.
+        /// </summary>
+        /// <value>
+        /// The image supported size.
+        /// </value>
+        public CapabilityControl<BoolType> CapImageAutoDeskew
+        {
+            get
+            {
+                if (_autoDeskew == null)
+                {
+                    _autoDeskew = new CapabilityControl<BoolType>(this, CapabilityId.ICapAutomaticDeskew, CapRoutines.EnumRoutine<BoolType>, null);
+                }
+                return _autoDeskew;
             }
         }
 
@@ -257,7 +359,7 @@ namespace NTwain
         /// <returns></returns>
         public IList<TWFix32> CapGetDPIs()
         {
-            var list = CapGetValues(CapabilityId.ICapXResolution);
+            var list = CapGet(CapabilityId.ICapXResolution);
             return list.Select(o => o.ConvertToFix32()).ToList();
         }
 
@@ -294,38 +396,6 @@ namespace NTwain
                         rc = _session.DGControl.Capability.Set(yres);
                     }
                 }
-                return rc;
-            }
-        }
-
-        #endregion
-
-        #region supported paper size
-
-        /// <summary>
-        /// Gets the supported <see cref="SupportedSize"/> for the current source.
-        /// Only call this at state 4 or higher.
-        /// </summary>
-        /// <returns></returns>
-        public IList<SupportedSize> CapGetSupportedSizes()
-        {
-            return CapGetValues(CapabilityId.ICapSupportedSizes).CastToEnum<SupportedSize>(true);
-        }
-
-        /// <summary>
-        /// Change the supported paper size for the current source.
-        /// </summary>
-        /// <param name="size">The size.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetSupportedSize(SupportedSize size)
-        {
-            var one = new TWOneValue();
-            one.Item = (uint)size;
-            one.ItemType = ItemType.UInt16;
-
-            using (TWCapability xres = new TWCapability(CapabilityId.ICapSupportedSizes, one))
-            {
-                var rc = _session.DGControl.Capability.Set(xres);
                 return rc;
             }
         }
