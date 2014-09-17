@@ -170,7 +170,7 @@ namespace NTwain
 
         #endregion
 
-        #region high-level caps
+        #region frequently used high-level caps stuff
 
         #region audio caps
 
@@ -348,25 +348,11 @@ namespace NTwain
                 if (_autoDeskew == null)
                 {
                     _autoDeskew = new CapabilityControl<BoolType>(this, CapabilityId.ICapAutomaticDeskew, ValueExtensions.ConvertToEnum<BoolType>, value =>
-                    {
-                        if (Identity.ProtocolMajor >= 2)
+                        new TWCapability(CapabilityId.ICapAutomaticRotate, new TWOneValue
                         {
-                            // if using twain 2.0 will need to use enum instead of onevalue (yuck)
-                            TWEnumeration en = new TWEnumeration();
-                            en.ItemList = new object[] { (uint)value };
-                            en.ItemType = ItemType.Bool;
-
-                            return new TWCapability(CapabilityId.ICapAutomaticDeskew, en);
-                        }
-                        else
-                        {
-                            TWOneValue one = new TWOneValue();
-                            one.Item = (uint)value;
-                            one.ItemType = ItemType.Bool;
-
-                            return new TWCapability(CapabilityId.ICapAutomaticDeskew, one);
-                        }
-                    });
+                            Item = (uint)value,
+                            ItemType = ItemType.Bool
+                        }));
                 }
                 return _autoDeskew;
             }
@@ -388,25 +374,11 @@ namespace NTwain
                 if (_autoRotate == null)
                 {
                     _autoRotate = new CapabilityControl<BoolType>(this, CapabilityId.ICapAutomaticRotate, ValueExtensions.ConvertToEnum<BoolType>, value =>
-                    {
-                        if (Identity.ProtocolMajor >= 2)
+                        new TWCapability(CapabilityId.ICapAutomaticRotate, new TWOneValue
                         {
-                            // if using twain 2.0 will need to use enum instead of onevalue (yuck)
-                            TWEnumeration en = new TWEnumeration();
-                            en.ItemList = new object[] { (uint)value };
-                            en.ItemType = ItemType.Bool;
-
-                            return new TWCapability(CapabilityId.ICapAutomaticRotate, en);
-                        }
-                        else
-                        {
-                            TWOneValue one = new TWOneValue();
-                            one.Item = (uint)value;
-                            one.ItemType = ItemType.Bool;
-
-                            return new TWCapability(CapabilityId.ICapAutomaticRotate, one);
-                        }
-                    });
+                            Item = (uint)value,
+                            ItemType = ItemType.Bool
+                        }));
                 }
                 return _autoRotate;
             }
@@ -464,6 +436,47 @@ namespace NTwain
             }
         }
 
+
+        private CapabilityControl<BoolType> _borderDetect;
+
+        /// <summary>
+        /// Gets the property to work with auto border detection flag for the current source.
+        /// </summary>
+        /// <value>
+        /// The auto border detection flag.
+        /// </value>
+        public CapabilityControl<BoolType> CapImageAutomaticBorderDetection
+        {
+            get
+            {
+                if (_borderDetect == null)
+                {
+                    _borderDetect = new CapabilityControl<BoolType>(this, CapabilityId.ICapAutomaticBorderDetection, ValueExtensions.ConvertToEnum<BoolType>, value =>
+                    {
+                        var rc = ReturnCode.Failure;
+
+                        var one = new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.Bool
+                        };
+
+                        using (TWCapability capValue = new TWCapability(CapabilityId.ICapUndefinedImageSize, one))
+                        {
+                            rc = _session.DGControl.Capability.Set(capValue);
+                        }
+                        using (TWCapability capValue = new TWCapability(CapabilityId.ICapAutomaticBorderDetection, one))
+                        {
+                            rc = _session.DGControl.Capability.Set(capValue);
+                        }
+
+                        return rc;
+                    });
+                }
+                return _borderDetect;
+            }
+        }
+
         #endregion
 
         #region other caps
@@ -483,164 +496,104 @@ namespace NTwain
                 if (_duplexEnabled == null)
                 {
                     _duplexEnabled = new CapabilityControl<BoolType>(this, CapabilityId.CapDuplexEnabled, ValueExtensions.ConvertToEnum<BoolType>, value =>
-                    {
-                        if (Identity.ProtocolMajor >= 2)
+                        new TWCapability(CapabilityId.CapDuplexEnabled, new TWOneValue
                         {
-                            // if using twain 2.0 will need to use enum instead of onevalue (yuck)
-                            TWEnumeration en = new TWEnumeration();
-                            en.ItemList = new object[] { (uint)value };
-                            en.ItemType = ItemType.Bool;
-
-                            return new TWCapability(CapabilityId.CapDuplexEnabled, en);
-                        }
-                        else
-                        {
-                            TWOneValue one = new TWOneValue();
-                            one.Item = (uint)value;
-                            one.ItemType = ItemType.Bool;
-
-                            return new TWCapability(CapabilityId.CapDuplexEnabled, one);
-                        }
-                    });
+                            Item = (uint)value,
+                            ItemType = ItemType.Bool
+                        }));
                 }
                 return _duplexEnabled;
             }
         }
 
-        #endregion
 
-        #endregion
-
-        #region onesie flags
-
+        private CapabilityControl<int> _xferCount;
 
         /// <summary>
-        /// Change the auto border detection flag for the current source.
+        /// Gets the property to work with xfer count for the current source.
         /// </summary>
-        /// <param name="useIt">if set to <c>true</c> use it.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetBorderDetection(bool useIt)
+        /// <value>
+        /// The xfer count.
+        /// </value>
+        public CapabilityControl<int> CapXferCount
         {
-            var rc = ReturnCode.Failure;
-            if (SupportedCaps.Contains(CapabilityId.ICapAutomaticBorderDetection))
+            get
             {
-                // this goes along with undefinedimagesize so that also
-                // needs to be set
-                if (Identity.ProtocolMajor >= 2)
+                if (_xferCount == null)
                 {
-                    // if using twain 2.0 will need to use enum instead of onevalue (yuck)
-                    TWEnumeration en = new TWEnumeration();
-                    en.ItemList = new object[] { (uint)(useIt ? 1 : 0) };
-                    en.ItemType = ItemType.Bool;
-
-                    using (TWCapability dx = new TWCapability(CapabilityId.ICapUndefinedImageSize, en))
-                    {
-                        rc = _session.DGControl.Capability.Set(dx);
-                    }
-                    using (TWCapability dx = new TWCapability(CapabilityId.ICapAutomaticBorderDetection, en))
-                    {
-                        rc = _session.DGControl.Capability.Set(dx);
-                    }
+                    _xferCount = new CapabilityControl<int>(this, CapabilityId.CapXferCount, ValueExtensions.ConvertToEnum<int>, value =>
+                        new TWCapability(CapabilityId.CapXferCount, new TWOneValue
+                        {
+                            Item = value > 0 ? (uint)value : uint.MaxValue,
+                            ItemType = ItemType.UInt16
+                        }));
                 }
-                else
-                {
-                    TWOneValue one = new TWOneValue();
-                    one.Item = (uint)(useIt ? 1 : 0);
-                    one.ItemType = ItemType.Bool;
-
-                    using (TWCapability capValue = new TWCapability(CapabilityId.ICapUndefinedImageSize, one))
-                    {
-                        rc = _session.DGControl.Capability.Set(capValue);
-                    }
-                    using (TWCapability capValue = new TWCapability(CapabilityId.ICapAutomaticBorderDetection, one))
-                    {
-                        rc = _session.DGControl.Capability.Set(capValue);
-                    }
-                }
+                return _xferCount;
             }
-            return rc;
         }
+
+
+        private CapabilityControl<BoolType> _feederEnabled;
 
         /// <summary>
-        /// Change the use feeder flag for the current source.
+        /// Gets the property to work with feeder enabled flag for the current source.
         /// </summary>
-        /// <param name="useIt">if set to <c>true</c> use it.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetFeeder(bool useIt)
+        /// <value>
+        /// The feeder enabled flag.
+        /// </value>
+        public CapabilityControl<BoolType> CapFeederEnabled
         {
-            var rc = ReturnCode.Failure;
-            if (SupportedCaps.Contains(CapabilityId.CapFeederEnabled))
+            get
             {
-                if (Identity.ProtocolMajor >= 2)
+                if (_feederEnabled == null)
                 {
-                    // if using twain 2.0 will need to use enum instead of onevalue (yuck)
-                    TWEnumeration en = new TWEnumeration();
-                    en.ItemList = new object[] { (ushort)(useIt ? 1 : 0) };
-                    en.ItemType = ItemType.Bool;
-
-
-
-                    // we will never set feeder off, only autofeed and autoscan
-                    // but if it is to SET then enable feeder needs to be set first
-                    if (useIt)
+                    _feederEnabled = new CapabilityControl<BoolType>(this, CapabilityId.CapFeederEnabled, ValueExtensions.ConvertToEnum<BoolType>, value =>
                     {
-                        using (TWCapability dx = new TWCapability(CapabilityId.CapFeederEnabled, en))
-                        {
-                            rc = _session.DGControl.Capability.Set(dx);
-                        }
-                    }
+                        var rc = ReturnCode.Failure;
 
-                    // to really use feeder we must also set autofeed or autoscan, but only
-                    // for one of them since setting autoscan also sets autofeed
-                    if (SupportedCaps.Contains(CapabilityId.CapAutoScan))
-                    {
-                        using (TWCapability dx = new TWCapability(CapabilityId.CapAutoScan, en))
+                        var one = new TWOneValue
                         {
-                            rc = _session.DGControl.Capability.Set(dx);
-                        }
-                    }
-                    else if (SupportedCaps.Contains(CapabilityId.CapAutoFeed))
-                    {
-                        using (TWCapability dx = new TWCapability(CapabilityId.CapAutoFeed, en))
+                            Item = (uint)value,
+                            ItemType = ItemType.Bool
+                        };
+
+                        // we will never set feeder off, only autofeed and autoscan
+                        // but if it is true then enable feeder needs to be set first
+                        if (value == BoolType.True)
                         {
-                            rc = _session.DGControl.Capability.Set(dx);
+                            using (TWCapability enabled = new TWCapability(CapabilityId.CapFeederEnabled, one))
+                            {
+                                rc = _session.DGControl.Capability.Set(enabled);
+                            }
                         }
-                    }
+                        // to really use feeder we must also set autofeed or autoscan, but only
+                        // for one of them since setting autoscan also sets autofeed
+                        if (SupportedCaps.Contains(CapabilityId.CapAutoScan))
+                        {
+                            using (TWCapability autoScan = new TWCapability(CapabilityId.CapAutoScan, one))
+                            {
+                                rc = _session.DGControl.Capability.Set(autoScan);
+                            }
+                        }
+                        else if (SupportedCaps.Contains(CapabilityId.CapAutoFeed))
+                        {
+                            using (TWCapability autoScan = new TWCapability(CapabilityId.CapAutoFeed, one))
+                            {
+                                rc = _session.DGControl.Capability.Set(autoScan);
+                            }
+                        }
+
+                        return rc;
+                    });
                 }
-                else
-                {
-                    TWOneValue one = new TWOneValue();
-                    one.Item = (uint)(useIt ? 1 : 0);
-                    one.ItemType = ItemType.Bool;
-
-                    if (useIt)
-                    {
-                        using (TWCapability enabled = new TWCapability(CapabilityId.CapFeederEnabled, one))
-                        {
-                            rc = _session.DGControl.Capability.Set(enabled);
-                        }
-                    }
-                    // to really use feeder we must also set autofeed or autoscan, but only
-                    // for one of them since setting autoscan also sets autofeed
-                    if (SupportedCaps.Contains(CapabilityId.CapAutoScan))
-                    {
-                        using (TWCapability autoScan = new TWCapability(CapabilityId.CapAutoScan, one))
-                        {
-                            rc = _session.DGControl.Capability.Set(autoScan);
-                        }
-                    }
-                    else if (SupportedCaps.Contains(CapabilityId.CapAutoFeed))
-                    {
-                        using (TWCapability autoScan = new TWCapability(CapabilityId.CapAutoFeed, one))
-                        {
-                            rc = _session.DGControl.Capability.Set(autoScan);
-                        }
-                    }
-                }
+                return _feederEnabled;
             }
-            return rc;
         }
 
+
         #endregion
+
+        #endregion
+
     }
 }

@@ -13,28 +13,68 @@ namespace NTwain
     public class CapabilityControl<TValue>
     {
         DataSource _source;
-        Func<object, TValue> _converter;
-        Func<TValue, TWCapability> _setProvider;
+        Func<object, TValue> _convertRoutine;
+        Func<TValue, ReturnCode> _setCustomRoutine;
+        Func<TValue, TWCapability> _setProvider; // an simplified way to set() that only needs on cap value
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CapabilityControl"/> class.
+        /// Initializes a new instance of the <see cref="CapabilityControl{TValue}" /> class.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="capability">The capability.</param>
-        /// <param name="valueConversionRoutine">The value conversion routine.</param>
-        /// <param name="setCapProvider">Callback to provide the capability object for set method.</param>
-        /// <exception cref="System.ArgumentNullException">source</exception>
-        public CapabilityControl(DataSource source, CapabilityId capability, Func<object, TValue> valueConversionRoutine, Func<TValue, TWCapability> setCapProvider)
+        /// <param name="getConversionRoutine">The value conversion routine in Get methods.</param>
+        /// <param name="setValueProvider">Callback to provide the capability object for set method.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// source
+        /// or
+        /// valueConversionRoutine
+        /// or
+        /// setValueProvider
+        /// </exception>
+        public CapabilityControl(DataSource source, CapabilityId capability,
+            Func<object, TValue> getConversionRoutine,
+            Func<TValue, TWCapability> setValueProvider)
         {
             if (source == null) { throw new ArgumentNullException("source"); }
-            if (valueConversionRoutine == null) { throw new ArgumentNullException("valueConversionRoutine"); }
+            if (getConversionRoutine == null) { throw new ArgumentNullException("valueConversionRoutine"); }
+            if (setValueProvider == null) { throw new ArgumentNullException("setValueProvider"); }
 
             _source = source;
-            _converter = valueConversionRoutine;
-            _setProvider = setCapProvider;
+            _convertRoutine = getConversionRoutine;
+            _setProvider = setValueProvider;
             Capability = capability;
             SupportedActions = source.CapQuerySupport(capability);
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CapabilityControl{TValue}" /> class.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="capability">The capability.</param>
+        /// <param name="getConversionRoutine">The value conversion routine in Get methods.</param>
+        /// <param name="setValueRoutine">Callback to perform set value.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// source
+        /// or
+        /// valueConversionRoutine
+        /// or
+        /// setValueRoutine
+        /// </exception>
+        public CapabilityControl(DataSource source, CapabilityId capability,
+            Func<object, TValue> getConversionRoutine,
+            Func<TValue, ReturnCode> setValueRoutine)
+        {
+            if (source == null) { throw new ArgumentNullException("source"); }
+            if (getConversionRoutine == null) { throw new ArgumentNullException("valueConversionRoutine"); }
+            if (setValueRoutine == null) { throw new ArgumentNullException("setValueRoutine"); }
+
+            _source = source;
+            _convertRoutine = getConversionRoutine;
+            _setCustomRoutine = setValueRoutine;
+            Capability = capability;
+            SupportedActions = source.CapQuerySupport(capability);
+        }
+
 
         bool Supports(QuerySupports flag)
         {
@@ -59,16 +99,85 @@ namespace NTwain
         /// </value>
         public QuerySupports SupportedActions { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this capability is supported.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this capability is supported; otherwise, <c>false</c>.
+        /// </value>
         public bool IsSupported { get { return SupportedActions > QuerySupports.None; } }
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="Get"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can get values; otherwise, <c>false</c>.
+        /// </value>
         public bool CanGet { get { return Supports(QuerySupports.Get); } }
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="GetDefault"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can get default value; otherwise, <c>false</c>.
+        /// </value>
         public bool CanGetDefault { get { return Supports(QuerySupports.GetDefault); } }
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="GetCurrent"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can get current value; otherwise, <c>false</c>.
+        /// </value>
         public bool CanGetCurrent { get { return Supports(QuerySupports.GetCurrent); } }
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="GetLabel"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can get label; otherwise, <c>false</c>.
+        /// </value>
         public bool CanGetLabel { get { return Supports(QuerySupports.GetLabel); } }
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="GetHelp"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can get help; otherwise, <c>false</c>.
+        /// </value>
         public bool CanGetHelp { get { return Supports(QuerySupports.GetHelp); } }
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="GetLabelEnum"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can get label enum; otherwise, <c>false</c>.
+        /// </value>
         public bool CanGetLabelEnum { get { return Supports(QuerySupports.GetLabelEnum); } }
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="Reset"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can reset; otherwise, <c>false</c>.
+        /// </value>
         public bool CanReset { get { return Supports(QuerySupports.Reset); } }
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="Set"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can set; otherwise, <c>false</c>.
+        /// </value>
         public bool CanSet { get { return Supports(QuerySupports.Set); } }
-        public bool CanSetConstraint { get { return Supports(QuerySupports.SetConstraint); } }
+
+        ///// <summary>
+        ///// Gets a value indicating whether <see cref="SetConstraint"/> is supported.
+        ///// </summary>
+        ///// <value>
+        /////   <c>true</c> if this capability can set constraint; otherwise, <c>false</c>.
+        ///// </value>
+        //public bool CanSetConstraint { get { return Supports(QuerySupports.SetConstraint); } }
 
         #endregion
 
@@ -82,7 +191,7 @@ namespace NTwain
         {
             if (CanGetDefault)
             {
-                return _converter(_source.CapGetDefault(Capability));
+                return _convertRoutine(_source.CapGetDefault(Capability));
             }
             return default(TValue);
         }
@@ -95,7 +204,7 @@ namespace NTwain
         {
             if (CanGetCurrent)
             {
-                return _converter(_source.CapGetCurrent(Capability));
+                return _convertRoutine(_source.CapGetCurrent(Capability));
             }
             return default(TValue);
         }
@@ -108,7 +217,7 @@ namespace NTwain
         {
             if (CanGet)
             {
-                return _source.CapGet(Capability).Select(o => _converter(o)).ToList();
+                return _source.CapGet(Capability).Select(o => _convertRoutine(o)).ToList();
             }
             return new List<TValue>();
         }
@@ -222,11 +331,18 @@ namespace NTwain
         public ReturnCode Set(TValue value)
         {
             ReturnCode rc = ReturnCode.Failure;
-            if (CanSet && _setProvider != null)
+            if (CanSet)
             {
-                using (var cap = _setProvider(value))
+                if (_setCustomRoutine != null)
                 {
-                    rc = _source.DGControl.Capability.Set(cap);
+                    rc = _setCustomRoutine(value);
+                }
+                else if (_setProvider != null)
+                {
+                    using (var cap = _setProvider(value))
+                    {
+                        rc = _source.DGControl.Capability.Set(cap);
+                    }
                 }
             }
             return rc;
@@ -234,12 +350,5 @@ namespace NTwain
 
 
         #endregion
-
-        public enum SetStrategy
-        {
-            Once,
-            Cascade,
-            Custom
-        }
     }
 }
