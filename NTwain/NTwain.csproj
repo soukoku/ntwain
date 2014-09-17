@@ -57,7 +57,6 @@
   <ItemGroup>
     <Compile Include="CapabilityControl.cs" />
     <Compile Include="CapabilityReader.cs" />
-    <Compile Include="CapRoutines.cs" />
     <Compile Include="Data\TypeReader.cs" />
     <Compile Include="Data\TwainTypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />

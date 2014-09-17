@@ -172,31 +172,7 @@ namespace NTwain
 
         #region high-level caps
 
-        private CapabilityControl<XferMech> _imgXferMech;
-
-        /// <summary>
-        /// Gets the property to work with image <see cref="XferMech"/> for the current source.
-        /// </summary>
-        /// <value>
-        /// The image xfer mech.
-        /// </value>
-        public CapabilityControl<XferMech> CapImageXferMech
-        {
-            get
-            {
-                if (_imgXferMech == null)
-                {
-                    _imgXferMech = new CapabilityControl<XferMech>(this, CapabilityId.ICapXferMech, CapRoutines.EnumRoutine<XferMech>,
-                        value => new TWCapability(CapabilityId.ICapXferMech, new TWOneValue
-                        {
-                            Item = (uint)value,
-                            ItemType = ItemType.UInt16
-                        }));
-                }
-                return _imgXferMech;
-            }
-        }
-
+        #region audio caps
 
         private CapabilityControl<XferMech> _audXferMech;
 
@@ -212,7 +188,7 @@ namespace NTwain
             {
                 if (_audXferMech == null)
                 {
-                    _audXferMech = new CapabilityControl<XferMech>(this, CapabilityId.ACapXferMech, CapRoutines.EnumRoutine<XferMech>,
+                    _audXferMech = new CapabilityControl<XferMech>(this, CapabilityId.ACapXferMech, ValueExtensions.ConvertToEnum<XferMech>,
                         value => new TWCapability(CapabilityId.ACapXferMech, new TWOneValue
                         {
                             Item = (uint)value,
@@ -220,6 +196,35 @@ namespace NTwain
                         }));
                 }
                 return _audXferMech;
+            }
+        }
+
+        #endregion
+
+        #region img caps
+
+        private CapabilityControl<XferMech> _imgXferMech;
+
+        /// <summary>
+        /// Gets the property to work with image <see cref="XferMech"/> for the current source.
+        /// </summary>
+        /// <value>
+        /// The image xfer mech.
+        /// </value>
+        public CapabilityControl<XferMech> CapImageXferMech
+        {
+            get
+            {
+                if (_imgXferMech == null)
+                {
+                    _imgXferMech = new CapabilityControl<XferMech>(this, CapabilityId.ICapXferMech, ValueExtensions.ConvertToEnum<XferMech>,
+                        value => new TWCapability(CapabilityId.ICapXferMech, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+                }
+                return _imgXferMech;
             }
         }
 
@@ -238,7 +243,7 @@ namespace NTwain
             {
                 if (_compression == null)
                 {
-                    _compression = new CapabilityControl<CompressionType>(this, CapabilityId.ICapCompression, CapRoutines.EnumRoutine<CompressionType>,
+                    _compression = new CapabilityControl<CompressionType>(this, CapabilityId.ICapCompression, ValueExtensions.ConvertToEnum<CompressionType>,
                         value => new TWCapability(CapabilityId.ICapCompression, new TWOneValue
                         {
                             Item = (uint)value,
@@ -264,7 +269,7 @@ namespace NTwain
             {
                 if (_fileFormat == null)
                 {
-                    _fileFormat = new CapabilityControl<FileFormat>(this, CapabilityId.ICapImageFileFormat, CapRoutines.EnumRoutine<FileFormat>,
+                    _fileFormat = new CapabilityControl<FileFormat>(this, CapabilityId.ICapImageFileFormat, ValueExtensions.ConvertToEnum<FileFormat>,
                         value => new TWCapability(CapabilityId.ICapImageFileFormat, new TWOneValue
                         {
                             Item = (uint)value,
@@ -290,7 +295,7 @@ namespace NTwain
             {
                 if (_pixelType == null)
                 {
-                    _pixelType = new CapabilityControl<PixelType>(this, CapabilityId.ICapPixelType, CapRoutines.EnumRoutine<PixelType>,
+                    _pixelType = new CapabilityControl<PixelType>(this, CapabilityId.ICapPixelType, ValueExtensions.ConvertToEnum<PixelType>,
                         value => new TWCapability(CapabilityId.ICapPixelType, new TWOneValue
                         {
                             Item = (uint)value,
@@ -316,7 +321,7 @@ namespace NTwain
             {
                 if (_supportSize == null)
                 {
-                    _supportSize = new CapabilityControl<SupportedSize>(this, CapabilityId.ICapSupportedSizes, CapRoutines.EnumRoutine<SupportedSize>,
+                    _supportSize = new CapabilityControl<SupportedSize>(this, CapabilityId.ICapSupportedSizes, ValueExtensions.ConvertToEnum<SupportedSize>,
                         value => new TWCapability(CapabilityId.ICapSupportedSizes, new TWOneValue
                         {
                             Item = (uint)value,
@@ -334,7 +339,7 @@ namespace NTwain
         /// Gets the property to work with image auto deskew flag for the current source.
         /// </summary>
         /// <value>
-        /// The image supported size.
+        /// The image auto deskew flag.
         /// </value>
         public CapabilityControl<BoolType> CapImageAutoDeskew
         {
@@ -342,143 +347,172 @@ namespace NTwain
             {
                 if (_autoDeskew == null)
                 {
-                    _autoDeskew = new CapabilityControl<BoolType>(this, CapabilityId.ICapAutomaticDeskew, CapRoutines.EnumRoutine<BoolType>, null);
+                    _autoDeskew = new CapabilityControl<BoolType>(this, CapabilityId.ICapAutomaticDeskew, ValueExtensions.ConvertToEnum<BoolType>, value =>
+                    {
+                        if (Identity.ProtocolMajor >= 2)
+                        {
+                            // if using twain 2.0 will need to use enum instead of onevalue (yuck)
+                            TWEnumeration en = new TWEnumeration();
+                            en.ItemList = new object[] { (uint)value };
+                            en.ItemType = ItemType.Bool;
+
+                            return new TWCapability(CapabilityId.ICapAutomaticDeskew, en);
+                        }
+                        else
+                        {
+                            TWOneValue one = new TWOneValue();
+                            one.Item = (uint)value;
+                            one.ItemType = ItemType.Bool;
+
+                            return new TWCapability(CapabilityId.ICapAutomaticDeskew, one);
+                        }
+                    });
                 }
                 return _autoDeskew;
             }
         }
 
-        #endregion
 
-        #region dpi
-
-        /// <summary>
-        /// Gets the supported DPI values for the current source.
-        /// Only call this at state 4 or higher.
-        /// </summary>
-        /// <returns></returns>
-        public IList<TWFix32> CapGetDPIs()
-        {
-            var list = CapGet(CapabilityId.ICapXResolution);
-            return list.Select(o => o.ConvertToFix32()).ToList();
-        }
+        private CapabilityControl<BoolType> _autoRotate;
 
         /// <summary>
-        /// Change the DPI value for the current source.
+        /// Gets the property to work with image auto rotate flag for the current source.
         /// </summary>
-        /// <param name="dpi">The DPI.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetDPI(TWFix32 dpi)
+        /// <value>
+        /// The image auto rotate flag.
+        /// </value>
+        public CapabilityControl<BoolType> CapImageAutoRotate
         {
-            return CapSetDPI(dpi, dpi);
-        }
-
-        /// <summary>
-        /// Change the DPI value for the current source.
-        /// </summary>
-        /// <param name="xDPI">The x DPI.</param>
-        /// <param name="yDPI">The y DPI.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetDPI(TWFix32 xDPI, TWFix32 yDPI)
-        {
-            TWOneValue one = new TWOneValue();
-            one.Item = (uint)xDPI;// ((uint)dpi) << 16;
-            one.ItemType = ItemType.Fix32;
-
-            using (TWCapability xres = new TWCapability(CapabilityId.ICapXResolution, one))
+            get
             {
-                var rc = _session.DGControl.Capability.Set(xres);
-                if (rc == ReturnCode.Success)
+                if (_autoRotate == null)
                 {
-                    one.Item = (uint)yDPI;
-                    using (TWCapability yres = new TWCapability(CapabilityId.ICapYResolution, one))
+                    _autoRotate = new CapabilityControl<BoolType>(this, CapabilityId.ICapAutomaticRotate, ValueExtensions.ConvertToEnum<BoolType>, value =>
                     {
-                        rc = _session.DGControl.Capability.Set(yres);
-                    }
+                        if (Identity.ProtocolMajor >= 2)
+                        {
+                            // if using twain 2.0 will need to use enum instead of onevalue (yuck)
+                            TWEnumeration en = new TWEnumeration();
+                            en.ItemList = new object[] { (uint)value };
+                            en.ItemType = ItemType.Bool;
+
+                            return new TWCapability(CapabilityId.ICapAutomaticRotate, en);
+                        }
+                        else
+                        {
+                            TWOneValue one = new TWOneValue();
+                            one.Item = (uint)value;
+                            one.ItemType = ItemType.Bool;
+
+                            return new TWCapability(CapabilityId.ICapAutomaticRotate, one);
+                        }
+                    });
                 }
-                return rc;
+                return _autoRotate;
             }
         }
+
+
+        private CapabilityControl<TWFix32> _xResolution;
+
+        /// <summary>
+        /// Gets the property to work with image horizontal resolution for the current source.
+        /// </summary>
+        /// <value>
+        /// The image horizontal resolution.
+        /// </value>
+        public CapabilityControl<TWFix32> CapImageXResolution
+        {
+            get
+            {
+                if (_xResolution == null)
+                {
+                    _xResolution = new CapabilityControl<TWFix32>(this, CapabilityId.ICapXResolution, ValueExtensions.ConvertToFix32,
+                        value => new TWCapability(CapabilityId.ICapXResolution, new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        }));
+                }
+                return _xResolution;
+            }
+        }
+
+
+        private CapabilityControl<TWFix32> _yResolution;
+
+        /// <summary>
+        /// Gets the property to work with image vertical resolution for the current source.
+        /// </summary>
+        /// <value>
+        /// The image vertical resolution.
+        /// </value>
+        public CapabilityControl<TWFix32> CapImageYResolution
+        {
+            get
+            {
+                if (_yResolution == null)
+                {
+                    _yResolution = new CapabilityControl<TWFix32>(this, CapabilityId.ICapYResolution, ValueExtensions.ConvertToFix32,
+                        value => new TWCapability(CapabilityId.ICapYResolution, new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        }));
+                }
+                return _yResolution;
+            }
+        }
+
+        #endregion
+
+        #region other caps
+
+        private CapabilityControl<BoolType> _duplexEnabled;
+
+        /// <summary>
+        /// Gets the property to work with duplex enabled flag for the current source.
+        /// </summary>
+        /// <value>
+        /// The duplex enabled flag.
+        /// </value>
+        public CapabilityControl<BoolType> CapDuplexEnabled
+        {
+            get
+            {
+                if (_duplexEnabled == null)
+                {
+                    _duplexEnabled = new CapabilityControl<BoolType>(this, CapabilityId.CapDuplexEnabled, ValueExtensions.ConvertToEnum<BoolType>, value =>
+                    {
+                        if (Identity.ProtocolMajor >= 2)
+                        {
+                            // if using twain 2.0 will need to use enum instead of onevalue (yuck)
+                            TWEnumeration en = new TWEnumeration();
+                            en.ItemList = new object[] { (uint)value };
+                            en.ItemType = ItemType.Bool;
+
+                            return new TWCapability(CapabilityId.CapDuplexEnabled, en);
+                        }
+                        else
+                        {
+                            TWOneValue one = new TWOneValue();
+                            one.Item = (uint)value;
+                            one.ItemType = ItemType.Bool;
+
+                            return new TWCapability(CapabilityId.CapDuplexEnabled, one);
+                        }
+                    });
+                }
+                return _duplexEnabled;
+            }
+        }
+
+        #endregion
 
         #endregion
 
         #region onesie flags
 
-        /// <summary>
-        /// Change the auto deskew flag for the current source.
-        /// </summary>
-        /// <param name="useIt">if set to <c>true</c> use it.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetAutoDeskew(bool useIt)
-        {
-            var rc = ReturnCode.Failure;
-            if (SupportedCaps.Contains(CapabilityId.ICapAutomaticDeskew))
-            {
-
-                if (Identity.ProtocolMajor >= 2)
-                {
-                    // if using twain 2.0 will need to use enum instead of onevalue (yuck)
-                    TWEnumeration en = new TWEnumeration();
-                    en.ItemList = new object[] { (uint)(useIt ? 1 : 0) };
-                    en.ItemType = ItemType.Bool;
-
-                    using (TWCapability dx = new TWCapability(CapabilityId.ICapAutomaticDeskew, en))
-                    {
-                        rc = _session.DGControl.Capability.Set(dx);
-                    }
-                }
-                else
-                {
-                    TWOneValue one = new TWOneValue();
-                    one.Item = (uint)(useIt ? 1 : 0);
-                    one.ItemType = ItemType.Bool;
-
-                    using (TWCapability capValue = new TWCapability(CapabilityId.ICapAutomaticDeskew, one))
-                    {
-                        rc = _session.DGControl.Capability.Set(capValue);
-                    }
-                }
-            }
-
-            return rc;
-        }
-
-        /// <summary>
-        /// Change the auto rotate flag for the current source.
-        /// </summary>
-        /// <param name="useIt">if set to <c>true</c> use it.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetAutoRotate(bool useIt)
-        {
-            var rc = ReturnCode.Failure;
-            if (SupportedCaps.Contains(CapabilityId.ICapAutomaticRotate))
-            {
-                if (Identity.ProtocolMajor >= 2)
-                {
-                    // if using twain 2.0 will need to use enum instead of onevalue (yuck)
-                    TWEnumeration en = new TWEnumeration();
-                    en.ItemList = new object[] { (uint)(useIt ? 1 : 0) };
-                    en.ItemType = ItemType.Bool;
-
-                    using (TWCapability dx = new TWCapability(CapabilityId.ICapAutomaticRotate, en))
-                    {
-                        rc = _session.DGControl.Capability.Set(dx);
-                    }
-                }
-                else
-                {
-                    TWOneValue one = new TWOneValue();
-                    one.Item = (uint)(useIt ? 1 : 0);
-                    one.ItemType = ItemType.Bool;
-
-                    using (TWCapability capValue = new TWCapability(CapabilityId.ICapAutomaticRotate, one))
-                    {
-                        rc = _session.DGControl.Capability.Set(capValue);
-                    }
-                }
-            }
-            return rc;
-        }
 
         /// <summary>
         /// Change the auto border detection flag for the current source.
@@ -525,39 +559,6 @@ namespace NTwain
                 }
             }
             return rc;
-        }
-
-        /// <summary>
-        /// Change the duplex flag for the current source.
-        /// </summary>
-        /// <param name="useIt">if set to <c>true</c> to use it.</param>
-        /// <returns></returns>
-        public ReturnCode CapSetDuplex(bool useIt)
-        {
-            if (Identity.ProtocolMajor >= 2)
-            {
-                // twain 2 likes to use enum :(
-
-                TWEnumeration en = new TWEnumeration();
-                en.ItemList = new object[] { (uint)(useIt ? 1 : 0) };
-                en.ItemType = ItemType.Bool;
-
-                using (TWCapability dx = new TWCapability(CapabilityId.CapDuplexEnabled, en))
-                {
-                    return _session.DGControl.Capability.Set(dx);
-                }
-            }
-            else
-            {
-                TWOneValue one = new TWOneValue();
-                one.Item = (uint)(useIt ? 1 : 0);
-                one.ItemType = ItemType.Bool;
-
-                using (TWCapability dx = new TWCapability(CapabilityId.CapDuplexEnabled, one))
-                {
-                    return _session.DGControl.Capability.Set(dx);
-                }
-            }
         }
 
         /// <summary>

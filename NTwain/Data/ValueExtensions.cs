@@ -51,38 +51,42 @@ namespace NTwain.Data
         /// <returns></returns>
         public static TEnum ConvertToEnum<TEnum>(this object value, bool tryUpperWord) where TEnum : struct,IConvertible
         {
-            var returnType = typeof(TEnum);
-
-            // standard int values
-            if (returnType.IsEnum)
+            if (value != null)
             {
-                if (tryUpperWord)
+                var returnType = typeof(TEnum);
+
+                // standard int values
+                if (returnType.IsEnum)
                 {
-                    // small routine to work with bad sources that may put
-                    // 16bit value in the upper word instead of lower word (as per the twain spec).
-                    var rawType = Enum.GetUnderlyingType(returnType);
-                    if (typeof(ushort).IsAssignableFrom(rawType))
+                    if (tryUpperWord)
                     {
-                        var intVal = Convert.ToUInt32(value, CultureInfo.InvariantCulture);
-                        var enumVal = GetLowerWord(intVal);
-                        if (!Enum.IsDefined(returnType, enumVal))
+                        // small routine to work with bad sources that may put
+                        // 16bit value in the upper word instead of lower word (as per the twain spec).
+                        var rawType = Enum.GetUnderlyingType(returnType);
+                        if (typeof(ushort).IsAssignableFrom(rawType))
                         {
-                            return (TEnum)Enum.ToObject(returnType, GetUpperWord(intVal));
+                            var intVal = Convert.ToUInt32(value, CultureInfo.InvariantCulture);
+                            var enumVal = GetLowerWord(intVal);
+                            if (!Enum.IsDefined(returnType, enumVal))
+                            {
+                                return (TEnum)Enum.ToObject(returnType, GetUpperWord(intVal));
+                            }
                         }
                     }
+                    // this may work better?
+                    return (TEnum)Enum.ToObject(returnType, value);
+                    //// cast to underlying type first then to the enum
+                    //return (T)Convert.ChangeType(value, rawType);
                 }
-                // this may work better?
-                return (TEnum)Enum.ToObject(returnType, value);
-                //// cast to underlying type first then to the enum
-                //return (T)Convert.ChangeType(value, rawType);
+                else if (typeof(IConvertible).IsAssignableFrom(returnType))
+                {
+                    // for regular integers and whatnot
+                    return (TEnum)Convert.ChangeType(value, returnType, CultureInfo.InvariantCulture);
+                }
+                // return as-is from cap. if caller made a mistake then there should be exceptions
+                return (TEnum)value;
             }
-            else if (typeof(IConvertible).IsAssignableFrom(returnType))
-            {
-                // for regular integers and whatnot
-                return (TEnum)Convert.ChangeType(value, returnType, CultureInfo.InvariantCulture);
-            }
-            // return as-is from cap. if caller made a mistake then there should be exceptions
-            return (TEnum)value;
+            return default(TEnum);
         }
 
         static ushort GetLowerWord(uint value)
@@ -101,11 +105,40 @@ namespace NTwain.Data
         /// <returns></returns>
         public static TWFix32 ConvertToFix32(this object value)
         {
-            if (value is TWFix32)
+            if (value != null)
             {
-                return (TWFix32)value;
+                if (value is TWFix32)
+                {
+                    return (TWFix32)value;
+                }
+                return (TWFix32)Convert.ToSingle(value, CultureInfo.InvariantCulture);
             }
-            return (TWFix32)Convert.ToSingle(value, CultureInfo.InvariantCulture);
+            return default(TWFix32);
         }
+
+
+        ///// <summary>
+        ///// Routine that does nothing.
+        ///// </summary>
+        ///// <param name="value">The value.</param>
+        ///// <returns></returns>
+        //public static object NoConvertRoutine(object value)
+        //{
+        //    return value;
+        //}
+
+        ///// <summary>
+        ///// Predefined routine for <see cref="string"/>
+        ///// </summary>
+        ///// <param name="value">The value.</param>
+        ///// <returns></returns>
+        //public static string ConvertToString(object value)
+        //{
+        //    if (value != null)
+        //    {
+        //        return value.ToString();
+        //    }
+        //    return default(string);
+        //}
     }
 }

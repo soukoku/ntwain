@@ -51,9 +51,6 @@
     <Compile Include="..\NTwain\CapabilityReader.cs">
       <Link>CapabilityReader.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\CapRoutines.cs">
-      <Link>CapRoutines.cs</Link>
-    </Compile>
     <Compile Include="..\NTwain\DataSource.Caps.cs">
       <Link>DataSource.Caps.cs</Link>
     </Compile>

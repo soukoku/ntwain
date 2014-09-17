@@ -280,14 +280,14 @@ namespace Tester.Winform
             {
                 LoadDepth(src.CapImagePixelType);
             }
-            if (groupDPI.Enabled = caps.Contains(CapabilityId.ICapXResolution) && caps.Contains(CapabilityId.ICapYResolution))
+            if (groupDPI.Enabled = src.CapImageXResolution.IsSupported && src.CapImageYResolution.IsSupported)
             {
-                LoadDPI();
+                LoadDPI(src.CapImageXResolution);
             }
             // TODO: find out if this is how duplex works or also needs the other option
-            if (groupDuplex.Enabled = caps.Contains(CapabilityId.CapDuplexEnabled))
+            if (groupDuplex.Enabled = src.CapDuplexEnabled.IsSupported)
             {
-                LoadDuplex();
+                LoadDuplex(src.CapDuplexEnabled);
             }
             if (groupSize.Enabled = src.CapImageSupportedSize.IsSupported)
             {
@@ -312,18 +312,20 @@ namespace Tester.Winform
                 groupSize.Text = labelTest;
             }
         }
+        
 
-        private void LoadDuplex()
+        private void LoadDuplex(CapabilityControl<BoolType> cap)
         {
-            ckDuplex.Checked = _twain.CurrentSource.CapGetCurrent(CapabilityId.CapDuplexEnabled).ConvertToEnum<uint>() != 0;
+            ckDuplex.Checked = cap.GetCurrent() == BoolType.True;
         }
 
-        private void LoadDPI()
+
+        private void LoadDPI(CapabilityControl<TWFix32> cap)
         {
             // only allow dpi of certain values for those source that lists everything
-            var list = _twain.CurrentSource.CapGetDPIs().Where(dpi => (dpi % 50) == 0).ToList();
+            var list = cap.Get().Where(dpi => (dpi % 50) == 0).ToList();
             comboDPI.DataSource = list;
-            var cur = (TWFix32)_twain.CurrentSource.CapGetCurrent(CapabilityId.ICapXResolution);
+            var cur = cap.GetCurrent();
             if (list.Contains(cur))
             {
                 comboDPI.SelectedItem = cur;
@@ -369,7 +371,8 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (TWFix32)comboDPI.SelectedItem;
-                _twain.CurrentSource.CapSetDPI(sel);
+                _twain.CurrentSource.CapImageXResolution.Set(sel);
+                _twain.CurrentSource.CapImageYResolution.Set(sel);
             }
         }
 
@@ -377,7 +380,7 @@ namespace Tester.Winform
         {
             if (!_loadingCaps && _twain.State == 4)
             {
-                _twain.CurrentSource.CapSetDuplex(ckDuplex.Checked);
+                _twain.CurrentSource.CapDuplexEnabled.Set(ckDuplex.Checked ? BoolType.True : BoolType.False);
             }
         }
 
