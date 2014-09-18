@@ -11,6 +11,14 @@ namespace Tester
     {
         static void Main(string[] args)
         {
+            if (PlatformInfo.Current.IsApp64bit)
+            {
+                Console.WriteLine("[64bit]");
+            }
+            else
+            {
+                Console.WriteLine("[32bit]");
+            }
             // just an amusing example to do twain in console without UI
             ThreadPool.QueueUserWorkItem(o =>
             {
@@ -26,26 +34,45 @@ namespace Tester
         private static TwainSession InitTwain()
         {
             var twain = new TwainSession(TWIdentity.CreateFromAssembly(DataGroups.Image, Assembly.GetExecutingAssembly()));
-            twain.DataTransferred += twain_DataTransferred;
-            twain.TransferReady += twain_TransferReady;
-            twain.SourceDisabled += twain_SourceDisabled;
+            twain.TransferReady += (s, e) =>
+            {
+                Console.WriteLine("Got xfer ready on thread {0}.", Thread.CurrentThread.ManagedThreadId);
+            };
+            twain.DataTransferred += (s, e) =>
+            {
+                if (e.NativeData != IntPtr.Zero)
+                {
+                    Console.WriteLine("SUCCESS! Got twain data on thread {0}.", Thread.CurrentThread.ManagedThreadId);
+                }
+                else
+                {
+                    Console.WriteLine("BUMMER! No twain data on thread {0}.", Thread.CurrentThread.ManagedThreadId);
+                }
+            };
+
+            twain.SourceDisabled += (s, e) =>
+            {
+                Console.WriteLine("Source disabled on thread {0}.", Thread.CurrentThread.ManagedThreadId);
+                var rc = twain.CurrentSource.Close();
+                rc = twain.Close();
+            };
             return twain;
         }
 
-
+        const string SAMPLE_SOURCE = "TWAIN2 FreeImage Software Scanner";
         static void DoTwainWork()
         {
-            Console.WriteLine("Getting ready to do twain stuff on thread {0}.", Thread.CurrentThread.ManagedThreadId);
+            Console.WriteLine("Getting ready to do twain stuff on thread {0}...", Thread.CurrentThread.ManagedThreadId);
             Thread.Sleep(1000);
 
             var rc = twain.Open();
 
             if (rc == ReturnCode.Success)
             {
-                var hit = twain.Where(s => string.Equals(s.Name, "TWAIN2 FreeImage Software Scanner")).FirstOrDefault();
+                var hit = twain.FirstOrDefault(s => string.Equals(s.Name, SAMPLE_SOURCE));
                 if (hit == null)
                 {
-                    Console.WriteLine("The sample source \"TWAIN2 FreeImage Software Scanner\" is not installed.");
+                    Console.WriteLine("The sample source \"" + SAMPLE_SOURCE + "\" is not installed.");
                     twain.Close();
                 }
                 else
@@ -54,7 +81,7 @@ namespace Tester
 
                     if (rc == ReturnCode.Success)
                     {
-                        Console.WriteLine("Start capture from the sample source.");
+                        Console.WriteLine("Starting capture from the sample source...");
                         rc = hit.Enable(SourceEnableMode.NoUI, false, IntPtr.Zero);
                     }
                     else
@@ -69,28 +96,5 @@ namespace Tester
             }
         }
 
-        static void twain_SourceDisabled(object sender, EventArgs e)
-        {
-            Console.WriteLine("Source disabled on thread {0}.", Thread.CurrentThread.ManagedThreadId);
-            var rc = twain.CurrentSource.Close();
-            rc = twain.Close();
-        }
-
-        static void twain_TransferReady(object sender, TransferReadyEventArgs e)
-        {
-            Console.WriteLine("Got xfer ready on thread {0}.", Thread.CurrentThread.ManagedThreadId);
-        }
-
-        static void twain_DataTransferred(object sender, DataTransferredEventArgs e)
-        {
-            if (e.NativeData != IntPtr.Zero)
-            {
-                Console.WriteLine("Got twain data on thread {0}.", Thread.CurrentThread.ManagedThreadId);
-            }
-            else
-            {
-                Console.WriteLine("No twain data on thread {0}.", Thread.CurrentThread.ManagedThreadId);
-            }
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using NTwain.Triplets;
+﻿using NTwain.Internals;
+using NTwain.Triplets;
 using System;
 using System.Collections.Generic;
 using System.IO;

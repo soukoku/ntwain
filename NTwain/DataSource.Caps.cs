@@ -9,7 +9,7 @@ namespace NTwain
     // this contains all cap-related methods prefixed with Cap
 
 
-    partial class DataSource
+    partial class DataSource : ICapController
     {
         #region low-level cap stuff
 
@@ -139,7 +139,7 @@ namespace NTwain
         /// </summary>
         /// <param name="capabilityId">The capability identifier.</param>
         /// <returns></returns>
-        public ReturnCode ResetAll(CapabilityId capabilityId)
+        public ReturnCode CapResetAll(CapabilityId capabilityId)
         {
             using (TWCapability cap = new TWCapability(capabilityId)
             {
@@ -156,7 +156,7 @@ namespace NTwain
         /// </summary>
         /// <param name="capabilityId">The capability identifier.</param>
         /// <returns></returns>
-        public ReturnCode Reset(CapabilityId capabilityId)
+        public ReturnCode CapReset(CapabilityId capabilityId)
         {
             using (TWCapability cap = new TWCapability(capabilityId)
             {

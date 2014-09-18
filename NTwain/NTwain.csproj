@@ -61,6 +61,7 @@
     <Compile Include="Data\TwainTypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="IDataSource.cs" />
+    <Compile Include="ICapController.cs" />
     <Compile Include="Internals\Extensions.cs" />
     <Compile Include="DataTransferredEventArgs.cs" />
     <Compile Include="IMemoryManager.cs" />

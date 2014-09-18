@@ -23,6 +23,7 @@ namespace NTwain
         {
             _session = session;
             Identity = sourceId;
+            ProtocolVersion = new Version(sourceId.ProtocolMajor, sourceId.ProtocolMinor);
         }
 
         /// <summary>
@@ -59,20 +60,6 @@ namespace NTwain
                 }
             });
             return rc;
-        }
-
-
-        /// <summary>
-        /// Enables the source to start transferring.
-        /// </summary>
-        /// <param name="mode">The mode.</param>
-        /// <param name="modal">if set to <c>true</c> any driver UI will display as modal.</param>
-        /// <param name="windowHandle">The window handle if modal.</param>
-        /// <returns></returns>
-        [Obsolete("Use Enable() instead.")]
-        public ReturnCode StartTransfer(SourceEnableMode mode, bool modal, IntPtr windowHandle)
-        {
-            return Enable(mode, modal, windowHandle);
         }
 
         /// <summary>
@@ -138,7 +125,7 @@ namespace NTwain
         public string ProductFamily { get { return Identity.ProductFamily; } }
 
         /// <summary>
-        /// Gets the version information.
+        /// Gets the source's version information.
         /// </summary>
         /// <value>
         /// The version.
@@ -154,21 +141,12 @@ namespace NTwain
         public DataGroups DataGroup { get { return Identity.DataGroup; } }
 
         /// <summary>
-        /// Gets the supported TWAIN protocol major number.
+        /// Gets the supported TWAIN protocol version.
         /// </summary>
         /// <value>
-        /// The protocol major number.
+        /// The protocol version.
         /// </value>
-        public int ProtocolMajor { get { return Identity.ProtocolMajor; } }
-
-        /// <summary>
-        /// Gets the supported TWAIN protocol minor number.
-        /// </summary>
-        /// <value>
-        /// The protocol minor number.
-        /// </value>
-        public int ProtocolMinor { get { return Identity.ProtocolMinor; } }
-
+        public Version ProtocolVersion { get; private set; }
 
         static readonly CapabilityId[] _emptyCapList = new CapabilityId[0];
 

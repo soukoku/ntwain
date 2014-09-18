@@ -12,6 +12,6 @@ namespace Tester.WPF
 
         public string Name { get { return DS.Name; } }
         public string Version { get { return DS.Version.Info; } }
-        public string Protocol { get { return string.Format("{0}.{1}", DS.ProtocolMajor, DS.ProtocolMinor); } }
+        public string Protocol { get { return DS.ProtocolVersion.ToString(); } }
     }
 }

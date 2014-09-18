@@ -1,9 +1,8 @@
 ﻿using NTwain.Data;
-using NTwain.Internals;
 using System;
 using System.ComponentModel;
 
-namespace NTwain
+namespace NTwain.Internals
 {
     /// <summary>
     /// Provides methods for managing memory on data exchanged with twain sources using old win32 methods.

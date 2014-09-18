@@ -78,6 +78,9 @@
     <Compile Include="..\NTwain\DeviceEventArgs.cs">
       <Link>DeviceEventArgs.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\ICapController.cs">
+      <Link>ICapController.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\IDataSource.cs">
       <Link>IDataSource.cs</Link>
     </Compile>

@@ -311,7 +311,7 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode ResetAll()
         {
-            return _source.ResetAll(Capability);
+            return _source.CapResetAll(Capability);
         }
 
         /// <summary>
@@ -320,7 +320,7 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode Reset()
         {
-            return _source.Reset(Capability);
+            return _source.CapReset(Capability);
         }
 
         /// <summary>
