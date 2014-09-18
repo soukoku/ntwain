@@ -9,7 +9,7 @@ namespace NTwain.Internals
     /// <summary>
     /// Extends <see cref="ITwainSession"/> with extra stuff for internal use.
     /// </summary>
-    interface ITwainSessionInternal : ITwainSession
+    interface ITwainSessionInternal : ITwainSession, ITripletControl
     {
         /// <summary>
         /// Gets the app id used for the session.
@@ -48,20 +48,5 @@ namespace NTwain.Internals
         /// Gets the triplet operations defined for audio data group.
         /// </summary>
         DGAudio DGAudio { get; }
-
-        /// <summary>
-        /// Gets the triplet operations defined for control data group.
-        /// </summary>
-        DGControl DGControl { get; }
-
-        /// <summary>
-        /// Gets the triplet operations defined for image data group.
-        /// </summary>
-        DGImage DGImage { get; }
-
-        /// <summary>
-        /// Gets the direct triplet operation entry for custom values.
-        /// </summary>
-        DGCustom DGCustom { get; }
     }
 }

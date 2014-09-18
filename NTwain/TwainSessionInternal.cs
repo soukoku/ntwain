@@ -73,7 +73,7 @@ namespace NTwain
         }
 
         DGControl _dgControl;
-        DGControl ITwainSessionInternal.DGControl
+        DGControl ITripletControl.DGControl
         {
             get
             {
@@ -83,7 +83,7 @@ namespace NTwain
         }
 
         DGImage _dgImage;
-        DGImage ITwainSessionInternal.DGImage
+        DGImage ITripletControl.DGImage
         {
             get
             {
@@ -93,7 +93,7 @@ namespace NTwain
         }
 
         DGCustom _dgCustom;
-        DGCustom ITwainSessionInternal.DGCustom
+        DGCustom ITripletControl.DGCustom
         {
             get
             {

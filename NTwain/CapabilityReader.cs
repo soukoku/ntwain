@@ -25,7 +25,7 @@ namespace NTwain
         /// capability</exception>
         public static CapabilityReader ReadValue(TWCapability capability)
         {
-            return ReadValue(capability, PlatformInfo.Current);
+            return ReadValue(capability, PlatformInfo.Current.MemoryManager);
         }
 
         /// <summary>
@@ -33,26 +33,24 @@ namespace NTwain
         /// from a TWAIN source.
         /// </summary>
         /// <param name="capability">The capability.</param>
-        /// <param name="platformInfo">The platform information.</param>
+        /// <param name="memoryManager">The memory manager.</param>
         /// <returns></returns>
-        /// <exception cref="System.ArgumentNullException">
-        /// capability
+        /// <exception cref="System.ArgumentNullException">capability
         /// or
-        /// platformInfo
-        /// </exception>
+        /// platformInfo</exception>
         /// <exception cref="System.ArgumentException">Capability contains no data.;capability
         /// or
         /// capability</exception>
-        public static CapabilityReader ReadValue(TWCapability capability, IPlatformInfo platformInfo)
+        public static CapabilityReader ReadValue(TWCapability capability, IMemoryManager memoryManager)
         {
             if (capability == null) { throw new ArgumentNullException("capability"); }
             if (capability.Container == IntPtr.Zero) { throw new ArgumentException(Resources.CapHasNoData, "capability"); }
-            if (platformInfo == null) { throw new ArgumentNullException("platformInfo"); }
+            if (memoryManager == null) { throw new ArgumentNullException("memoryManager"); }
 
             IntPtr baseAddr = IntPtr.Zero;
             try
             {
-                baseAddr = platformInfo.MemoryManager.Lock(capability.Container);
+                baseAddr = memoryManager.Lock(capability.Container);
                 switch (capability.ContainerType)
                 {
                     case ContainerType.Array:
@@ -83,7 +81,7 @@ namespace NTwain
             {
                 if (baseAddr != IntPtr.Zero)
                 {
-                    platformInfo.MemoryManager.Unlock(baseAddr);
+                    memoryManager.Unlock(baseAddr);
                 }
             }
         }

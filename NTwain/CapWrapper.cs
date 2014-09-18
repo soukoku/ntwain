@@ -10,15 +10,23 @@ namespace NTwain
     /// Wrapped class for reading/writing a TWAIN capability associated with a <see cref="DataSource"/>.
     /// </summary>
     /// <typeparam name="TValue">The TWAIN type of the value.</typeparam>
-    public class CapabilityControl<TValue>
+    public class CapWrapper<TValue>
     {
-        DataSource _source;
+        /// <summary>
+        /// Routine that does nothing.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public static ReturnCode NoSetRoutine(TValue value) { return ReturnCode.Failure; }
+
+
+        ICapControl _source;
         Func<object, TValue> _convertRoutine;
         Func<TValue, ReturnCode> _setCustomRoutine;
         Func<TValue, TWCapability> _setProvider; // an simplified way to set() that only needs on cap value
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CapabilityControl{TValue}" /> class.
+        /// Initializes a new instance of the <see cref="CapWrapper{TValue}" /> class.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="capability">The capability.</param>
@@ -31,7 +39,7 @@ namespace NTwain
         /// or
         /// setValueProvider
         /// </exception>
-        public CapabilityControl(DataSource source, CapabilityId capability,
+        public CapWrapper(ICapControl source, CapabilityId capability,
             Func<object, TValue> getConversionRoutine,
             Func<TValue, TWCapability> setValueProvider)
         {
@@ -47,12 +55,12 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CapabilityControl{TValue}" /> class.
+        /// Initializes a new instance of the <see cref="CapWrapper{TValue}" /> class.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="capability">The capability.</param>
         /// <param name="getConversionRoutine">The value conversion routine in Get methods.</param>
-        /// <param name="setValueRoutine">Callback to perform set value.</param>
+        /// <param name="setValueRoutine">Callback to perform set value. Pass <see cref="NoSetRoutine"/> to not do sets.</param>
         /// <exception cref="System.ArgumentNullException">
         /// source
         /// or
@@ -60,7 +68,7 @@ namespace NTwain
         /// or
         /// setValueRoutine
         /// </exception>
-        public CapabilityControl(DataSource source, CapabilityId capability,
+        public CapWrapper(ICapControl source, CapabilityId capability,
             Func<object, TValue> getConversionRoutine,
             Func<TValue, ReturnCode> setValueRoutine)
         {
@@ -306,7 +314,7 @@ namespace NTwain
         #region set methods
 
         /// <summary>
-        /// Resets all values and constraint to power-on defaults.
+        /// Resets all values and constraints to power-on defaults.
         /// </summary>
         /// <returns></returns>
         public ReturnCode ResetAll()

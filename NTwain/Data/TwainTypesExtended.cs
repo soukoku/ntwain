@@ -643,32 +643,61 @@ namespace NTwain.Data
         /// <param name="capability">The capability.</param>
         /// <param name="value">The value.</param>
         public TWCapability(CapabilityId capability, TWOneValue value)
+            : this(capability, value, PlatformInfo.Current.MemoryManager) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWCapability" /> class.
+        /// </summary>
+        /// <param name="capability">The capability.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="memoryManager">The memory manager.</param>
+        public TWCapability(CapabilityId capability, TWOneValue value, IMemoryManager memoryManager)
         {
             Capability = capability;
             ContainerType = ContainerType.OneValue;
-            SetOneValue(value);
+            SetOneValue(value, memoryManager);
         }
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="TWCapability" /> class.
         /// </summary>
         /// <param name="capability">The capability.</param>
         /// <param name="value">The value.</param>
         public TWCapability(CapabilityId capability, TWEnumeration value)
+            : this(capability, value, PlatformInfo.Current.MemoryManager) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWCapability" /> class.
+        /// </summary>
+        /// <param name="capability">The capability.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="memoryManager">The memory manager.</param>
+        public TWCapability(CapabilityId capability, TWEnumeration value, IMemoryManager memoryManager)
         {
             Capability = capability;
             ContainerType = ContainerType.Enum;
-            SetEnumValue(value);
+            SetEnumValue(value, memoryManager);
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TWCapability" /> class.
         /// </summary>
         /// <param name="capability">The capability.</param>
         /// <param name="value">The value.</param>
         public TWCapability(CapabilityId capability, TWRange value)
+            : this(capability, value, PlatformInfo.Current.MemoryManager) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWCapability" /> class.
+        /// </summary>
+        /// <param name="capability">The capability.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="memoryManager">The memory manager.</param>
+        public TWCapability(CapabilityId capability, TWRange value, IMemoryManager memoryManager)
         {
             Capability = capability;
             ContainerType = ContainerType.Range;
-            SetRangeValue(value);
+            SetRangeValue(value, memoryManager);
         }
         #endregion
 
@@ -691,7 +720,7 @@ namespace NTwain.Data
 
         #region value functions
 
-        void SetOneValue(TWOneValue value)
+        void SetOneValue(TWOneValue value, IMemoryManager memoryManager)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
             ContainerType = ContainerType.OneValue;
@@ -699,14 +728,14 @@ namespace NTwain.Data
             // since one value can only house UInt32 we will not allow type size > 4
             if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWOneValue")); }
 
-            _hContainer = PlatformInfo.Current.MemoryManager.Allocate((uint)Marshal.SizeOf(value));
+            _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
             {
                 Marshal.StructureToPtr(value, _hContainer, false);
             }
         }
 
-        void SetEnumValue(TWEnumeration value)
+        void SetEnumValue(TWEnumeration value, IMemoryManager memoryManager)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
             ContainerType = ContainerType.Enum;
@@ -715,8 +744,8 @@ namespace NTwain.Data
             Int32 valueSize = TWEnumeration.ItemOffset + value.ItemList.Length * TypeReader.GetItemTypeSize(value.ItemType);
 
             int offset = 0;
-            _hContainer = PlatformInfo.Current.MemoryManager.Allocate((uint)valueSize);
-            IntPtr baseAddr = PlatformInfo.Current.MemoryManager.Lock(_hContainer);
+            _hContainer = memoryManager.Allocate((uint)valueSize);
+            IntPtr baseAddr = memoryManager.Lock(_hContainer);
 
             // can't safely use StructureToPtr here so write it our own
             WriteValue(baseAddr, ref offset, ItemType.UInt16, value.ItemType);
@@ -727,11 +756,11 @@ namespace NTwain.Data
             {
                 WriteValue(baseAddr, ref offset, value.ItemType, item);
             }
-            PlatformInfo.Current.MemoryManager.Unlock(baseAddr);
+            memoryManager.Unlock(baseAddr);
         }
 
 
-        void SetRangeValue(TWRange value)
+        void SetRangeValue(TWRange value, IMemoryManager memoryManager)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
             ContainerType = ContainerType.Range;
@@ -739,7 +768,7 @@ namespace NTwain.Data
             // since range value can only house UInt32 we will not allow type size > 4
             if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWRange")); }
 
-            _hContainer = PlatformInfo.Current.MemoryManager.Allocate((uint)Marshal.SizeOf(value));
+            _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
             {
                 Marshal.StructureToPtr(value, _hContainer, false);

@@ -45,11 +45,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\NTwain\CapabilityControl.cs">
-      <Link>CapabilityControl.cs</Link>
-    </Compile>
     <Compile Include="..\NTwain\CapabilityReader.cs">
       <Link>CapabilityReader.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\CapWrapper.cs">
+      <Link>CapWrapper.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\DataSource.Caps.cs">
       <Link>DataSource.Caps.cs</Link>
@@ -78,8 +78,8 @@
     <Compile Include="..\NTwain\DeviceEventArgs.cs">
       <Link>DeviceEventArgs.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\ICapController.cs">
-      <Link>ICapController.cs</Link>
+    <Compile Include="..\NTwain\ICapControl.cs">
+      <Link>ICapControl.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\IDataSource.cs">
       <Link>IDataSource.cs</Link>
@@ -125,6 +125,9 @@
     </Compile>
     <Compile Include="..\NTwain\IPlatformInfo.cs">
       <Link>IPlatformInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\ITripletControl.cs">
+      <Link>ITripletControl.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\ITwainSession.cs">
       <Link>ITwainSession.cs</Link>

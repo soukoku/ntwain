@@ -4,38 +4,38 @@ using System.Collections.Generic;
 namespace NTwain
 {
     /// <summary>
-    /// Interface for controlling caps.
+    /// Interface for providing basic functions at controlling caps.
     /// </summary>
-    public interface ICapController
+    public interface ICapControl : ITripletControl
     {
 
         /// <summary>
-        /// A general method that tries to get capability values from current <see cref="DataSource" />.
+        /// Gets all the possible values for a capability.
         /// </summary>
-        /// <param name="capabilityId">The capability unique identifier.</param>
+        /// <param name="capabilityId">The capability identifier.</param>
         /// <returns></returns>
         IList<object> CapGet(CapabilityId capabilityId);
 
         /// <summary>
         /// Gets the current value for a capability.
         /// </summary>
-        /// <param name="capId">The cap id.</param>
+        /// <param name="capabilityId">The capability identifier.</param>
         /// <returns></returns>
-        object CapGetCurrent(CapabilityId capId);
+        object CapGetCurrent(CapabilityId capabilityId);
 
         /// <summary>
         /// Gets the default value for a capability.
         /// </summary>
-        /// <param name="capId">The cap id.</param>
+        /// <param name="capabilityId">The capability identifier.</param>
         /// <returns></returns>
-        object CapGetDefault(CapabilityId capId);
-        
+        object CapGetDefault(CapabilityId capabilityId);
+
         /// <summary>
-        /// Gets the actual supported operations for a capability.
+        /// Gets the supported operations for a capability.
         /// </summary>
-        /// <param name="capId">The cap identifier.</param>
+        /// <param name="capabilityId">The capability identifier.</param>
         /// <returns></returns>
-        QuerySupports CapQuerySupport(CapabilityId capId);
+        QuerySupports CapQuerySupport(CapabilityId capabilityId);
 
         /// <summary>
         /// Resets the current value to power-on default.
@@ -45,7 +45,7 @@ namespace NTwain
         ReturnCode CapReset(CapabilityId capabilityId);
 
         /// <summary>
-        /// Resets all values and constraint to power-on defaults.
+        /// Resets all values and constraints to power-on defaults.
         /// </summary>
         /// <param name="capabilityId">The capability identifier.</param>
         /// <returns></returns>

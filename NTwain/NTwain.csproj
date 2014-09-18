@@ -55,13 +55,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CapabilityControl.cs" />
+    <Compile Include="CapWrapper.cs" />
     <Compile Include="CapabilityReader.cs" />
     <Compile Include="Data\TypeReader.cs" />
     <Compile Include="Data\TwainTypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="IDataSource.cs" />
-    <Compile Include="ICapController.cs" />
+    <Compile Include="ICapControl.cs" />
     <Compile Include="Internals\Extensions.cs" />
     <Compile Include="DataTransferredEventArgs.cs" />
     <Compile Include="IMemoryManager.cs" />
@@ -73,6 +73,7 @@
     <Compile Include="Internals\WindowsHook.cs" />
     <Compile Include="Internals\WrappedManualResetEvent.cs" />
     <Compile Include="IPlatformInfo.cs" />
+    <Compile Include="ITripletControl.cs" />
     <Compile Include="ITwainSession.cs" />
     <Compile Include="Internals\WinMemoryManager.cs" />
     <Compile Include="Internals\UnsafeNativeMethods.cs" />
