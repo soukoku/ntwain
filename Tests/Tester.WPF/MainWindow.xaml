@@ -3,7 +3,6 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
         xmlns:modern="http://modernwpf"
 		Title="TWAIN DS Tester" Height="600" Width="900" ResizeMode="CanResizeWithGrip"
-        modern:Chrome.ShowCaptionIcon="False"
         Style="{StaticResource AppWindow}">
     <Grid>
         <Grid.RowDefinitions>

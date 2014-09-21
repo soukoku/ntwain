@@ -286,6 +286,7 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.panelOptions);
             this.Controls.Add(this.toolStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TestForm";
             this.Text = "Test Form";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
