@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace Tester.WPF
 {
     /// <summary>
-    /// Interaction logic for Dummy.xaml
+    /// Interaction logic for Launcher.xaml
     /// </summary>
-    public partial class Dummy : Window
+    public partial class Launcher : Window
     {
-        public Dummy()
+        public Launcher()
         {
             InitializeComponent();
         }

@@ -1,7 +1,8 @@
-﻿<Window x:Class="Tester.WPF.Dummy"
+﻿<Window x:Class="Tester.WPF.Launcher"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Dummy" Height="300" Width="300">
+        Title="Scan Launcher" Height="200" Width="250"
+        ResizeMode="NoResize" Style="{StaticResource AppWindow}">
     <Grid>
         <StackPanel VerticalAlignment="Center">
             <Button Content="Open scan window" Click="Button_Click" Margin="4 0"></Button>

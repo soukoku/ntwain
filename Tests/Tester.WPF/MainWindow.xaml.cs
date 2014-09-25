@@ -23,19 +23,20 @@ namespace Tester.WPF
         public MainWindow()
         {
             InitializeComponent();
-            if (IntPtr.Size == 8)
-            {
-                Title = Title + " (64bit)";
-            }
-            else
-            {
-                Title = Title + " (32bit)";
-            }
-
-            _twainVM = new TwainVM();
-            this.DataContext = _twainVM;
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
+                if (IntPtr.Size == 8)
+                {
+                    Title = Title + " (64bit)";
+                }
+                else
+                {
+                    Title = Title + " (32bit)";
+                }
+
+                _twainVM = new TwainVM();
+                this.DataContext = _twainVM;
+
                 Messenger.Default.Register<DialogMessage>(this, msg =>
                 {
                     if (Dispatcher.CheckAccess())
@@ -73,6 +74,7 @@ namespace Tester.WPF
 
             // use this for internal msg loop
             //var rc = _twainVM.Open();
+
             // use this to hook into current app loop
             var rc = _twainVM.Open(new WpfMessageLoopHook(new WindowInteropHelper(this).Handle));
 
@@ -88,15 +90,6 @@ namespace Tester.WPF
 
         private void SrcList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
-            //var test = new NTwain.Internals.InternalMessageLoopHook();
-            //test.StartTest();
-            //test.BeginInvoke(() =>
-            //{
-            //    Debug.WriteLine("doodle");
-            //    test.StopTest();
-            //});
-
             if (_twainVM.State == 4)
             {
                 _twainVM.CurrentSource.Close();
@@ -358,7 +351,7 @@ namespace Tester.WPF
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);
                         break;
                     case CapabilityId.CapXferCount:
-                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);
+                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapXferCount.Get();
                         break;
                     case CapabilityId.CustomBase:
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);

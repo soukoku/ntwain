@@ -1,10 +1,10 @@
 ﻿<Application x:Class="Tester.WPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="Dummy.xaml">
+             StartupUri="Launcher.xaml">
 	<Application.Resources>
         <ResourceDictionary>
-            <!-- Dummy Style, anything you won't use goes -->
+            <!-- Launcher Style, anything you won't use goes -->
             <Style TargetType="{x:Type Rectangle}" />
 
             <ResourceDictionary.MergedDictionaries>
@@ -13,7 +13,7 @@
                 <ResourceDictionary Source="/ModernWPF;component/Themes/ModernStyles.xaml" />
                 
                 <ResourceDictionary>
-                    <Style x:Key="AppWindow" TargetType="Window" BasedOn="{StaticResource ModernWindow}"/>
+                    <Style x:Key="AppWindow" TargetType="Window" BasedOn="{StaticResource ModernWindowV2}"/>
                     <Style x:Key="AppListBoxItem" TargetType="ListBoxItem" BasedOn="{StaticResource ModernListBoxItem}">
                         <Setter Property="BorderThickness" Value="1"/>
                         <Style.Triggers>

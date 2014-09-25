@@ -6,6 +6,9 @@ using System.Text;
 
 namespace NTwain
 {
+    //TODO: handle multi-value sets
+
+
     /// <summary>
     /// Wrapped class for reading/writing a TWAIN capability associated with a <see cref="DataSource"/>.
     /// </summary>
@@ -24,6 +27,30 @@ namespace NTwain
         Func<object, TValue> _convertRoutine;
         Func<TValue, ReturnCode> _setCustomRoutine;
         Func<TValue, TWCapability> _setProvider; // an simplified way to set() that only needs on cap value
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CapWrapper{TValue}" /> class.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="capability">The capability.</param>
+        /// <param name="getConversionRoutine">The value conversion routine in Get methods.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// source
+        /// or
+        /// valueConversionRoutine
+        /// </exception>
+        public CapWrapper(ICapControl source, CapabilityId capability,
+            Func<object, TValue> getConversionRoutine)
+        {
+            if (source == null) { throw new ArgumentNullException("source"); }
+            if (getConversionRoutine == null) { throw new ArgumentNullException("valueConversionRoutine"); }
+
+            _source = source;
+            _convertRoutine = getConversionRoutine;
+            Capability = capability;
+            SupportedActions = source.CapQuerySupport(capability);
+        }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CapWrapper{TValue}" /> class.
