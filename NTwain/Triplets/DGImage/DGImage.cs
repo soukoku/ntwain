@@ -34,7 +34,7 @@ namespace NTwain.Triplets
         /// <summary>
         /// Gets the operations defined for DAT_EXTIMAGEINFO.
         /// </summary>
-        public ExtImageInfo ExtImageInfo
+        internal ExtImageInfo ExtImageInfo
         {
             get
             {

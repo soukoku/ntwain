@@ -208,7 +208,8 @@ namespace NTwain.Data
         TW_UINT16 _itemType;
         TW_UINT16 _numItems;
         TW_UINT16 _returnCode;
-        TW_UINTPTR _item;
+        //TW_UINTPTR _item;
+        TW_HANDLE _item; // easier to work with intptr
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]

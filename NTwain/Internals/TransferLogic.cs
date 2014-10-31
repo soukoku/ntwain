@@ -137,7 +137,7 @@ namespace NTwain.Internals
                         lockedPtr = PlatformInfo.Current.MemoryManager.Lock(dataPtr);
                     }
 
-                    session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(lockedPtr, null));
+                    session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(session.CurrentSource, lockedPtr, null));
                 }
                 else
                 {
@@ -177,7 +177,7 @@ namespace NTwain.Internals
             var xrc = session.DGAudio.AudioFileXfer.Get();
             if (xrc == ReturnCode.XferDone)
             {
-                session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(filePath, null));
+                session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(session.CurrentSource, filePath, null));
             }
             else
             {
@@ -420,32 +420,24 @@ namespace NTwain.Internals
         {
             DataTransferredEventArgs args = null;
             TWImageInfo imgInfo;
-            //TWExtImageInfo extInfo = null;
-            //if (session.CurrentSource.SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
-            //{
-            //    if (session.DGImage.ExtImageInfo.Get(out extInfo) != ReturnCode.Success)
-            //    {
-            //        extInfo = null;
-            //    }
-            //}
+
             if (session.DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
             {
                 imgInfo = null;
             }
             if (dataPtr != IntPtr.Zero)
             {
-                args = new DataTransferredEventArgs(dataPtr, imgInfo);
+                args = new DataTransferredEventArgs(session.CurrentSource, dataPtr, imgInfo);
             }
             else if (dataArray != null)
             {
-                args = new DataTransferredEventArgs(dataArray, imgInfo);
+                args = new DataTransferredEventArgs(session.CurrentSource, dataArray, imgInfo);
             }
             else
             {
-                args = new DataTransferredEventArgs(filePath, imgInfo);
+                args = new DataTransferredEventArgs(session.CurrentSource, filePath, imgInfo);
             }
             session.SafeSyncableRaiseEvent(args);
-            //if (extInfo != null) { extInfo.Dispose(); }
         }
 
         #endregion

@@ -56,16 +56,10 @@ namespace NTwain.Data
                     frame.Bottom = (TWFix32)ReadValue(baseAddress, ref offset, ItemType.Fix32);
                     return frame; // no need to update offset again after reading fix32
                 case ItemType.String128:
-                    val = ReadString(baseAddress, offset, TwainConst.String128 - 2);
-                    break;
                 case ItemType.String255:
-                    val = ReadString(baseAddress, offset, TwainConst.String255 - 1);
-                    break;
                 case ItemType.String32:
-                    val = ReadString(baseAddress, offset, TwainConst.String32 - 2);
-                    break;
                 case ItemType.String64:
-                    val = ReadString(baseAddress, offset, TwainConst.String64 - 2);
+                    val = Marshal.PtrToStringAnsi(new IntPtr(baseAddress.ToInt64() + offset));
                     break;
                 case ItemType.Handle:
                     val = Marshal.ReadIntPtr(baseAddress, offset);
@@ -73,25 +67,6 @@ namespace NTwain.Data
             }
             offset += GetItemTypeSize(type);
             return val;
-        }
-
-        static string ReadString(IntPtr baseAddr, int offset, int maxLength)
-        {
-            // does this work cross-platform?
-            var val = Marshal.PtrToStringAnsi(new IntPtr(baseAddr.ToInt64() + offset));
-            if (val.Length > maxLength)
-            {
-                // bad source, whatever
-            }
-            return val;
-            //var sb = new StringBuilder(maxLength);
-            //byte bt;
-            //while (sb.Length < maxLength &&
-            //    (bt = Marshal.ReadByte(baseAddr, offset++)) != 0)
-            //{
-            //    sb.Append((char)bt);
-            //}
-            //return sb.ToString();
         }
 
         static readonly Dictionary<ItemType, int> __sizes = GenerateSizes();
@@ -112,6 +87,7 @@ namespace NTwain.Data
             sizes[ItemType.String64] = TwainConst.String64;
             sizes[ItemType.String128] = TwainConst.String128;
             sizes[ItemType.String255] = TwainConst.String255;
+            // TODO: find out if it should be fixed 4 bytes or intptr size
             sizes[ItemType.Handle] = IntPtr.Size;
 
             return sizes;

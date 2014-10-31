@@ -68,6 +68,16 @@ namespace Tester.Winform
             };
             _twain.DataTransferred += (s, e) =>
             {
+                // example on getting ext image info
+                var infos = e.GetExtImageInfo(ExtendedImageInfo.Camera).Where(it => it.ReturnCode == ReturnCode.Success);
+                foreach (var it in infos)
+                {
+                    var values = it.ReadValues();
+                    Debug.WriteLine(string.Format("{0} = {1}", it.InfoID, values.FirstOrDefault()));
+                    break;
+                }
+
+                // handle image data
                 Bitmap img = null;
                 if (e.NativeData != IntPtr.Zero)
                 {
@@ -312,7 +322,7 @@ namespace Tester.Winform
                 groupSize.Text = labelTest;
             }
         }
-        
+
 
         private void LoadDuplex(CapWrapper<BoolType> cap)
         {

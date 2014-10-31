@@ -657,7 +657,7 @@ namespace NTwain.Data
             ContainerType = ContainerType.OneValue;
             SetOneValue(value, memoryManager);
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TWCapability" /> class.
         /// </summary>
@@ -1374,7 +1374,7 @@ namespace NTwain.Data
     /// This structure is used to pass specific information between the data source and the application
     /// through <see cref="TWExtImageInfo"/>.
     /// </summary>
-    [DebuggerDisplay("Type = {ItemType}")]
+    [DebuggerDisplay("ID = {InfoID}, Type = {ItemType}")]
     public partial struct TWInfo
     {
         /// <summary>
@@ -1407,7 +1407,101 @@ namespace NTwain.Data
         /// If the Item field contains a handle to data, then the Application is
         /// responsible for freeing that memory.
         /// </summary>
-        public UIntPtr Item { get { return _item; } internal set { _item = value; } }
+        public IntPtr Item { get { return _item; } internal set { _item = value; } }
+
+        bool ItemIsPointer
+        {
+            get
+            {
+                return ItemType == Data.ItemType.Handle ||
+                    (TypeReader.GetItemTypeSize(ItemType) * NumItems) > 4;// IntPtr.Size
+            }
+        }
+
+        /// <summary>
+        /// Try to reads the values from the <see cref="Item"/> property.
+        /// </summary>
+        /// <returns></returns>
+        public List<object> ReadValues()
+        {
+            var values = new List<object>();
+            if (NumItems > 0)
+            {
+                if (ItemIsPointer)
+                {
+                    if (Item != IntPtr.Zero)
+                    {
+                        IntPtr lockPtr = IntPtr.Zero;
+                        try
+                        {
+                            int offset = 0;
+                            lockPtr = PlatformInfo.Current.MemoryManager.Lock(Item);
+
+                            for (int i = 0; i < NumItems; i++)
+                            {
+                                values.Add(TypeReader.ReadValue(lockPtr, ref offset, ItemType));
+                            }
+                        }
+                        finally
+                        {
+                            if (lockPtr != IntPtr.Zero)
+                            {
+                                PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // do the lame and create a ptr to the value so we can reuse TypeReader
+                    IntPtr tempPtr = IntPtr.Zero;
+                    try
+                    {
+                        tempPtr = Marshal.AllocHGlobal(IntPtr.Size);
+                        Marshal.WriteIntPtr(tempPtr, Item);
+                        int offset = 0;
+                        values.Add(TypeReader.ReadValue(tempPtr, ref offset, ItemType));
+                    }
+                    finally
+                    {
+                        if (tempPtr != IntPtr.Zero)
+                        {
+                            Marshal.FreeHGlobal(tempPtr);
+                        }
+                    }
+                }
+            }
+            return values;
+        }
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            //GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing) { }
+
+            if (ItemIsPointer && Item != IntPtr.Zero)
+            {
+                PlatformInfo.Current.MemoryManager.Free(Item);
+            }
+            Item = IntPtr.Zero;
+        }
+
+
+        //~TWInfo()
+        //{
+        //    Dispose(false);
+        //}
+        #endregion
     }
 
     /// <summary>
@@ -1418,7 +1512,7 @@ namespace NTwain.Data
     /// using the above operation triplet. The data source then examines each Info, and fills the rest of
     /// data with information allocating memory when necessary.
     /// </summary>
-    public sealed partial class TWExtImageInfo : IDisposable
+    sealed partial class TWExtImageInfo
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TWExtImageInfo"/> class.
@@ -1440,50 +1534,6 @@ namespace NTwain.Data
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public TWInfo[] Info { get { return _info; } }
-
-        #region IDisposable Members
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing) { }
-            // this is iffy & may have to flatten info array as individual fields in this class to work
-            if (_info != null)
-            {
-                for (int i = 0; i < _info.Length; i++)
-                {
-                    var it = _info[i];
-                    if (it.Item != UIntPtr.Zero)
-                    {
-                        var sz = it.NumItems * TypeReader.GetItemTypeSize(it.ItemType);
-                        if (sz > UIntPtr.Size || it.ItemType == ItemType.Handle)
-                        {
-                            // uintptr to intptr could be bad
-                            var ptr = new IntPtr(BitConverter.ToInt64(BitConverter.GetBytes(it.Item.ToUInt64()), 0));
-                            PlatformInfo.Current.MemoryManager.Free(ptr);
-                        }
-                    }
-                    it.Item = UIntPtr.Zero;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Finalizes an instance of the <see cref="TWExtImageInfo"/> class.
-        /// </summary>
-        ~TWExtImageInfo()
-        {
-            Dispose(false);
-        }
-        #endregion
     }
 
     /// <summary>

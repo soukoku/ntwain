@@ -1,5 +1,7 @@
 ﻿using NTwain.Data;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NTwain
 {
@@ -9,32 +11,38 @@ namespace NTwain
     public class DataTransferredEventArgs : EventArgs
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataTransferredEventArgs"/> class.
+        /// Initializes a new instance of the <see cref="DataTransferredEventArgs" /> class.
         /// </summary>
+        /// <param name="source">The source.</param>
         /// <param name="nativeData">The native data.</param>
         /// <param name="imageInfo">The image information.</param>
-        public DataTransferredEventArgs(IntPtr nativeData, TWImageInfo imageInfo)
+        public DataTransferredEventArgs(DataSource source, IntPtr nativeData, TWImageInfo imageInfo)
         {
+            DataSource = source;
             NativeData = nativeData;
             ImageInfo = imageInfo;
         }
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataTransferredEventArgs"/> class.
+        /// Initializes a new instance of the <see cref="DataTransferredEventArgs" /> class.
         /// </summary>
+        /// <param name="source">The source.</param>
         /// <param name="fileDataPath">The file data path.</param>
         /// <param name="imageInfo">The image information.</param>
-        public DataTransferredEventArgs(string fileDataPath, TWImageInfo imageInfo)
+        public DataTransferredEventArgs(DataSource source, string fileDataPath, TWImageInfo imageInfo)
         {
+            DataSource = source;
             FileDataPath = fileDataPath;
             ImageInfo = imageInfo;
         }
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataTransferredEventArgs"/> class.
+        /// Initializes a new instance of the <see cref="DataTransferredEventArgs" /> class.
         /// </summary>
+        /// <param name="source">The source.</param>
         /// <param name="memoryData">The memory data.</param>
         /// <param name="imageInfo">The image information.</param>
-        public DataTransferredEventArgs(byte[] memoryData, TWImageInfo imageInfo)
+        public DataTransferredEventArgs(DataSource source, byte[] memoryData, TWImageInfo imageInfo)
         {
+            DataSource = source;
             MemoryData = memoryData;
             ImageInfo = imageInfo;
         }
@@ -76,12 +84,41 @@ namespace NTwain
         /// </value>
         public TWImageInfo ImageInfo { get; private set; }
 
-        ///// <summary>
-        ///// Gets the extended image information if applicable.
-        ///// </summary>
-        ///// <value>
-        ///// The extended image information.
-        ///// </value>
-        //public TWExtImageInfo ExImageInfo { get; internal set; }
+        /// <summary>
+        /// Gets the data source.
+        /// </summary>
+        /// <value>
+        /// The data source.
+        /// </value>
+        public DataSource DataSource { get; private set; }
+
+        /// <summary>
+        /// Gets the extended image information if applicable.
+        /// </summary>
+        /// <param name="infoIds">The information ids.</param>
+        /// <returns></returns>
+        /// <exception cref="System.InvalidOperationException"></exception>
+        public IEnumerable<TWInfo> GetExtImageInfo(params ExtendedImageInfo[] infoIds)
+        {
+            if (infoIds != null && infoIds.Length > 0 && DataSource.SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
+            {
+                var request = new TWExtImageInfo { NumInfos = (uint)infoIds.Length };
+                if (infoIds.Length > request.Info.Length)
+                {
+                    throw new InvalidOperationException(string.Format("Info ID array excdd maximum length of {0}.", request.Info.Length));
+                }
+
+                for (int i = 0; i < infoIds.Length; i++)
+                {
+                    request.Info[i].InfoID = infoIds[i];
+                }
+
+                if (DataSource.DGImage.ExtImageInfo.Get(request) == ReturnCode.Success)
+                {
+                    return request.Info.Where(it => it.InfoID != ExtendedImageInfo.Invalid);
+                }
+            }
+            return Enumerable.Empty<TWInfo>();
+        }
     }
 }
