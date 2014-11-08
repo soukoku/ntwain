@@ -13,7 +13,7 @@ namespace NTwain
     /// Wrapped class for reading/writing a TWAIN capability associated with a <see cref="DataSource"/>.
     /// </summary>
     /// <typeparam name="TValue">The TWAIN type of the value.</typeparam>
-    public class CapWrapper<TValue>
+    public class CapWrapper<TValue> : NTwain.ICapWrapper<TValue>
     {
         /// <summary>
         /// Routine that does nothing.
@@ -339,15 +339,6 @@ namespace NTwain
         #endregion
 
         #region set methods
-
-        /// <summary>
-        /// Resets all values and constraints to power-on defaults.
-        /// </summary>
-        /// <returns></returns>
-        public ReturnCode ResetAll()
-        {
-            return _source.CapResetAll(Capability);
-        }
 
         /// <summary>
         /// Resets the current value to power-on default.

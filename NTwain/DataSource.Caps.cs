@@ -140,14 +140,10 @@ namespace NTwain
         /// <summary>
         /// Resets all values and constraint to power-on defaults.
         /// </summary>
-        /// <param name="capabilityId">The capability identifier.</param>
         /// <returns></returns>
-        public ReturnCode CapResetAll(CapabilityId capabilityId)
+        public ReturnCode CapResetAll()
         {
-            using (TWCapability cap = new TWCapability(capabilityId)
-            {
-                ContainerType = ContainerType.DoNotCare
-            })
+            using (TWCapability cap = new TWCapability(CapabilityId.CapSupportedCaps))
             {
                 var rc = DGControl.Capability.ResetAll(cap);
                 return rc;
@@ -161,10 +157,7 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode CapReset(CapabilityId capabilityId)
         {
-            using (TWCapability cap = new TWCapability(capabilityId)
-            {
-                ContainerType = ContainerType.DoNotCare
-            })
+            using (TWCapability cap = new TWCapability(capabilityId))
             {
                 var rc = DGControl.Capability.Reset(cap);
                 return rc;
@@ -185,7 +178,7 @@ namespace NTwain
         /// <value>
         /// The audio xfer mech.
         /// </value>
-        public CapWrapper<XferMech> CapAudioXferMech
+        public ICapWrapper<XferMech> CapAudioXferMech
         {
             get
             {
@@ -202,6 +195,51 @@ namespace NTwain
 
         #region img caps
 
+        #region mandatory
+
+        private CapWrapper<CompressionType> _compression;
+
+        /// <summary>
+        /// Gets the property to work with image <see cref="CompressionType"/> for the current source.
+        /// </summary>
+        /// <value>
+        /// The image compression.
+        /// </value>
+        public ICapWrapper<CompressionType> CapImageCompression
+        {
+            get
+            {
+                return _compression ?? (_compression = new CapWrapper<CompressionType>(this, CapabilityId.ICapCompression, ValueExtensions.ConvertToEnum<CompressionType>,
+                        value => new TWCapability(CapabilityId.ICapCompression, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        })));
+            }
+        }
+
+
+        private CapWrapper<PixelType> _pixelType;
+
+        /// <summary>
+        /// Gets the property to work with image <see cref="PixelType"/> for the current source.
+        /// </summary>
+        /// <value>
+        /// The image pixel type.
+        /// </value>
+        public ICapWrapper<PixelType> CapImagePixelType
+        {
+            get
+            {
+                return _pixelType ?? (_pixelType = new CapWrapper<PixelType>(this, CapabilityId.ICapPixelType, ValueExtensions.ConvertToEnum<PixelType>,
+                        value => new TWCapability(CapabilityId.ICapPixelType, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        })));
+            }
+        }
+
         private CapWrapper<Unit> _imgUnits;
 
         /// <summary>
@@ -210,7 +248,7 @@ namespace NTwain
         /// <value>
         /// The image unit of measure.
         /// </value>
-        public CapWrapper<Unit> CapImageUnits
+        public ICapWrapper<Unit> CapImageUnits
         {
             get
             {
@@ -231,7 +269,7 @@ namespace NTwain
         /// <value>
         /// The image xfer mech.
         /// </value>
-        public CapWrapper<XferMech> CapImageXferMech
+        public ICapWrapper<XferMech> CapImageXferMech
         {
             get
             {
@@ -244,24 +282,157 @@ namespace NTwain
             }
         }
 
+        #endregion
 
-        private CapWrapper<CompressionType> _compression;
+
+        private CapWrapper<BoolType> _autoBright;
 
         /// <summary>
-        /// Gets the property to work with image <see cref="CompressionType"/> for the current source.
+        /// Gets the property to work with image auto brightness flag for the current source.
         /// </summary>
         /// <value>
-        /// The image compression.
+        /// The image auto brightness flag.
         /// </value>
-        public CapWrapper<CompressionType> CapImageCompression
+        public ICapWrapper<BoolType> CapImageAutoBright
         {
             get
             {
-                return _compression ?? (_compression = new CapWrapper<CompressionType>(this, CapabilityId.ICapCompression, ValueExtensions.ConvertToEnum<CompressionType>,
-                        value => new TWCapability(CapabilityId.ICapCompression, new TWOneValue
+                return _autoBright ?? (_autoBright = new CapWrapper<BoolType>(this, CapabilityId.ICapAutoBright, ValueExtensions.ConvertToEnum<BoolType>, value =>
+                        new TWCapability(CapabilityId.ICapAutoBright, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.Bool
+                        })));
+            }
+        }
+
+        private CapWrapper<TWFix32> _brightness;
+
+        /// <summary>
+        /// Gets the property to work with image brightness for the current source.
+        /// </summary>
+        /// <value>
+        /// The image brightness.
+        /// </value>
+        public ICapWrapper<TWFix32> CapImageBrightness
+        {
+            get
+            {
+                return _brightness ?? (_brightness = new CapWrapper<TWFix32>(this, CapabilityId.ICapBrightness, ValueExtensions.ConvertToFix32,
+                        value => new TWCapability(CapabilityId.ICapBrightness, new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        })));
+            }
+        }
+
+        private CapWrapper<TWFix32> _contrast;
+
+        /// <summary>
+        /// Gets the property to work with image contrast for the current source.
+        /// </summary>
+        /// <value>
+        /// The image contrast.
+        /// </value>
+        public ICapWrapper<TWFix32> CapImageContrast
+        {
+            get
+            {
+                return _contrast ?? (_contrast = new CapWrapper<TWFix32>(this, CapabilityId.ICapContrast, ValueExtensions.ConvertToFix32,
+                        value => new TWCapability(CapabilityId.ICapContrast, new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        })));
+            }
+        }
+
+        // TODO: add ICapCustHalftone
+
+        private CapWrapper<TWFix32> _exposureTime;
+
+        /// <summary>
+        /// Gets the property to work with image exposure time (in seconds) for the current source.
+        /// </summary>
+        /// <value>
+        /// The image exposure time.
+        /// </value>
+        public ICapWrapper<TWFix32> CapImageExposureTime
+        {
+            get
+            {
+                return _exposureTime ?? (_exposureTime = new CapWrapper<TWFix32>(this, CapabilityId.ICapExposureTime, ValueExtensions.ConvertToFix32,
+                        value => new TWCapability(CapabilityId.ICapExposureTime, new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        })));
+            }
+        }
+
+
+        private CapWrapper<ImageFilter> _imgFilter;
+
+        /// <summary>
+        /// Gets the property to work with image <see cref="FilterType"/> for the current source.
+        /// </summary>
+        /// <value>
+        /// The image filter type.
+        /// </value>
+        public ICapWrapper<ImageFilter> CapImageFilter
+        {
+            get
+            {
+                return _imgFilter ?? (_imgFilter = new CapWrapper<ImageFilter>(this, CapabilityId.ICapFilter, ValueExtensions.ConvertToEnum<ImageFilter>,
+                        value => new TWCapability(CapabilityId.ICapFilter, new TWOneValue
                         {
                             Item = (uint)value,
                             ItemType = ItemType.UInt16
+                        })));
+            }
+        }
+
+        private CapWrapper<TWFix32> _gamma;
+
+        /// <summary>
+        /// Gets the property to work with image gamma value for the current source.
+        /// </summary>
+        /// <value>
+        /// The image gamma.
+        /// </value>
+        public ICapWrapper<TWFix32> CapImageGamma
+        {
+            get
+            {
+                return _gamma ?? (_gamma = new CapWrapper<TWFix32>(this, CapabilityId.ICapGamma, ValueExtensions.ConvertToFix32,
+                        value => new TWCapability(CapabilityId.ICapGamma, new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        })));
+            }
+        }
+
+        // TODO: add ICapHalftones
+
+        private CapWrapper<TWFix32> _highlight;
+
+        /// <summary>
+        /// Gets the property to work with image highlight value for the current source.
+        /// </summary>
+        /// <value>
+        /// The image highlight.
+        /// </value>
+        public ICapWrapper<TWFix32> CapImageHighlight
+        {
+            get
+            {
+                return _highlight ?? (_highlight = new CapWrapper<TWFix32>(this, CapabilityId.ICapHighlight, ValueExtensions.ConvertToFix32,
+                        value => new TWCapability(CapabilityId.ICapHighlight, new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
                         })));
             }
         }
@@ -275,7 +446,7 @@ namespace NTwain
         /// <value>
         /// The image file format.
         /// </value>
-        public CapWrapper<FileFormat> CapImageFileFormat
+        public ICapWrapper<FileFormat> CapImageFileFormat
         {
             get
             {
@@ -289,20 +460,42 @@ namespace NTwain
         }
 
 
-        private CapWrapper<PixelType> _pixelType;
+        private CapWrapper<BoolType> _lampState;
 
         /// <summary>
-        /// Gets the property to work with image <see cref="PixelType"/> for the current source.
+        /// Gets the property to work with image lamp state flag for the current source.
         /// </summary>
         /// <value>
-        /// The image pixel type.
+        /// The image lamp state flag.
         /// </value>
-        public CapWrapper<PixelType> CapImagePixelType
+        public ICapWrapper<BoolType> CapImageLameState
         {
             get
             {
-                return _pixelType ?? (_pixelType = new CapWrapper<PixelType>(this, CapabilityId.ICapPixelType, ValueExtensions.ConvertToEnum<PixelType>,
-                        value => new TWCapability(CapabilityId.ICapPixelType, new TWOneValue
+                return _lampState ?? (_lampState = new CapWrapper<BoolType>(this, CapabilityId.ICapLampState, ValueExtensions.ConvertToEnum<BoolType>, value =>
+                        new TWCapability(CapabilityId.ICapLampState, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.Bool
+                        })));
+            }
+        }
+
+
+        private CapWrapper<LightSource> _lightSource;
+
+        /// <summary>
+        /// Gets the property to work with image light source for the current source.
+        /// </summary>
+        /// <value>
+        /// The image light source.
+        /// </value>
+        public ICapWrapper<LightSource> CapImageLightSource
+        {
+            get
+            {
+                return _lightSource ?? (_lightSource = new CapWrapper<LightSource>(this, CapabilityId.ICapLightSource, ValueExtensions.ConvertToEnum<LightSource>, value =>
+                        new TWCapability(CapabilityId.ICapLightSource, new TWOneValue
                         {
                             Item = (uint)value,
                             ItemType = ItemType.UInt16
@@ -310,6 +503,158 @@ namespace NTwain
             }
         }
 
+
+        private CapWrapper<OrientationType> _orientation;
+
+        /// <summary>
+        /// Gets the property to work with image orientation for the current source.
+        /// </summary>
+        /// <value>
+        /// The image orientation.
+        /// </value>
+        public ICapWrapper<OrientationType> CapImageOrientation
+        {
+            get
+            {
+                return _orientation ?? (_orientation = new CapWrapper<OrientationType>(this, CapabilityId.ICapOrientation, ValueExtensions.ConvertToEnum<OrientationType>, value =>
+                        new TWCapability(CapabilityId.ICapOrientation, new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        })));
+            }
+        }
+
+        private CapWrapper<TWFix32> _physicalWidth;
+
+        /// <summary>
+        /// Gets the property to work with image physical width for the current source.
+        /// </summary>
+        /// <value>
+        /// The image physical width.
+        /// </value>
+        public IReadOnlyCapWrapper<TWFix32> CapImagePhysicalWidth
+        {
+            get
+            {
+                return _physicalWidth ?? (_physicalWidth = new CapWrapper<TWFix32>(this, CapabilityId.ICapPhysicalWidth, ValueExtensions.ConvertToFix32));
+            }
+        }
+
+        private CapWrapper<TWFix32> _physicalHeight;
+
+        /// <summary>
+        /// Gets the property to work with image physical height for the current source.
+        /// </summary>
+        /// <value>
+        /// The image physical height.
+        /// </value>
+        public IReadOnlyCapWrapper<TWFix32> CapImagePhysicalHeight
+        {
+            get
+            {
+                return _physicalHeight ?? (_physicalHeight = new CapWrapper<TWFix32>(this, CapabilityId.ICapPhysicalHeight, ValueExtensions.ConvertToFix32));
+            }
+        }
+
+        private CapWrapper<TWFix32> _shadow;
+
+        /// <summary>
+        /// Gets the property to work with image shadow value for the current source.
+        /// </summary>
+        /// <value>
+        /// The image shadow.
+        /// </value>
+        public ICapWrapper<TWFix32> CapImageShadow
+        {
+            get
+            {
+                return _shadow ?? (_shadow = new CapWrapper<TWFix32>(this, CapabilityId.ICapShadow, ValueExtensions.ConvertToFix32,
+                        value => new TWCapability(CapabilityId.ICapShadow, new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        })));
+            }
+        }
+
+        // TODO: add ICapFrames
+
+        private CapWrapper<TWFix32> _nativeXRes;
+
+        /// <summary>
+        /// Gets the property to work with image's native x-axis resolution for the current source.
+        /// </summary>
+        /// <value>
+        /// The image's native x-axis resolution.
+        /// </value>
+        public IReadOnlyCapWrapper<TWFix32> CapImageXNativeResolution
+        {
+            get
+            {
+                return _nativeXRes ?? (_nativeXRes = new CapWrapper<TWFix32>(this, CapabilityId.ICapXNativeResolution, ValueExtensions.ConvertToFix32));
+            }
+        }
+
+        private CapWrapper<TWFix32> _nativeYRes;
+
+        /// <summary>
+        /// Gets the property to work with image's native y-axis resolution for the current source.
+        /// </summary>
+        /// <value>
+        /// The image's native y-axis resolution.
+        /// </value>
+        public IReadOnlyCapWrapper<TWFix32> CapImageYNativeResolution
+        {
+            get
+            {
+                return _nativeYRes ?? (_nativeYRes = new CapWrapper<TWFix32>(this, CapabilityId.ICapYNativeResolution, ValueExtensions.ConvertToFix32));
+            }
+        }
+
+
+        private CapWrapper<TWFix32> _xResolution;
+
+        /// <summary>
+        /// Gets the property to work with image x-axis resolution for the current source.
+        /// </summary>
+        /// <value>
+        /// The image x-axis resolution.
+        /// </value>
+        public ICapWrapper<TWFix32> CapImageXResolution
+        {
+            get
+            {
+                return _xResolution ?? (_xResolution = new CapWrapper<TWFix32>(this, CapabilityId.ICapXResolution, ValueExtensions.ConvertToFix32,
+                        value => new TWCapability(CapabilityId.ICapXResolution, new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        })));
+            }
+        }
+
+
+        private CapWrapper<TWFix32> _yResolution;
+
+        /// <summary>
+        /// Gets the property to work with image y-axis resolution for the current source.
+        /// </summary>
+        /// <value>
+        /// The image y-axis resolution.
+        /// </value>
+        public ICapWrapper<TWFix32> CapImageYResolution
+        {
+            get
+            {
+                return _yResolution ?? (_yResolution = new CapWrapper<TWFix32>(this, CapabilityId.ICapYResolution, ValueExtensions.ConvertToFix32,
+                        value => new TWCapability(CapabilityId.ICapYResolution, new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        })));
+            }
+        }
 
         private CapWrapper<SupportedSize> _supportSize;
 
@@ -319,7 +664,7 @@ namespace NTwain
         /// <value>
         /// The image supported size.
         /// </value>
-        public CapWrapper<SupportedSize> CapImageSupportedSize
+        public ICapWrapper<SupportedSize> CapImageSupportedSize
         {
             get
             {
@@ -341,7 +686,7 @@ namespace NTwain
         /// <value>
         /// The image auto deskew flag.
         /// </value>
-        public CapWrapper<BoolType> CapImageAutoDeskew
+        public ICapWrapper<BoolType> CapImageAutoDeskew
         {
             get
             {
@@ -363,7 +708,7 @@ namespace NTwain
         /// <value>
         /// The image auto rotate flag.
         /// </value>
-        public CapWrapper<BoolType> CapImageAutoRotate
+        public ICapWrapper<BoolType> CapImageAutoRotate
         {
             get
             {
@@ -377,50 +722,6 @@ namespace NTwain
         }
 
 
-        private CapWrapper<TWFix32> _xResolution;
-
-        /// <summary>
-        /// Gets the property to work with image horizontal resolution for the current source.
-        /// </summary>
-        /// <value>
-        /// The image horizontal resolution.
-        /// </value>
-        public CapWrapper<TWFix32> CapImageXResolution
-        {
-            get
-            {
-                return _xResolution ?? (_xResolution = new CapWrapper<TWFix32>(this, CapabilityId.ICapXResolution, ValueExtensions.ConvertToFix32,
-                        value => new TWCapability(CapabilityId.ICapXResolution, new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        })));
-            }
-        }
-
-
-        private CapWrapper<TWFix32> _yResolution;
-
-        /// <summary>
-        /// Gets the property to work with image vertical resolution for the current source.
-        /// </summary>
-        /// <value>
-        /// The image vertical resolution.
-        /// </value>
-        public CapWrapper<TWFix32> CapImageYResolution
-        {
-            get
-            {
-                return _yResolution ?? (_yResolution = new CapWrapper<TWFix32>(this, CapabilityId.ICapYResolution, ValueExtensions.ConvertToFix32,
-                        value => new TWCapability(CapabilityId.ICapYResolution, new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        })));
-            }
-        }
-
-
         private CapWrapper<BoolType> _borderDetect;
 
         /// <summary>
@@ -429,7 +730,7 @@ namespace NTwain
         /// <value>
         /// The auto border detection flag.
         /// </value>
-        public CapWrapper<BoolType> CapImageAutomaticBorderDetection
+        public ICapWrapper<BoolType> CapImageAutomaticBorderDetection
         {
             get
             {
@@ -459,7 +760,33 @@ namespace NTwain
 
         #endregion
 
-        #region other caps
+        #region general caps
+
+        #region mandatory
+
+        private CapWrapper<int> _xferCount;
+
+        /// <summary>
+        /// Gets the property to work with xfer count for the current source.
+        /// </summary>
+        /// <value>
+        /// The xfer count.
+        /// </value>
+        public ICapWrapper<int> CapXferCount
+        {
+            get
+            {
+                return _xferCount ?? (_xferCount = new CapWrapper<int>(this, CapabilityId.CapXferCount, ValueExtensions.ConvertToEnum<int>, value =>
+                        new TWCapability(CapabilityId.CapXferCount, new TWOneValue
+                        {
+                            Item = value > 0 ? (uint)value : uint.MaxValue,
+                            ItemType = ItemType.UInt16
+                        })));
+            }
+        }
+
+        #endregion
+
 
         private CapWrapper<Duplex> _duplex;
 
@@ -469,7 +796,7 @@ namespace NTwain
         /// <value>
         /// The duplex mode.
         /// </value>
-        public CapWrapper<Duplex> CapDuplex
+        public IReadOnlyCapWrapper<Duplex> CapDuplex
         {
             get
             {
@@ -485,7 +812,7 @@ namespace NTwain
         /// <value>
         /// The duplex enabled flag.
         /// </value>
-        public CapWrapper<BoolType> CapDuplexEnabled
+        public ICapWrapper<BoolType> CapDuplexEnabled
         {
             get
             {
@@ -498,28 +825,6 @@ namespace NTwain
             }
         }
 
-
-        private CapWrapper<int> _xferCount;
-
-        /// <summary>
-        /// Gets the property to work with xfer count for the current source.
-        /// </summary>
-        /// <value>
-        /// The xfer count.
-        /// </value>
-        public CapWrapper<int> CapXferCount
-        {
-            get
-            {
-                return _xferCount ?? (_xferCount = new CapWrapper<int>(this, CapabilityId.CapXferCount, ValueExtensions.ConvertToEnum<int>, value =>
-                        new TWCapability(CapabilityId.CapXferCount, new TWOneValue
-                        {
-                            Item = value > 0 ? (uint)value : uint.MaxValue,
-                            ItemType = ItemType.UInt16
-                        })));
-            }
-        }
-
         private CapWrapper<BoolType> _feederLoaded;
 
         /// <summary>
@@ -528,7 +833,7 @@ namespace NTwain
         /// <value>
         /// The feeder loaded flag.
         /// </value>
-        public CapWrapper<BoolType> CapFeederLoaded
+        public IReadOnlyCapWrapper<BoolType> CapFeederLoaded
         {
             get
             {
@@ -544,7 +849,7 @@ namespace NTwain
         /// <value>
         /// The feeder enabled flag.
         /// </value>
-        public CapWrapper<BoolType> CapFeederEnabled
+        public ICapWrapper<BoolType> CapFeederEnabled
         {
             get
             {
@@ -597,7 +902,7 @@ namespace NTwain
         /// <value>
         /// The clear page flag.
         /// </value>
-        public CapWrapper<BoolType> CapClearPage
+        public ICapWrapper<BoolType> CapClearPage
         {
             get
             {
@@ -618,7 +923,7 @@ namespace NTwain
         /// <value>
         /// The feed page flag.
         /// </value>
-        public CapWrapper<BoolType> CapFeedPage
+        public ICapWrapper<BoolType> CapFeedPage
         {
             get
             {
@@ -639,7 +944,7 @@ namespace NTwain
         /// <value>
         /// The rewind page flag.
         /// </value>
-        public CapWrapper<BoolType> CapRewindPage
+        public ICapWrapper<BoolType> CapRewindPage
         {
             get
             {
@@ -660,7 +965,7 @@ namespace NTwain
         /// <value>
         /// The indicators flag.
         /// </value>
-        public CapWrapper<BoolType> CapIndicators
+        public ICapWrapper<BoolType> CapIndicators
         {
             get
             {
@@ -681,7 +986,7 @@ namespace NTwain
         /// <value>
         /// The paper sensor flag.
         /// </value>
-        public CapWrapper<BoolType> CapPaperDetectable
+        public IReadOnlyCapWrapper<BoolType> CapPaperDetectable
         {
             get
             {
@@ -697,7 +1002,7 @@ namespace NTwain
         /// <value>
         /// The UI controllable flag.
         /// </value>
-        public CapWrapper<BoolType> CapUIControllable
+        public IReadOnlyCapWrapper<BoolType> CapUIControllable
         {
             get
             {
@@ -713,7 +1018,7 @@ namespace NTwain
         /// <value>
         /// The devince online flag.
         /// </value>
-        public CapWrapper<BoolType> CapDeviceOnline
+        public IReadOnlyCapWrapper<BoolType> CapDeviceOnline
         {
             get
             {
@@ -729,7 +1034,7 @@ namespace NTwain
         /// <value>
         /// The thumbnails enabled flag.
         /// </value>
-        public CapWrapper<BoolType> CapThumbnailsEnabled
+        public ICapWrapper<BoolType> CapThumbnailsEnabled
         {
             get
             {
@@ -750,7 +1055,7 @@ namespace NTwain
         /// <value>
         /// The UI only flag.
         /// </value>
-        public CapWrapper<BoolType> CapEnableDSUIOnly
+        public IReadOnlyCapWrapper<BoolType> CapEnableDSUIOnly
         {
             get
             {
@@ -766,7 +1071,7 @@ namespace NTwain
         /// <value>
         /// The custom data flag.
         /// </value>
-        public CapWrapper<BoolType> CapCustomDSData
+        public IReadOnlyCapWrapper<BoolType> CapCustomDSData
         {
             get
             {
@@ -782,7 +1087,7 @@ namespace NTwain
         /// <value>
         /// The job control option.
         /// </value>
-        public CapWrapper<JobControl> CapJobControl
+        public ICapWrapper<JobControl> CapJobControl
         {
             get
             {
@@ -803,7 +1108,7 @@ namespace NTwain
         /// <value>
         /// The alarm volume.
         /// </value>
-        public CapWrapper<int> CapAlarmVolume
+        public ICapWrapper<int> CapAlarmVolume
         {
             get
             {
@@ -824,7 +1129,7 @@ namespace NTwain
         ///// <value>
         ///// The auto capture count.
         ///// </value>
-        //public CapWrapper<int> CapAutomaticCapture
+        //public ICapWrapper<int> CapAutomaticCapture
         //{
         //    get
         //    {

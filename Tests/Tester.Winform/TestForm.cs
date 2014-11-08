@@ -307,7 +307,7 @@ namespace Tester.Winform
             _loadingCaps = false;
         }
 
-        private void LoadPaperSize(CapWrapper<SupportedSize> cap)
+        private void LoadPaperSize(ICapWrapper<SupportedSize> cap)
         {
             var list = cap.Get();
             comboSize.DataSource = list;
@@ -324,13 +324,13 @@ namespace Tester.Winform
         }
 
 
-        private void LoadDuplex(CapWrapper<BoolType> cap)
+        private void LoadDuplex(ICapWrapper<BoolType> cap)
         {
             ckDuplex.Checked = cap.GetCurrent() == BoolType.True;
         }
 
 
-        private void LoadDPI(CapWrapper<TWFix32> cap)
+        private void LoadDPI(ICapWrapper<TWFix32> cap)
         {
             // only allow dpi of certain values for those source that lists everything
             var list = cap.Get().Where(dpi => (dpi % 50) == 0).ToList();
@@ -342,7 +342,7 @@ namespace Tester.Winform
             }
         }
 
-        private void LoadDepth(CapWrapper<PixelType> cap)
+        private void LoadDepth(ICapWrapper<PixelType> cap)
         {
             var list = cap.Get();
             comboDepth.DataSource = list;

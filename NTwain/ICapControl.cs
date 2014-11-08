@@ -47,24 +47,8 @@ namespace NTwain
         /// <summary>
         /// Resets all values and constraints to power-on defaults.
         /// </summary>
-        /// <param name="capabilityId">The capability identifier.</param>
         /// <returns></returns>
-        ReturnCode CapResetAll(CapabilityId capabilityId);
+        ReturnCode CapResetAll();
 
-
-        //CapabilityControl<XferMech> CapAudioXferMech { get; }
-        //CapabilityControl<BoolType> CapDuplexEnabled { get; }
-        //CapabilityControl<BoolType> CapFeederEnabled { get; }
-        //CapabilityControl<BoolType> CapImageAutoDeskew { get; }
-        //CapabilityControl<BoolType> CapImageAutomaticBorderDetection { get; }
-        //CapabilityControl<BoolType> CapImageAutoRotate { get; }
-        //CapabilityControl<CompressionType> CapImageCompression { get; }
-        //CapabilityControl<FileFormat> CapImageFileFormat { get; }
-        //CapabilityControl<PixelType> CapImagePixelType { get; }
-        //CapabilityControl<SupportedSize> CapImageSupportedSize { get; }
-        //CapabilityControl<XferMech> CapImageXferMech { get; }
-        //CapabilityControl<TWFix32> CapImageXResolution { get; }
-        //CapabilityControl<TWFix32> CapImageYResolution { get; }
-        //CapabilityControl<int> CapXferCount { get; }
     }
 }

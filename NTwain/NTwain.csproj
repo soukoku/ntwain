@@ -78,6 +78,7 @@
     <Compile Include="Internals\WinMemoryManager.cs" />
     <Compile Include="Internals\UnsafeNativeMethods.cs" />
     <Compile Include="Internals\IWinMessageFilter.cs" />
+    <Compile Include="ICapWrapper.cs" />
     <Compile Include="MessageLoopHooks.cs" />
     <Compile Include="PlatformInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

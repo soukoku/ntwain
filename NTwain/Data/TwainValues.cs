@@ -1792,6 +1792,7 @@ namespace NTwain.Data
         ICapCustHalftone = 0x1104,
         ICapExposureTime = 0x1105,
         ICapFilter = 0x1106,
+        [Obsolete("Use ICapFlashUsed2 instead.")]
         ICapFlashUsed = 0x1107,
         ICapGamma = 0x1108,
         ICapHalftones = 0x1109,

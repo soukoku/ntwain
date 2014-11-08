@@ -81,6 +81,9 @@
     <Compile Include="..\NTwain\ICapControl.cs">
       <Link>ICapControl.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\ICapWrapper.cs">
+      <Link>ICapWrapper.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\IDataSource.cs">
       <Link>IDataSource.cs</Link>
     </Compile>
