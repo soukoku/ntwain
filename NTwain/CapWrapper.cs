@@ -24,9 +24,9 @@ namespace NTwain
 
 
         ICapControl _source;
-        Func<object, TValue> _convertRoutine;
+        Func<object, TValue> _getConvertRoutine;
         Func<TValue, ReturnCode> _setCustomRoutine;
-        Func<TValue, TWCapability> _setProvider; // an simplified way to set() that only needs on cap value
+        Func<TValue, TWOneValue> _setOneValueFunc;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CapWrapper{TValue}" /> class.
@@ -46,7 +46,7 @@ namespace NTwain
             if (getConversionRoutine == null) { throw new ArgumentNullException("valueConversionRoutine"); }
 
             _source = source;
-            _convertRoutine = getConversionRoutine;
+            _getConvertRoutine = getConversionRoutine;
             Capability = capability;
             SupportedActions = source.CapQuerySupport(capability);
         }
@@ -68,15 +68,15 @@ namespace NTwain
         /// </exception>
         public CapWrapper(ICapControl source, CapabilityId capability,
             Func<object, TValue> getConversionRoutine,
-            Func<TValue, TWCapability> setValueProvider)
+            Func<TValue, TWOneValue> setValueProvider)
         {
             if (source == null) { throw new ArgumentNullException("source"); }
             if (getConversionRoutine == null) { throw new ArgumentNullException("valueConversionRoutine"); }
             if (setValueProvider == null) { throw new ArgumentNullException("setValueProvider"); }
 
             _source = source;
-            _convertRoutine = getConversionRoutine;
-            _setProvider = setValueProvider;
+            _getConvertRoutine = getConversionRoutine;
+            _setOneValueFunc = setValueProvider;
             Capability = capability;
             SupportedActions = source.CapQuerySupport(capability);
         }
@@ -104,7 +104,7 @@ namespace NTwain
             if (setValueRoutine == null) { throw new ArgumentNullException("setValueRoutine"); }
 
             _source = source;
-            _convertRoutine = getConversionRoutine;
+            _getConvertRoutine = getConversionRoutine;
             _setCustomRoutine = setValueRoutine;
             Capability = capability;
             SupportedActions = source.CapQuerySupport(capability);
@@ -206,13 +206,13 @@ namespace NTwain
         /// </value>
         public bool CanSet { get { return Supports(QuerySupports.Set); } }
 
-        ///// <summary>
-        ///// Gets a value indicating whether <see cref="SetConstraint"/> is supported.
-        ///// </summary>
-        ///// <value>
-        /////   <c>true</c> if this capability can set constraint; otherwise, <c>false</c>.
-        ///// </value>
-        //public bool CanSetConstraint { get { return Supports(QuerySupports.SetConstraint); } }
+        /// <summary>
+        /// Gets a value indicating whether <see cref="SetConstraint"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can set constraint; otherwise, <c>false</c>.
+        /// </value>
+        public bool CanSetConstraint { get { return Supports(QuerySupports.SetConstraint); } }
 
         #endregion
 
@@ -226,7 +226,7 @@ namespace NTwain
         {
             if (CanGetDefault)
             {
-                return _convertRoutine(_source.CapGetDefault(Capability));
+                return _getConvertRoutine(_source.CapGetDefault(Capability));
             }
             return default(TValue);
         }
@@ -239,7 +239,7 @@ namespace NTwain
         {
             if (CanGetCurrent)
             {
-                return _convertRoutine(_source.CapGetCurrent(Capability));
+                return _getConvertRoutine(_source.CapGetCurrent(Capability));
             }
             return default(TValue);
         }
@@ -252,7 +252,7 @@ namespace NTwain
         {
             if (CanGet)
             {
-                return _source.CapGet(Capability).Select(o => _convertRoutine(o)).ToList();
+                return _source.CapGet(Capability).Select(o => _getConvertRoutine(o)).ToList();
             }
             return new List<TValue>();
         }
@@ -350,7 +350,7 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Sets the current value of this capability.
+        /// Simplified version that sets the current value of this capability.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
@@ -363,9 +363,9 @@ namespace NTwain
                 {
                     rc = _setCustomRoutine(value);
                 }
-                else if (_setProvider != null)
+                else if (_setOneValueFunc != null)
                 {
-                    using (var cap = _setProvider(value))
+                    using (var cap = new TWCapability(Capability, _setOneValueFunc(value)))
                     {
                         rc = _source.DGControl.Capability.Set(cap);
                     }
@@ -374,6 +374,59 @@ namespace NTwain
             return rc;
         }
 
+        /// <summary>
+        /// Sets the constraint value of this capability.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public ReturnCode SetConstraint(TWOneValue value)
+        {
+            ReturnCode rc = ReturnCode.Failure;
+            if (CanSetConstraint)
+            {
+                using (var cap = new TWCapability(Capability, value))
+                {
+                    rc = _source.DGControl.Capability.SetConstraint(cap);
+                }
+            }
+            return rc;
+        }
+
+        /// <summary>
+        /// Sets the constraint value of this capability.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public ReturnCode SetConstraint(TWEnumeration value)
+        {
+            ReturnCode rc = ReturnCode.Failure;
+            if (CanSetConstraint)
+            {
+                using (var cap = new TWCapability(Capability, value))
+                {
+                    rc = _source.DGControl.Capability.SetConstraint(cap);
+                }
+            }
+            return rc;
+        }
+
+        /// <summary>
+        /// Sets the constraint value of this capability.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public ReturnCode SetConstraint(TWRange value)
+        {
+            ReturnCode rc = ReturnCode.Failure;
+            if (CanSetConstraint)
+            {
+                using (var cap = new TWCapability(Capability, value))
+                {
+                    rc = _source.DGControl.Capability.SetConstraint(cap);
+                }
+            }
+            return rc;
+        }
 
         #endregion
     }

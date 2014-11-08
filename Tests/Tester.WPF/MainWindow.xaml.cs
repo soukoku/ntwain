@@ -411,7 +411,7 @@ namespace Tester.WPF
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap).CastToEnum<BitDepthReduction>();
                         break;
                     case CapabilityId.ICapBitOrder:
-                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap).CastToEnum<BitOrder>();
+                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImageBitOrder.Get();
                         break;
                     case CapabilityId.ICapBitOrderCodes:
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);
@@ -420,7 +420,7 @@ namespace Tester.WPF
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImageBrightness.Get();
                         break;
                     case CapabilityId.ICapCCITTKFactor:
-                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);
+                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImageCCITTKFactor.Get();
                         break;
                     case CapabilityId.ICapColorManagementEnabled:
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);
@@ -501,13 +501,13 @@ namespace Tester.WPF
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImageLameState.Get();
                         break;
                     case CapabilityId.ICapLightPath:
-                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap).CastToEnum<LightPath>();
+                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImageLightPath.Get();
                         break;
                     case CapabilityId.ICapLightSource:
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImageLightSource.Get();
                         break;
                     case CapabilityId.ICapMaxFrames:
-                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);
+                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImageMaxFrames.Get();
                         break;
                     case CapabilityId.ICapMinimumHeight:
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);
@@ -553,7 +553,7 @@ namespace Tester.WPF
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImagePhysicalWidth.Get();
                         break;
                     case CapabilityId.ICapPixelFlavor:
-                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap).CastToEnum<PixelFlavor>();
+                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImagePixelFlavor.Get();
                         break;
                     case CapabilityId.ICapPixelFlavorCodes:
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);
@@ -562,10 +562,10 @@ namespace Tester.WPF
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImagePixelType.Get();
                         break;
                     case CapabilityId.ICapPlanarChunky:
-                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap).CastToEnum<PlanarChunky>();
+                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImagePlanarChunky.Get();
                         break;
                     case CapabilityId.ICapRotation:
-                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap).CastToEnum<Rotation>();
+                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImageRotation.Get();
                         break;
                     case CapabilityId.ICapShadow:
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImageShadow.Get();
@@ -586,7 +586,7 @@ namespace Tester.WPF
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);
                         break;
                     case CapabilityId.ICapTiles:
-                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);
+                        CapDetailList.ItemsSource = _twainVM.CurrentSource.CapImageTiles.Get();
                         break;
                     case CapabilityId.ICapTimeFill:
                         CapDetailList.ItemsSource = _twainVM.CurrentSource.CapGet(cap);

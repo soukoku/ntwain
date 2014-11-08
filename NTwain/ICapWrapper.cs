@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Data;
+using System;
 namespace NTwain
 {
 
@@ -140,16 +141,45 @@ namespace NTwain
         bool CanSet { get; }
 
         /// <summary>
+        /// Gets a value indicating whether <see cref="SetConstraint"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can set constraint; otherwise, <c>false</c>.
+        /// </value>
+        bool CanSetConstraint { get; }
+
+        /// <summary>
         /// Resets the current value to power-on default.
         /// </summary>
         /// <returns></returns>
         NTwain.Data.ReturnCode Reset();
 
         /// <summary>
-        /// Sets the current value of this capability.
+        /// Simplified version that sets the current value of this capability.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
         NTwain.Data.ReturnCode Set(TValue value);
+
+        /// <summary>
+        /// Sets the constraint value of this capability.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        ReturnCode SetConstraint(TWOneValue value);
+
+        /// <summary>
+        /// Sets the constraint value of this capability.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        ReturnCode SetConstraint(TWEnumeration value);
+
+        /// <summary>
+        /// Sets the constraint value of this capability.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        ReturnCode SetConstraint(TWRange value);
     }
 }
