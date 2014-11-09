@@ -654,7 +654,6 @@ namespace NTwain.Data
         public TWCapability(CapabilityId capability, TWOneValue value, IMemoryManager memoryManager)
         {
             Capability = capability;
-            ContainerType = ContainerType.OneValue;
             SetOneValue(value, memoryManager);
         }
 
@@ -675,7 +674,6 @@ namespace NTwain.Data
         public TWCapability(CapabilityId capability, TWEnumeration value, IMemoryManager memoryManager)
         {
             Capability = capability;
-            ContainerType = ContainerType.Enum;
             SetEnumValue(value, memoryManager);
         }
 
@@ -696,8 +694,27 @@ namespace NTwain.Data
         public TWCapability(CapabilityId capability, TWRange value, IMemoryManager memoryManager)
         {
             Capability = capability;
-            ContainerType = ContainerType.Range;
             SetRangeValue(value, memoryManager);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWCapability" /> class.
+        /// </summary>
+        /// <param name="capability">The capability.</param>
+        /// <param name="value">The value.</param>
+        public TWCapability(CapabilityId capability, TWArray value)
+            : this(capability, value, PlatformInfo.Current.MemoryManager) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWCapability" /> class.
+        /// </summary>
+        /// <param name="capability">The capability.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="memoryManager">The memory manager.</param>
+        public TWCapability(CapabilityId capability, TWArray value, IMemoryManager memoryManager)
+        {
+            Capability = capability;
+            SetArrayValue(value, memoryManager);
         }
         #endregion
 
@@ -759,7 +776,6 @@ namespace NTwain.Data
             memoryManager.Unlock(baseAddr);
         }
 
-
         void SetRangeValue(TWRange value, IMemoryManager memoryManager)
         {
             if (value == null) { throw new ArgumentNullException("value"); }
@@ -774,6 +790,28 @@ namespace NTwain.Data
                 Marshal.StructureToPtr(value, _hContainer, false);
             }
         }
+
+        void SetArrayValue(TWArray value, IMemoryManager memoryManager)
+        {
+            if (value == null) { throw new ArgumentNullException("value"); }
+            ContainerType = ContainerType.Array;
+
+            Int32 valueSize = 6 + value.ItemList.Length * TypeReader.GetItemTypeSize(value.ItemType);
+
+            int offset = 0;
+            _hContainer = memoryManager.Allocate((uint)valueSize);
+            IntPtr baseAddr = memoryManager.Lock(_hContainer);
+
+            // can't safely use StructureToPtr here so write it our own
+            WriteValue(baseAddr, ref offset, ItemType.UInt16, value.ItemType);
+            WriteValue(baseAddr, ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
+            foreach (var item in value.ItemList)
+            {
+                WriteValue(baseAddr, ref offset, value.ItemType, item);
+            }
+            memoryManager.Unlock(baseAddr);
+        }
+
         #endregion
 
         #region writes

@@ -1,5 +1,6 @@
 ﻿using NTwain.Data;
 using System;
+using System.Collections.Generic;
 namespace NTwain
 {
 
@@ -58,18 +59,43 @@ namespace NTwain
         bool CanGetLabelEnum { get; }
 
         /// <summary>
+        /// Gets a value indicating whether <see cref="Reset"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can reset; otherwise, <c>false</c>.
+        /// </value>
+        bool CanReset { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="Set"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can set; otherwise, <c>false</c>.
+        /// </value>
+        bool CanSet { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="SetConstraint"/> is supported.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this capability can set constraint; otherwise, <c>false</c>.
+        /// </value>
+        bool CanSetConstraint { get; }
+
+
+        /// <summary>
         /// Gets the capability.
         /// </summary>
         /// <value>
         /// The capability.
         /// </value>
-        NTwain.Data.CapabilityId Capability { get; }
+        CapabilityId Capability { get; }
 
         /// <summary>
         /// Gets all the possible values of this capability.
         /// </summary>
         /// <returns></returns>
-        System.Collections.Generic.IList<TValue> Get();
+        IList<TValue> Get();
 
         /// <summary>
         /// Gets the current value of this capability.
@@ -99,7 +125,7 @@ namespace NTwain
         /// [Experimental] Gets the display names for possible values of this capability.
         /// </summary>
         /// <returns></returns>
-        System.Collections.Generic.IList<string> GetLabelEnum();
+        IList<string> GetLabelEnum();
 
         /// <summary>
         /// Gets a value indicating whether this capability is supported.
@@ -115,7 +141,7 @@ namespace NTwain
         /// <value>
         /// The supported actions.
         /// </value>
-        NTwain.Data.QuerySupports SupportedActions { get; }
+        QuerySupports SupportedActions { get; }
     }
 
     /// <summary>
@@ -125,41 +151,23 @@ namespace NTwain
     public interface ICapWrapper<TValue> : IReadOnlyCapWrapper<TValue>
     {
         /// <summary>
-        /// Gets a value indicating whether <see cref="Reset"/> is supported.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this capability can reset; otherwise, <c>false</c>.
-        /// </value>
-        bool CanReset { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether <see cref="Set"/> is supported.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this capability can set; otherwise, <c>false</c>.
-        /// </value>
-        bool CanSet { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether <see cref="SetConstraint"/> is supported.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this capability can set constraint; otherwise, <c>false</c>.
-        /// </value>
-        bool CanSetConstraint { get; }
-
-        /// <summary>
         /// Resets the current value to power-on default.
         /// </summary>
         /// <returns></returns>
-        NTwain.Data.ReturnCode Reset();
+        ReturnCode Reset();
 
         /// <summary>
         /// Simplified version that sets the current value of this capability.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        NTwain.Data.ReturnCode Set(TValue value);
+        ReturnCode Set(TValue value);/// <summary>
+                                                 /// 
+        /// A version of Set that uses an array.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        ReturnCode Set(TWArray value);
 
         /// <summary>
         /// Sets the constraint value of this capability.

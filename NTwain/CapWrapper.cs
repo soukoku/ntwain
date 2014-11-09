@@ -354,6 +354,7 @@ namespace NTwain
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
+        /// <exception cref="System.InvalidOperationException">Simple Set() is not defined for this capability.</exception>
         public ReturnCode Set(TValue value)
         {
             ReturnCode rc = ReturnCode.Failure;
@@ -369,6 +370,28 @@ namespace NTwain
                     {
                         rc = _source.DGControl.Capability.Set(cap);
                     }
+                }
+                else
+                {
+                    throw new InvalidOperationException("Simple Set() is not defined for this capability.");
+                }
+            }
+            return rc;
+        }
+
+        /// <summary>
+        /// A version of Set that uses an array.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public ReturnCode Set(TWArray value)
+        {
+            ReturnCode rc = ReturnCode.Failure;
+            if (CanSet)
+            {
+                using (var cap = new TWCapability(Capability, value))
+                {
+                    rc = _source.DGControl.Capability.Set(cap);
                 }
             }
             return rc;

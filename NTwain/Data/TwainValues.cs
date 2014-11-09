@@ -225,7 +225,7 @@ namespace NTwain.Data
     /// Corresponds to TWBP_* values.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
-    public enum BlankPage : short
+    public enum BlankPage //: short
     {
         Invalid = 0,
         Disable = -2,

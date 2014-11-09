@@ -286,22 +286,22 @@ namespace Tester.Winform
             var src = _twain.CurrentSource;
             var caps = src.SupportedCaps;
             _loadingCaps = true;
-            if (groupDepth.Enabled = src.CapImagePixelType.IsSupported)
+            if (groupDepth.Enabled = src.ICapPixelType.IsSupported)
             {
-                LoadDepth(src.CapImagePixelType);
+                LoadDepth(src.ICapPixelType);
             }
-            if (groupDPI.Enabled = src.CapImageXResolution.IsSupported && src.CapImageYResolution.IsSupported)
+            if (groupDPI.Enabled = src.ICapXResolution.IsSupported && src.ICapYResolution.IsSupported)
             {
-                LoadDPI(src.CapImageXResolution);
+                LoadDPI(src.ICapXResolution);
             }
             // TODO: find out if this is how duplex works or also needs the other option
             if (groupDuplex.Enabled = src.CapDuplexEnabled.IsSupported)
             {
                 LoadDuplex(src.CapDuplexEnabled);
             }
-            if (groupSize.Enabled = src.CapImageSupportedSize.IsSupported)
+            if (groupSize.Enabled = src.ICapSupportedSizes.IsSupported)
             {
-                LoadPaperSize(src.CapImageSupportedSize);
+                LoadPaperSize(src.ICapSupportedSizes);
             }
             btnAllSettings.Enabled = caps.Contains(CapabilityId.CapEnableDSUIOnly);
             _loadingCaps = false;
@@ -363,7 +363,7 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (SupportedSize)comboSize.SelectedItem;
-                _twain.CurrentSource.CapImageSupportedSize.Set(sel);
+                _twain.CurrentSource.ICapSupportedSizes.Set(sel);
             }
         }
 
@@ -372,7 +372,7 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (PixelType)comboDepth.SelectedItem;
-                _twain.CurrentSource.CapImagePixelType.Set(sel);
+                _twain.CurrentSource.ICapPixelType.Set(sel);
             }
         }
 
@@ -381,8 +381,8 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (TWFix32)comboDPI.SelectedItem;
-                _twain.CurrentSource.CapImageXResolution.Set(sel);
-                _twain.CurrentSource.CapImageYResolution.Set(sel);
+                _twain.CurrentSource.ICapXResolution.Set(sel);
+                _twain.CurrentSource.ICapYResolution.Set(sel);
             }
         }
 
