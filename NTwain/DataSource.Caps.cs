@@ -166,8 +166,6 @@ namespace NTwain
 
         #endregion
 
-        #region high-level caps stuff
-
         #region audio caps
 
         private CapWrapper<XferMech> _audXferMech;
@@ -347,7 +345,26 @@ namespace NTwain
             }
         }
 
-        // TODO: add ICapCustHalftone
+        private CapWrapper<byte> _custHalftone;
+
+        /// <summary>
+        /// Gets the property to work with image square-cell halftone for the current source.
+        /// </summary>
+        /// <value>
+        /// The image square-cell halftone.
+        /// </value>
+        public ICapWrapper<byte> ICapCustHalftone
+        {
+            get
+            {
+                return _custHalftone ?? (_custHalftone = new CapWrapper<byte>(this, CapabilityId.ICapCustHalftone, ValueExtensions.ConvertToEnum<byte>,
+                        value => new TWOneValue
+                        {
+                            Item = value,
+                            ItemType = ItemType.UInt8
+                        }));
+            }
+        }
 
         private CapWrapper<TWFix32> _exposureTime;
 
@@ -1697,6 +1714,227 @@ namespace NTwain
             }
         }
 
+        private CapWrapper<BoolType> _cropUseFrame;
+
+        /// <summary>
+        /// Gets the property to work with image auto crop flag for the current source.
+        /// </summary>
+        /// <value>
+        /// The image auto crop flag.
+        /// </value>
+        public IReadOnlyCapWrapper<BoolType> ICapAutomaticCropUsesFrame
+        {
+            get
+            {
+                return _cropUseFrame ?? (_cropUseFrame = new CapWrapper<BoolType>(this, CapabilityId.ICapAutomaticCropUsesFrame, ValueExtensions.ConvertToEnum<BoolType>));
+            }
+        }
+
+        private CapWrapper<BoolType> _lengthDetect;
+
+        /// <summary>
+        /// Gets the property to work with image auto length detection flag for the current source.
+        /// </summary>
+        /// <value>
+        /// The image auto length detection flag.
+        /// </value>
+        public ICapWrapper<BoolType> ICapAutomaticLengthDetection
+        {
+            get
+            {
+                return _lengthDetect ?? (_lengthDetect = new CapWrapper<BoolType>(this, CapabilityId.ICapAutomaticLengthDetection, ValueExtensions.ConvertToEnum<BoolType>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.Bool
+                    }));
+            }
+        }
+
+        private CapWrapper<BoolType> _autoColor;
+
+        /// <summary>
+        /// Gets the property to work with image auto color detection flag for the current source.
+        /// </summary>
+        /// <value>
+        /// The image auto color detection flag.
+        /// </value>
+        public ICapWrapper<BoolType> ICapAutomaticColorEnabled
+        {
+            get
+            {
+                return _autoColor ?? (_autoColor = new CapWrapper<BoolType>(this, CapabilityId.ICapAutomaticColorEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.Bool
+                    }));
+            }
+        }
+
+        private CapWrapper<PixelType> _autoColorNonPixel;
+
+        /// <summary>
+        /// Gets the property to work with image auto non-color pixel type for the current source.
+        /// </summary>
+        /// <value>
+        /// The image auto non-color pixel type.
+        /// </value>
+        public ICapWrapper<PixelType> ICapAutomaticColorNonColorPixelType
+        {
+            get
+            {
+                return _autoColorNonPixel ?? (_autoColorNonPixel = new CapWrapper<PixelType>(this, CapabilityId.ICapAutomaticColorNonColorPixelType, ValueExtensions.ConvertToEnum<PixelType>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.UInt16
+                    }));
+            }
+        }
+
+        private CapWrapper<BoolType> _colorMgmt;
+
+        /// <summary>
+        /// Gets the property to work with image color management flag for the current source.
+        /// </summary>
+        /// <value>
+        /// The image color management flag.
+        /// </value>
+        public ICapWrapper<BoolType> ICapColorManagementEnabled
+        {
+            get
+            {
+                return _colorMgmt ?? (_colorMgmt = new CapWrapper<BoolType>(this, CapabilityId.ICapColorManagementEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.Bool
+                    }));
+            }
+        }
+
+        private CapWrapper<ImageMerge> _imgMerge;
+
+        /// <summary>
+        /// Gets the property to work with image merge option for the current source.
+        /// </summary>
+        /// <value>
+        /// The image merge option.
+        /// </value>
+        public ICapWrapper<ImageMerge> ICapImageMerge
+        {
+            get
+            {
+                return _imgMerge ?? (_imgMerge = new CapWrapper<ImageMerge>(this, CapabilityId.ICapImageMerge, ValueExtensions.ConvertToEnum<ImageMerge>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.UInt16
+                    }));
+            }
+        }
+
+        private CapWrapper<TWFix32> _mergeHeight;
+
+        /// <summary>
+        /// Gets the property to work with image merge height threshold for the current source.
+        /// </summary>
+        /// <value>
+        /// The image merge height threshold.
+        /// </value>
+        public ICapWrapper<TWFix32> ICapImageMergeHeightThreshold
+        {
+            get
+            {
+                return _mergeHeight ?? (_mergeHeight = new CapWrapper<TWFix32>(this, CapabilityId.ICapImageMergeHeightThreshold, ValueExtensions.ConvertToFix32,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        }));
+            }
+        }
+
+        private CapWrapper<ExtendedImageInfo> _supportedExtInfo;
+
+        /// <summary>
+        /// Gets the property to get supported ext image info for the current source.
+        /// </summary>
+        /// <value>
+        /// The supported ext image info.
+        /// </value>
+        public IReadOnlyCapWrapper<ExtendedImageInfo> ICapSupportedExtImageInfo
+        {
+            get
+            {
+                return _supportedExtInfo ?? (_supportedExtInfo = new CapWrapper<ExtendedImageInfo>(this, CapabilityId.ICapSupportedExtImageInfo, ValueExtensions.ConvertToEnum<ExtendedImageInfo>));
+            }
+        }
+
+        private CapWrapper<FilmType> _filmType;
+
+        /// <summary>
+        /// Gets the property to work with image film type for the current source.
+        /// </summary>
+        /// <value>
+        /// The image film type.
+        /// </value>
+        public ICapWrapper<FilmType> ICapFilmType
+        {
+            get
+            {
+                return _filmType ?? (_filmType = new CapWrapper<FilmType>(this, CapabilityId.ICapFilmType, ValueExtensions.ConvertToEnum<FilmType>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.UInt16
+                    }));
+            }
+        }
+
+        private CapWrapper<Mirror> _mirror;
+
+        /// <summary>
+        /// Gets the property to work with image mirror option for the current source.
+        /// </summary>
+        /// <value>
+        /// The image mirror option.
+        /// </value>
+        public ICapWrapper<Mirror> ICapMirror
+        {
+            get
+            {
+                return _mirror ?? (_mirror = new CapWrapper<Mirror>(this, CapabilityId.ICapMirror, ValueExtensions.ConvertToEnum<Mirror>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.UInt16
+                    }));
+            }
+        }
+
+        private CapWrapper<JpegSubsampling> _jpegSubSampling;
+
+        /// <summary>
+        /// Gets the property to work with image jpeg sub sampling for the current source.
+        /// </summary>
+        /// <value>
+        /// The image jpeg sub sampling.
+        /// </value>
+        public ICapWrapper<JpegSubsampling> ICapJpegSubsampling
+        {
+            get
+            {
+                return _jpegSubSampling ?? (_jpegSubSampling = new CapWrapper<JpegSubsampling>(this, CapabilityId.ICapJpegSubsampling, ValueExtensions.ConvertToEnum<JpegSubsampling>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.UInt16
+                    }));
+            }
+        }
+
         #endregion
 
         #region general caps
@@ -2082,8 +2320,6 @@ namespace NTwain
         //    }
         //}
 
-
-        #endregion
 
         #endregion
 

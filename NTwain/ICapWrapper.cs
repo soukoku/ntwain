@@ -170,6 +170,13 @@ namespace NTwain
         ReturnCode Set(TWArray value);
 
         /// <summary>
+        /// A version of Set that uses an enumeration.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        ReturnCode Set(TWEnumeration value);
+
+        /// <summary>
         /// Sets the constraint value of this capability.
         /// </summary>
         /// <param name="value">The value.</param>

@@ -398,6 +398,24 @@ namespace NTwain
         }
 
         /// <summary>
+        /// A version of Set that uses an enumeration.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public ReturnCode Set(TWEnumeration value)
+        {
+            ReturnCode rc = ReturnCode.Failure;
+            if (CanSet)
+            {
+                using (var cap = new TWCapability(Capability, value))
+                {
+                    rc = _source.DGControl.Capability.Set(cap);
+                }
+            }
+            return rc;
+        }
+
+        /// <summary>
         /// Sets the constraint value of this capability.
         /// </summary>
         /// <param name="value">The value.</param>
