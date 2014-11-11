@@ -45,7 +45,7 @@
   <ItemGroup>
     <Reference Include="CommonWin32, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a0a4edcfe233918d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\CommonWin32.2.0.5.4\lib\net35-Client\CommonWin32.dll</HintPath>
+      <HintPath>..\..\packages\CommonWin32.2.0.5.5\lib\net35-Client\CommonWin32.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.0.2.32240, Culture=neutral, PublicKeyToken=0e453835af4ee6ce, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

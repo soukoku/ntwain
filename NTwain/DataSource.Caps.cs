@@ -1964,59 +1964,7 @@ namespace NTwain
 
         #endregion
 
-
-        private CapWrapper<Duplex> _duplex;
-
-        /// <summary>
-        /// Gets the property to see what's the duplex mode for the current source.
-        /// </summary>
-        /// <value>
-        /// The duplex mode.
-        /// </value>
-        public IReadOnlyCapWrapper<Duplex> CapDuplex
-        {
-            get
-            {
-                return _duplex ?? (_duplex = new CapWrapper<Duplex>(this, CapabilityId.CapDuplex, ValueExtensions.ConvertToEnum<Duplex>));
-            }
-        }
-
-        private CapWrapper<BoolType> _duplexEnabled;
-
-        /// <summary>
-        /// Gets the property to work with duplex enabled flag for the current source.
-        /// </summary>
-        /// <value>
-        /// The duplex enabled flag.
-        /// </value>
-        public ICapWrapper<BoolType> CapDuplexEnabled
-        {
-            get
-            {
-                return _duplexEnabled ?? (_duplexEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapDuplexEnabled, ValueExtensions.ConvertToEnum<BoolType>,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,
-                            ItemType = ItemType.Bool
-                        }));
-            }
-        }
-
-        private CapWrapper<BoolType> _feederLoaded;
-
-        /// <summary>
-        /// Gets the property to work with feeder loaded flag for the current source.
-        /// </summary>
-        /// <value>
-        /// The feeder loaded flag.
-        /// </value>
-        public IReadOnlyCapWrapper<BoolType> CapFeederLoaded
-        {
-            get
-            {
-                return _feederLoaded ?? (_feederLoaded = new CapWrapper<BoolType>(this, CapabilityId.CapFeederLoaded, ValueExtensions.ConvertToEnum<BoolType>));
-            }
-        }
+        // TODO: add CAP_AUTHOR,CAP_CAPTION
 
         private CapWrapper<BoolType> _feederEnabled;
 
@@ -2052,23 +2000,93 @@ namespace NTwain
                         }
                         // to really use feeder we must also set autofeed or autoscan, but only
                         // for one of them since setting autoscan also sets autofeed
-                        if (SupportedCaps.Contains(CapabilityId.CapAutoScan))
+                        if (CapAutoScan.CanSet)
                         {
-                            using (TWCapability autoScan = new TWCapability(CapabilityId.CapAutoScan, one))
-                            {
-                                rc = _session.DGControl.Capability.Set(autoScan);
-                            }
+                            rc = CapAutoScan.Set(value);
                         }
-                        else if (SupportedCaps.Contains(CapabilityId.CapAutoFeed))
+                        else if (CapAutoFeed.CanSet)
                         {
-                            using (TWCapability autoScan = new TWCapability(CapabilityId.CapAutoFeed, one))
-                            {
-                                rc = _session.DGControl.Capability.Set(autoScan);
-                            }
+                            rc = CapAutoFeed.Set(value);
                         }
 
                         return rc;
                     }));
+            }
+        }
+
+        private CapWrapper<BoolType> _feederLoaded;
+
+        /// <summary>
+        /// Gets the property to work with feeder loaded flag for the current source.
+        /// </summary>
+        /// <value>
+        /// The feeder loaded flag.
+        /// </value>
+        public IReadOnlyCapWrapper<BoolType> CapFeederLoaded
+        {
+            get
+            {
+                return _feederLoaded ?? (_feederLoaded = new CapWrapper<BoolType>(this, CapabilityId.CapFeederLoaded, ValueExtensions.ConvertToEnum<BoolType>));
+            }
+        }
+
+        // TODO: add CAP_TIMEDATE
+
+        private CapWrapper<CapabilityId> _supportedCaps;
+
+        /// <summary>
+        /// Gets the supported caps for the current source.
+        /// </summary>
+        /// <value>
+        /// The supported caps.
+        /// </value>
+        public IReadOnlyCapWrapper<CapabilityId> CapSupportedCaps
+        {
+            get
+            {
+                return _supportedCaps ?? (_supportedCaps = new CapWrapper<CapabilityId>(this, CapabilityId.CapSupportedCaps, ValueExtensions.ConvertToEnum<CapabilityId>));
+            }
+        }
+
+        private CapWrapper<CapabilityId> _extendedCaps;
+
+        /// <summary>
+        /// Gets the extended caps for the current source.
+        /// </summary>
+        /// <value>
+        /// The extended caps.
+        /// </value>
+        public ICapWrapper<CapabilityId> CapExtendedCaps
+        {
+            get
+            {
+                return _extendedCaps ?? (_extendedCaps = new CapWrapper<CapabilityId>(this, CapabilityId.CapExtendedCaps, ValueExtensions.ConvertToEnum<CapabilityId>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.UInt16
+                    }));
+            }
+        }
+
+        private CapWrapper<BoolType> _autoFeed;
+
+        /// <summary>
+        /// Gets the property to work with auto feed page flag for the current source.
+        /// </summary>
+        /// <value>
+        /// The auto feed flag.
+        /// </value>
+        public ICapWrapper<BoolType> CapAutoFeed
+        {
+            get
+            {
+                return _autoFeed ?? (_autoFeed = new CapWrapper<BoolType>(this, CapabilityId.CapAutoFeed, ValueExtensions.ConvertToEnum<BoolType>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.Bool
+                        }));
             }
         }
 
@@ -2204,6 +2222,27 @@ namespace NTwain
             }
         }
 
+        private CapWrapper<BoolType> _autoScan;
+
+        /// <summary>
+        /// Gets the property to work with auto scan page flag for the current source.
+        /// </summary>
+        /// <value>
+        /// The auto scan flag.
+        /// </value>
+        public ICapWrapper<BoolType> CapAutoScan
+        {
+            get
+            {
+                return _autoScan ?? (_autoScan = new CapWrapper<BoolType>(this, CapabilityId.CapAutoScan, ValueExtensions.ConvertToEnum<BoolType>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.Bool
+                        }));
+            }
+        }
+
         private CapWrapper<BoolType> _thumbsEnabled;
 
         /// <summary>
@@ -2217,6 +2256,43 @@ namespace NTwain
             get
             {
                 return _thumbsEnabled ?? (_thumbsEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapThumbnailsEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.Bool
+                        }));
+            }
+        }
+
+        private CapWrapper<Duplex> _duplex;
+
+        /// <summary>
+        /// Gets the property to see what's the duplex mode for the current source.
+        /// </summary>
+        /// <value>
+        /// The duplex mode.
+        /// </value>
+        public IReadOnlyCapWrapper<Duplex> CapDuplex
+        {
+            get
+            {
+                return _duplex ?? (_duplex = new CapWrapper<Duplex>(this, CapabilityId.CapDuplex, ValueExtensions.ConvertToEnum<Duplex>));
+            }
+        }
+
+        private CapWrapper<BoolType> _duplexEnabled;
+
+        /// <summary>
+        /// Gets the property to work with duplex enabled flag for the current source.
+        /// </summary>
+        /// <value>
+        /// The duplex enabled flag.
+        /// </value>
+        public ICapWrapper<BoolType> CapDuplexEnabled
+        {
+            get
+            {
+                return _duplexEnabled ?? (_duplexEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapDuplexEnabled, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2257,6 +2333,27 @@ namespace NTwain
             }
         }
 
+        private CapWrapper<uint> _endorser;
+
+        /// <summary>
+        /// Gets the property to work with endorser for the current source.
+        /// </summary>
+        /// <value>
+        /// The endorser option.
+        /// </value>
+        public ICapWrapper<uint> CapEndorser
+        {
+            get
+            {
+                return _endorser ?? (_endorser = new CapWrapper<uint>(this, CapabilityId.CapEndorser, ValueExtensions.ConvertToEnum<uint>,
+                        value => new TWOneValue
+                        {
+                            Item = value,
+                            ItemType = ItemType.UInt32
+                        }));
+            }
+        }
+
         private CapWrapper<JobControl> _jobControl;
 
         /// <summary>
@@ -2270,6 +2367,27 @@ namespace NTwain
             get
             {
                 return _jobControl ?? (_jobControl = new CapWrapper<JobControl>(this, CapabilityId.CapJobControl, ValueExtensions.ConvertToEnum<JobControl>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<AlarmType> _alarms;
+
+        /// <summary>
+        /// Gets the property to work with alarms for the current source.
+        /// </summary>
+        /// <value>
+        /// The alarms.
+        /// </value>
+        public ICapWrapper<AlarmType> CapAlarms
+        {
+            get
+            {
+                return _alarms ?? (_alarms = new CapWrapper<AlarmType>(this, CapabilityId.CapAlarms, ValueExtensions.ConvertToEnum<AlarmType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2299,27 +2417,202 @@ namespace NTwain
             }
         }
 
-        //private CapWrapper<int> _autoCapture;
+        private CapWrapper<int> _autoCapture;
 
-        ///// <summary>
-        ///// Gets the property to work with auto capture count for the current source.
-        ///// </summary>
-        ///// <value>
-        ///// The auto capture count.
-        ///// </value>
-        //public ICapWrapper<int> CapAutomaticCapture
-        //{
-        //    get
-        //    {
-        //        return _autoCapture ?? (_autoCapture = new CapWrapper<int>(this, CapabilityId.CapAutomaticCapture, ValueExtensions.ConvertToEnum<int>,
-        //                new TWCapability(CapabilityId.CapAutomaticCapture, new TWOneValue
-        //                {
-        //                    Item = (uint)value,
-        //                    ItemType = ItemType.Int32
-        //                }));
-        //    }
-        //}
+        /// <summary>
+        /// Gets the property to work with auto capture count for the current source.
+        /// </summary>
+        /// <value>
+        /// The auto capture count.
+        /// </value>
+        public ICapWrapper<int> CapAutomaticCapture
+        {
+            get
+            {
+                return _autoCapture ?? (_autoCapture = new CapWrapper<int>(this, CapabilityId.CapAutomaticCapture, ValueExtensions.ConvertToEnum<int>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.Int32
+                        }));
+            }
+        }
 
+        private CapWrapper<int> _timeBeforeCap;
+
+        /// <summary>
+        /// Gets the property to work with the time before first capture (milliseconds) for the current source.
+        /// </summary>
+        /// <value>
+        /// The time before first capture.
+        /// </value>
+        public ICapWrapper<int> CapTimeBeforeFirstCapture
+        {
+            get
+            {
+                return _timeBeforeCap ?? (_timeBeforeCap = new CapWrapper<int>(this, CapabilityId.CapTimeBeforeFirstCapture, ValueExtensions.ConvertToEnum<int>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.Int32
+                        }));
+            }
+        }
+
+        private CapWrapper<int> _timeBetweenCap;
+
+        /// <summary>
+        /// Gets the property to work with the time between captures (milliseconds) for the current source.
+        /// </summary>
+        /// <value>
+        /// The time between captures.
+        /// </value>
+        public ICapWrapper<int> CapTimeBetweenCaptures
+        {
+            get
+            {
+                return _timeBetweenCap ?? (_timeBetweenCap = new CapWrapper<int>(this, CapabilityId.CapTimeBetweenCaptures, ValueExtensions.ConvertToEnum<int>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.Int32
+                        }));
+            }
+        }
+
+        private CapWrapper<ClearBuffer> _clearBuff;
+
+        /// <summary>
+        /// Gets the property to work with the clear buffers option for the current source.
+        /// </summary>
+        /// <value>
+        /// The clear buffers option.
+        /// </value>
+        public ICapWrapper<ClearBuffer> CapClearBuffers
+        {
+            get
+            {
+                return _clearBuff ?? (_clearBuff = new CapWrapper<ClearBuffer>(this, CapabilityId.CapClearBuffers, ValueExtensions.ConvertToEnum<ClearBuffer>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<uint> _maxBatchBuff;
+
+        /// <summary>
+        /// Gets the property to work with the max buffered pages for the current source.
+        /// </summary>
+        /// <value>
+        /// The max batch buffered pages.
+        /// </value>
+        public ICapWrapper<uint> CapMaxBatchBuffers
+        {
+            get
+            {
+                return _maxBatchBuff ?? (_maxBatchBuff = new CapWrapper<uint>(this, CapabilityId.CapMaxBatchBuffers, ValueExtensions.ConvertToEnum<uint>,
+                        value => new TWOneValue
+                        {
+                            Item = value,
+                            ItemType = ItemType.UInt32
+                        }));
+            }
+        }
+
+        // TODO: add CAP_DEVICETIMEDATE
+
+        private CapWrapper<PowerSupply> _powerSup;
+
+        /// <summary>
+        /// Gets the property to see current device's power supply.
+        /// </summary>
+        /// <value>
+        /// The power supply indicator.
+        /// </value>
+        public IReadOnlyCapWrapper<PowerSupply> CapPowerSupply
+        {
+            get
+            {
+                return _powerSup ?? (_powerSup = new CapWrapper<PowerSupply>(this, CapabilityId.CapPowerSupply, ValueExtensions.ConvertToEnum<PowerSupply>));
+            }
+        }
+
+        private CapWrapper<BoolType> _camPreviewUI;
+
+        /// <summary>
+        /// Gets the property to see whether device supports camera preview UI flag.
+        /// </summary>
+        /// <value>
+        /// The camera preview UI flag.
+        /// </value>
+        public IReadOnlyCapWrapper<BoolType> CapCameraPreviewUI
+        {
+            get
+            {
+                return _camPreviewUI ?? (_camPreviewUI = new CapWrapper<BoolType>(this, CapabilityId.CapCameraPreviewUI, ValueExtensions.ConvertToEnum<BoolType>));
+            }
+        }
+
+        private CapWrapper<DeviceEvent> _devEvent;
+
+        /// <summary>
+        /// Gets the property to work with the reported device events for the current source.
+        /// </summary>
+        /// <value>
+        /// The reported device events.
+        /// </value>
+        public ICapWrapper<DeviceEvent> CapDeviceEvent
+        {
+            get
+            {
+                return _devEvent ?? (_devEvent = new CapWrapper<DeviceEvent>(this, CapabilityId.CapDeviceEvent, ValueExtensions.ConvertToEnum<DeviceEvent>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<string> _serialNo;
+
+        /// <summary>
+        /// Gets the property for device serial number.
+        /// </summary>
+        /// <value>
+        /// The device serial number.
+        /// </value>
+        public IReadOnlyCapWrapper<string> CapSerialNumber
+        {
+            get
+            {
+                return _serialNo ?? (_serialNo = new CapWrapper<string>(this, CapabilityId.CapSerialNumber, value => { return value.ToString(); }));
+            }
+        }
+
+        private CapWrapper<Printer> _printer;
+
+        /// <summary>
+        /// Gets the property to work printer list for the current source.
+        /// </summary>
+        /// <value>
+        /// The printer list.
+        /// </value>
+        public ICapWrapper<Printer> CapPrinter
+        {
+            get
+            {
+                return _printer ?? (_printer = new CapWrapper<Printer>(this, CapabilityId.CapPrinter, ValueExtensions.ConvertToEnum<Printer>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
 
         #endregion
 

@@ -150,9 +150,9 @@ namespace NTwain
 
         static readonly CapabilityId[] _emptyCapList = new CapabilityId[0];
 
-        private IList<CapabilityId> _supportedCaps;
+        private IList<CapabilityId> _supportedCapsList;
         /// <summary>
-        /// Gets the supported caps for this source.
+        /// Gets the list of supported caps for this source.
         /// </summary>
         /// <value>
         /// The supported caps.
@@ -161,15 +161,15 @@ namespace NTwain
         {
             get
             {
-                if (_supportedCaps == null && _session.State > 3)
+                if (_supportedCapsList == null && _session.State > 3)
                 {
-                    _supportedCaps = CapGet(CapabilityId.CapSupportedCaps).CastToEnum<CapabilityId>(false);
+                    _supportedCapsList = CapSupportedCaps.Get();// CapGet(CapabilityId.CapSupportedCaps).CastToEnum<CapabilityId>(false);
                 }
-                return _supportedCaps ?? _emptyCapList;
+                return _supportedCapsList ?? _emptyCapList;
             }
             private set
             {
-                _supportedCaps = value;
+                _supportedCapsList = value;
                 //OnPropertyChanged("SupportedCaps");
             }
         }
