@@ -2044,7 +2044,7 @@ namespace NTwain
         {
             get
             {
-                return _supportedCaps ?? (_supportedCaps = new CapWrapper<CapabilityId>(this, CapabilityId.CapSupportedCaps, ValueExtensions.ConvertToEnum<CapabilityId>));
+                return _supportedCaps ?? (_supportedCaps = new CapWrapper<CapabilityId>(this, CapabilityId.CapSupportedCaps, value => value.ConvertToEnum<CapabilityId>(false)));
             }
         }
 
@@ -2060,7 +2060,7 @@ namespace NTwain
         {
             get
             {
-                return _extendedCaps ?? (_extendedCaps = new CapWrapper<CapabilityId>(this, CapabilityId.CapExtendedCaps, ValueExtensions.ConvertToEnum<CapabilityId>,
+                return _extendedCaps ?? (_extendedCaps = new CapWrapper<CapabilityId>(this, CapabilityId.CapExtendedCaps, value => value.ConvertToEnum<CapabilityId>(false),
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -2596,7 +2596,7 @@ namespace NTwain
         private CapWrapper<Printer> _printer;
 
         /// <summary>
-        /// Gets the property to work printer list for the current source.
+        /// Gets the property to work with printer list for the current source.
         /// </summary>
         /// <value>
         /// The printer list.
@@ -2611,6 +2611,700 @@ namespace NTwain
                             Item = (uint)value,
                             ItemType = ItemType.UInt16
                         }));
+            }
+        }
+
+        private CapWrapper<BoolType> _printerEnabled;
+
+        /// <summary>
+        /// Gets the property to work with printer enabled flag.
+        /// </summary>
+        /// <value>
+        /// The printer enabled flag.
+        /// </value>
+        public ICapWrapper<BoolType> CapPrinterEnabled
+        {
+            get
+            {
+                return _printerEnabled ?? (_printerEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapPrinterEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.Bool
+                    }));
+            }
+        }
+
+        private CapWrapper<int> _printerIndex;
+
+        /// <summary>
+        /// Gets the property to work with the starting printer index for the current source.
+        /// </summary>
+        /// <value>
+        /// The printer index.
+        /// </value>
+        public ICapWrapper<int> CapPrinterIndex
+        {
+            get
+            {
+                return _printerIndex ?? (_printerIndex = new CapWrapper<int>(this, CapabilityId.CapPrinterIndex, ValueExtensions.ConvertToEnum<int>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt32
+                        }));
+            }
+        }
+
+        private CapWrapper<PrinterMode> _printerMode;
+
+        /// <summary>
+        /// Gets the property to work with printer mode for the current source.
+        /// </summary>
+        /// <value>
+        /// The printer mode.
+        /// </value>
+        public ICapWrapper<PrinterMode> CapPrinterMode
+        {
+            get
+            {
+                return _printerMode ?? (_printerMode = new CapWrapper<PrinterMode>(this, CapabilityId.CapPrinterMode, ValueExtensions.ConvertToEnum<PrinterMode>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        // TODO: add CAP_PRINTERSTRING, CAP_PRINTERSUFFIX
+
+        private CapWrapper<Language> _language;
+
+        /// <summary>
+        /// Gets the property to work with string data language for the current source.
+        /// </summary>
+        /// <value>
+        /// The language.
+        /// </value>
+        public ICapWrapper<Language> CapLanguage
+        {
+            get
+            {
+                return _language ?? (_language = new CapWrapper<Language>(this, CapabilityId.CapLanguage, ValueExtensions.ConvertToEnum<Language>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<FeederAlignment> _feedAlign;
+
+        /// <summary>
+        /// Gets the property to work with feeder alignment for the current source.
+        /// </summary>
+        /// <value>
+        /// The feeder alignment.
+        /// </value>
+        public ICapWrapper<FeederAlignment> CapFeederAlignment
+        {
+            get
+            {
+                return _feedAlign ?? (_feedAlign = new CapWrapper<FeederAlignment>(this, CapabilityId.CapFeederAlignment, ValueExtensions.ConvertToEnum<FeederAlignment>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<FeederOrder> _feedOrder;
+
+        /// <summary>
+        /// Gets the property to work with feeder order for the current source.
+        /// </summary>
+        /// <value>
+        /// The feeder order.
+        /// </value>
+        public ICapWrapper<FeederOrder> CapFeederOrder
+        {
+            get
+            {
+                return _feedOrder ?? (_feedOrder = new CapWrapper<FeederOrder>(this, CapabilityId.CapFeederOrder, ValueExtensions.ConvertToEnum<FeederOrder>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<BoolType> _reacuireAllow;
+
+        /// <summary>
+        /// Gets the property to see whether device supports reacquire flag.
+        /// </summary>
+        /// <value>
+        /// The reacquire flag.
+        /// </value>
+        public IReadOnlyCapWrapper<BoolType> CapReacquireAllowed
+        {
+            get
+            {
+                return _reacuireAllow ?? (_reacuireAllow = new CapWrapper<BoolType>(this, CapabilityId.CapReacquireAllowed, ValueExtensions.ConvertToEnum<BoolType>));
+            }
+        }
+
+        private CapWrapper<int> _battMinutes;
+
+        /// <summary>
+        /// Gets the property to see the remaining battery power for the device.
+        /// </summary>
+        /// <value>
+        /// The battery minutes.
+        /// </value>
+        public IReadOnlyCapWrapper<int> CapBatteryMinutes
+        {
+            get
+            {
+                return _battMinutes ?? (_battMinutes = new CapWrapper<int>(this, CapabilityId.CapBatteryMinutes, ValueExtensions.ConvertToEnum<int>));
+            }
+        }
+
+        private CapWrapper<int> _battPercent;
+
+        /// <summary>
+        /// Gets the property to see the remaining battery percentage for the device.
+        /// </summary>
+        /// <value>
+        /// The battery percentage.
+        /// </value>
+        public IReadOnlyCapWrapper<int> CapBatteryPercentage
+        {
+            get
+            {
+                return _battPercent ?? (_battPercent = new CapWrapper<int>(this, CapabilityId.CapBatteryPercentage, ValueExtensions.ConvertToEnum<int>));
+            }
+        }
+
+        private CapWrapper<CameraSide> _camSide;
+
+        /// <summary>
+        /// Gets the property to work with camera side for the current source.
+        /// </summary>
+        /// <value>
+        /// The camera side.
+        /// </value>
+        public ICapWrapper<CameraSide> CapCameraSide
+        {
+            get
+            {
+                return _camSide ?? (_camSide = new CapWrapper<CameraSide>(this, CapabilityId.CapCameraSide, ValueExtensions.ConvertToEnum<CameraSide>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<Segmented> _segmented;
+
+        /// <summary>
+        /// Gets the property to work with segmentation setting for the current source.
+        /// </summary>
+        /// <value>
+        /// The segmentation setting.
+        /// </value>
+        public ICapWrapper<Segmented> CapSegmented
+        {
+            get
+            {
+                return _segmented ?? (_segmented = new CapWrapper<Segmented>(this, CapabilityId.CapSegmented, ValueExtensions.ConvertToEnum<Segmented>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<BoolType> _camEnabled;
+
+        /// <summary>
+        /// Gets the property to work with camera enabled flag.
+        /// </summary>
+        /// <value>
+        /// The camera enabled flag.
+        /// </value>
+        public ICapWrapper<BoolType> CapCameraEnabled
+        {
+            get
+            {
+                return _camEnabled ?? (_camEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapCameraEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.Bool
+                    }));
+            }
+        }
+
+        private CapWrapper<PixelType> _camOrder;
+
+        /// <summary>
+        /// Gets the property to work with camera order for the current source.
+        /// </summary>
+        /// <value>
+        /// The camera order setting.
+        /// </value>
+        public ICapWrapper<PixelType> CapCameraOrder
+        {
+            get
+            {
+                return _camOrder ?? (_camOrder = new CapWrapper<PixelType>(this, CapabilityId.CapCameraOrder, ValueExtensions.ConvertToEnum<PixelType>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<BoolType> _micrEnabled;
+
+        /// <summary>
+        /// Gets the property to work with check scanning support flag.
+        /// </summary>
+        /// <value>
+        /// The check scanning support flag.
+        /// </value>
+        public ICapWrapper<BoolType> CapMicrEnabled
+        {
+            get
+            {
+                return _micrEnabled ?? (_micrEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapMicrEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.Bool
+                    }));
+            }
+        }
+
+        private CapWrapper<BoolType> _feederPrep;
+
+        /// <summary>
+        /// Gets the property to work with feeder prep flag.
+        /// </summary>
+        /// <value>
+        /// The feeder prep flag.
+        /// </value>
+        public ICapWrapper<BoolType> CapFeederPrep
+        {
+            get
+            {
+                return _feederPrep ?? (_feederPrep = new CapWrapper<BoolType>(this, CapabilityId.CapFeederPrep, ValueExtensions.ConvertToEnum<BoolType>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.Bool
+                    }));
+            }
+        }
+
+        private CapWrapper<FeederPocket> _feedPocket;
+
+        /// <summary>
+        /// Gets the property to work with feeder pocket for the current source.
+        /// </summary>
+        /// <value>
+        /// The feeder pocket setting.
+        /// </value>
+        public ICapWrapper<FeederPocket> CapFeederPocket
+        {
+            get
+            {
+                return _feedPocket ?? (_feedPocket = new CapWrapper<FeederPocket>(this, CapabilityId.CapFeederPocket, ValueExtensions.ConvertToEnum<FeederPocket>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<BoolType> _autoMedium;
+
+        /// <summary>
+        /// Gets the property to work with auto-sense medium (paper source) flag.
+        /// </summary>
+        /// <value>
+        /// The auto-sense medium flag.
+        /// </value>
+        public ICapWrapper<BoolType> CapAutomaticSenseMedium
+        {
+            get
+            {
+                return _autoMedium ?? (_autoMedium = new CapWrapper<BoolType>(this, CapabilityId.CapAutomaticSenseMedium, ValueExtensions.ConvertToEnum<BoolType>,
+                    value => new TWOneValue
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.Bool
+                    }));
+            }
+        }
+
+        private CapWrapper<string> _custGuid;
+
+        /// <summary>
+        /// Gets the property for device interface guid.
+        /// </summary>
+        /// <value>
+        /// The device interface guid.
+        /// </value>
+        public IReadOnlyCapWrapper<string> CapCustomInterfaceGuid
+        {
+            get
+            {
+                return _custGuid ?? (_custGuid = new CapWrapper<string>(this, CapabilityId.CapCustomInterfaceGuid, value => { return value.ToString(); }));
+            }
+        }
+
+        private CapWrapper<CapabilityId> _supportedCapsUnique;
+
+        /// <summary>
+        /// Gets the supported caps for unique segments for the current source.
+        /// </summary>
+        /// <value>
+        /// The supported caps for unique segments.
+        /// </value>
+        public IReadOnlyCapWrapper<CapabilityId> CapSupportedCapsSegmentUnique
+        {
+            get
+            {
+                return _supportedCapsUnique ?? (_supportedCapsUnique = new CapWrapper<CapabilityId>(this, CapabilityId.CapSupportedCapsSegmentUnique, value => value.ConvertToEnum<CapabilityId>(false)));
+            }
+        }
+
+        private CapWrapper<uint> _supportedDat;
+
+        /// <summary>
+        /// Gets the supported caps for supported DATs.
+        /// </summary>
+        /// <value>
+        /// The supported DATs.
+        /// </value>
+        public IReadOnlyCapWrapper<uint> CapSupportedDATs
+        {
+            get
+            {
+                return _supportedDat ?? (_supportedDat = new CapWrapper<uint>(this, CapabilityId.CapSupportedDATs, ValueExtensions.ConvertToEnum<uint>));
+            }
+        }
+
+        private CapWrapper<DoubleFeedDetection> _dblFeedDetect;
+
+        /// <summary>
+        /// Gets the property to work with double feed detection option for the current source.
+        /// </summary>
+        /// <value>
+        /// The double feed detection option.
+        /// </value>
+        public ICapWrapper<DoubleFeedDetection> CapDoubleFeedDetection
+        {
+            get
+            {
+                return _dblFeedDetect ?? (_dblFeedDetect = new CapWrapper<DoubleFeedDetection>(this, CapabilityId.CapDoubleFeedDetection, ValueExtensions.ConvertToEnum<DoubleFeedDetection>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<TWFix32> _dblFeedLength;
+
+        /// <summary>
+        /// Gets the property to work with double feed detection length for the current source.
+        /// </summary>
+        /// <value>
+        /// The double feed detection length.
+        /// </value>
+        public ICapWrapper<TWFix32> CapDoubleFeedDetectionLength
+        {
+            get
+            {
+                return _dblFeedLength ?? (_dblFeedLength = new CapWrapper<TWFix32>(this, CapabilityId.CapDoubleFeedDetectionLength, ValueExtensions.ConvertToFix32,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        }));
+            }
+        }
+
+        private CapWrapper<DoubleFeedDetectionSensitivity> _dblFeedSensitivity;
+
+        /// <summary>
+        /// Gets the property to work with double feed detection sensitivity for the current source.
+        /// </summary>
+        /// <value>
+        /// The double feed detection sensitivity.
+        /// </value>
+        public ICapWrapper<DoubleFeedDetectionSensitivity> CapDoubleFeedDetectionSensitivity
+        {
+            get
+            {
+                return _dblFeedSensitivity ?? (_dblFeedSensitivity = new CapWrapper<DoubleFeedDetectionSensitivity>(this, CapabilityId.CapDoubleFeedDetectionSensitivity, ValueExtensions.ConvertToEnum<DoubleFeedDetectionSensitivity>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<DoubleFeedDetectionResponse> _dblFeedResp;
+
+        /// <summary>
+        /// Gets the property to work with double feed detection response for the current source.
+        /// </summary>
+        /// <value>
+        /// The double feed detection response.
+        /// </value>
+        public ICapWrapper<DoubleFeedDetectionResponse> CapDoubleFeedDetectionResponse
+        {
+            get
+            {
+                return _dblFeedResp ?? (_dblFeedResp = new CapWrapper<DoubleFeedDetectionResponse>(this, CapabilityId.CapDoubleFeedDetectionResponse, ValueExtensions.ConvertToEnum<DoubleFeedDetectionResponse>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<PaperHandling> _paperHandling;
+
+        /// <summary>
+        /// Gets the property to work with paper handling option for the current source.
+        /// </summary>
+        /// <value>
+        /// The paper handling option.
+        /// </value>
+        public ICapWrapper<PaperHandling> CapPaperHandling
+        {
+            get
+            {
+                return _paperHandling ?? (_paperHandling = new CapWrapper<PaperHandling>(this, CapabilityId.CapPaperHandling, ValueExtensions.ConvertToEnum<PaperHandling>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<IndicatorsMode> _indicatorMode;
+
+        /// <summary>
+        /// Gets the property to work with diplayed indicators for the current source.
+        /// </summary>
+        /// <value>
+        /// The diplayed indicators.
+        /// </value>
+        public ICapWrapper<IndicatorsMode> CapIndicatorsMode
+        {
+            get
+            {
+                return _indicatorMode ?? (_indicatorMode = new CapWrapper<IndicatorsMode>(this, CapabilityId.CapIndicatorsMode, ValueExtensions.ConvertToEnum<IndicatorsMode>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt16
+                        }));
+            }
+        }
+
+        private CapWrapper<TWFix32> _printVOffset;
+
+        /// <summary>
+        /// Gets the property to work with printer y-offset for the current source.
+        /// </summary>
+        /// <value>
+        /// The printer y-offset.
+        /// </value>
+        public ICapWrapper<TWFix32> CapPrinterVerticalOffset
+        {
+            get
+            {
+                return _printVOffset ?? (_printVOffset = new CapWrapper<TWFix32>(this, CapabilityId.CapPrinterVerticalOffset, ValueExtensions.ConvertToFix32,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,// ((uint)dpi) << 16;
+                            ItemType = ItemType.Fix32
+                        }));
+            }
+        }
+
+        private CapWrapper<int> _powerSaveTime;
+
+        /// <summary>
+        /// Gets the property to work with camera power down time (seconds) for the current source.
+        /// </summary>
+        /// <value>
+        /// The camera power down time.
+        /// </value>
+        public ICapWrapper<int> CapPowerSaveTime
+        {
+            get
+            {
+                return _powerSaveTime ?? (_powerSaveTime = new CapWrapper<int>(this, CapabilityId.CapPowerSaveTime, ValueExtensions.ConvertToEnum<int>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.Int32
+                        }));
+            }
+        }
+
+        private CapWrapper<int> _printCharRot;
+
+        /// <summary>
+        /// Gets the property to work with printer character rotation for the current source.
+        /// </summary>
+        /// <value>
+        /// The printer character rotation.
+        /// </value>
+        public ICapWrapper<int> CapPrinterCharRotation
+        {
+            get
+            {
+                return _printCharRot ?? (_printCharRot = new CapWrapper<int>(this, CapabilityId.CapPrinterCharRotation, ValueExtensions.ConvertToEnum<int>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt32
+                        }));
+            }
+        }
+
+        private CapWrapper<PrinterFontStyle> _printFontStyle;
+
+        /// <summary>
+        /// Gets the property to work with printer font style for the current source.
+        /// </summary>
+        /// <value>
+        /// The printer font style.
+        /// </value>
+        public ICapWrapper<PrinterFontStyle> CapPrinterFontStyle
+        {
+            get
+            {
+                return _printFontStyle ?? (_printFontStyle = new CapWrapper<PrinterFontStyle>(this, CapabilityId.CapPrinterFontStyle, ValueExtensions.ConvertToEnum<PrinterFontStyle>));
+            }
+        }
+
+        // TODO: add CAP_PRINTERINDEXLEADCHAR
+
+        private CapWrapper<uint> _printIdxMax;
+
+        /// <summary>
+        /// Gets the property to work with printer index max value for the current source.
+        /// </summary>
+        /// <value>
+        /// The printer index max value.
+        /// </value>
+        public ICapWrapper<uint> CapPrinterIndexMaxValue
+        {
+            get
+            {
+                return _printIdxMax ?? (_printIdxMax = new CapWrapper<uint>(this, CapabilityId.CapPrinterIndexMaxValue, ValueExtensions.ConvertToEnum<uint>,
+                        value => new TWOneValue
+                        {
+                            Item = value,
+                            ItemType = ItemType.UInt32
+                        }));
+            }
+        }
+
+        private CapWrapper<int> _printNumDigit;
+
+        /// <summary>
+        /// Gets the property to work with printer number digits value for the current source.
+        /// </summary>
+        /// <value>
+        /// The printer number digits value.
+        /// </value>
+        public ICapWrapper<int> CapPrinterIndexNumDigits
+        {
+            get
+            {
+                return _printNumDigit ?? (_printNumDigit = new CapWrapper<int>(this, CapabilityId.CapPrinterIndexNumDigits, ValueExtensions.ConvertToEnum<int>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt32
+                        }));
+            }
+        }
+
+        private CapWrapper<int> _printIdxStep;
+
+        /// <summary>
+        /// Gets the property to work with printer index step value for the current source.
+        /// </summary>
+        /// <value>
+        /// The printer index step value.
+        /// </value>
+        public ICapWrapper<int> CapPrinterIndexStep
+        {
+            get
+            {
+                return _printIdxStep ?? (_printIdxStep = new CapWrapper<int>(this, CapabilityId.CapPrinterIndexStep, ValueExtensions.ConvertToEnum<int>,
+                        value => new TWOneValue
+                        {
+                            Item = (uint)value,
+                            ItemType = ItemType.UInt32
+                        }));
+            }
+        }
+
+        private CapWrapper<PrinterIndexTrigger> _printIdxTrig;
+
+        /// <summary>
+        /// Gets the property to work with printer index trigger for the current source.
+        /// </summary>
+        /// <value>
+        /// The printer index trigger.
+        /// </value>
+        public ICapWrapper<PrinterIndexTrigger> CapPrinterIndexTrigger
+        {
+            get
+            {
+                return _printIdxTrig ?? (_printIdxTrig = new CapWrapper<PrinterIndexTrigger>(this, CapabilityId.CapPrinterIndexTrigger, ValueExtensions.ConvertToEnum<PrinterIndexTrigger>));
+            }
+        }
+
+        private CapWrapper<string> _printPreview;
+
+        /// <summary>
+        /// Gets the next print values.
+        /// </summary>
+        /// <value>
+        /// The next print values.
+        /// </value>
+        public IReadOnlyCapWrapper<string> CapPrinterStringPreview
+        {
+            get
+            {
+                return _printPreview ?? (_printPreview = new CapWrapper<string>(this, CapabilityId.CapPrinterStringPreview, value => { return value.ToString(); }));
             }
         }
 
