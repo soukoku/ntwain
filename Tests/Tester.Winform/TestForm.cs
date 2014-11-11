@@ -68,6 +68,8 @@ namespace Tester.Winform
             };
             _twain.DataTransferred += (s, e) =>
             {
+                Debug.WriteLine("Transferred data.");
+
                 // example on getting ext image info
                 var infos = e.GetExtImageInfo(ExtendedImageInfo.Camera).Where(it => it.ReturnCode == ReturnCode.Success);
                 foreach (var it in infos)
@@ -178,6 +180,8 @@ namespace Tester.Winform
         {
             if (_twain.State == 4)
             {
+                //_twain.CurrentSource.CapXferCount.Set(4);
+
                 _stopScan = false;
 
                 if (_twain.CurrentSource.SupportedCaps.Contains(CapabilityId.CapUIControllable))
