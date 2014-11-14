@@ -11,7 +11,7 @@ namespace Tester
     {
         static void Main(string[] args)
         {
-            if (PlatformInfo.Current.IsApp64bit)
+            if (PlatformInfo.Current.IsApp64Bit)
             {
                 Console.WriteLine("[64bit]");
             }

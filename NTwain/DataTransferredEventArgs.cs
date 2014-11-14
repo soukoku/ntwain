@@ -1,6 +1,7 @@
 ﻿using NTwain.Data;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace NTwain
@@ -105,7 +106,7 @@ namespace NTwain
                 var request = new TWExtImageInfo { NumInfos = (uint)infoIds.Length };
                 if (infoIds.Length > request.Info.Length)
                 {
-                    throw new InvalidOperationException(string.Format("Info ID array excdd maximum length of {0}.", request.Info.Length));
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Info ID array exceeded maximum length of {0}.", request.Info.Length));
                 }
 
                 for (int i = 0; i < infoIds.Length; i++)

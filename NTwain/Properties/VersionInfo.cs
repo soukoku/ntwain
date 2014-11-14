@@ -12,7 +12,7 @@ namespace NTwain
     /// <summary>
     /// Contains version info of this assembly.
     /// </summary>
-    public class NTwainVersionInfo
+    static class NTwainVersionInfo
     {
         /// <summary>
         /// The major release version number.
@@ -23,7 +23,7 @@ namespace NTwain
         /// <summary>
         /// The build release version number.
         /// </summary>
-        public const string Build = "3.2.0"; // change this for each nuget release
+        public const string Build = "3.2.1"; // change this for each nuget release
 
 
     }

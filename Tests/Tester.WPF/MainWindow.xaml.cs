@@ -25,7 +25,7 @@ namespace Tester.WPF
             InitializeComponent();
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                if (IntPtr.Size == 8)
+                if (PlatformInfo.Current.IsApp64Bit)
                 {
                     Title = Title + " (64bit)";
                 }

@@ -15,14 +15,6 @@ namespace NTwain
     /// <typeparam name="TValue">The TWAIN type of the value.</typeparam>
     public class CapWrapper<TValue> : NTwain.ICapWrapper<TValue>
     {
-        /// <summary>
-        /// Routine that does nothing.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        public static ReturnCode NoSetRoutine(TValue value) { return ReturnCode.Failure; }
-
-
         ICapControl _source;
         Func<object, TValue> _getConvertRoutine;
         Func<TValue, ReturnCode> _setCustomRoutine;
@@ -37,13 +29,13 @@ namespace NTwain
         /// <exception cref="System.ArgumentNullException">
         /// source
         /// or
-        /// valueConversionRoutine
+        /// getConversionRoutine
         /// </exception>
         public CapWrapper(ICapControl source, CapabilityId capability,
             Func<object, TValue> getConversionRoutine)
         {
             if (source == null) { throw new ArgumentNullException("source"); }
-            if (getConversionRoutine == null) { throw new ArgumentNullException("valueConversionRoutine"); }
+            if (getConversionRoutine == null) { throw new ArgumentNullException("getConversionRoutine"); }
 
             _source = source;
             _getConvertRoutine = getConversionRoutine;
@@ -62,7 +54,7 @@ namespace NTwain
         /// <exception cref="System.ArgumentNullException">
         /// source
         /// or
-        /// valueConversionRoutine
+        /// getConversionRoutine
         /// or
         /// setValueProvider
         /// </exception>
@@ -71,7 +63,7 @@ namespace NTwain
             Func<TValue, TWOneValue> setValueProvider)
         {
             if (source == null) { throw new ArgumentNullException("source"); }
-            if (getConversionRoutine == null) { throw new ArgumentNullException("valueConversionRoutine"); }
+            if (getConversionRoutine == null) { throw new ArgumentNullException("getConversionRoutine"); }
             if (setValueProvider == null) { throw new ArgumentNullException("setValueProvider"); }
 
             _source = source;
@@ -87,11 +79,11 @@ namespace NTwain
         /// <param name="source">The source.</param>
         /// <param name="capability">The capability.</param>
         /// <param name="getConversionRoutine">The value conversion routine in Get methods.</param>
-        /// <param name="setValueRoutine">Callback to perform set value. Pass <see cref="NoSetRoutine"/> to not do sets.</param>
+        /// <param name="setValueRoutine">Callback to perform set value.</param>
         /// <exception cref="System.ArgumentNullException">
         /// source
         /// or
-        /// valueConversionRoutine
+        /// getConversionRoutine
         /// or
         /// setValueRoutine
         /// </exception>
@@ -100,7 +92,7 @@ namespace NTwain
             Func<TValue, ReturnCode> setValueRoutine)
         {
             if (source == null) { throw new ArgumentNullException("source"); }
-            if (getConversionRoutine == null) { throw new ArgumentNullException("valueConversionRoutine"); }
+            if (getConversionRoutine == null) { throw new ArgumentNullException("getConversionRoutine"); }
             if (setValueRoutine == null) { throw new ArgumentNullException("setValueRoutine"); }
 
             _source = source;

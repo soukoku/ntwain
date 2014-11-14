@@ -28,7 +28,7 @@ namespace NTwain
         /// <value>
         /// <c>true</c> if the application is 64-bit; otherwise, <c>false</c>.
         /// </value>
-        bool IsApp64bit { get; }
+        bool IsApp64Bit { get; }
 
         /// <summary>
         /// Gets a value indicating whether this library is supported on current OS.

@@ -573,21 +573,21 @@ namespace NTwain.Data
             _callBackProc = callback;
         }
 
-        /// <summary>
-        /// An application defined reference constant.
-        /// </summary>
-        /// <value>
-        /// The reference constant.
-        /// </value>
-        public uint RefCon { get { return _refCon; } set { _refCon = value; } }
+        ///// <summary>
+        ///// An application defined reference constant.
+        ///// </summary>
+        ///// <value>
+        ///// The reference constant.
+        ///// </value>
+        //public uint RefCon { get { return _refCon; } set { _refCon = value; } }
 
-        /// <summary>
-        /// Initialized to any valid DG_CONTROL / DAT_NULL message.
-        /// </summary>
-        /// <value>
-        /// The message.
-        /// </value>
-        public short Message { get { return _message; } set { _message = value; } }
+        ///// <summary>
+        ///// Initialized to any valid DG_CONTROL / DAT_NULL message.
+        ///// </summary>
+        ///// <value>
+        ///// The message.
+        ///// </value>
+        //public short Message { get { return _message; } set { _message = value; } }
     }
     /// <summary>
     /// Used in the Callback mechanism for sending messages from the Source to the Application.
@@ -603,22 +603,22 @@ namespace NTwain.Data
             _callBackProc = callback;
         }
 
-        /// <summary>
-        /// An application defined reference constant. It has a different size on different
-        /// platforms.
-        /// </summary>
-        /// <value>
-        /// The reference constant.
-        /// </value>
-        public UIntPtr RefCon { get { return _refCon; } set { _refCon = value; } }
+        ///// <summary>
+        ///// An application defined reference constant. It has a different size on different
+        ///// platforms.
+        ///// </summary>
+        ///// <value>
+        ///// The reference constant.
+        ///// </value>
+        //public UIntPtr RefCon { get { return _refCon; } set { _refCon = value; } }
 
-        /// <summary>
-        /// Initialized to any valid DG_CONTROL / DAT_NULL message.
-        /// </summary>
-        /// <value>
-        /// The message.
-        /// </value>
-        public short Message { get { return _message; } set { _message = value; } }
+        ///// <summary>
+        ///// Initialized to any valid DG_CONTROL / DAT_NULL message.
+        ///// </summary>
+        ///// <value>
+        ///// The message.
+        ///// </value>
+        //public short Message { get { return _message; } set { _message = value; } }
     }
 
     /// <summary>
@@ -1460,7 +1460,7 @@ namespace NTwain.Data
         /// Try to reads the values from the <see cref="Item"/> property.
         /// </summary>
         /// <returns></returns>
-        public List<object> ReadValues()
+        public IList<object> ReadValues()
         {
             var values = new List<object>();
             if (NumItems > 0)
@@ -1566,7 +1566,12 @@ namespace NTwain.Data
         /// image information. The application should allocate memory and fill in the
         /// attribute tag for image information.
         /// </summary>
-        public uint NumInfos { get { return _numInfos; } set { _numInfos = value; } }
+        public uint NumInfos
+        {
+            //get { return _numInfos; } 
+            set { _numInfos = value; }
+        }
+
         /// <summary>
         /// Array of information.
         /// </summary>
@@ -2501,17 +2506,29 @@ namespace NTwain.Data
         /// interface. Otherwise, set to FALSE. Note that not all sources support ShowUI =
         /// FALSE.
         /// </summary>
-        public bool ShowUI { get { return _showUI > 0; } set { _showUI = value ? TwainConst.True : TwainConst.False; } }
+        public bool ShowUI
+        {
+            get { return _showUI > 0; }
+            set { _showUI = value ? TwainConst.True : TwainConst.False; }
+        }
         /// <summary>
         /// If ShowUI is TRUE, then an application setting this to TRUE requests the Source to
         /// run Modal.
         /// </summary>
-        public bool ModalUI { get { return _modalUI > 0; } set { _modalUI = value ? TwainConst.True : TwainConst.False; } }
+        public bool ModalUI
+        {
+            //get { return _modalUI > 0; } 
+            set { _modalUI = value ? TwainConst.True : TwainConst.False; }
+        }
         /// <summary>
         /// Microsoft Windows only: Application’s window handle. The Source designates
         /// the hWnd as its parent when creating the Source dialog.
         /// </summary>
-        public IntPtr hParent { get { return _hParent; } set { _hParent = value; } }
+        public IntPtr hParent
+        {
+            //get { return _hParent; } 
+            set { _hParent = value; }
+        }
     }
 
 

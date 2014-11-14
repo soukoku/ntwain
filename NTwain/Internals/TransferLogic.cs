@@ -278,7 +278,7 @@ namespace NTwain.Internals
                         var xrc = ReturnCode.Success;
                         do
                         {
-                            xrc = session.DGImage.ImageMemFileXfer.Get(xferInfo);
+                            xrc = session.DGImage.ImageMemXfer.Get(xferInfo);
 
                             if (xrc == ReturnCode.Success ||
                                 xrc == ReturnCode.XferDone)

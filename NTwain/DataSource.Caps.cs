@@ -19,12 +19,12 @@ namespace NTwain
         /// <summary>
         /// Gets the actual supported operations for a capability.
         /// </summary>
-        /// <param name="capId">The cap identifier.</param>
+        /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
-        public QuerySupports CapQuerySupport(CapabilityId capId)
+        public QuerySupports CapQuerySupport(CapabilityId capabilityId)
         {
             QuerySupports retVal = QuerySupports.None;
-            using (TWCapability cap = new TWCapability(capId))
+            using (TWCapability cap = new TWCapability(capabilityId))
             {
                 var rc = _session.DGControl.Capability.QuerySupport(cap);
                 if (rc == ReturnCode.Success)
@@ -43,11 +43,11 @@ namespace NTwain
         /// <summary>
         /// Gets the current value for a capability.
         /// </summary>
-        /// <param name="capId">The cap id.</param>
+        /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
-        public object CapGetCurrent(CapabilityId capId)
+        public object CapGetCurrent(CapabilityId capabilityId)
         {
-            using (TWCapability cap = new TWCapability(capId))
+            using (TWCapability cap = new TWCapability(capabilityId))
             {
                 var rc = _session.DGControl.Capability.GetCurrent(cap);
                 if (rc == ReturnCode.Success)
@@ -82,11 +82,11 @@ namespace NTwain
         /// <summary>
         /// Gets the default value for a capability.
         /// </summary>
-        /// <param name="capId">The cap id.</param>
+        /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
-        public object CapGetDefault(CapabilityId capId)
+        public object CapGetDefault(CapabilityId capabilityId)
         {
-            using (TWCapability cap = new TWCapability(capId))
+            using (TWCapability cap = new TWCapability(capabilityId))
             {
                 var rc = _session.DGControl.Capability.GetDefault(cap);
                 if (rc == ReturnCode.Success)
@@ -121,7 +121,7 @@ namespace NTwain
         /// <summary>
         /// A general method that tries to get capability values from current <see cref="DataSource" />.
         /// </summary>
-        /// <param name="capabilityId">The capability unique identifier.</param>
+        /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
         public IList<object> CapGet(CapabilityId capabilityId)
         {
@@ -153,7 +153,7 @@ namespace NTwain
         /// <summary>
         /// Resets the current value to power-on default.
         /// </summary>
-        /// <param name="capabilityId">The capability identifier.</param>
+        /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
         public ReturnCode CapReset(CapabilityId capabilityId)
         {

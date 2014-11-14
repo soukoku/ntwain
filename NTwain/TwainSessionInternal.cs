@@ -73,7 +73,8 @@ namespace NTwain
         }
 
         DGControl _dgControl;
-        DGControl ITripletControl.DGControl
+        DGControl ITripletControl.DGControl { get { return DGControl; } }
+        protected DGControl DGControl
         {
             get
             {
@@ -82,8 +83,10 @@ namespace NTwain
             }
         }
 
+
         DGImage _dgImage;
-        DGImage ITripletControl.DGImage
+        DGImage ITripletControl.DGImage { get { return DGImage; } }
+        protected DGImage DGImage
         {
             get
             {
@@ -93,7 +96,8 @@ namespace NTwain
         }
 
         DGCustom _dgCustom;
-        DGCustom ITripletControl.DGCustom
+        DGCustom ITripletControl.DGCustom { get { return DGCustom; } }
+        protected DGCustom DGCustom
         {
             get
             {

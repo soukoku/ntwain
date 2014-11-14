@@ -1179,7 +1179,7 @@ namespace NTwain.Data
         Antigua = 8091,
         Argentina = 54,
         Aruba = 297,
-        AscensionI = 247,
+        AscensionIsland = 247,
         Australia = 61,
         Austria = 43,
         Bahamas = 8092,
@@ -1194,7 +1194,7 @@ namespace NTwain.Data
         Bolivia = 591,
         Botswana = 267,
         Britain = 6,
-        BritVirginIs = 8095,
+        BritishVirginIslands = 8095,
         Brazil = 55,
         Brunei = 673,
         Bulgaria = 359,
@@ -1203,14 +1203,14 @@ namespace NTwain.Data
         Burundi = 1006,
         Camaroon = 237,
         Canada = 2,
-        CapeVerdeIs = 238,
-        CaymanIs = 8096,
-        CentralAfrep = 1007,
+        CapeVerdeIslands = 238,
+        CaymanIslands = 8096,
+        CentralAfricanRepublic = 1007,
         Chad = 1008,
         Chile = 56,
         China = 86,
-        ChristmasIs = 1009,
-        CocosLs = 1009,
+        ChristmasIsland = 1009,
+        CocosIslands = 1009,
         Colombia = 57,
         Comoros = 1010,
         Congo = 1011,
@@ -1966,7 +1966,7 @@ namespace NTwain.Data
     /// Corresponds to TWEJ_*.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
-    public enum TWEJ : ushort
+    public enum EndXferJob : ushort
     {
         None = 0x0000,
         MidSeparator = 0x0001,

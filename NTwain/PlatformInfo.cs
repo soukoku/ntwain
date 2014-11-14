@@ -25,7 +25,7 @@ namespace NTwain
 
         PlatformInfo()
         {
-            IsApp64bit = IntPtr.Size == 8;
+            IsApp64Bit = IntPtr.Size == 8;
 
             IsOnMono = Type.GetType("Mono.Runtime") != null;
             IsWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
@@ -36,7 +36,7 @@ namespace NTwain
                 var newDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_NEW_DSM_NAME);
                 var oldDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_OLD_DSM_NAME);
 
-                if (IsApp64bit)
+                if (IsApp64Bit)
                 {
                     ExpectedDsmPath = newDsmPath;
                     IsSupported = DsmExists = File.Exists(ExpectedDsmPath);
@@ -81,7 +81,7 @@ namespace NTwain
         /// <value>
         /// <c>true</c> if the application is 64-bit; otherwise, <c>false</c>.
         /// </value>
-        public bool IsApp64bit { get; private set; }
+        public bool IsApp64Bit { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether the applicable TWAIN DSM library exists in the operating system.

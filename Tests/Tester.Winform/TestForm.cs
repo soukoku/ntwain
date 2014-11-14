@@ -25,7 +25,7 @@ namespace Tester.Winform
         public TestForm()
         {
             InitializeComponent();
-            if (IntPtr.Size == 8)
+            if (NTwain.PlatformInfo.Current.IsApp64Bit)
             {
                 Text = Text + " (64bit)";
             }
