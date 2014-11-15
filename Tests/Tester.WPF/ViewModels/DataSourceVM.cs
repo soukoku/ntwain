@@ -12,7 +12,7 @@ namespace Tester.WPF
     /// <summary>
     /// Wraps a data source as view model.
     /// </summary>
-    class DSVM : ViewModelBase
+    class DataSourceVM : ViewModelBase
     {
         public DataSource DS { get; set; }
 
@@ -21,7 +21,7 @@ namespace Tester.WPF
         public string Protocol { get { return DS.ProtocolVersion.ToString(); } }
 
         ICollectionView _capView;
-        public DSVM()
+        public DataSourceVM()
         {
             Caps = new ObservableCollection<CapVM>();
             _capView = CollectionViewSource.GetDefaultView(Caps);

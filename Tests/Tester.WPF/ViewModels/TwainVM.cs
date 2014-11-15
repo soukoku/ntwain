@@ -9,39 +9,216 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Collections.ObjectModel;
+using GalaSoft.MvvmLight;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
+using ModernWPF;
+using ModernWPF.Messages;
 
 namespace Tester.WPF
 {
     /// <summary>
     /// Wraps the twain session as a view model for databinding.
     /// </summary>
-    class TwainVM : TwainSession
+    class TwainVM : ViewModelBase
     {
         public TwainVM()
-            : base(TWIdentity.CreateFromAssembly(DataGroups.Image | DataGroups.Audio, Assembly.GetEntryAssembly()))
         {
+            DataSources = new ObservableCollection<DataSourceVM>();
+            CapturedImages = new ObservableCollection<ImageSource>();
+
             //this.SynchronizationContext = SynchronizationContext.Current;
+            var appId = TWIdentity.CreateFromAssembly(DataGroups.Image | DataGroups.Audio, Assembly.GetEntryAssembly());
+            _session = new TwainSession(appId);
+            _session.TransferError += _session_TransferError;
+            _session.TransferReady += _session_TransferReady;
+            _session.DataTransferred += _session_DataTransferred;
+            _session.SourceDisabled += _session_SourceDisabled;
         }
 
-        private ImageSource _image;
+        TwainSession _session;
 
-        /// <summary>
-        /// Gets or sets the captured image.
-        /// </summary>
-        /// <value>
-        /// The image.
-        /// </value>
-        public ImageSource Image
+        #region properties
+
+        public string AppTitle
         {
-            get { return _image; }
+            get
+            {
+                if (NTwain.PlatformInfo.Current.IsApp64Bit)
+                {
+                    return "TWAIN Data Source Tester (64bit)";
+                }
+                else
+                {
+                    return "TWAIN Data Source Tester (32bit)";
+                }
+            }
+        }
+        public ObservableCollection<DataSourceVM> DataSources { get; private set; }
+        private DataSourceVM _selectedSource;
+
+        public DataSourceVM SelectedSource
+        {
+            get { return _selectedSource; }
             set
             {
-                _image = value;
-                OnPropertyChanged("Image");
+                if (_session.State == 4)
+                {
+                    _session.CurrentSource.Close();
+                }
+                _selectedSource = value;
+                RaisePropertyChanged(() => SelectedSource);
+                if (_selectedSource != null)
+                {
+                    _selectedSource.Open();
+                }
             }
         }
 
-        protected override void OnTransferError(TransferErrorEventArgs e)
+        public int State { get { return _session.State; } }
+
+        private IntPtr _winHandle;
+        public IntPtr WindowHandle
+        {
+            get { return _winHandle; }
+            set
+            {
+                _winHandle = value;
+                if (value == IntPtr.Zero)
+                {
+
+                }
+                else
+                {
+                    // use this for internal msg loop
+                    var rc = _session.Open();
+
+                    // use this to hook into current app loop
+                    //var rc = _session.Open(new WpfMessageLoopHook(value));
+
+                    if (rc == ReturnCode.Success)
+                    {
+                        ReloadSourcesCommand.Execute(null);
+                    }
+                }
+            }
+        }
+
+
+        private ICommand _showDriverCommand;
+        public ICommand ShowDriverCommand
+        {
+            get
+            {
+                return _showDriverCommand ?? (_showDriverCommand = new RelayCommand(() =>
+                {
+                    if (_session.State == 4)
+                    {
+                        var rc = _session.CurrentSource.Enable(SourceEnableMode.ShowUIOnly, false, WindowHandle);
+                    }
+                }, () =>
+                {
+                    return _session.State == 4 && _session.CurrentSource.CapEnableDSUIOnly.GetCurrent() == BoolType.True;
+                }));
+            }
+        }
+
+        private ICommand _captureCommand;
+        public ICommand CaptureCommand
+        {
+            get
+            {
+                return _captureCommand ?? (_captureCommand = new RelayCommand(() =>
+                {
+                    if (_session.State == 4)
+                    {
+                        //if (this.CurrentSource.ICapPixelType.Get().Contains(PixelType.BlackWhite))
+                        //{
+                        //    this.CurrentSource.ICapPixelType.Set(PixelType.BlackWhite);
+                        //}
+
+                        //if (this.CurrentSource.ICapXferMech.Get().Contains(XferMech.File))
+                        //{
+                        //    this.CurrentSource.ICapXferMech.Set(XferMech.File);
+                        //}
+
+                        var rc = _session.CurrentSource.Enable(SourceEnableMode.NoUI, false, WindowHandle);
+                    }
+                }, () =>
+                {
+                    return _session.State == 4;
+                }));
+            }
+        }
+
+
+        private ICommand _clearCommand;
+        public ICommand ClearCommand
+        {
+            get
+            {
+                return _clearCommand ?? (_clearCommand = new RelayCommand(() =>
+                {
+                    CapturedImages.Clear();
+                }, () =>
+                {
+                    return CapturedImages.Count > 0;
+                }));
+            }
+        }
+        private ICommand _reloadSrc;
+        public ICommand ReloadSourcesCommand
+        {
+            get
+            {
+                return _reloadSrc ?? (_reloadSrc = new RelayCommand(() =>
+                {
+                    DataSources.Clear();
+                    foreach (var s in _session.Select(s => new DataSourceVM { DS = s }))
+                    {
+                        DataSources.Add(s);
+                    }
+                }, () =>
+                {
+                    return _session.State > 2;
+                }));
+            }
+        }
+
+        /// <summary>
+        /// Gets the captured images.
+        /// </summary>
+        /// <value>
+        /// The captured images.
+        /// </value>
+        public ObservableCollection<ImageSource> CapturedImages { get; private set; }
+
+        public double MinThumbnailSize { get { return 50; } }
+        public double MaxThumbnailSize { get { return 300; } }
+
+        private double _thumbSize = 150;
+        public double ThumbnailSize
+        {
+            get { return _thumbSize; }
+            set
+            {
+                if (value > MaxThumbnailSize) { value = MaxThumbnailSize; }
+                else if (value < MinThumbnailSize) { value = MinThumbnailSize; }
+                _thumbSize = value;
+                RaisePropertyChanged(() => ThumbnailSize);
+            }
+        }
+
+
+        #endregion
+
+        void _session_SourceDisabled(object sender, EventArgs e)
+        {
+            Messenger.Default.Send(new RefreshCommandsMessage());
+        }
+
+        void _session_TransferError(object sender, TransferErrorEventArgs e)
         {
             App.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -66,25 +243,23 @@ namespace Tester.WPF
             }));
         }
 
-        protected override void OnTransferReady(TransferReadyEventArgs e)
+        void _session_TransferReady(object sender, TransferReadyEventArgs e)
         {
-            // set it up to use file xfer
-
-            if (this.CurrentSource.CapGetCurrent(CapabilityId.ICapXferMech).ConvertToEnum<XferMech>() == XferMech.File)
+            if (_session.CurrentSource.ICapXferMech.GetCurrent() == XferMech.File)
             {
-                var formats = this.CurrentSource.ICapImageFileFormat.Get();
+                var formats = _session.CurrentSource.ICapImageFileFormat.Get();
                 var wantFormat = formats.Contains(FileFormat.Tiff) ? FileFormat.Tiff : FileFormat.Bmp;
 
                 var fileSetup = new TWSetupFileXfer
                 {
                     Format = wantFormat,
-                    FileName = GetUniqueName(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test", ".tif")
+                    FileName = GetUniqueName(Path.GetTempPath(), "twain-test", "." + wantFormat)
                 };
-                var rc = this.CurrentSource.DGControl.SetupFileXfer.Set(fileSetup);
+                var rc = _session.CurrentSource.DGControl.SetupFileXfer.Set(fileSetup);
             }
         }
 
-        private string GetUniqueName(string dir, string name, string ext)
+        string GetUniqueName(string dir, string name, string ext)
         {
             var filePath = Path.Combine(dir, name + ext);
             int next = 1;
@@ -95,9 +270,22 @@ namespace Tester.WPF
             return filePath;
         }
 
-        protected override void OnDataTransferred(DataTransferredEventArgs e)
+        void _session_DataTransferred(object sender, DataTransferredEventArgs e)
         {
-            ImageSource img = null;
+            ImageSource img = GenerateThumbnail(e);
+            if (img != null)
+            {
+                App.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    CapturedImages.Add(img);
+                }));
+            }
+        }
+
+
+        ImageSource GenerateThumbnail(DataTransferredEventArgs e)
+        {
+            BitmapSource img = null;
             if (e.NativeData != IntPtr.Zero)
             {
                 img = e.NativeData.GetWPFBitmap();
@@ -106,35 +294,26 @@ namespace Tester.WPF
             {
                 img = new BitmapImage(new Uri(e.FileDataPath));
             }
+
             if (img != null)
             {
-                if (img.CanFreeze)
-                {
-                    img.Freeze();
-                }
-                App.Current.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    Image = img;
-                }));
+                // from http://stackoverflow.com/questions/18189501/create-thumbnail-image-directly-from-header-less-image-byte-array
+                var scale = MaxThumbnailSize / img.PixelWidth;
+                var transform = new ScaleTransform(scale, scale);
+                var thumbnail = new TransformedBitmap(img, transform);
+                img = new WriteableBitmap(new TransformedBitmap(img, transform));
+                img.Freeze();
             }
+            return img;
         }
 
-        public void TestCapture(IntPtr hwnd)
+        internal void CloseDown()
         {
-            if (State == 4)
+            if (_session.State == 4)
             {
-                //if (this.CurrentSource.ICapPixelType.Get().Contains(PixelType.BlackWhite))
-                //{
-                //    this.CurrentSource.ICapPixelType.Set(PixelType.BlackWhite);
-                //}
-
-                //if (this.CurrentSource.ICapXferMech.Get().Contains(XferMech.File))
-                //{
-                //    this.CurrentSource.ICapXferMech.Set(XferMech.File);
-                //}
-
-                var rc = this.CurrentSource.Enable(SourceEnableMode.NoUI, false, hwnd);
+                _session.CurrentSource.Close();
             }
+            _session.Close();
         }
     }
 }

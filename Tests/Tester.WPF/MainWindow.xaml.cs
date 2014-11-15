@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using ModernWPF.Controls;
+using ModernWPF.Messages;
 using NTwain;
 using NTwain.Data;
 using System;
@@ -26,29 +27,20 @@ namespace Tester.WPF
             InitializeComponent();
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                if (PlatformInfo.Current.IsApp64Bit)
-                {
-                    Title = Title + " (64bit)";
-                }
-                else
-                {
-                    Title = Title + " (32bit)";
-                }
+                _twainVM = this.DataContext as TwainVM;
 
-                _twainVM = new TwainVM();
-                this.DataContext = _twainVM;
-
+                Messenger.Default.Register<RefreshCommandsMessage>(this, m => m.HandleRefreshCommands());
                 Messenger.Default.Register<DialogMessage>(this, msg =>
                 {
                     if (Dispatcher.CheckAccess())
                     {
-                        ModernMessageBox.Show(this, msg.Content, msg.Caption, msg.Button, msg.Icon, msg.DefaultResult);
+                        this.HandleDialogMessageModern(msg);
                     }
                     else
                     {
                         Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            ModernMessageBox.Show(this, msg.Content, msg.Caption, msg.Button, msg.Icon, msg.DefaultResult);
+                            this.HandleDialogMessageModern(msg);
                         }));
                     }
                 });
@@ -61,48 +53,16 @@ namespace Tester.WPF
         }
         protected override void OnClosed(EventArgs e)
         {
-            if (_twainVM.State == 4)
-            {
-                _twainVM.CurrentSource.Close();
-            }
-            _twainVM.Close();
+            _twainVM.CloseDown();
             base.OnClosed(e);
         }
 
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
+            _twainVM.WindowHandle = new WindowInteropHelper(this).Handle;
 
-            // use this for internal msg loop
-            //var rc = _twainVM.Open();
-
-            // use this to hook into current app loop
-            var rc = _twainVM.Open(new WpfMessageLoopHook(new WindowInteropHelper(this).Handle));
-
-            if (rc == ReturnCode.Success)
-            {
-                SrcList.ItemsSource = _twainVM.Select(s => new DSVM { DS = s });
-            }
         }
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            _twainVM.TestCapture(new WindowInteropHelper(this).Handle);
-        }
-
-        private void SrcList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_twainVM.State == 4)
-            {
-                _twainVM.CurrentSource.Close();
-            }
-
-            var dsId = SrcList.SelectedItem as DSVM;
-            if (dsId != null)
-            {
-                dsId.Open();
-            }
-        }
-
 
         private void CapList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
