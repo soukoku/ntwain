@@ -123,15 +123,15 @@ namespace Tester.WPF
         {
             if (State == 4)
             {
-                if (this.CurrentSource.ICapPixelType.Get().Contains(PixelType.BlackWhite))
-                {
-                    this.CurrentSource.ICapPixelType.Set(PixelType.BlackWhite);
-                }
+                //if (this.CurrentSource.ICapPixelType.Get().Contains(PixelType.BlackWhite))
+                //{
+                //    this.CurrentSource.ICapPixelType.Set(PixelType.BlackWhite);
+                //}
 
-                if (this.CurrentSource.ICapXferMech.Get().Contains(XferMech.File))
-                {
-                    this.CurrentSource.ICapXferMech.Set(XferMech.File);
-                }
+                //if (this.CurrentSource.ICapXferMech.Get().Contains(XferMech.File))
+                //{
+                //    this.CurrentSource.ICapXferMech.Set(XferMech.File);
+                //}
 
                 var rc = this.CurrentSource.Enable(SourceEnableMode.NoUI, false, hwnd);
             }
