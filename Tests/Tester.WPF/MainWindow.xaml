@@ -7,6 +7,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -17,7 +18,7 @@
         </Grid.ColumnDefinitions>
 
         <Label Content="Sources"></Label>
-        <ListBox x:Name="SrcList" Grid.Row="1" Width="150"
+        <ListBox x:Name="SrcList" Grid.Row="1" Grid.RowSpan="2" Width="150"
                  SelectionChanged="SrcList_SelectionChanged"
                  Style="{StaticResource AppListBox}">
             <ListBox.ItemTemplate>
@@ -34,7 +35,12 @@
         </ListBox>
 
         <Label Content="Caps" Grid.Column="1"></Label>
-        <ListBox x:Name="CapList" Grid.Row="1" Grid.Column="1" Width="150"
+        <TextBox Text="{Binding CapFilter, UpdateSourceTrigger=PropertyChanged}" DataContext="{Binding ElementName=SrcList, Path=SelectedItem}"
+                 Grid.Column="1" Grid.Row="1"
+                 modern:TextBoxUI.WatermarkText="Find cap name"></TextBox>
+        <ListBox x:Name="CapList" Grid.Row="2" Grid.Column="1" Width="150"
+                 DataContext="{Binding ElementName=SrcList, Path=SelectedItem}"
+                 ItemsSource="{Binding Caps}"
                  SelectionChanged="CapList_SelectionChanged"
                  Style="{StaticResource AppListBox}">
             <ListBox.ItemTemplate>
@@ -48,7 +54,7 @@
             </ListBox.ItemTemplate></ListBox>
 
         <Label Content="Cap values" Grid.Column="2"></Label>
-        <ListBox x:Name="CapDetailList" Grid.Row="1" Grid.Column="2" MinWidth="100"
+        <ListBox x:Name="CapDetailList" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" MinWidth="100"
                  SelectionChanged="CapDetailList_SelectionChanged"
                  ScrollViewer.CanContentScroll="True" 
                  Style="{StaticResource AppListBox}">
@@ -64,7 +70,7 @@
             <TextBlock Text="{Binding State}"></TextBlock>
             <Button Content="Test acquire" Click="Button_Click_1" Margin="4 0"></Button>
         </StackPanel>
-        <modern:AnimatedScrollViewer Grid.Row="1" Grid.Column="3" VerticalScrollBarVisibility="Auto"
+        <modern:AnimatedScrollViewer Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" VerticalScrollBarVisibility="Auto"
 				HorizontalScrollBarVisibility="Auto">
             <Image Stretch="Uniform" MaxWidth="1000"
                    RenderOptions.BitmapScalingMode="HighQuality"

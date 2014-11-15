@@ -17,17 +17,17 @@ namespace Tester.WPF
         MethodInfo _getCurrentMethod;
         MethodInfo _setMethod;
 
-        public CapVM(DSVM ds, CapabilityId cap)
+        public CapVM(DataSource ds, CapabilityId cap)
         {
-            _ds = ds.DS;
+            _ds = ds;
             Cap = cap;
-            Supports = ds.DS.CapQuerySupport(cap);
+            Supports = ds.CapQuerySupport(cap);
 
             var capName = cap.ToString();
-            var wrapProperty = ds.DS.GetType().GetProperty(capName);
+            var wrapProperty = ds.GetType().GetProperty(capName);
             if (wrapProperty != null)
             {
-                _wrapper = wrapProperty.GetGetMethod().Invoke(ds.DS, null);
+                _wrapper = wrapProperty.GetGetMethod().Invoke(ds, null);
                 var wrapperType = _wrapper.GetType();
                 _getMethod = wrapperType.GetMethod("Get");
                 _getCurrentMethod = wrapperType.GetMethod("GetCurrent");

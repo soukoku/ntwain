@@ -99,17 +99,7 @@ namespace Tester.WPF
             var dsId = SrcList.SelectedItem as DSVM;
             if (dsId != null)
             {
-                var rc = dsId.DS.Open();
-                //rc = DGControl.Status.Get(dsId, ref stat);
-                if (rc == ReturnCode.Success)
-                {
-                    var caps = dsId.DS.SupportedCaps.Select(o => new CapVM(dsId, o)).OrderBy(o => o.Name).ToList();
-                    CapList.ItemsSource = caps;
-                }
-            }
-            else
-            {
-                CapList.ItemsSource = null;
+                dsId.Open();
             }
         }
 
