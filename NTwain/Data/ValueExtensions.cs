@@ -58,11 +58,12 @@ namespace NTwain.Data
                 // standard int values
                 if (returnType.IsEnum)
                 {
+                    var rawType = Enum.GetUnderlyingType(returnType);
+                        
                     if (tryUpperWord)
                     {
                         // small routine to work with bad sources that may put
                         // 16bit value in the upper word instead of lower word (as per the twain spec).
-                        var rawType = Enum.GetUnderlyingType(returnType);
                         if (typeof(ushort).IsAssignableFrom(rawType))
                         {
                             var intVal = Convert.ToUInt32(value, CultureInfo.InvariantCulture);
@@ -73,10 +74,12 @@ namespace NTwain.Data
                             }
                         }
                     }
-                    // this may work better?
-                    return (TEnum)Enum.ToObject(returnType, value);
-                    //// cast to underlying type first then to the enum
-                    //return (T)Convert.ChangeType(value, rawType);
+                    // old method:
+                    // return (TEnum)Enum.ToObject(returnType, value);
+                    
+                    // new method:
+                    // try to convert to enum's underlying type first then cast to the enum
+                    return (TEnum)Convert.ChangeType(value, rawType);
                 }
                 else if (typeof(IConvertible).IsAssignableFrom(returnType))
                 {
