@@ -67,9 +67,49 @@ myDS.Open();
 
 ```
 
-At this point you can negotiate with the source using all the typical TWAIN triplet API.
-The DataSource class itself has some handy pre-defined methods for common capability negotiation
-such as DPI, bitdepth, or paper size to get you started.
+At this point you can use all the typical TWAIN triplet API for working with a data source.
+
+
+```
+#!c#
+
+// all exposed triplet operations are defined through these properties.
+// if the operation you want is not available, that most likely means 
+// it's not for consumer use or there's an equivalent API in this lib.
+myDS.DGControl...;
+myDS.DGImage...;
+
+```
+
+Additionally, the DataSource class itself has some handy pre-defined wrappers for common capability 
+negotiation. You can use the wrapper properties to see what capabilities or their operations are 
+supported. You also won't have to keep track of what value types to use since the wrapper defines it
+for you. Most capabilities only require a simple single value to set
+and the wrapper makes it easy to do that (see example below):
+
+
+```
+#!c#
+
+// The wrapper has many methods that corresponds to the TWAIN capability triplet msgs like
+// Get(), GetCurrent(), GetDefault(), Set(), etc.
+// (see TWAIN pdf doc for reference)
+
+
+// This example sets pixel type of scanned image to BW and
+// IPixelType is the wrapper property on the data source.
+// (note: the name of the wrapper property is the same as the CapabilityId enum)
+PixelType myValue = PixelType.BlackWhite; 
+
+if (myDS.ICapPixelType.CanSet  &&
+    myDS.ICapPixelType.Get().Contains(myValue))
+{
+    myDS.ICapPixelType.Set(myValue);
+}
+
+
+```
+
 
 When you're ready to get into transfer mode, just call Enable() on the source object.
 
@@ -80,7 +120,7 @@ myDS.Enable(...);
 
 ```
 
-After transfer has completed (remember you are notified of this with the SourceDisabled event from session) 
+After transfer has completed (remember that you are notified of this with the SourceDisabled event from session) 
 and you're done with TWAIN, you can close the source and the session in sequence to clean things up.
 
 ```
