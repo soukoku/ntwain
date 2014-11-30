@@ -8,36 +8,36 @@ namespace NTwain.Internals
 
     class WrappedManualResetEvent : IDisposable
     {
-#if NET4
-        ManualResetEventSlim _slim;
-#else
+#if NET35
         ManualResetEvent _mre;
+#else
+        ManualResetEventSlim _slim;
 #endif
 
         public WrappedManualResetEvent()
         {
-#if NET4
-            _slim = new ManualResetEventSlim();
-#else
+#if NET35
             _mre = new ManualResetEvent(false);
+#else
+            _slim = new ManualResetEventSlim();
 #endif
         }
 
         public void Wait()
         {
-#if NET4
-            _slim.Wait();
-#else
+#if NET35
             _mre.WaitOne();
+#else
+            _slim.Wait();
 #endif
         }
 
         public void Set()
         {
-#if NET4
-            _slim.Set();
-#else
+#if NET35
             _mre.Set();
+#else
+            _slim.Set();
 #endif
         }
 
@@ -45,10 +45,10 @@ namespace NTwain.Internals
 
         public void Dispose()
         {
-#if NET4
-            _slim.Dispose();
-#else
+#if NET35
             _mre.Close();
+#else
+            _slim.Dispose();
 #endif
         }
 

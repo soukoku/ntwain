@@ -34,7 +34,11 @@ namespace NTwain
             if (IsWindows)
             {
                 var newDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_NEW_DSM_NAME);
-                var oldDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_OLD_DSM_NAME);
+#if NET35
+                var oldDsmPath = Path.Combine(Environment.GetEnvironmentVariable("windir"), Dsm.WIN_OLD_DSM_NAME);
+#else
+                var oldDsmPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), Dsm.WIN_OLD_DSM_NAME);
+#endif
 
                 if (IsApp64Bit)
                 {
