@@ -122,8 +122,8 @@ namespace NTwain
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: EnableSource with {1}.", Thread.CurrentThread.ManagedThreadId, mode));
 
-                // app v2.2 or higher uses callback2
-                if (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2)
+                // per the spec (8-10) app v2.2 or higher uses callback2
+                if (_appId.ProtocolMajor > 2 || (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2))
                 {
                     var cb = new TWCallback2(HandleCallback);
                     var rc2 = ((ITwainSessionInternal)this).DGControl.Callback2.RegisterCallback(cb);
@@ -136,6 +136,7 @@ namespace NTwain
                 }
                 else
                 {
+                    // all else try old callback
                     var cb = new TWCallback(HandleCallback);
 
                     var rc2 = ((ITwainSessionInternal)this).DGControl.Callback.RegisterCallback(cb);
