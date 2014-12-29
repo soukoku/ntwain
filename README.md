@@ -52,9 +52,12 @@ or all subsequent transfers using the event object.
 * DataTransferred - fired after the transfer has occurred. The data available depends on 
 what you've specified using the TWAIN API before starting the transfer.
 
+NOTE: do not try to close the source/session in the handler of these 2 events or something
+unpredictable will happen. Either let the scan run its course or cancel the scan using the flag 
+in the TransferReady event arg.
 
 Once you've setup and opened the session, you can get available sources, pick one to use,
-and call Open() to start using it.
+and call Open() to start using it as the example below.
 
 
 ```
@@ -136,12 +139,12 @@ Caveats
 --------------------------------------
 At the moment this lib does not provide ways to parse transferred image data and require
 consumers to do the conversion themselves. The winform project contains one such 
-example for handling DIB image in native transfer using the CommonWin32 lib.
+example for handling DIB image pointer in native transfer using the CommonWin32 lib.
 
-If you call session.Open() without passing a message loop hook argument, it will run an 
-internal message loop behind the scenes. When this happens the events will be raised from another thread. 
+If you just call session.Open() without passing a message loop hook argument, an 
+internal message loop will be started behind the scenes. When this happens the session events may be raised from another thread. 
 If you would like things marshalled to a UI thread then set the experimental SynchronizationContext property
-to the one from the UI thread. 
+to the one from your preferred UI thread. 
 
 ```
 #!c#
@@ -164,4 +167,4 @@ newer data source manager (twaindsm.dll) from below installed.
 In fact, installing the new DSM is recommended whether you're running in 64-bit or not.
 
 If the scanner's TWAIN driver is still 32-bit (and most likely it will be) then you'll have no choice but to
-compile the app as x86.
+compile the exe using the NTwain.dll in x86.
