@@ -50,63 +50,65 @@ namespace NTwain.Internals
                 {
                     rc = session.DGControl.PendingXfers.Reset(pending);
                 }
-                else if (!preXferArgs.CancelCurrent)
+                else
                 {
-                    DataGroups xferGroup = DataGroups.None;
-
-                    if (session.DGControl.XferGroup.Get(ref xferGroup) != ReturnCode.Success)
+                    if (!preXferArgs.CancelCurrent)
                     {
-                        xferGroup = DataGroups.None;
-                    }
+                        DataGroups xferGroup = DataGroups.None;
 
-                    // some DS end up getting none but we will assume it's image
-                    if (xferGroup == DataGroups.None ||
-                        (xferGroup & DataGroups.Image) == DataGroups.Image)
-                    {
-                        // default to memory
-                        var mech = XferMech.Memory;
-
-                        object mechRaw = session.CurrentSource.CapGetCurrent(CapabilityId.ICapXferMech);
-                        if (mechRaw != null)
+                        if (session.DGControl.XferGroup.Get(ref xferGroup) != ReturnCode.Success)
                         {
-                            mech = mechRaw.ConvertToEnum<XferMech>();
+                            xferGroup = DataGroups.None;
                         }
 
-                        switch (mech)
+                        // some DS end up getting none but we will assume it's image
+                        if (xferGroup == DataGroups.None ||
+                            (xferGroup & DataGroups.Image) == DataGroups.Image)
                         {
-                            case XferMech.Memory:
-                                DoImageMemoryXfer(session);
-                                break;
-                            case XferMech.File:
-                                DoImageFileXfer(session);
-                                break;
-                            case XferMech.MemFile:
-                                DoImageMemoryFileXfer(session);
-                                break;
-                            case XferMech.Native:
-                            default: // always assume native
-                                DoImageNativeXfer(session);
-                                break;
+                            // default to memory
+                            var mech = XferMech.Memory;
 
+                            object mechRaw = session.CurrentSource.CapGetCurrent(CapabilityId.ICapXferMech);
+                            if (mechRaw != null)
+                            {
+                                mech = mechRaw.ConvertToEnum<XferMech>();
+                            }
+
+                            switch (mech)
+                            {
+                                case XferMech.Memory:
+                                    DoImageMemoryXfer(session);
+                                    break;
+                                case XferMech.File:
+                                    DoImageFileXfer(session);
+                                    break;
+                                case XferMech.MemFile:
+                                    DoImageMemoryFileXfer(session);
+                                    break;
+                                case XferMech.Native:
+                                default: // always assume native
+                                    DoImageNativeXfer(session);
+                                    break;
+
+                            }
                         }
-                    }
-                    if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
-                    {
-                        var mech = session.CurrentSource.CapGetCurrent(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
-                        switch (mech)
+                        if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
                         {
-                            case XferMech.File:
-                                DoAudioFileXfer(session);
-                                break;
-                            case XferMech.Native:
-                            default: // always assume native
-                                DoAudioNativeXfer(session);
-                                break;
+                            var mech = session.CurrentSource.CapGetCurrent(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
+                            switch (mech)
+                            {
+                                case XferMech.File:
+                                    DoAudioFileXfer(session);
+                                    break;
+                                case XferMech.Native:
+                                default: // always assume native
+                                    DoAudioNativeXfer(session);
+                                    break;
+                            }
                         }
                     }
+                    rc = session.DGControl.PendingXfers.EndXfer(pending);
                 }
-                rc = session.DGControl.PendingXfers.EndXfer(pending);
-
                 #endregion
 
             } while (rc == ReturnCode.Success && pending.Count != 0);
