@@ -156,7 +156,8 @@ namespace NTwain.Internals
                 // data here is allocated by source so needs to use shared mem calls
                 if (lockedPtr != IntPtr.Zero)
                 {
-                    PlatformInfo.Current.MemoryManager.Unlock(lockedPtr);
+                    //PlatformInfo.Current.MemoryManager.Unlock(lockedPtr);
+                    PlatformInfo.Current.MemoryManager.Unlock(dataPtr);
                     lockedPtr = IntPtr.Zero;
                 }
                 if (dataPtr != IntPtr.Zero)
@@ -222,7 +223,8 @@ namespace NTwain.Internals
                 // data here is allocated by source so needs to use shared mem calls
                 if (lockedPtr != IntPtr.Zero)
                 {
-                    PlatformInfo.Current.MemoryManager.Unlock(lockedPtr);
+                    //PlatformInfo.Current.MemoryManager.Unlock(lockedPtr);
+                    PlatformInfo.Current.MemoryManager.Unlock(dataPtr);
                     lockedPtr = IntPtr.Zero;
                 }
                 if (dataPtr != IntPtr.Zero)
@@ -300,7 +302,8 @@ namespace NTwain.Internals
                                 {
                                     if (lockPtr != IntPtr.Zero)
                                     {
-                                        PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
+                                        PlatformInfo.Current.MemoryManager.Unlock(xferInfo.Memory.TheMem);
+                                        //PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
                                     }
                                 }
                             }
@@ -376,7 +379,8 @@ namespace NTwain.Internals
                                 {
                                     if (lockPtr != IntPtr.Zero)
                                     {
-                                        PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
+                                        PlatformInfo.Current.MemoryManager.Unlock(xferInfo.Memory.TheMem);
+                                        //PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
                                     }
                                 }
                                 outStream.Write(buffer, 0, buffer.Length);

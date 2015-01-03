@@ -773,7 +773,8 @@ namespace NTwain.Data
             {
                 WriteValue(baseAddr, ref offset, value.ItemType, item);
             }
-            memoryManager.Unlock(baseAddr);
+            //memoryManager.Unlock(baseAddr);
+            memoryManager.Unlock(_hContainer);
         }
 
         void SetRangeValue(TWRange value, IMemoryManager memoryManager)
@@ -809,7 +810,8 @@ namespace NTwain.Data
             {
                 WriteValue(baseAddr, ref offset, value.ItemType, item);
             }
-            memoryManager.Unlock(baseAddr);
+            memoryManager.Unlock(_hContainer);
+            //memoryManager.Unlock(baseAddr);
         }
 
         #endregion
@@ -1484,7 +1486,8 @@ namespace NTwain.Data
                         {
                             if (lockPtr != IntPtr.Zero)
                             {
-                                PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
+                                PlatformInfo.Current.MemoryManager.Unlock(Item);
+                                //PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
                             }
                         }
                     }

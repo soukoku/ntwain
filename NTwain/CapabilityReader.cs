@@ -81,7 +81,8 @@ namespace NTwain
             {
                 if (baseAddr != IntPtr.Zero)
                 {
-                    memoryManager.Unlock(baseAddr);
+                    //memoryManager.Unlock(baseAddr);
+                    memoryManager.Unlock(capability.Container);
                 }
             }
         }

@@ -29,7 +29,7 @@ namespace NTwain
         /// <summary>
         /// Function to unlock a previously locked memory region.
         /// </summary>
-        /// <param name="handle">The handle from <see cref="Lock"/>.</param>
+        /// <param name="handle">The same handle passed <see cref="Lock"/>.</param>
         void Unlock(IntPtr handle);
     }
 }
