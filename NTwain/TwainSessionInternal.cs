@@ -210,7 +210,7 @@ namespace NTwain
         #region IWinMessageFilter Members
 
         /// <summary>
-        /// Checks and handle the message if it's a TWAIN message.
+        /// Checks and handles the message if it's a TWAIN message.
         /// </summary>
         /// <param name="hwnd">The window handle.</param>
         /// <param name="msg">The message.</param>
@@ -265,6 +265,8 @@ namespace NTwain
                 // spec says we must handle this on the thread that enabled the DS.
                 // by using the internal dispatcher this will be the case.
 
+                // In any event the trick to get this thing working is to return from the callback first
+                // before trying to process the msg or there will be unpredictable errors.
                 _msgLoopHook.BeginInvoke(() =>
                 {
                     HandleSourceMsg(msg);

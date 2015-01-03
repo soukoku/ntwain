@@ -20,8 +20,8 @@ namespace NTwain.Internals
         public static void DoTransferRoutine(ITwainSessionInternal session)
         {
             var pending = new TWPendingXfers();
-            var rc = ReturnCode.Success;
-
+            //var rc = ReturnCode.Success;
+            var rc = session.DGControl.PendingXfers.Get(pending);
             do
             {
                 #region build and raise xfer ready
