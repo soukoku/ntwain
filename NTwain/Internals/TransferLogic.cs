@@ -26,14 +26,24 @@ namespace NTwain.Internals
             {
                 #region build and raise xfer ready
 
-                TWAudioInfo audInfo;
-                if (session.DGAudio.AudioInfo.Get(out audInfo) != ReturnCode.Success)
+                bool xferImage = true; // default to always xfer image
+                bool xferAudio = false;
+                DataGroups xferGroup = DataGroups.None;
+                if (session.DGControl.XferGroup.Get(ref xferGroup) == ReturnCode.Success)
+                {
+                    xferAudio = (xferGroup & DataGroups.Audio) == DataGroups.Audio;
+                    xferImage = xferGroup == DataGroups.None || (xferGroup & DataGroups.Audio) == DataGroups.Audio;
+                }
+
+
+                TWAudioInfo audInfo = null;
+                if (xferAudio && session.DGAudio.AudioInfo.Get(out audInfo) != ReturnCode.Success)
                 {
                     audInfo = null;
                 }
 
-                TWImageInfo imgInfo;
-                if (session.DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
+                TWImageInfo imgInfo = null;
+                if (xferImage && session.DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
                 {
                     imgInfo = null;
                 }
@@ -54,16 +64,9 @@ namespace NTwain.Internals
                 {
                     if (!preXferArgs.CancelCurrent)
                     {
-                        DataGroups xferGroup = DataGroups.None;
-
-                        if (session.DGControl.XferGroup.Get(ref xferGroup) != ReturnCode.Success)
-                        {
-                            xferGroup = DataGroups.None;
-                        }
 
                         // some DS end up getting none but we will assume it's image
-                        if (xferGroup == DataGroups.None ||
-                            (xferGroup & DataGroups.Image) == DataGroups.Image)
+                        if (xferImage)
                         {
                             // default to memory
                             var mech = XferMech.Memory;
@@ -92,7 +95,7 @@ namespace NTwain.Internals
 
                             }
                         }
-                        if ((xferGroup & DataGroups.Audio) == DataGroups.Audio)
+                        if (xferAudio)
                         {
                             var mech = session.CurrentSource.CapGetCurrent(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
                             switch (mech)
