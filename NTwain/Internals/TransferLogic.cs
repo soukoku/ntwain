@@ -32,7 +32,7 @@ namespace NTwain.Internals
                 if (session.DGControl.XferGroup.Get(ref xferGroup) == ReturnCode.Success)
                 {
                     xferAudio = (xferGroup & DataGroups.Audio) == DataGroups.Audio;
-                    xferImage = xferGroup == DataGroups.None || (xferGroup & DataGroups.Audio) == DataGroups.Audio;
+                    xferImage = xferGroup == DataGroups.None || (xferGroup & DataGroups.Image) == DataGroups.Image;
                 }
 
 
@@ -68,8 +68,8 @@ namespace NTwain.Internals
                         // some DS end up getting none but we will assume it's image
                         if (xferImage)
                         {
-                            // default to memory
-                            var mech = XferMech.Memory;
+                            // default to native
+                            var mech = XferMech.Native;
 
                             object mechRaw = session.CurrentSource.CapGetCurrent(CapabilityId.ICapXferMech);
                             if (mechRaw != null)
