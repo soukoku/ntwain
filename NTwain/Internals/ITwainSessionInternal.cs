@@ -36,6 +36,8 @@ namespace NTwain.Internals
 
         void ChangeCurrentSource(DataSource source);
 
+        void UpdateCallback();
+
         ReturnCode DisableSource();
 
         void SafeSyncableRaiseEvent(DataTransferredEventArgs e);

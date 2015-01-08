@@ -38,6 +38,7 @@ namespace NTwain
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
 
                 rc = _session.DGControl.Identity.OpenDS(this);
+                _session.UpdateCallback();
             });
             return rc;
         }
@@ -58,6 +59,7 @@ namespace NTwain
                 {
                     SupportedCaps = null;
                 }
+                _session.UpdateCallback();
             });
             return rc;
         }

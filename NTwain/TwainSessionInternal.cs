@@ -27,6 +27,44 @@ namespace NTwain
         /// <value>The app id.</value>
         TWIdentity ITwainSessionInternal.AppId { get { return _appId; } }
 
+        void ITwainSessionInternal.UpdateCallback()
+        {
+            if (State < 4)
+            {
+                _callbackObj = null;
+            }
+            else
+            {
+                ReturnCode rc = ReturnCode.Failure;
+                // per the spec (8-10) apps for 2.2 or higher uses callback2 so try this first
+                if (_appId.ProtocolMajor > 2 || (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2))
+                {
+                    var cb = new TWCallback2(HandleCallback);
+                    rc = ((ITwainSessionInternal)this).DGControl.Callback2.RegisterCallback(cb);
+
+                    if (rc == ReturnCode.Success)
+                    {
+                        Debug.WriteLine("Registered callback2 OK.");
+                        _callbackObj = cb;
+                    }
+                }
+
+                if (rc != ReturnCode.Success)
+                {
+                    // always try old callback
+                    var cb = new TWCallback(HandleCallback);
+
+                    rc = ((ITwainSessionInternal)this).DGControl.Callback.RegisterCallback(cb);
+
+                    if (rc == ReturnCode.Success)
+                    {
+                        Debug.WriteLine("Registered callback OK.");
+                        _callbackObj = cb;
+                    }
+                }
+            }
+        }
+
         void ITwainSessionInternal.ChangeState(int newState, bool notifyChange)
         {
             _state = newState;
@@ -122,54 +160,19 @@ namespace NTwain
             {
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: EnableSource with {1}.", Thread.CurrentThread.ManagedThreadId, mode));
 
-                // per the spec (8-10) app v2.2 or higher uses callback2
-                if (_appId.ProtocolMajor > 2 || (_appId.ProtocolMajor >= 2 && _appId.ProtocolMinor >= 2))
-                {
-                    var cb = new TWCallback2(HandleCallback);
-                    var rc2 = ((ITwainSessionInternal)this).DGControl.Callback2.RegisterCallback(cb);
-
-                    if (rc2 == ReturnCode.Success)
-                    {
-                        Debug.WriteLine("Registered callback2 OK.");
-                        _callbackObj = cb;
-                    }
-                }
-                else
-                {
-                    // all else try old callback
-                    var cb = new TWCallback(HandleCallback);
-
-                    var rc2 = ((ITwainSessionInternal)this).DGControl.Callback.RegisterCallback(cb);
-
-                    if (rc2 == ReturnCode.Success)
-                    {
-                        Debug.WriteLine("Registered callback OK.");
-                        _callbackObj = cb;
-                    }
-                }
 
                 _twui = new TWUserInterface();
                 _twui.ShowUI = mode == SourceEnableMode.ShowUI;
                 _twui.ModalUI = modal;
                 _twui.hParent = windowHandle;
 
-                try
+                if (mode == SourceEnableMode.ShowUIOnly)
                 {
-                    if (mode == SourceEnableMode.ShowUIOnly)
-                    {
-                        rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDSUIOnly(_twui);
-                    }
-                    else
-                    {
-                        rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDS(_twui);
-                    }
+                    rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDSUIOnly(_twui);
                 }
-                finally
+                else
                 {
-                    if (rc != ReturnCode.Success)
-                    {
-                        _callbackObj = null;
-                    }
+                    rc = ((ITwainSessionInternal)this).DGControl.UserInterface.EnableDS(_twui);
                 }
             });
             return rc;
@@ -191,7 +194,6 @@ namespace NTwain
                         rc = ((ITwainSessionInternal)this).DGControl.UserInterface.DisableDS(_twui);
                         if (rc == ReturnCode.Success)
                         {
-                            _callbackObj = null;
                             SafeAsyncSyncableRaiseOnEvent(OnSourceDisabled, SourceDisabled);
                         }
                     });
