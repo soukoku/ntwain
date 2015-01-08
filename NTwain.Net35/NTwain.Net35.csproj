@@ -156,6 +156,9 @@
     <Compile Include="..\NTwain\SourceEnableMode.cs">
       <Link>SourceEnableMode.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\State.cs">
+      <Link>State.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\TransferErrorEventArgs.cs">
       <Link>TransferErrorEventArgs.cs</Link>
     </Compile>

@@ -57,6 +57,13 @@ namespace NTwain
         /// <value>The state.</value>
         int State { get; }
 
+        /// <summary>
+        /// Gets the named state value as defined by the TWAIN spec.
+        /// </summary>
+        /// <value>
+        /// The state.
+        /// </value>
+        State StateEx { get; }
 
         /// <summary>
         /// Quick flag to check if the DSM has been opened.

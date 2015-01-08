@@ -88,6 +88,7 @@
     </Compile>
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="Internals\TentativeStateCommitable.cs" />
+    <Compile Include="State.cs" />
     <Compile Include="TransferErrorEventArgs.cs" />
     <Compile Include="TransferReadyEventArgs.cs" />
     <Compile Include="Triplets\DGControl\DGControl.Callback2.cs" />

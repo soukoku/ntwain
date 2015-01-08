@@ -41,7 +41,10 @@ namespace NTwain
 
             _appId = appId;
             _ownedSources = new Dictionary<string, DataSource>();
-            ((ITwainSessionInternal)this).ChangeState(1, false);
+            if (PlatformInfo.Current.IsSupported)
+            {
+                ((ITwainSessionInternal)this).ChangeState(2, false);
+            }
 #if DEBUG
             // defaults to false on release since it's only useful during dev
             EnforceState = true;
@@ -144,7 +147,7 @@ namespace NTwain
             return null;
         }
 
-        int _state;
+        int _state = 1;
         /// <summary>
         /// Gets the current state number as defined by the TWAIN spec.
         /// </summary>
@@ -162,6 +165,20 @@ namespace NTwain
                     OnPropertyChanged("State");
                     SafeAsyncSyncableRaiseOnEvent(OnStateChanged, StateChanged);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets the named state value as defined by the TWAIN spec.
+        /// </summary>
+        /// <value>
+        /// The state.
+        /// </value>
+        public State StateEx
+        {
+            get
+            {
+                return (State)_state;
             }
         }
 
