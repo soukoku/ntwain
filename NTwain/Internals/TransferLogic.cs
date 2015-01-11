@@ -68,14 +68,7 @@ namespace NTwain.Internals
                         // some DS end up getting none but we will assume it's image
                         if (xferImage)
                         {
-                            // default to native
-                            var mech = XferMech.Native;
-
-                            object mechRaw = session.CurrentSource.CapGetCurrent(CapabilityId.ICapXferMech);
-                            if (mechRaw != null)
-                            {
-                                mech = mechRaw.ConvertToEnum<XferMech>();
-                            }
+                            var mech = session.CurrentSource.ICapXferMech.GetCurrent();
 
                             switch (mech)
                             {
@@ -97,7 +90,7 @@ namespace NTwain.Internals
                         }
                         if (xferAudio)
                         {
-                            var mech = session.CurrentSource.CapGetCurrent(CapabilityId.ACapXferMech).ConvertToEnum<XferMech>();
+                            var mech = session.CurrentSource.ACapXferMech.GetCurrent();
                             switch (mech)
                             {
                                 case XferMech.File:

@@ -321,7 +321,7 @@ namespace NTwain
                     var rc = _source.DGControl.Capability.GetLabelEnum(cap);
                     if (rc == ReturnCode.Success)
                     {
-                        cap.ReadMultiCapValues(list);
+                        CapabilityReader.ReadValue(cap).PopulateFromCapValues(list);
                     }
                 }
             }

@@ -131,7 +131,7 @@ namespace NTwain
                 var rc = _session.DGControl.Capability.Get(cap);
                 if (rc == ReturnCode.Success)
                 {
-                    cap.ReadMultiCapValues(list);
+                    CapabilityReader.ReadValue(cap).PopulateFromCapValues(list);
                 }
             }
             return list;

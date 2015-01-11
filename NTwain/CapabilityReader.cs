@@ -179,12 +179,50 @@ namespace NTwain
 
         #region reader methods
 
+        /// <summary>
+        /// Don't care what contain it is, just populates the specified list with the capability values (count be one or many).
+        /// </summary>
+        /// <param name="toPopulate">The list to populate the values.</param>
+        /// <returns></returns>
+        public IList<object> PopulateFromCapValues(IList<object> toPopulate)
+        {
+            if (toPopulate == null) { toPopulate = new List<object>(); }
+
+            switch (ContainerType)
+            {
+                case ContainerType.OneValue:
+                    if (OneValue != null)
+                    {
+                        toPopulate.Add(OneValue);
+                    }
+                    break;
+                case ContainerType.Array:
+                case ContainerType.Enum:
+                    if (CollectionValues != null)
+                    {
+                        foreach (var o in CollectionValues)
+                        {
+                            toPopulate.Add(o);
+                        }
+                    }
+                    break;
+                case ContainerType.Range:
+                    for (var i = RangeMinValue; i >= RangeMinValue && i <= RangeMaxValue; i += RangeStepSize)
+                    {
+                        toPopulate.Add(i);
+                    }
+                    break;
+            }
+            return toPopulate;
+        }
+
+
         CapabilityReader ReadOneValue(IntPtr baseAddr)
         {
             int offset = 0;
             ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
             offset += 2;
-            OneValue = TypeReader.ReadValue(baseAddr, ref offset, ItemType);
+            OneValue = baseAddr.ReadValue(ref offset, ItemType);
             return this;
         }
 
@@ -200,7 +238,7 @@ namespace NTwain
                 CollectionValues = new object[count];
                 for (int i = 0; i < count; i++)
                 {
-                    CollectionValues[i] = TypeReader.ReadValue(baseAddr, ref offset, ItemType);
+                    CollectionValues[i] = baseAddr.ReadValue(ref offset, ItemType);
                 }
             }
             return this;
@@ -222,7 +260,7 @@ namespace NTwain
                 CollectionValues = new object[count];
                 for (int i = 0; i < count; i++)
                 {
-                    CollectionValues[i] = TypeReader.ReadValue(baseAddr, ref offset, ItemType);
+                    CollectionValues[i] = baseAddr.ReadValue(ref offset, ItemType);
                 }
             }
             return this;

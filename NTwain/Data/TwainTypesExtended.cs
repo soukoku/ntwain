@@ -743,7 +743,7 @@ namespace NTwain.Data
             ContainerType = ContainerType.OneValue;
 
             // since one value can only house UInt32 we will not allow type size > 4
-            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWOneValue")); }
+            if (TypeExtensions.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWOneValue")); }
 
             _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
@@ -758,20 +758,20 @@ namespace NTwain.Data
             ContainerType = ContainerType.Enum;
 
 
-            Int32 valueSize = TWEnumeration.ItemOffset + value.ItemList.Length * TypeReader.GetItemTypeSize(value.ItemType);
+            Int32 valueSize = TWEnumeration.ItemOffset + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
 
             int offset = 0;
             _hContainer = memoryManager.Allocate((uint)valueSize);
             IntPtr baseAddr = memoryManager.Lock(_hContainer);
 
             // can't safely use StructureToPtr here so write it our own
-            WriteValue(baseAddr, ref offset, ItemType.UInt16, value.ItemType);
-            WriteValue(baseAddr, ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
-            WriteValue(baseAddr, ref offset, ItemType.UInt32, value.CurrentIndex);
-            WriteValue(baseAddr, ref offset, ItemType.UInt32, value.DefaultIndex);
+            baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
+            baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
+            baseAddr.WriteValue(ref offset, ItemType.UInt32, value.CurrentIndex);
+            baseAddr.WriteValue(ref offset, ItemType.UInt32, value.DefaultIndex);
             foreach (var item in value.ItemList)
             {
-                WriteValue(baseAddr, ref offset, value.ItemType, item);
+                baseAddr.WriteValue(ref offset, value.ItemType, item);
             }
             //memoryManager.Unlock(baseAddr);
             memoryManager.Unlock(_hContainer);
@@ -783,7 +783,7 @@ namespace NTwain.Data
             ContainerType = ContainerType.Range;
 
             // since range value can only house UInt32 we will not allow type size > 4
-            if (TypeReader.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWRange")); }
+            if (TypeExtensions.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWRange")); }
 
             _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
             if (_hContainer != IntPtr.Zero)
@@ -797,18 +797,18 @@ namespace NTwain.Data
             if (value == null) { throw new ArgumentNullException("value"); }
             ContainerType = ContainerType.Array;
 
-            Int32 valueSize = 6 + value.ItemList.Length * TypeReader.GetItemTypeSize(value.ItemType);
+            Int32 valueSize = 6 + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
 
             int offset = 0;
             _hContainer = memoryManager.Allocate((uint)valueSize);
             IntPtr baseAddr = memoryManager.Lock(_hContainer);
 
             // can't safely use StructureToPtr here so write it our own
-            WriteValue(baseAddr, ref offset, ItemType.UInt16, value.ItemType);
-            WriteValue(baseAddr, ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
+            baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
+            baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
             foreach (var item in value.ItemList)
             {
-                WriteValue(baseAddr, ref offset, value.ItemType, item);
+                baseAddr.WriteValue(ref offset, value.ItemType, item);
             }
             memoryManager.Unlock(_hContainer);
             //memoryManager.Unlock(baseAddr);
@@ -816,145 +816,6 @@ namespace NTwain.Data
 
         #endregion
 
-        #region writes
-
-        /// <summary>
-        /// Entry call for writing values to a pointer.
-        /// </summary>
-        /// <param name="baseAddr"></param>
-        /// <param name="offset"></param>
-        /// <param name="type"></param>
-        /// <param name="value"></param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
-        void WriteValue(IntPtr baseAddr, ref int offset, ItemType type, object value)
-        {
-            switch (type)
-            {
-                case ItemType.Int8:
-                case ItemType.UInt8:
-                    Marshal.WriteByte(baseAddr, offset, Convert.ToByte(value, CultureInfo.InvariantCulture));// (byte)value);
-                    break;
-                case ItemType.Bool:
-                case ItemType.Int16:
-                case ItemType.UInt16:
-                    Marshal.WriteInt16(baseAddr, offset, Convert.ToInt16(value, CultureInfo.InvariantCulture));//(short)value);
-                    break;
-                case ItemType.UInt32:
-                case ItemType.Int32:
-                    Marshal.WriteInt32(baseAddr, offset, Convert.ToInt32(value, CultureInfo.InvariantCulture));//(int)value);
-                    break;
-                case ItemType.Fix32:
-                    TWFix32 f32 = (TWFix32)value;
-                    Marshal.WriteInt16(baseAddr, offset, f32.Whole);
-                    if (f32.Fraction > Int16.MaxValue)
-                    {
-                        Marshal.WriteInt16(baseAddr, offset + 2, (Int16)(f32.Fraction - 32768));
-                    }
-                    else
-                    {
-                        Marshal.WriteInt16(baseAddr, offset + 2, (Int16)f32.Fraction);
-                    }
-                    break;
-                case ItemType.Frame:
-                    TWFrame frame = (TWFrame)value;
-                    WriteValue(baseAddr, ref offset, ItemType.Fix32, frame.Left);
-                    WriteValue(baseAddr, ref offset, ItemType.Fix32, frame.Top);
-                    WriteValue(baseAddr, ref offset, ItemType.Fix32, frame.Right);
-                    WriteValue(baseAddr, ref offset, ItemType.Fix32, frame.Bottom);
-                    return; // no need to update offset for this
-                //case ItemType.String1024:
-                //    WriteString(baseAddr, offset, value as string, 1024);
-                //    break;
-                case ItemType.String128:
-                    WriteString(baseAddr, offset, (string)value, 128);
-                    break;
-                case ItemType.String255:
-                    WriteString(baseAddr, offset, (string)value, 255);
-                    break;
-                case ItemType.String32:
-                    WriteString(baseAddr, offset, (string)value, 32);
-                    break;
-                case ItemType.String64:
-                    WriteString(baseAddr, offset, (string)value, 64);
-                    break;
-                //case ItemType.Unicode512:
-                //    WriteUString(baseAddr, offset, value as string, 512);
-                //    break;
-            }
-            offset += TypeReader.GetItemTypeSize(type);
-        }
-        /// <summary>
-        /// Writes string value.
-        /// </summary>
-        /// <param name="baseAddr"></param>
-        /// <param name="offset"></param>
-        /// <param name="item"></param>
-        /// <param name="maxLength"></param>
-        static void WriteString(IntPtr baseAddr, int offset, string item, int maxLength)
-        {
-            if (string.IsNullOrEmpty(item))
-            {
-                // write zero
-                Marshal.WriteByte(baseAddr, offset, 0);
-            }
-            else
-            {
-                for (int i = 0; i < maxLength; i++)
-                {
-                    if (i == item.Length)
-                    {
-                        // string end reached, so write \0 and quit
-                        Marshal.WriteByte(baseAddr, offset, 0);
-                        return;
-                    }
-                    else
-                    {
-                        Marshal.WriteByte(baseAddr, offset, (byte)item[i]);
-                        offset++;
-                    }
-                }
-                // when ended normally also write \0
-                Marshal.WriteByte(baseAddr, offset, 0);
-            }
-        }
-        ///// <summary>
-        ///// Writes unicode string value.
-        ///// </summary>
-        ///// <param name="baseAddr"></param>
-        ///// <param name="offset"></param>
-        ///// <param name="item"></param>
-        ///// <param name="maxLength"></param>
-        //[EnvironmentPermissionAttribute(SecurityAction.LinkDemand)]
-        //private void WriteUString(IntPtr baseAddr, int offset, string item, int maxLength)
-        //{
-        //    if (string.IsNullOrEmpty(item))
-        //    {
-        //        // write zero
-        //        Marshal.WriteInt16(baseAddr, offset, (char)0);
-        //    }
-        //    else
-        //    {
-        //        // use 2 bytes per char
-        //        for (int i = 0; i < maxLength; i++)
-        //        {
-        //            if (i == item.Length)
-        //            {
-        //                // string end reached, so write \0 and quit
-        //                Marshal.WriteInt16(baseAddr, offset, (char)0);
-        //                return;
-        //            }
-        //            else
-        //            {
-        //                Marshal.WriteInt16(baseAddr, offset, item[i]);
-        //                offset += 2;
-        //            }
-        //        }
-        //        // when ended normally also write \0
-        //        Marshal.WriteByte(baseAddr, offset, 0);
-        //    }
-        //}
-
-        #endregion
 
         #region IDisposable Members
 
@@ -985,47 +846,6 @@ namespace NTwain.Data
             Dispose(false);
         }
         #endregion
-
-
-
-        /// <summary>
-        /// A general method that returns the data in a <see cref="TWCapability" />.
-        /// </summary>
-        /// <param name="toPopulate">The list to populate if necessary.</param>
-        /// <returns></returns>
-        public IList<object> ReadMultiCapValues(IList<object> toPopulate)
-        {
-            if (toPopulate == null) { toPopulate = new List<object>(); }
-
-            var read = CapabilityReader.ReadValue(this);
-
-            switch (read.ContainerType)
-            {
-                case ContainerType.OneValue:
-                    if (read.OneValue != null)
-                    {
-                        toPopulate.Add(read.OneValue);
-                    }
-                    break;
-                case ContainerType.Array:
-                case ContainerType.Enum:
-                    if (read.CollectionValues != null)
-                    {
-                        foreach (var o in read.CollectionValues)
-                        {
-                            toPopulate.Add(o);
-                        }
-                    }
-                    break;
-                case ContainerType.Range:
-                    for (var i = read.RangeMinValue; i >= read.RangeMinValue && i <= read.RangeMaxValue; i += read.RangeStepSize)
-                    {
-                        toPopulate.Add(i);
-                    }
-                    break;
-            }
-            return toPopulate;
-        }
 
     }
 
@@ -1454,7 +1274,7 @@ namespace NTwain.Data
             get
             {
                 return ItemType == Data.ItemType.Handle ||
-                    (TypeReader.GetItemTypeSize(ItemType) * NumItems) > 4;// IntPtr.Size
+                    (TypeExtensions.GetItemTypeSize(ItemType) * NumItems) > 4;// IntPtr.Size
             }
         }
 
@@ -1479,7 +1299,7 @@ namespace NTwain.Data
 
                             for (int i = 0; i < NumItems; i++)
                             {
-                                values.Add(TypeReader.ReadValue(lockPtr, ref offset, ItemType));
+                                values.Add(TypeExtensions.ReadValue(lockPtr, ref offset, ItemType));
                             }
                         }
                         finally
@@ -1501,7 +1321,7 @@ namespace NTwain.Data
                         tempPtr = Marshal.AllocHGlobal(IntPtr.Size);
                         Marshal.WriteIntPtr(tempPtr, Item);
                         int offset = 0;
-                        values.Add(TypeReader.ReadValue(tempPtr, ref offset, ItemType));
+                        values.Add(TypeExtensions.ReadValue(tempPtr, ref offset, ItemType));
                     }
                     finally
                     {

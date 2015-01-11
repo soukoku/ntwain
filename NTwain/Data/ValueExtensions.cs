@@ -6,7 +6,7 @@ using System.Linq;
 namespace NTwain.Data
 {
     /// <summary>
-    /// Utility on converting (possibly bad) integer values to enum values.
+    /// Contains extension methods for converting (possibly bad) integer values to enum values.
     /// </summary>
     public static class ValueExtensions
     {

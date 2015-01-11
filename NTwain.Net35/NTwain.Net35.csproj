@@ -69,8 +69,8 @@
     <Compile Include="..\NTwain\Data\TwainValues.cs">
       <Link>Data\TwainValues.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\Data\TypeReader.cs">
-      <Link>Data\TypeReader.cs</Link>
+    <Compile Include="..\NTwain\Data\TypeExtensions.cs">
+      <Link>Data\TypeExtensions.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Data\ValueExtensions.cs">
       <Link>Data\ValueExtensions.cs</Link>

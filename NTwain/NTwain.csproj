@@ -57,7 +57,7 @@
   <ItemGroup>
     <Compile Include="CapWrapper.cs" />
     <Compile Include="CapabilityReader.cs" />
-    <Compile Include="Data\TypeReader.cs" />
+    <Compile Include="Data\TypeExtensions.cs" />
     <Compile Include="Data\TwainTypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="IDataSource.cs" />
