@@ -24,16 +24,18 @@ namespace NTwain
             ImageInfo = imageInfo;
         }
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataTransferredEventArgs" /> class.
+        /// Initializes a new instance of the <see cref="DataTransferredEventArgs"/> class.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="fileDataPath">The file data path.</param>
         /// <param name="imageInfo">The image information.</param>
-        public DataTransferredEventArgs(DataSource source, string fileDataPath, TWImageInfo imageInfo)
+        /// <param name="imageFileFormat">The image file format.</param>
+        public DataTransferredEventArgs(DataSource source, string fileDataPath, TWImageInfo imageInfo, FileFormat imageFileFormat)
         {
             DataSource = source;
             FileDataPath = fileDataPath;
             ImageInfo = imageInfo;
+            ImageFileFormat = imageFileFormat;
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="DataTransferredEventArgs" /> class.
@@ -65,6 +67,14 @@ namespace NTwain
         /// The file path.
         /// </value>
         public string FileDataPath { get; private set; }
+
+        /// <summary>
+        /// Gets the file format if applicable.
+        /// </summary>
+        /// <value>
+        /// The file format.
+        /// </value>
+        public FileFormat ImageFileFormat { get; private set; }
 
         /// <summary>
         /// Gets the raw memory data if the transfer was memory.

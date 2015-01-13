@@ -176,7 +176,7 @@ namespace NTwain.Internals
             var xrc = session.DGAudio.AudioFileXfer.Get();
             if (xrc == ReturnCode.XferDone)
             {
-                session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(session.CurrentSource, filePath, null));
+                session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(session.CurrentSource, filePath, null, (FileFormat)0));
             }
             else
             {
@@ -202,7 +202,7 @@ namespace NTwain.Internals
                     {
                         lockedPtr = PlatformInfo.Current.MemoryManager.Lock(dataPtr);
                     }
-                    DoImageXferredEventRoutine(session, lockedPtr, null, null);
+                    DoImageXferredEventRoutine(session, lockedPtr, null, null, (FileFormat)0);
                 }
                 else
                 {
@@ -243,7 +243,7 @@ namespace NTwain.Internals
             var xrc = session.DGImage.ImageFileXfer.Get();
             if (xrc == ReturnCode.XferDone)
             {
-                DoImageXferredEventRoutine(session, IntPtr.Zero, null, filePath);
+                DoImageXferredEventRoutine(session, IntPtr.Zero, null, filePath, setupInfo.Format);
             }
             else
             {
@@ -307,7 +307,7 @@ namespace NTwain.Internals
 
                         if (xrc == ReturnCode.XferDone)
                         {
-                            DoImageXferredEventRoutine(session, IntPtr.Zero, xferredData.ToArray(), null);
+                            DoImageXferredEventRoutine(session, IntPtr.Zero, xferredData.ToArray(), null, (FileFormat)0);
                         }
                         else
                         {
@@ -413,12 +413,12 @@ namespace NTwain.Internals
 
                 if (File.Exists(finalFile))
                 {
-                    DoImageXferredEventRoutine(session, IntPtr.Zero, null, finalFile);
+                    DoImageXferredEventRoutine(session, IntPtr.Zero, null, finalFile, fileInfo.Format);
                 }
             }
         }
 
-        static void DoImageXferredEventRoutine(ITwainSessionInternal session, IntPtr dataPtr, byte[] dataArray, string filePath)
+        static void DoImageXferredEventRoutine(ITwainSessionInternal session, IntPtr dataPtr, byte[] dataArray, string filePath, FileFormat format)
         {
             DataTransferredEventArgs args = null;
             TWImageInfo imgInfo;
@@ -437,7 +437,7 @@ namespace NTwain.Internals
             }
             else
             {
-                args = new DataTransferredEventArgs(session.CurrentSource, filePath, imgInfo);
+                args = new DataTransferredEventArgs(session.CurrentSource, filePath, imgInfo, format);
             }
             session.SafeSyncableRaiseEvent(args);
         }
