@@ -15,7 +15,7 @@ namespace NTwain.Data
             {ItemType.Int8, 1},
             {ItemType.UInt8, 1},
             {ItemType.Int16, 2},
-            {ItemType.UInt8, 2},
+            {ItemType.UInt16, 2},
             {ItemType.Bool, 2},
             {ItemType.Int32, 4},
             {ItemType.UInt32, 4},
