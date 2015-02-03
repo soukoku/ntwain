@@ -158,14 +158,14 @@ namespace NTwain
         /// <value>
         /// The range minimum value.
         /// </value>
-        public uint RangeMinValue { get; private set; }
+        public object RangeMinValue { get; private set; }
         /// <summary>
         /// The most positive/least negative value of the range.
         /// </summary>
         /// <value>
         /// The range maximum value.
         /// </value>
-        public uint RangeMaxValue { get; private set; }
+        public object RangeMaxValue { get; private set; }
         /// <summary>
         /// The delta between two adjacent values of the range.
         /// e.g. Item2 - Item1 = StepSize;
@@ -173,7 +173,7 @@ namespace NTwain
         /// <value>
         /// The size of the range step.
         /// </value>
-        public uint RangeStepSize { get; private set; }
+        public object RangeStepSize { get; private set; }
 
         #endregion
 
@@ -207,9 +207,103 @@ namespace NTwain
                     }
                     break;
                 case ContainerType.Range:
-                    for (var i = RangeMinValue; i >= RangeMinValue && i <= RangeMaxValue; i += RangeStepSize)
+                    // horrible cast but should work.
+                    // in the for loop we also compare against min in case the step
+                    // is parsed as negative number and causes infinite loop.
+                    switch (ItemType)
                     {
-                        toPopulate.Add(i);
+                        case Data.ItemType.Fix32:
+                            {
+                                var min = (TWFix32)RangeMinValue;
+                                var counter = min;
+                                var max = (TWFix32)RangeMaxValue;
+                                var step = (TWFix32)RangeStepSize;
+
+                                for (var i = min; i >= min && i <= max; i += step)
+                                {
+                                    toPopulate.Add(i);
+                                }
+                            }
+                            break;
+                        case Data.ItemType.UInt32:
+                            {
+                                var min = (uint)RangeMinValue;
+                                var counter = min;
+                                var max = (uint)RangeMaxValue;
+                                var step = (uint)RangeStepSize;
+
+                                for (var i = min; i >= min && i <= max; i += step)
+                                {
+                                    toPopulate.Add(i);
+                                }
+                            }
+                            break;
+                        case Data.ItemType.Int32:
+                            {
+                                var min = (int)RangeMinValue;
+                                var counter = min;
+                                var max = (int)RangeMaxValue;
+                                var step = (int)RangeStepSize;
+
+                                for (var i = min; i >= min && i <= max; i += step)
+                                {
+                                    toPopulate.Add(i);
+                                }
+                            }
+                            break;
+                        // these should never happen since TW_ENUM fields are 4 bytes but you never know
+                        case Data.ItemType.UInt16:
+                            {
+                                var min = (ushort)RangeMinValue;
+                                var counter = min;
+                                var max = (ushort)RangeMaxValue;
+                                var step = (ushort)RangeStepSize;
+
+                                for (var i = min; i >= min && i <= max; i += step)
+                                {
+                                    toPopulate.Add(i);
+                                }
+                            }
+                            break;
+                        case Data.ItemType.Int16:
+                            {
+                                var min = (short)RangeMinValue;
+                                var counter = min;
+                                var max = (short)RangeMaxValue;
+                                var step = (short)RangeStepSize;
+
+                                for (var i = min; i >= min && i <= max; i += step)
+                                {
+                                    toPopulate.Add(i);
+                                }
+                            }
+                            break;
+                        case Data.ItemType.UInt8:
+                            {
+                                var min = (byte)RangeMinValue;
+                                var counter = min;
+                                var max = (byte)RangeMaxValue;
+                                var step = (byte)RangeStepSize;
+
+                                for (var i = min; i >= min && i <= max; i += step)
+                                {
+                                    toPopulate.Add(i);
+                                }
+                            }
+                            break;
+                        case Data.ItemType.Int8:
+                            {
+                                var min = (sbyte)RangeMinValue;
+                                var counter = min;
+                                var max = (sbyte)RangeMaxValue;
+                                var step = (sbyte)RangeStepSize;
+
+                                for (var i = min; i >= min && i <= max; i += step)
+                                {
+                                    toPopulate.Add(i);
+                                }
+                            }
+                            break;
                     }
                     break;
             }
@@ -271,15 +365,22 @@ namespace NTwain
             int offset = 0;
             ItemType = (ItemType)(ushort)Marshal.ReadInt16(baseAddr, offset);
             offset += 2;
-            RangeMinValue = (uint)Marshal.ReadInt32(baseAddr, offset);
-            offset += 4;
-            RangeMaxValue = (uint)Marshal.ReadInt32(baseAddr, offset);
-            offset += 4;
-            RangeStepSize = (uint)Marshal.ReadInt32(baseAddr, offset);
-            offset += 4;
-            RangeDefaultValue = (uint)Marshal.ReadInt32(baseAddr, offset);
-            offset += 4;
-            RangeCurrentValue = (uint)Marshal.ReadInt32(baseAddr, offset);
+
+            RangeMinValue = baseAddr.ReadValue(ref offset, ItemType);
+            RangeMaxValue = baseAddr.ReadValue(ref offset, ItemType);
+            RangeStepSize = baseAddr.ReadValue(ref offset, ItemType);
+            RangeDefaultValue = baseAddr.ReadValue(ref offset, ItemType);
+            RangeCurrentValue = baseAddr.ReadValue(ref offset, ItemType);
+
+            //RangeMinValue = (uint)Marshal.ReadInt32(baseAddr, offset);
+            //offset += 4;
+            //RangeMaxValue = (uint)Marshal.ReadInt32(baseAddr, offset);
+            //offset += 4;
+            //RangeStepSize = (uint)Marshal.ReadInt32(baseAddr, offset);
+            //offset += 4;
+            //RangeDefaultValue = (uint)Marshal.ReadInt32(baseAddr, offset);
+            //offset += 4;
+            //RangeCurrentValue = (uint)Marshal.ReadInt32(baseAddr, offset);
 
             return this;
         }
