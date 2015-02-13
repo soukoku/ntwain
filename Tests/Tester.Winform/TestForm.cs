@@ -39,6 +39,13 @@ namespace Tester.Winform
             }
         }
 
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            SetupTwain();
+
+        }
+
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             if (_twain != null)
@@ -59,16 +66,13 @@ namespace Tester.Winform
         {
             var appId = TWIdentity.CreateFromAssembly(DataGroups.Image, Assembly.GetEntryAssembly());
             _twain = new TwainSession(appId);
-            // either set this and don't worry about threads during events,
-            // or don't and invoke during the events yourself
-            //_twain.SynchronizationContext = SynchronizationContext.Current;
             _twain.StateChanged += (s, e) =>
             {
                 Debug.WriteLine("State changed to " + _twain.State + " on thread " + Thread.CurrentThread.ManagedThreadId);
             };
             _twain.DataTransferred += (s, e) =>
             {
-                Debug.WriteLine("Transferred data.");
+                Debug.WriteLine("Transferred data event on thread " + Thread.CurrentThread.ManagedThreadId);
 
                 // example on getting ext image info
                 var infos = e.GetExtImageInfo(ExtendedImageInfo.Camera).Where(it => it.ReturnCode == ReturnCode.Success);
@@ -104,6 +108,7 @@ namespace Tester.Winform
             };
             _twain.SourceDisabled += (s, e) =>
             {
+                Debug.WriteLine("Source disabled event on thread " + Thread.CurrentThread.ManagedThreadId);
                 this.BeginInvoke(new Action(() =>
                 {
                     btnStopScan.Enabled = false;
@@ -114,8 +119,21 @@ namespace Tester.Winform
             };
             _twain.TransferReady += (s, e) =>
             {
+                Debug.WriteLine("Transferr ready event on thread " + Thread.CurrentThread.ManagedThreadId);
                 e.CancelAll = _stopScan;
             };
+
+            // either set sync context and don't worry about threads during events,
+            // or don't and use control.invoke during the events yourself
+            Debug.WriteLine("Setup thread = " + Thread.CurrentThread.ManagedThreadId);
+            _twain.SynchronizationContext = SynchronizationContext.Current;
+            if (_twain.State < 3)
+            {
+                // use this for internal msg loop
+                _twain.Open();
+                // use this to hook into current app loop
+                //_twain.Open(new WindowsFormsMessageLoopHook(this.Handle));
+            }
         }
 
         private void CleanupTwain()
@@ -151,6 +169,27 @@ namespace Tester.Winform
         private void reloadSourcesListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ReloadSourceList();
+        }
+
+        private void ReloadSourceList()
+        {
+            if (_twain.State >= 3)
+            {
+                while (btnSources.DropDownItems.IndexOf(sepSourceList) > 0)
+                {
+                    var first = btnSources.DropDownItems[0];
+                    first.Click -= SourceMenuItem_Click;
+                    btnSources.DropDownItems.Remove(first);
+                }
+                foreach (var src in _twain)
+                {
+                    var srcBtn = new ToolStripMenuItem(src.Name);
+                    srcBtn.Tag = src;
+                    srcBtn.Click += SourceMenuItem_Click;
+                    srcBtn.Checked = _twain.CurrentSource != null && _twain.CurrentSource.Name == src.Name;
+                    btnSources.DropDownItems.Insert(0, srcBtn);
+                }
+            }
         }
 
         void SourceMenuItem_Click(object sender, EventArgs e)
@@ -244,43 +283,8 @@ namespace Tester.Winform
                 }
             }
         }
+
         #endregion
-
-        #region real work
-
-        private void ReloadSourceList()
-        {
-            if (_twain == null)
-            {
-                SetupTwain();
-            }
-            if (_twain.State < 3)
-            {
-                // use this for internal msg loop
-                _twain.Open();
-                // use this to hook into current app loop
-                //_twain.Open(new WindowsFormsMessageLoopHook(this.Handle));
-            }
-
-            if (_twain.State >= 3)
-            {
-                while (btnSources.DropDownItems.IndexOf(sepSourceList) > 0)
-                {
-                    var first = btnSources.DropDownItems[0];
-                    first.Click -= SourceMenuItem_Click;
-                    btnSources.DropDownItems.Remove(first);
-                }
-                foreach (var src in _twain)
-                {
-                    var srcBtn = new ToolStripMenuItem(src.Name);
-                    srcBtn.Tag = src;
-                    srcBtn.Click += SourceMenuItem_Click;
-                    srcBtn.Checked = _twain.CurrentSource != null && _twain.CurrentSource.Name == src.Name;
-                    btnSources.DropDownItems.Insert(0, srcBtn);
-                }
-            }
-        }
-
 
         #region cap control
 
@@ -402,8 +406,6 @@ namespace Tester.Winform
         {
             _twain.CurrentSource.Enable(SourceEnableMode.ShowUIOnly, true, this.Handle);
         }
-
-        #endregion
 
         #endregion
 
