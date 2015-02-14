@@ -21,7 +21,7 @@ namespace Tester.WPF
         {
             _ds = ds;
             Cap = cap;
-            Supports = ds.CapQuerySupport(cap);
+
 
             var capName = cap.ToString();
             var wrapProperty = ds.GetType().GetProperty(capName);
@@ -33,6 +33,22 @@ namespace Tester.WPF
                 _getCurrentMethod = wrapperType.GetMethod("GetCurrent");
                 _setMethod = wrapperType.GetMethods().FirstOrDefault(m => m.Name == "Set");
             }
+
+            var supportTest = ds.CapQuerySupport(cap);
+            if (supportTest.HasValue)
+            {
+                Supports = supportTest.Value;
+            }
+            else
+            {
+                if (_wrapper != null)
+                {
+                    var wrapperType = _wrapper.GetType();
+                    QuerySupports? supports = (QuerySupports?)wrapperType.GetProperty("SupportedActions").GetGetMethod().Invoke(_wrapper, null);
+                    Supports = supports.GetValueOrDefault();
+                }
+            }
+
         }
 
         public IEnumerable Get()

@@ -15,10 +15,11 @@ namespace NTwain
     /// <typeparam name="TValue">The TWAIN type of the value.</typeparam>
     public class CapWrapper<TValue> : NTwain.ICapWrapper<TValue>
     {
-        ICapControl _source;
+        IDataSource _source;
         Func<object, TValue> _getConvertRoutine;
         Func<TValue, ReturnCode> _setCustomRoutine;
         Func<TValue, TWOneValue> _setOneValueFunc;
+        bool _readOnly;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CapWrapper{TValue}" /> class.
@@ -31,16 +32,18 @@ namespace NTwain
         /// or
         /// getConversionRoutine
         /// </exception>
-        public CapWrapper(ICapControl source, CapabilityId capability,
-            Func<object, TValue> getConversionRoutine)
+        public CapWrapper(IDataSource source, CapabilityId capability,
+            Func<object, TValue> getConversionRoutine, bool readOnly)
         {
             if (source == null) { throw new ArgumentNullException("source"); }
             if (getConversionRoutine == null) { throw new ArgumentNullException("getConversionRoutine"); }
 
             _source = source;
             _getConvertRoutine = getConversionRoutine;
+            _readOnly = readOnly;
             Capability = capability;
-            SupportedActions = source.CapQuerySupport(capability);
+
+            CheckSupports();
         }
 
 
@@ -58,7 +61,7 @@ namespace NTwain
         /// or
         /// setValueProvider
         /// </exception>
-        public CapWrapper(ICapControl source, CapabilityId capability,
+        public CapWrapper(IDataSource source, CapabilityId capability,
             Func<object, TValue> getConversionRoutine,
             Func<TValue, TWOneValue> setValueProvider)
         {
@@ -70,7 +73,8 @@ namespace NTwain
             _getConvertRoutine = getConversionRoutine;
             _setOneValueFunc = setValueProvider;
             Capability = capability;
-            SupportedActions = source.CapQuerySupport(capability);
+
+            CheckSupports();
         }
 
         /// <summary>
@@ -87,7 +91,7 @@ namespace NTwain
         /// or
         /// setValueRoutine
         /// </exception>
-        public CapWrapper(ICapControl source, CapabilityId capability,
+        public CapWrapper(IDataSource source, CapabilityId capability,
             Func<object, TValue> getConversionRoutine,
             Func<TValue, ReturnCode> setValueRoutine)
         {
@@ -99,7 +103,51 @@ namespace NTwain
             _getConvertRoutine = getConversionRoutine;
             _setCustomRoutine = setValueRoutine;
             Capability = capability;
-            SupportedActions = source.CapQuerySupport(capability);
+
+            CheckSupports();
+        }
+
+        private void CheckSupports()
+        {
+            if (!_supports.HasValue && _source.IsOpen)
+            {
+                var srcVersion = _source.ProtocolVersion;
+                if (srcVersion >= ProtocolVersions.GetMinimumVersion(Capability))
+                {
+                    _supports = _source.CapQuerySupport(Capability);
+
+                    if (!_supports.HasValue)
+                    {
+                        // lame source, have to guess using a get call
+                        using (TWCapability cap = new TWCapability(Capability))
+                        {
+                            var rc = _source.DGControl.Capability.Get(cap);
+                            if (rc == ReturnCode.Success)
+                            {
+                                // assume can do common things
+                                if (_readOnly)
+                                {
+                                    _supports = QuerySupports.Get | QuerySupports.GetCurrent | QuerySupports.GetDefault;
+                                }
+                                else
+                                {
+                                    _supports = QuerySupports.Get | QuerySupports.GetCurrent | QuerySupports.GetDefault |
+                                        QuerySupports.Set | QuerySupports.Reset | QuerySupports.SetConstraint;
+                                }
+
+                            }
+                            else
+                            {
+                                _supports = QuerySupports.None;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    _supports = QuerySupports.None;
+                }
+            }
         }
 
 
@@ -118,13 +166,22 @@ namespace NTwain
         /// </value>
         public CapabilityId Capability { get; private set; }
 
+        QuerySupports? _supports;
+
         /// <summary>
         /// Gets the supported actions.
         /// </summary>
         /// <value>
         /// The supported actions.
         /// </value>
-        public QuerySupports SupportedActions { get; private set; }
+        public QuerySupports SupportedActions
+        {
+            get
+            {
+                CheckSupports();
+                return _supports.GetValueOrDefault();
+            }
+        }
 
         /// <summary>
         /// Gets a value indicating whether this capability is supported.
@@ -242,11 +299,7 @@ namespace NTwain
         /// <returns></returns>
         public IList<TValue> Get()
         {
-            if (CanGet)
-            {
-                return _source.CapGet(Capability).Select(o => _getConvertRoutine(o)).ToList();
-            }
-            return new List<TValue>();
+            return _source.CapGet(Capability).Select(o => _getConvertRoutine(o)).ToList();
         }
 
         /// <summary>
@@ -256,22 +309,20 @@ namespace NTwain
         public string GetLabel()
         {
             object value = null;
-            if (CanGetLabel)
-            {
-                using (TWCapability cap = new TWCapability(Capability))
-                {
-                    var rc = _source.DGControl.Capability.GetLabel(cap);
-                    if (rc == ReturnCode.Success)
-                    {
-                        var read = CapabilityReader.ReadValue(cap);
 
-                        switch (read.ContainerType)
-                        {
-                            case ContainerType.OneValue:
-                                // most likely not correct
-                                value = read.OneValue;
-                                break;
-                        }
+            using (TWCapability cap = new TWCapability(Capability))
+            {
+                var rc = _source.DGControl.Capability.GetLabel(cap);
+                if (rc == ReturnCode.Success)
+                {
+                    var read = CapabilityReader.ReadValue(cap);
+
+                    switch (read.ContainerType)
+                    {
+                        case ContainerType.OneValue:
+                            // most likely not correct
+                            value = read.OneValue;
+                            break;
                     }
                 }
             }
@@ -285,22 +336,19 @@ namespace NTwain
         public string GetHelp()
         {
             object value = null;
-            if (CanGetHelp)
+            using (TWCapability cap = new TWCapability(Capability))
             {
-                using (TWCapability cap = new TWCapability(Capability))
+                var rc = _source.DGControl.Capability.GetHelp(cap);
+                if (rc == ReturnCode.Success)
                 {
-                    var rc = _source.DGControl.Capability.GetHelp(cap);
-                    if (rc == ReturnCode.Success)
-                    {
-                        var read = CapabilityReader.ReadValue(cap);
+                    var read = CapabilityReader.ReadValue(cap);
 
-                        switch (read.ContainerType)
-                        {
-                            case ContainerType.OneValue:
-                                // most likely not correct
-                                value = read.OneValue;
-                                break;
-                        }
+                    switch (read.ContainerType)
+                    {
+                        case ContainerType.OneValue:
+                            // most likely not correct
+                            value = read.OneValue;
+                            break;
                     }
                 }
             }
@@ -314,15 +362,13 @@ namespace NTwain
         public IList<string> GetLabelEnum()
         {
             var list = new List<object>();
-            if (CanGetLabelEnum)
+
+            using (TWCapability cap = new TWCapability(Capability))
             {
-                using (TWCapability cap = new TWCapability(Capability))
+                var rc = _source.DGControl.Capability.GetLabelEnum(cap);
+                if (rc == ReturnCode.Success)
                 {
-                    var rc = _source.DGControl.Capability.GetLabelEnum(cap);
-                    if (rc == ReturnCode.Success)
-                    {
-                        CapabilityReader.ReadValue(cap).PopulateFromCapValues(list);
-                    }
+                    CapabilityReader.ReadValue(cap).PopulateFromCapValues(list);
                 }
             }
             return list.Select(o => o.ToString()).ToList();
@@ -350,23 +396,21 @@ namespace NTwain
         public ReturnCode Set(TValue value)
         {
             ReturnCode rc = ReturnCode.Failure;
-            if (CanSet)
+
+            if (_setCustomRoutine != null)
             {
-                if (_setCustomRoutine != null)
+                rc = _setCustomRoutine(value);
+            }
+            else if (_setOneValueFunc != null)
+            {
+                using (var cap = new TWCapability(Capability, _setOneValueFunc(value)))
                 {
-                    rc = _setCustomRoutine(value);
+                    rc = _source.DGControl.Capability.Set(cap);
                 }
-                else if (_setOneValueFunc != null)
-                {
-                    using (var cap = new TWCapability(Capability, _setOneValueFunc(value)))
-                    {
-                        rc = _source.DGControl.Capability.Set(cap);
-                    }
-                }
-                else
-                {
-                    throw new InvalidOperationException("Simple Set() is not defined for this capability.");
-                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Simple Set() is not defined for this capability.");
             }
             return rc;
         }
@@ -379,12 +423,9 @@ namespace NTwain
         public ReturnCode Set(TWArray value)
         {
             ReturnCode rc = ReturnCode.Failure;
-            if (CanSet)
+            using (var cap = new TWCapability(Capability, value))
             {
-                using (var cap = new TWCapability(Capability, value))
-                {
-                    rc = _source.DGControl.Capability.Set(cap);
-                }
+                rc = _source.DGControl.Capability.Set(cap);
             }
             return rc;
         }
@@ -397,12 +438,9 @@ namespace NTwain
         public ReturnCode Set(TWEnumeration value)
         {
             ReturnCode rc = ReturnCode.Failure;
-            if (CanSet)
+            using (var cap = new TWCapability(Capability, value))
             {
-                using (var cap = new TWCapability(Capability, value))
-                {
-                    rc = _source.DGControl.Capability.Set(cap);
-                }
+                rc = _source.DGControl.Capability.Set(cap);
             }
             return rc;
         }
@@ -415,12 +453,9 @@ namespace NTwain
         public ReturnCode SetConstraint(TWOneValue value)
         {
             ReturnCode rc = ReturnCode.Failure;
-            if (CanSetConstraint)
+            using (var cap = new TWCapability(Capability, value))
             {
-                using (var cap = new TWCapability(Capability, value))
-                {
-                    rc = _source.DGControl.Capability.SetConstraint(cap);
-                }
+                rc = _source.DGControl.Capability.SetConstraint(cap);
             }
             return rc;
         }
@@ -433,12 +468,9 @@ namespace NTwain
         public ReturnCode SetConstraint(TWEnumeration value)
         {
             ReturnCode rc = ReturnCode.Failure;
-            if (CanSetConstraint)
+            using (var cap = new TWCapability(Capability, value))
             {
-                using (var cap = new TWCapability(Capability, value))
-                {
-                    rc = _source.DGControl.Capability.SetConstraint(cap);
-                }
+                rc = _source.DGControl.Capability.SetConstraint(cap);
             }
             return rc;
         }
@@ -451,12 +483,9 @@ namespace NTwain
         public ReturnCode SetConstraint(TWRange value)
         {
             ReturnCode rc = ReturnCode.Failure;
-            if (CanSetConstraint)
+            using (var cap = new TWCapability(Capability, value))
             {
-                using (var cap = new TWCapability(Capability, value))
-                {
-                    rc = _source.DGControl.Capability.SetConstraint(cap);
-                }
+                rc = _source.DGControl.Capability.SetConstraint(cap);
             }
             return rc;
         }

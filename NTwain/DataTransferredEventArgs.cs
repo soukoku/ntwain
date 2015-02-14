@@ -111,7 +111,7 @@ namespace NTwain
         /// <exception cref="System.InvalidOperationException"></exception>
         public IEnumerable<TWInfo> GetExtImageInfo(params ExtendedImageInfo[] infoIds)
         {
-            if (infoIds != null && infoIds.Length > 0 && DataSource.SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
+            if (infoIds != null && infoIds.Length > 0)// && DataSource.SupportedCaps.Contains(CapabilityId.ICapExtImageInfo))
             {
                 var request = new TWExtImageInfo { NumInfos = (uint)infoIds.Length };
                 if (infoIds.Length > request.Info.Length)

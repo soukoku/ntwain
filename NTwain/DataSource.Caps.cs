@@ -17,13 +17,13 @@ namespace NTwain
         #region low-level cap stuff
 
         /// <summary>
-        /// Gets the actual supported operations for a capability.
+        /// Gets the actual supported operations for a capability. This is not supported by all sources.
         /// </summary>
         /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
-        public QuerySupports CapQuerySupport(CapabilityId capabilityId)
+        public QuerySupports? CapQuerySupport(CapabilityId capabilityId)
         {
-            QuerySupports retVal = QuerySupports.None;
+            QuerySupports? retVal = null;
             using (TWCapability cap = new TWCapability(capabilityId))
             {
                 var rc = _session.DGControl.Capability.QuerySupport(cap);
@@ -549,7 +549,7 @@ namespace NTwain
         {
             get
             {
-                return _physicalWidth ?? (_physicalWidth = new CapWrapper<TWFix32>(this, CapabilityId.ICapPhysicalWidth, ValueExtensions.ConvertToFix32));
+                return _physicalWidth ?? (_physicalWidth = new CapWrapper<TWFix32>(this, CapabilityId.ICapPhysicalWidth, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -565,7 +565,7 @@ namespace NTwain
         {
             get
             {
-                return _physicalHeight ?? (_physicalHeight = new CapWrapper<TWFix32>(this, CapabilityId.ICapPhysicalHeight, ValueExtensions.ConvertToFix32));
+                return _physicalHeight ?? (_physicalHeight = new CapWrapper<TWFix32>(this, CapabilityId.ICapPhysicalHeight, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -604,7 +604,7 @@ namespace NTwain
         {
             get
             {
-                return _nativeXRes ?? (_nativeXRes = new CapWrapper<TWFix32>(this, CapabilityId.ICapXNativeResolution, ValueExtensions.ConvertToFix32));
+                return _nativeXRes ?? (_nativeXRes = new CapWrapper<TWFix32>(this, CapabilityId.ICapXNativeResolution, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -620,7 +620,7 @@ namespace NTwain
         {
             get
             {
-                return _nativeYRes ?? (_nativeYRes = new CapWrapper<TWFix32>(this, CapabilityId.ICapYNativeResolution, ValueExtensions.ConvertToFix32));
+                return _nativeYRes ?? (_nativeYRes = new CapWrapper<TWFix32>(this, CapabilityId.ICapYNativeResolution, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -1101,7 +1101,7 @@ namespace NTwain
         {
             get
             {
-                return _minHeight ?? (_minHeight = new CapWrapper<TWFix32>(this, CapabilityId.ICapMinimumHeight, ValueExtensions.ConvertToFix32));
+                return _minHeight ?? (_minHeight = new CapWrapper<TWFix32>(this, CapabilityId.ICapMinimumHeight, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -1117,7 +1117,7 @@ namespace NTwain
         {
             get
             {
-                return _minWidth ?? (_minWidth = new CapWrapper<TWFix32>(this, CapabilityId.ICapMinimumWidth, ValueExtensions.ConvertToFix32));
+                return _minWidth ?? (_minWidth = new CapWrapper<TWFix32>(this, CapabilityId.ICapMinimumWidth, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -1196,7 +1196,7 @@ namespace NTwain
         {
             get
             {
-                return _barcodeType ?? (_barcodeType = new CapWrapper<BarcodeType>(this, CapabilityId.ICapSupportedBarcodeTypes, ValueExtensions.ConvertToEnum<BarcodeType>));
+                return _barcodeType ?? (_barcodeType = new CapWrapper<BarcodeType>(this, CapabilityId.ICapSupportedBarcodeTypes, ValueExtensions.ConvertToEnum<BarcodeType>, true));
             }
         }
 
@@ -1359,7 +1359,7 @@ namespace NTwain
         {
             get
             {
-                return _patchcodeType ?? (_patchcodeType = new CapWrapper<PatchCode>(this, CapabilityId.ICapSupportedPatchCodeTypes, ValueExtensions.ConvertToEnum<PatchCode>));
+                return _patchcodeType ?? (_patchcodeType = new CapWrapper<PatchCode>(this, CapabilityId.ICapSupportedPatchCodeTypes, ValueExtensions.ConvertToEnum<PatchCode>, true));
             }
         }
 
@@ -1726,7 +1726,7 @@ namespace NTwain
         {
             get
             {
-                return _cropUseFrame ?? (_cropUseFrame = new CapWrapper<BoolType>(this, CapabilityId.ICapAutomaticCropUsesFrame, ValueExtensions.ConvertToEnum<BoolType>));
+                return _cropUseFrame ?? (_cropUseFrame = new CapWrapper<BoolType>(this, CapabilityId.ICapAutomaticCropUsesFrame, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -1868,7 +1868,7 @@ namespace NTwain
         {
             get
             {
-                return _supportedExtInfo ?? (_supportedExtInfo = new CapWrapper<ExtendedImageInfo>(this, CapabilityId.ICapSupportedExtImageInfo, ValueExtensions.ConvertToEnum<ExtendedImageInfo>));
+                return _supportedExtInfo ?? (_supportedExtInfo = new CapWrapper<ExtendedImageInfo>(this, CapabilityId.ICapSupportedExtImageInfo, ValueExtensions.ConvertToEnum<ExtendedImageInfo>, true));
             }
         }
 
@@ -2026,7 +2026,7 @@ namespace NTwain
         {
             get
             {
-                return _feederLoaded ?? (_feederLoaded = new CapWrapper<BoolType>(this, CapabilityId.CapFeederLoaded, ValueExtensions.ConvertToEnum<BoolType>));
+                return _feederLoaded ?? (_feederLoaded = new CapWrapper<BoolType>(this, CapabilityId.CapFeederLoaded, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2035,7 +2035,7 @@ namespace NTwain
         private CapWrapper<CapabilityId> _supportedCaps;
 
         /// <summary>
-        /// Gets the supported caps for the current source.
+        /// Gets the supported caps for the current source. This is not supported by all sources.
         /// </summary>
         /// <value>
         /// The supported caps.
@@ -2044,7 +2044,7 @@ namespace NTwain
         {
             get
             {
-                return _supportedCaps ?? (_supportedCaps = new CapWrapper<CapabilityId>(this, CapabilityId.CapSupportedCaps, value => value.ConvertToEnum<CapabilityId>(false)));
+                return _supportedCaps ?? (_supportedCaps = new CapWrapper<CapabilityId>(this, CapabilityId.CapSupportedCaps, value => value.ConvertToEnum<CapabilityId>(false), true));
             }
         }
 
@@ -2186,7 +2186,7 @@ namespace NTwain
         {
             get
             {
-                return _paperDetectable ?? (_paperDetectable = new CapWrapper<BoolType>(this, CapabilityId.CapPaperDetectable, ValueExtensions.ConvertToEnum<BoolType>));
+                return _paperDetectable ?? (_paperDetectable = new CapWrapper<BoolType>(this, CapabilityId.CapPaperDetectable, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2202,7 +2202,7 @@ namespace NTwain
         {
             get
             {
-                return _uiControllable ?? (_uiControllable = new CapWrapper<BoolType>(this, CapabilityId.CapUIControllable, ValueExtensions.ConvertToEnum<BoolType>));
+                return _uiControllable ?? (_uiControllable = new CapWrapper<BoolType>(this, CapabilityId.CapUIControllable, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2218,7 +2218,7 @@ namespace NTwain
         {
             get
             {
-                return _devOnline ?? (_devOnline = new CapWrapper<BoolType>(this, CapabilityId.CapDeviceOnline, ValueExtensions.ConvertToEnum<BoolType>));
+                return _devOnline ?? (_devOnline = new CapWrapper<BoolType>(this, CapabilityId.CapDeviceOnline, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2276,7 +2276,7 @@ namespace NTwain
         {
             get
             {
-                return _duplex ?? (_duplex = new CapWrapper<Duplex>(this, CapabilityId.CapDuplex, ValueExtensions.ConvertToEnum<Duplex>));
+                return _duplex ?? (_duplex = new CapWrapper<Duplex>(this, CapabilityId.CapDuplex, ValueExtensions.ConvertToEnum<Duplex>, true));
             }
         }
 
@@ -2313,7 +2313,7 @@ namespace NTwain
         {
             get
             {
-                return _dsUIonly ?? (_dsUIonly = new CapWrapper<BoolType>(this, CapabilityId.CapEnableDSUIOnly, ValueExtensions.ConvertToEnum<BoolType>));
+                return _dsUIonly ?? (_dsUIonly = new CapWrapper<BoolType>(this, CapabilityId.CapEnableDSUIOnly, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2329,7 +2329,7 @@ namespace NTwain
         {
             get
             {
-                return _dsData ?? (_dsData = new CapWrapper<BoolType>(this, CapabilityId.CapCustomDSData, ValueExtensions.ConvertToEnum<BoolType>));
+                return _dsData ?? (_dsData = new CapWrapper<BoolType>(this, CapabilityId.CapCustomDSData, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2536,7 +2536,7 @@ namespace NTwain
         {
             get
             {
-                return _powerSup ?? (_powerSup = new CapWrapper<PowerSupply>(this, CapabilityId.CapPowerSupply, ValueExtensions.ConvertToEnum<PowerSupply>));
+                return _powerSup ?? (_powerSup = new CapWrapper<PowerSupply>(this, CapabilityId.CapPowerSupply, ValueExtensions.ConvertToEnum<PowerSupply>, true));
             }
         }
 
@@ -2552,7 +2552,7 @@ namespace NTwain
         {
             get
             {
-                return _camPreviewUI ?? (_camPreviewUI = new CapWrapper<BoolType>(this, CapabilityId.CapCameraPreviewUI, ValueExtensions.ConvertToEnum<BoolType>));
+                return _camPreviewUI ?? (_camPreviewUI = new CapWrapper<BoolType>(this, CapabilityId.CapCameraPreviewUI, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2589,7 +2589,7 @@ namespace NTwain
         {
             get
             {
-                return _serialNo ?? (_serialNo = new CapWrapper<string>(this, CapabilityId.CapSerialNumber, value => { return value.ToString(); }));
+                return _serialNo ?? (_serialNo = new CapWrapper<string>(this, CapabilityId.CapSerialNumber, value => { return value.ToString(); }, true));
             }
         }
 
@@ -2754,7 +2754,7 @@ namespace NTwain
         {
             get
             {
-                return _reacuireAllow ?? (_reacuireAllow = new CapWrapper<BoolType>(this, CapabilityId.CapReacquireAllowed, ValueExtensions.ConvertToEnum<BoolType>));
+                return _reacuireAllow ?? (_reacuireAllow = new CapWrapper<BoolType>(this, CapabilityId.CapReacquireAllowed, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2770,7 +2770,7 @@ namespace NTwain
         {
             get
             {
-                return _battMinutes ?? (_battMinutes = new CapWrapper<int>(this, CapabilityId.CapBatteryMinutes, ValueExtensions.ConvertToEnum<int>));
+                return _battMinutes ?? (_battMinutes = new CapWrapper<int>(this, CapabilityId.CapBatteryMinutes, ValueExtensions.ConvertToEnum<int>, true));
             }
         }
 
@@ -2786,7 +2786,7 @@ namespace NTwain
         {
             get
             {
-                return _battPercent ?? (_battPercent = new CapWrapper<int>(this, CapabilityId.CapBatteryPercentage, ValueExtensions.ConvertToEnum<int>));
+                return _battPercent ?? (_battPercent = new CapWrapper<int>(this, CapabilityId.CapBatteryPercentage, ValueExtensions.ConvertToEnum<int>, true));
             }
         }
 
@@ -2970,7 +2970,7 @@ namespace NTwain
         {
             get
             {
-                return _custGuid ?? (_custGuid = new CapWrapper<string>(this, CapabilityId.CapCustomInterfaceGuid, value => { return value.ToString(); }));
+                return _custGuid ?? (_custGuid = new CapWrapper<string>(this, CapabilityId.CapCustomInterfaceGuid, value => { return value.ToString(); }, true));
             }
         }
 
@@ -2986,7 +2986,7 @@ namespace NTwain
         {
             get
             {
-                return _supportedCapsUnique ?? (_supportedCapsUnique = new CapWrapper<CapabilityId>(this, CapabilityId.CapSupportedCapsSegmentUnique, value => value.ConvertToEnum<CapabilityId>(false)));
+                return _supportedCapsUnique ?? (_supportedCapsUnique = new CapWrapper<CapabilityId>(this, CapabilityId.CapSupportedCapsSegmentUnique, value => value.ConvertToEnum<CapabilityId>(false), true));
             }
         }
 
@@ -3002,7 +3002,7 @@ namespace NTwain
         {
             get
             {
-                return _supportedDat ?? (_supportedDat = new CapWrapper<uint>(this, CapabilityId.CapSupportedDATs, ValueExtensions.ConvertToEnum<uint>));
+                return _supportedDat ?? (_supportedDat = new CapWrapper<uint>(this, CapabilityId.CapSupportedDATs, ValueExtensions.ConvertToEnum<uint>, true));
             }
         }
 
@@ -3207,7 +3207,7 @@ namespace NTwain
         {
             get
             {
-                return _printFontStyle ?? (_printFontStyle = new CapWrapper<PrinterFontStyle>(this, CapabilityId.CapPrinterFontStyle, ValueExtensions.ConvertToEnum<PrinterFontStyle>));
+                return _printFontStyle ?? (_printFontStyle = new CapWrapper<PrinterFontStyle>(this, CapabilityId.CapPrinterFontStyle, ValueExtensions.ConvertToEnum<PrinterFontStyle>, false));
             }
         }
 
@@ -3288,7 +3288,7 @@ namespace NTwain
         {
             get
             {
-                return _printIdxTrig ?? (_printIdxTrig = new CapWrapper<PrinterIndexTrigger>(this, CapabilityId.CapPrinterIndexTrigger, ValueExtensions.ConvertToEnum<PrinterIndexTrigger>));
+                return _printIdxTrig ?? (_printIdxTrig = new CapWrapper<PrinterIndexTrigger>(this, CapabilityId.CapPrinterIndexTrigger, ValueExtensions.ConvertToEnum<PrinterIndexTrigger>, false));
             }
         }
 
@@ -3304,7 +3304,7 @@ namespace NTwain
         {
             get
             {
-                return _printPreview ?? (_printPreview = new CapWrapper<string>(this, CapabilityId.CapPrinterStringPreview, value => { return value.ToString(); }));
+                return _printPreview ?? (_printPreview = new CapWrapper<string>(this, CapabilityId.CapPrinterStringPreview, value => { return value.ToString(); }, true));
             }
         }
 

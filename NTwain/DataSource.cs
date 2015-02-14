@@ -150,22 +150,31 @@ namespace NTwain
         /// </value>
         public Version ProtocolVersion { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this data source has been opened.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this data source is open; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsOpen { get { return _session.IsSourceOpen; } }
+
         static readonly CapabilityId[] _emptyCapList = new CapabilityId[0];
 
         private IList<CapabilityId> _supportedCapsList;
         /// <summary>
-        /// Gets the list of supported caps for this source.
+        /// Gets the list of supported caps for this source. 
         /// </summary>
         /// <value>
         /// The supported caps.
         /// </value>
+        [Obsolete("Use CapSupportedCaps.Get() instead.")]
         public IList<CapabilityId> SupportedCaps
         {
             get
             {
                 if (_supportedCapsList == null && _session.State > 3)
                 {
-                    _supportedCapsList = CapSupportedCaps.Get();// CapGet(CapabilityId.CapSupportedCaps).CastToEnum<CapabilityId>(false);
+                    _supportedCapsList = CapSupportedCaps.Get();
                 }
                 return _supportedCapsList ?? _emptyCapList;
             }

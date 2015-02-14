@@ -6,7 +6,7 @@ namespace NTwain
     /// <summary>
     /// Represents a TWAIN data source.
     /// </summary>
-    public interface IDataSource
+    public interface IDataSource : ICapControl
     {
         /// <summary>
         /// Gets the source's product name.
@@ -63,6 +63,14 @@ namespace NTwain
         /// The version.
         /// </value>
         TWVersion Version { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether this data source has been opened.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this data source is open; otherwise, <c>false</c>.
+        /// </value>
+        bool IsOpen { get; }
 
         /// <summary>
         /// Opens the source for capability negotiation.

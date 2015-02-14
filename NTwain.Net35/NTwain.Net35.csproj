@@ -153,6 +153,9 @@
     <Compile Include="..\NTwain\Properties\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\ProtocolVersions.cs">
+      <Link>ProtocolVersions.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\SourceEnableMode.cs">
       <Link>SourceEnableMode.cs</Link>
     </Compile>

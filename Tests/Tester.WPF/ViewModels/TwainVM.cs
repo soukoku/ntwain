@@ -35,6 +35,7 @@ namespace Tester.WPF
             _session.TransferReady += _session_TransferReady;
             _session.DataTransferred += _session_DataTransferred;
             _session.SourceDisabled += _session_SourceDisabled;
+            _session.StateChanged += (s, e) => { RaisePropertyChanged(() => State); };
         }
 
         TwainSession _session;

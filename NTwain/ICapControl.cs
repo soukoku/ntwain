@@ -35,7 +35,7 @@ namespace NTwain
         /// </summary>
         /// <param name="capabilityId">The capability identifier.</param>
         /// <returns></returns>
-        QuerySupports CapQuerySupport(CapabilityId capabilityId);
+        QuerySupports? CapQuerySupport(CapabilityId capabilityId);
 
         /// <summary>
         /// Resets the current value to power-on default.

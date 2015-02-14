@@ -70,6 +70,10 @@ namespace Tester.Winform
             {
                 Debug.WriteLine("State changed to " + _twain.State + " on thread " + Thread.CurrentThread.ManagedThreadId);
             };
+            _twain.TransferError += (s, e) =>
+            {
+                Debug.WriteLine("Got xfer error on thread " + Thread.CurrentThread.ManagedThreadId);
+            };
             _twain.DataTransferred += (s, e) =>
             {
                 Debug.WriteLine("Transferred data event on thread " + Thread.CurrentThread.ManagedThreadId);
@@ -223,7 +227,7 @@ namespace Tester.Winform
 
                 _stopScan = false;
 
-                if (_twain.CurrentSource.SupportedCaps.Contains(CapabilityId.CapUIControllable))
+                if (_twain.CurrentSource.CapUIControllable.IsSupported)//.SupportedCaps.Contains(CapabilityId.CapUIControllable))
                 {
                     // hide scanner ui if possible
                     if (_twain.CurrentSource.Enable(SourceEnableMode.NoUI, false, this.Handle) == ReturnCode.Success)
@@ -292,8 +296,10 @@ namespace Tester.Winform
         private void LoadSourceCaps()
         {
             var src = _twain.CurrentSource;
-            var caps = src.SupportedCaps;
             _loadingCaps = true;
+
+            var test = src.SupportedCaps;
+
             if (groupDepth.Enabled = src.ICapPixelType.IsSupported)
             {
                 LoadDepth(src.ICapPixelType);
@@ -311,7 +317,7 @@ namespace Tester.Winform
             {
                 LoadPaperSize(src.ICapSupportedSizes);
             }
-            btnAllSettings.Enabled = caps.Contains(CapabilityId.CapEnableDSUIOnly);
+            btnAllSettings.Enabled = src.CapEnableDSUIOnly.IsSupported;
             _loadingCaps = false;
         }
 

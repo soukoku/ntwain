@@ -128,20 +128,12 @@ namespace NTwain
         IList<string> GetLabelEnum();
 
         /// <summary>
-        /// Gets a value indicating whether this capability is supported.
+        /// Gets a value indicating whether this capability is at all supported.
         /// </summary>
         /// <value>
         /// <c>true</c> if this capability is supported; otherwise, <c>false</c>.
         /// </value>
         bool IsSupported { get; }
-
-        /// <summary>
-        /// Gets the supported actions.
-        /// </summary>
-        /// <value>
-        /// The supported actions.
-        /// </value>
-        QuerySupports SupportedActions { get; }
     }
 
     /// <summary>

@@ -23,7 +23,7 @@ namespace NTwain
         /// <summary>
         /// The build release version number.
         /// </summary>
-        public const string Build = "3.2.6"; // change this for each nuget release
+        public const string Build = "3.2.7"; // change this for each nuget release
 
 
     }
