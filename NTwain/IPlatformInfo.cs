@@ -38,6 +38,36 @@ namespace NTwain
         /// <c>true</c> if this library is supported; otherwise, <c>false</c>.
         /// </value>
         bool IsSupported { get; }
+        /// <summary>
+        /// Gets a value indicating whether the lib is expecting to use new DSM.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if using the new DSM; otherwise, <c>false</c>.
+        /// </value>
+        bool UseNewWinDSM { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the current runtime is mono.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if the current runtime is on mono; otherwise, <c>false</c>.
+        /// </value>
+        bool IsOnMono { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the current OS is windows.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if the current OS is windows; otherwise, <c>false</c>.
+        /// </value>
+        bool IsWindows { get; }
+        /// <summary>
+        /// Gets a value indicating whether the current OS is linux.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the current OS is linux; otherwise, <c>false</c>.
+        /// </value>
+        bool IsLinux { get; }
 
         /// <summary>
         /// Gets the <see cref="IMemoryManager"/> for communicating with data sources.

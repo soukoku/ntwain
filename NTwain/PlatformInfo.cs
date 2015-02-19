@@ -13,7 +13,8 @@ namespace NTwain
     /// </summary>
     public class PlatformInfo : IPlatformInfo
     {
-        internal static readonly PlatformInfo __global = new PlatformInfo();
+        static readonly PlatformInfo __global = new PlatformInfo();
+        internal static PlatformInfo InternalCurrent { get { return __global; } }
         /// <summary>
         /// Gets the current platform info related to TWAIN.
         /// </summary>
@@ -74,10 +75,36 @@ namespace NTwain
             _defaultMemManager = new WinMemoryManager();
         }
 
-        internal readonly bool UseNewWinDSM;
-        internal readonly bool IsOnMono;
-        internal readonly bool IsWindows;
-        internal readonly bool IsLinux;
+        /// <summary>
+        /// Gets a value indicating whether the lib is expecting to use new DSM.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if using the new DSM; otherwise, <c>false</c>.
+        /// </value>
+        public bool UseNewWinDSM { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the current runtime is mono.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if the current runtime is on mono; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsOnMono { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the current OS is windows.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if the current OS is windows; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsWindows { get; private set; }
+        /// <summary>
+        /// Gets a value indicating whether the current OS is linux.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the current OS is linux; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsLinux { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether the application is running in 64-bit.

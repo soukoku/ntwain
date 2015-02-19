@@ -6,8 +6,7 @@ using System.Text;
 namespace NTwain.Internals
 {
     /// <summary>
-    /// Interface for checking whether messages from WndProc is a TWAIN message and is handled
-    /// internally.
+    /// Interface for something that can check whether messages from WndProc is a TWAIN message and already handled.
     /// </summary>
     interface IWinMessageFilter
     {

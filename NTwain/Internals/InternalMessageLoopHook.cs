@@ -36,7 +36,7 @@ namespace NTwain.Internals
                     {
                         Debug.WriteLine("NTwain message loop is starting.");
                         _dispatcher = Dispatcher.CurrentDispatcher;
-                        if (!PlatformInfo.__global.IsOnMono)
+                        if (!PlatformInfo.Current.IsOnMono)
                         {
                             _hook = new WindowsHook(filter);
                             Handle = _hook.Handle;
@@ -75,7 +75,7 @@ namespace NTwain.Internals
             {
                 action();
             }
-            else if (PlatformInfo.__global.IsOnMono)
+            else if (PlatformInfo.Current.IsOnMono)
             {
                 using (var man = new WrappedManualResetEvent())
                 {

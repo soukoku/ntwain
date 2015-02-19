@@ -3,16 +3,16 @@
 [assembly: AssemblyCopyright("Copyright \x00a9 Yin-Chun Wang 2012-2015")]
 [assembly: AssemblyCompany("Yin-Chun Wang")]
 
-[assembly: AssemblyVersion(NTwain.NTwainVersionInfo.Release)]
-[assembly: AssemblyFileVersion(NTwain.NTwainVersionInfo.Build)]
-[assembly: AssemblyInformationalVersion(NTwain.NTwainVersionInfo.Build)]
+[assembly: AssemblyVersion(NTwain.VersionInfo.Release)]
+[assembly: AssemblyFileVersion(NTwain.VersionInfo.Build)]
+[assembly: AssemblyInformationalVersion(NTwain.VersionInfo.Build)]
 
 namespace NTwain
 {
     /// <summary>
-    /// Contains version info of this assembly.
+    /// Contains version info of NTwain.
     /// </summary>
-    static class NTwainVersionInfo
+    static class VersionInfo
     {
         /// <summary>
         /// The major release version number.
@@ -23,7 +23,7 @@ namespace NTwain
         /// <summary>
         /// The build release version number.
         /// </summary>
-        public const string Build = "3.2.7"; // change this for each nuget release
+        public const string Build = "3.2.8"; // change this for each nuget release
 
 
     }

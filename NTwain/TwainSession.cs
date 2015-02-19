@@ -242,7 +242,7 @@ namespace NTwain
                         rc = ((ITwainSessionInternal)this).DGControl.EntryPoint.Get(out entry);
                         if (rc == ReturnCode.Success)
                         {
-                            PlatformInfo.__global.MemoryManager = entry;
+                            PlatformInfo.InternalCurrent.MemoryManager = entry;
                             Debug.WriteLine("Using TWAIN2 memory functions.");
                         }
                         else
@@ -269,7 +269,7 @@ namespace NTwain
                 rc = ((ITwainSessionInternal)this).DGControl.Parent.CloseDsm(_msgLoopHook.Handle);
                 if (rc == ReturnCode.Success)
                 {
-                    PlatformInfo.__global.MemoryManager = null;
+                    PlatformInfo.InternalCurrent.MemoryManager = null;
                     _msgLoopHook.Stop();
                 }
             });
