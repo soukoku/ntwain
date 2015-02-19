@@ -97,7 +97,7 @@ and the wrapper makes it easy to do that (see example below):
 #!c#
 
 // The wrapper has many methods that corresponds to the TWAIN capability triplet msgs like
-// Get(), GetCurrent(), GetDefault(), Set(), etc.
+// GetValues(), GetCurrent(), GetDefault(), SetValue(), etc.
 // (see TWAIN pdf doc for reference)
 
 
@@ -107,9 +107,9 @@ and the wrapper makes it easy to do that (see example below):
 PixelType myValue = PixelType.BlackWhite; 
 
 if (myDS.ICapPixelType.CanSet  &&
-    myDS.ICapPixelType.Get().Contains(myValue))
+    myDS.ICapPixelType.GetValues().Contains(myValue))
 {
-    myDS.ICapPixelType.Set(myValue);
+    myDS.ICapPixelType.SetValue(myValue);
 }
 
 
