@@ -143,16 +143,16 @@ namespace NTwain
         /// Gets the bitmap from the <see cref="NativeData"/> if it's an image.
         /// </summary>
         /// <returns></returns>
-        public Bitmap GetNativeBitmap()
+        public Image GetNativeImage()
         {
-            Bitmap image = null;
+            Image image = null;
             if (NativeData != IntPtr.Zero)
             {
-                if (PlatformInfo.Current.IsWindows)
+                if (ImageTools.IsDib(NativeData))
                 {
                     image = ImageTools.ReadBitmapImage(NativeData);
                 }
-                else if (PlatformInfo.Current.IsLinux)
+                else if (ImageTools.IsTiff(NativeData))
                 {
                     image = ImageTools.ReadTiffImage(NativeData);
                 }

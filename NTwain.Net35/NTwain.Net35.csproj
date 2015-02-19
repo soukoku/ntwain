@@ -124,17 +124,17 @@
     <Compile Include="..\NTwain\Internals\WrappedManualResetEvent.cs">
       <Link>Internals\WrappedManualResetEvent.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\Interop\BITMAPINFO.cs">
-      <Link>Interop\BITMAPINFO.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\Interop\BITMAPINFOHEADER.cs">
-      <Link>Interop\BITMAPINFOHEADER.cs</Link>
+    <Compile Include="..\NTwain\Interop\BITMAP.cs">
+      <Link>Interop\BITMAP.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Interop\MESSAGE.cs">
       <Link>Interop\MESSAGE.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Interop\NativeMethods.cs">
       <Link>Interop\NativeMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Interop\TIFF.cs">
+      <Link>Interop\TIFF.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Interop\UnsafeNativeMethods.cs">
       <Link>Interop\UnsafeNativeMethods.cs</Link>

@@ -87,10 +87,10 @@ namespace Tester.Winform
                 }
 
                 // handle image data
-                Bitmap img = null;
+                Image img = null;
                 if (e.NativeData != IntPtr.Zero)
                 {
-                    img = e.GetNativeBitmap();
+                    img = e.GetNativeImage();
                 }
                 else if (!string.IsNullOrEmpty(e.FileDataPath))
                 {

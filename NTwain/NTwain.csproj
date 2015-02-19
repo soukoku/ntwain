@@ -70,13 +70,13 @@
     <Compile Include="ImageTools.cs" />
     <Compile Include="Internals\InternalMessageLoopHook.cs" />
     <Compile Include="Internals\ITwainSessionInternal.cs" />
-    <Compile Include="Interop\BITMAPINFO.cs" />
-    <Compile Include="Interop\BITMAPINFOHEADER.cs" />
+    <Compile Include="Interop\BITMAP.cs" />
     <Compile Include="Interop\MESSAGE.cs" />
     <Compile Include="Internals\TransferLogic.cs" />
     <Compile Include="Internals\WindowsHook.cs" />
     <Compile Include="Internals\WrappedManualResetEvent.cs" />
     <Compile Include="Interop\NativeMethods.cs" />
+    <Compile Include="Interop\TIFF.cs" />
     <Compile Include="IPlatformInfo.cs" />
     <Compile Include="ITripletControl.cs" />
     <Compile Include="ITwainSession.cs" />

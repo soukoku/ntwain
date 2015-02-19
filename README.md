@@ -51,8 +51,8 @@ TwainSession class provides many events, but these 2 are the most important
 or all subsequent transfers using the event object.
 * DataTransferred - fired after the transfer has occurred. The data available depends on 
 what you've specified using the TWAIN API before starting the transfer. If using image
-native transfer, the event arg provides a quick GetNativeBitmap() method to convert the
-data to a System.Drawing.Bitmap.
+native transfer, the event arg provides a quick GetNativeImage() method to convert the
+data to a System.Drawing.Image.
 
 NOTE: do not try to close the source/session in the handler of these 2 events or something
 unpredictable will happen. Either let the scan run its course or cancel the scan using the flag 
@@ -140,7 +140,7 @@ session.Close();
 Caveats
 --------------------------------------
 At the moment the DataTransferredEventArgs only provides conversion routine to 
-a Bitmap image when using native transfer.
+an image when using native transfer.
 If other transfer methods are used you'll have to deal with them yourself.
 
 If you just call session.Open() without passing a message loop hook argument, an 
