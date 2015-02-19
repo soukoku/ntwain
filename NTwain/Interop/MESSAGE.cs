@@ -4,10 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace NTwain.Internals
+namespace NTwain.Interop
 {
-
-
     /// <summary>
     /// The MSG structure in Windows for TWAIN use.
     /// </summary>

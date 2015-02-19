@@ -289,7 +289,7 @@ namespace Tester.WPF
             BitmapSource img = null;
             if (e.NativeData != IntPtr.Zero)
             {
-                img = e.NativeData.GetWPFBitmap();
+                img = e.GetNativeBitmap().ConvertToWpfBitmap();
             }
             else if (!string.IsNullOrEmpty(e.FileDataPath))
             {

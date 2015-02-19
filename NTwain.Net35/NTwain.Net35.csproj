@@ -41,6 +41,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -87,6 +88,9 @@
     <Compile Include="..\NTwain\IDataSource.cs">
       <Link>IDataSource.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\ImageTools.cs">
+      <Link>ImageTools.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\IMemoryManager.cs">
       <Link>IMemoryManager.cs</Link>
     </Compile>
@@ -105,17 +109,11 @@
     <Compile Include="..\NTwain\Internals\IWinMessageFilter.cs">
       <Link>Internals\IWinMessageFilter.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\Internals\MESSAGE.cs">
-      <Link>Internals\MESSAGE.cs</Link>
-    </Compile>
     <Compile Include="..\NTwain\Internals\TentativeStateCommitable.cs">
       <Link>Internals\TentativeStateCommitable.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Internals\TransferLogic.cs">
       <Link>Internals\TransferLogic.cs</Link>
-    </Compile>
-    <Compile Include="..\NTwain\Internals\UnsafeNativeMethods.cs">
-      <Link>Internals\UnsafeNativeMethods.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Internals\WindowsHook.cs">
       <Link>Internals\WindowsHook.cs</Link>
@@ -125,6 +123,21 @@
     </Compile>
     <Compile Include="..\NTwain\Internals\WrappedManualResetEvent.cs">
       <Link>Internals\WrappedManualResetEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Interop\BITMAPINFO.cs">
+      <Link>Interop\BITMAPINFO.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Interop\BITMAPINFOHEADER.cs">
+      <Link>Interop\BITMAPINFOHEADER.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Interop\MESSAGE.cs">
+      <Link>Interop\MESSAGE.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Interop\NativeMethods.cs">
+      <Link>Interop\NativeMethods.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Interop\UnsafeNativeMethods.cs">
+      <Link>Interop\UnsafeNativeMethods.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\IPlatformInfo.cs">
       <Link>IPlatformInfo.cs</Link>

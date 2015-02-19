@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace NTwain.Internals
+namespace NTwain.Interop
 {
     [SuppressUnmanagedCodeSecurity]
     static class UnsafeNativeMethods
@@ -23,12 +23,5 @@ namespace NTwain.Internals
         internal static extern bool WinGlobalUnlock(IntPtr handle);
 
         #endregion
-    }
-
-    static class NativeMethods
-    {
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
     }
 }

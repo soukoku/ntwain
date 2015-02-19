@@ -1,8 +1,14 @@
 ﻿using NTwain.Data;
+using NTwain.Internals;
+using NTwain.Interop;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace NTwain
 {
@@ -131,5 +137,29 @@ namespace NTwain
             }
             return Enumerable.Empty<TWInfo>();
         }
+
+
+        /// <summary>
+        /// Gets the bitmap from the <see cref="NativeData"/> if it's an image.
+        /// </summary>
+        /// <returns></returns>
+        public Bitmap GetNativeBitmap()
+        {
+            Bitmap image = null;
+            if (NativeData != IntPtr.Zero)
+            {
+                if (PlatformInfo.Current.IsWindows)
+                {
+                    image = ImageTools.ReadBitmapImage(NativeData);
+                }
+                else if (PlatformInfo.Current.IsLinux)
+                {
+                    image = ImageTools.ReadTiffImage(NativeData);
+                }
+            }
+            return image;
+        }
+
+        
     }
 }

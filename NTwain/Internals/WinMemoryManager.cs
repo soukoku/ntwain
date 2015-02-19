@@ -1,4 +1,5 @@
 ﻿using NTwain.Data;
+using NTwain.Interop;
 using System;
 using System.ComponentModel;
 

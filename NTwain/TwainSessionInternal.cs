@@ -1,5 +1,6 @@
 ﻿using NTwain.Data;
 using NTwain.Internals;
+using NTwain.Interop;
 using NTwain.Triplets;
 using System;
 using System.Collections.Generic;
@@ -231,7 +232,7 @@ namespace NTwain
                 IntPtr msgPtr = IntPtr.Zero;
                 try
                 {
-                    var winMsg = new NTwain.Internals.MESSAGE(hwnd, msg, wParam, lParam);
+                    var winMsg = new MESSAGE(hwnd, msg, wParam, lParam);
 
                     // no need to do another lock call when using marshal alloc
                     msgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(winMsg));

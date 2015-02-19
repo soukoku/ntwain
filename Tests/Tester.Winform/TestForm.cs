@@ -1,5 +1,4 @@
-﻿using CommonWin32;
-using NTwain;
+﻿using NTwain;
 using NTwain.Data;
 using System;
 using System.Diagnostics;
@@ -91,7 +90,7 @@ namespace Tester.Winform
                 Bitmap img = null;
                 if (e.NativeData != IntPtr.Zero)
                 {
-                    img = e.NativeData.GetDrawingBitmap();
+                    img = e.GetNativeBitmap();
                 }
                 else if (!string.IsNullOrEmpty(e.FileDataPath))
                 {
