@@ -34,6 +34,8 @@ namespace NTwain
 
             if (IsWindows)
             {
+                _defaultMemManager = new WinMemoryManager();
+
                 var newDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_NEW_DSM_NAME);
 #if NET35
                 var oldDsmPath = Path.Combine(Environment.GetEnvironmentVariable("windir"), Dsm.WIN_OLD_DSM_NAME);
@@ -63,6 +65,8 @@ namespace NTwain
             }
             else if (IsLinux)
             {
+                _defaultMemManager = new LinuxMemoryManager();
+
                 ExpectedDsmPath = Dsm.LINUX_DSM_PATH;
                 DsmExists = File.Exists(ExpectedDsmPath);
                 IsSupported = DsmExists && IsOnMono;
@@ -71,8 +75,6 @@ namespace NTwain
             {
                 // mac? not gonna happen
             }
-
-            _defaultMemManager = new WinMemoryManager();
         }
 
         /// <summary>

@@ -70,6 +70,7 @@
     <Compile Include="ImageTools.cs" />
     <Compile Include="Internals\InternalMessageLoopHook.cs" />
     <Compile Include="Internals\ITwainSessionInternal.cs" />
+    <Compile Include="Internals\LinuxMemoryManager.cs" />
     <Compile Include="Interop\BITMAP.cs" />
     <Compile Include="Interop\MESSAGE.cs" />
     <Compile Include="Internals\TransferLogic.cs" />

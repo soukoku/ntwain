@@ -109,6 +109,9 @@
     <Compile Include="..\NTwain\Internals\IWinMessageFilter.cs">
       <Link>Internals\IWinMessageFilter.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\Internals\LinuxMemoryManager.cs">
+      <Link>Internals\LinuxMemoryManager.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\Internals\TentativeStateCommitable.cs">
       <Link>Internals\TentativeStateCommitable.cs</Link>
     </Compile>
