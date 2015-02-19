@@ -11,6 +11,10 @@ namespace NTwain
     public enum State
     {
         /// <summary>
+        /// Just a default value.
+        /// </summary>
+        Invalid = 0,
+        /// <summary>
         /// The starting state, corresponds to state 1.
         /// </summary>
         DsmUnloaded = 1,

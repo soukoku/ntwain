@@ -11,7 +11,7 @@ namespace NTwain
     public interface IReadOnlyCapWrapper<TValue>
     {
         /// <summary>
-        /// Gets a value indicating whether <see cref="Get"/> is supported.
+        /// Gets a value indicating whether <see cref="GetValues"/> is supported.
         /// </summary>
         /// <value>
         ///   <c>true</c> if this capability can get values; otherwise, <c>false</c>.
@@ -95,7 +95,7 @@ namespace NTwain
         /// Gets all the possible values of this capability.
         /// </summary>
         /// <returns></returns>
-        IList<TValue> Get();
+        IList<TValue> GetValues();
 
         /// <summary>
         /// Gets the current value of this capability.
@@ -153,20 +153,20 @@ namespace NTwain
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        ReturnCode Set(TValue value);/// <summary>
+        ReturnCode SetValue(TValue value);/// <summary>
                                                  /// 
         /// A version of Set that uses an array.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        ReturnCode Set(TWArray value);
+        ReturnCode SetValue(TWArray value);
 
         /// <summary>
         /// A version of Set that uses an enumeration.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        ReturnCode Set(TWEnumeration value);
+        ReturnCode SetValue(TWEnumeration value);
 
         /// <summary>
         /// Sets the constraint value of this capability.

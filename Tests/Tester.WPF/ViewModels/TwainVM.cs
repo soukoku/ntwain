@@ -248,7 +248,7 @@ namespace Tester.WPF
         {
             if (_session.CurrentSource.ICapXferMech.GetCurrent() == XferMech.File)
             {
-                var formats = _session.CurrentSource.ICapImageFileFormat.Get();
+                var formats = _session.CurrentSource.ICapImageFileFormat.GetValues();
                 var wantFormat = formats.Contains(FileFormat.Tiff) ? FileFormat.Tiff : FileFormat.Bmp;
 
                 var fileSetup = new TWSetupFileXfer

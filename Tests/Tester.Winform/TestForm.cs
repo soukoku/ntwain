@@ -322,7 +322,7 @@ namespace Tester.Winform
 
         private void LoadPaperSize(ICapWrapper<SupportedSize> cap)
         {
-            var list = cap.Get();
+            var list = cap.GetValues();
             comboSize.DataSource = list;
             var cur = cap.GetCurrent();
             if (list.Contains(cur))
@@ -346,7 +346,7 @@ namespace Tester.Winform
         private void LoadDPI(ICapWrapper<TWFix32> cap)
         {
             // only allow dpi of certain values for those source that lists everything
-            var list = cap.Get().Where(dpi => (dpi % 50) == 0).ToList();
+            var list = cap.GetValues().Where(dpi => (dpi % 50) == 0).ToList();
             comboDPI.DataSource = list;
             var cur = cap.GetCurrent();
             if (list.Contains(cur))
@@ -357,7 +357,7 @@ namespace Tester.Winform
 
         private void LoadDepth(ICapWrapper<PixelType> cap)
         {
-            var list = cap.Get();
+            var list = cap.GetValues();
             comboDepth.DataSource = list;
             var cur = cap.GetCurrent();
             if (list.Contains(cur))
@@ -376,7 +376,7 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (SupportedSize)comboSize.SelectedItem;
-                _twain.CurrentSource.ICapSupportedSizes.Set(sel);
+                _twain.CurrentSource.ICapSupportedSizes.SetValue(sel);
             }
         }
 
@@ -385,7 +385,7 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (PixelType)comboDepth.SelectedItem;
-                _twain.CurrentSource.ICapPixelType.Set(sel);
+                _twain.CurrentSource.ICapPixelType.SetValue(sel);
             }
         }
 
@@ -394,8 +394,8 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (TWFix32)comboDPI.SelectedItem;
-                _twain.CurrentSource.ICapXResolution.Set(sel);
-                _twain.CurrentSource.ICapYResolution.Set(sel);
+                _twain.CurrentSource.ICapXResolution.SetValue(sel);
+                _twain.CurrentSource.ICapYResolution.SetValue(sel);
             }
         }
 
@@ -403,7 +403,7 @@ namespace Tester.Winform
         {
             if (!_loadingCaps && _twain.State == 4)
             {
-                _twain.CurrentSource.CapDuplexEnabled.Set(ckDuplex.Checked ? BoolType.True : BoolType.False);
+                _twain.CurrentSource.CapDuplexEnabled.SetValue(ckDuplex.Checked ? BoolType.True : BoolType.False);
             }
         }
 

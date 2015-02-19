@@ -1576,7 +1576,7 @@ namespace NTwain
                         };
 
                         // this needs to also set undefined size optino
-                        rc = ICapUndefinedImageSize.Set(value);
+                        rc = ICapUndefinedImageSize.SetValue(value);
                         using (TWCapability capValue = new TWCapability(CapabilityId.ICapAutomaticBorderDetection, one))
                         {
                             rc = _session.DGControl.Capability.Set(capValue);
@@ -2002,11 +2002,11 @@ namespace NTwain
                         // for one of them since setting autoscan also sets autofeed
                         if (CapAutoScan.CanSet)
                         {
-                            rc = CapAutoScan.Set(value);
+                            rc = CapAutoScan.SetValue(value);
                         }
                         else if (CapAutoFeed.CanSet)
                         {
-                            rc = CapAutoFeed.Set(value);
+                            rc = CapAutoFeed.SetValue(value);
                         }
 
                         return rc;

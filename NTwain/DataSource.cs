@@ -174,7 +174,7 @@ namespace NTwain
             {
                 if (_supportedCapsList == null && _session.State > 3)
                 {
-                    _supportedCapsList = CapSupportedCaps.Get();
+                    _supportedCapsList = CapSupportedCaps.GetValues();
                 }
                 return _supportedCapsList ?? _emptyCapList;
             }

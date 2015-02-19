@@ -49,7 +49,7 @@ namespace Tester.WPF
             //rc = DGControl.Status.Get(dsId, ref stat);
             if (rc == ReturnCode.Success)
             {
-                foreach (var c in DS.CapSupportedCaps.Get().Select(o => new CapVM(DS, o)))
+                foreach (var c in DS.CapSupportedCaps.GetValues().Select(o => new CapVM(DS, o)))
                 {
                     Caps.Add(c);
                 }

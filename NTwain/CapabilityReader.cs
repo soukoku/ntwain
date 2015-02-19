@@ -207,107 +207,105 @@ namespace NTwain
                     }
                     break;
                 case ContainerType.Range:
-                    // horrible cast but should work.
-                    // in the for loop we also compare against min in case the step
-                    // is parsed as negative number and causes infinite loop.
-                    switch (ItemType)
-                    {
-                        case Data.ItemType.Fix32:
-                            {
-                                var min = (TWFix32)RangeMinValue;
-                                var counter = min;
-                                var max = (TWFix32)RangeMaxValue;
-                                var step = (TWFix32)RangeStepSize;
-
-                                for (var i = min; i >= min && i <= max; i += step)
-                                {
-                                    toPopulate.Add(i);
-                                }
-                            }
-                            break;
-                        case Data.ItemType.UInt32:
-                            {
-                                var min = (uint)RangeMinValue;
-                                var counter = min;
-                                var max = (uint)RangeMaxValue;
-                                var step = (uint)RangeStepSize;
-
-                                for (var i = min; i >= min && i <= max; i += step)
-                                {
-                                    toPopulate.Add(i);
-                                }
-                            }
-                            break;
-                        case Data.ItemType.Int32:
-                            {
-                                var min = (int)RangeMinValue;
-                                var counter = min;
-                                var max = (int)RangeMaxValue;
-                                var step = (int)RangeStepSize;
-
-                                for (var i = min; i >= min && i <= max; i += step)
-                                {
-                                    toPopulate.Add(i);
-                                }
-                            }
-                            break;
-                        // these should never happen since TW_ENUM fields are 4 bytes but you never know
-                        case Data.ItemType.UInt16:
-                            {
-                                var min = (ushort)RangeMinValue;
-                                var counter = min;
-                                var max = (ushort)RangeMaxValue;
-                                var step = (ushort)RangeStepSize;
-
-                                for (var i = min; i >= min && i <= max; i += step)
-                                {
-                                    toPopulate.Add(i);
-                                }
-                            }
-                            break;
-                        case Data.ItemType.Int16:
-                            {
-                                var min = (short)RangeMinValue;
-                                var counter = min;
-                                var max = (short)RangeMaxValue;
-                                var step = (short)RangeStepSize;
-
-                                for (var i = min; i >= min && i <= max; i += step)
-                                {
-                                    toPopulate.Add(i);
-                                }
-                            }
-                            break;
-                        case Data.ItemType.UInt8:
-                            {
-                                var min = (byte)RangeMinValue;
-                                var counter = min;
-                                var max = (byte)RangeMaxValue;
-                                var step = (byte)RangeStepSize;
-
-                                for (var i = min; i >= min && i <= max; i += step)
-                                {
-                                    toPopulate.Add(i);
-                                }
-                            }
-                            break;
-                        case Data.ItemType.Int8:
-                            {
-                                var min = (sbyte)RangeMinValue;
-                                var counter = min;
-                                var max = (sbyte)RangeMaxValue;
-                                var step = (sbyte)RangeStepSize;
-
-                                for (var i = min; i >= min && i <= max; i += step)
-                                {
-                                    toPopulate.Add(i);
-                                }
-                            }
-                            break;
-                    }
+                    PopulateRange(toPopulate);
                     break;
             }
             return toPopulate;
+        }
+
+        private void PopulateRange(IList<object> toPopulate)
+        {
+            // horrible cast but should work.
+            // in the for loop we also compare against min in case the step
+            // is parsed as negative number and causes infinite loop.
+            switch (ItemType)
+            {
+                case Data.ItemType.Fix32:
+                    {
+                        var min = (TWFix32)RangeMinValue;
+                        var max = (TWFix32)RangeMaxValue;
+                        var step = (TWFix32)RangeStepSize;
+
+                        for (var i = min; i >= min && i <= max; i += step)
+                        {
+                            toPopulate.Add(i);
+                        }
+                    }
+                    break;
+                case Data.ItemType.UInt32:
+                    {
+                        var min = (uint)RangeMinValue;
+                        var max = (uint)RangeMaxValue;
+                        var step = (uint)RangeStepSize;
+
+                        for (var i = min; i >= min && i <= max; i += step)
+                        {
+                            toPopulate.Add(i);
+                        }
+                    }
+                    break;
+                case Data.ItemType.Int32:
+                    {
+                        var min = (int)RangeMinValue;
+                        var max = (int)RangeMaxValue;
+                        var step = (int)RangeStepSize;
+
+                        for (var i = min; i >= min && i <= max; i += step)
+                        {
+                            toPopulate.Add(i);
+                        }
+                    }
+                    break;
+                // these should never happen since TW_ENUM fields are 4 bytes but you never know
+                case Data.ItemType.UInt16:
+                    {
+                        var min = (ushort)RangeMinValue;
+                        var max = (ushort)RangeMaxValue;
+                        var step = (ushort)RangeStepSize;
+
+                        for (var i = min; i >= min && i <= max; i += step)
+                        {
+                            toPopulate.Add(i);
+                        }
+                    }
+                    break;
+                case Data.ItemType.Int16:
+                    {
+                        var min = (short)RangeMinValue;
+                        var max = (short)RangeMaxValue;
+                        var step = (short)RangeStepSize;
+
+                        for (var i = min; i >= min && i <= max; i += step)
+                        {
+                            toPopulate.Add(i);
+                        }
+                    }
+                    break;
+                case Data.ItemType.UInt8:
+                    {
+                        var min = (byte)RangeMinValue;
+                        var max = (byte)RangeMaxValue;
+                        var step = (byte)RangeStepSize;
+
+                        for (var i = min; i >= min && i <= max; i += step)
+                        {
+                            toPopulate.Add(i);
+                        }
+                    }
+                    break;
+                case Data.ItemType.Int8:
+                    {
+                        var min = (sbyte)RangeMinValue;
+                        var max = (sbyte)RangeMaxValue;
+                        var step = (sbyte)RangeStepSize;
+
+                        for (var i = min; i >= min && i <= max; i += step)
+                        {
+                            toPopulate.Add(i);
+                        }
+                    }
+                    break;
+            }
         }
 
 

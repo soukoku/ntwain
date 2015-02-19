@@ -88,7 +88,6 @@ namespace NTwain
             var headerSize = Marshal.SizeOf(typeof(TIFFHEADER));
             var tagSize = Marshal.SizeOf(typeof(TIFFTAG));
             var tiffSize = 0;
-            var header = (TIFFHEADER)Marshal.PtrToStructure(data, typeof(TIFFHEADER));
             var tagPtr = data.ToInt64() + headerSize;
             for (int i = 0; i < 999; i++)
             {

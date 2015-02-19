@@ -79,7 +79,7 @@ namespace NTwain.Data
                     
                     // new method:
                     // try to convert to enum's underlying type first then cast to the enum
-                    return (TEnum)Convert.ChangeType(value, rawType);
+                    return (TEnum)Convert.ChangeType(value, rawType, CultureInfo.InvariantCulture);
                 }
                 else if (typeof(IConvertible).IsAssignableFrom(returnType))
                 {

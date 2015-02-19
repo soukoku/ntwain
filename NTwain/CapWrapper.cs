@@ -192,7 +192,7 @@ namespace NTwain
         public bool IsSupported { get { return SupportedActions > QuerySupports.None; } }
 
         /// <summary>
-        /// Gets a value indicating whether <see cref="Get"/> is supported.
+        /// Gets a value indicating whether <see cref="GetValues"/> is supported.
         /// </summary>
         /// <value>
         ///   <c>true</c> if this capability can get values; otherwise, <c>false</c>.
@@ -248,7 +248,7 @@ namespace NTwain
         public bool CanReset { get { return Supports(QuerySupports.Reset); } }
 
         /// <summary>
-        /// Gets a value indicating whether <see cref="Set"/> is supported.
+        /// Gets a value indicating whether <see cref="SetValue"/> is supported.
         /// </summary>
         /// <value>
         ///   <c>true</c> if this capability can set; otherwise, <c>false</c>.
@@ -297,7 +297,7 @@ namespace NTwain
         /// Gets all the possible values of this capability.
         /// </summary>
         /// <returns></returns>
-        public IList<TValue> Get()
+        public IList<TValue> GetValues()
         {
             return _source.CapGet(Capability).Select(o => _getConvertRoutine(o)).ToList();
         }
@@ -393,7 +393,7 @@ namespace NTwain
         /// <param name="value">The value.</param>
         /// <returns></returns>
         /// <exception cref="System.InvalidOperationException">Simple Set() is not defined for this capability.</exception>
-        public ReturnCode Set(TValue value)
+        public ReturnCode SetValue(TValue value)
         {
             ReturnCode rc = ReturnCode.Failure;
 
@@ -420,7 +420,7 @@ namespace NTwain
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public ReturnCode Set(TWArray value)
+        public ReturnCode SetValue(TWArray value)
         {
             ReturnCode rc = ReturnCode.Failure;
             using (var cap = new TWCapability(Capability, value))
@@ -435,7 +435,7 @@ namespace NTwain
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public ReturnCode Set(TWEnumeration value)
+        public ReturnCode SetValue(TWEnumeration value)
         {
             ReturnCode rc = ReturnCode.Failure;
             using (var cap = new TWCapability(Capability, value))
