@@ -29,9 +29,9 @@ namespace Tester.WPF
             {
                 _wrapper = wrapProperty.GetGetMethod().Invoke(ds, null);
                 var wrapperType = _wrapper.GetType();
-                _getMethod = wrapperType.GetMethod("Get");
+                _getMethod = wrapperType.GetMethod("GetValues");
                 _getCurrentMethod = wrapperType.GetMethod("GetCurrent");
-                _setMethod = wrapperType.GetMethods().FirstOrDefault(m => m.Name == "Set");
+                _setMethod = wrapperType.GetMethods().FirstOrDefault(m => m.Name == "SetValue");
             }
 
             var supportTest = ds.CapQuerySupport(cap);

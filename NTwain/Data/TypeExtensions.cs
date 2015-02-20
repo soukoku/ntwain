@@ -146,10 +146,10 @@ namespace NTwain.Data
                     break;
                 case ItemType.Frame:
                     TWFrame frame = (TWFrame)value;
-                    WriteValue(baseAddr, ref offset, ItemType.Fix32, frame.Left);
-                    WriteValue(baseAddr, ref offset, ItemType.Fix32, frame.Top);
-                    WriteValue(baseAddr, ref offset, ItemType.Fix32, frame.Right);
-                    WriteValue(baseAddr, ref offset, ItemType.Fix32, frame.Bottom);
+                    WriteValue(baseAddr, ref offset, ItemType.Fix32, (TWFix32)frame.Left);
+                    WriteValue(baseAddr, ref offset, ItemType.Fix32, (TWFix32)frame.Top);
+                    WriteValue(baseAddr, ref offset, ItemType.Fix32, (TWFix32)frame.Right);
+                    WriteValue(baseAddr, ref offset, ItemType.Fix32, (TWFix32)frame.Bottom);
                     return; // no need to update offset for this
                 //case ItemType.String1024:
                 //    WriteString(baseAddr, offset, value as string, 1024);

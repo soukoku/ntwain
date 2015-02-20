@@ -8,6 +8,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -91,6 +92,10 @@ namespace Tester.WPF
                     }
                     catch (Exception ex)
                     {
+                        if (ex is TargetInvocationException)
+                        {
+                            ex = ex.InnerException;
+                        }
                         ModernMessageBox.Show(this, ex.Message, "Cannot Set", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
