@@ -643,18 +643,30 @@ namespace NTwain.Data
         /// <param name="capability">The capability.</param>
         /// <param name="value">The value.</param>
         public TWCapability(CapabilityId capability, TWOneValue value)
-            : this(capability, value, PlatformInfo.Current.MemoryManager) { }
-
+        {
+            Capability = capability;
+            SetOneValue(value, PlatformInfo.Current.MemoryManager);
+        }
         /// <summary>
-        /// Initializes a new instance of the <see cref="TWCapability" /> class.
+        /// Initializes a new instance of the <see cref="TWCapability"/> class.
         /// </summary>
         /// <param name="capability">The capability.</param>
         /// <param name="value">The value.</param>
-        /// <param name="memoryManager">The memory manager.</param>
-        public TWCapability(CapabilityId capability, TWOneValue value, IMemoryManager memoryManager)
+        /// <param name="type">The type.</param>
+        public TWCapability(CapabilityId capability, string value, ItemType type)
         {
             Capability = capability;
-            SetOneValue(value, memoryManager);
+            SetOneValue(value, type, PlatformInfo.Current.MemoryManager);
+        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWCapability"/> class.
+        /// </summary>
+        /// <param name="capability">The capability.</param>
+        /// <param name="value">The value.</param>
+        public TWCapability(CapabilityId capability, TWFrame value)
+        {
+            Capability = capability;
+            SetOneValue(value, PlatformInfo.Current.MemoryManager);
         }
 
         /// <summary>
@@ -663,18 +675,9 @@ namespace NTwain.Data
         /// <param name="capability">The capability.</param>
         /// <param name="value">The value.</param>
         public TWCapability(CapabilityId capability, TWEnumeration value)
-            : this(capability, value, PlatformInfo.Current.MemoryManager) { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCapability" /> class.
-        /// </summary>
-        /// <param name="capability">The capability.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="memoryManager">The memory manager.</param>
-        public TWCapability(CapabilityId capability, TWEnumeration value, IMemoryManager memoryManager)
         {
             Capability = capability;
-            SetEnumValue(value, memoryManager);
+            SetEnumValue(value, PlatformInfo.Current.MemoryManager);
         }
 
         /// <summary>
@@ -683,18 +686,9 @@ namespace NTwain.Data
         /// <param name="capability">The capability.</param>
         /// <param name="value">The value.</param>
         public TWCapability(CapabilityId capability, TWRange value)
-            : this(capability, value, PlatformInfo.Current.MemoryManager) { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCapability" /> class.
-        /// </summary>
-        /// <param name="capability">The capability.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="memoryManager">The memory manager.</param>
-        public TWCapability(CapabilityId capability, TWRange value, IMemoryManager memoryManager)
         {
             Capability = capability;
-            SetRangeValue(value, memoryManager);
+            SetRangeValue(value, PlatformInfo.Current.MemoryManager);
         }
 
         /// <summary>
@@ -703,18 +697,9 @@ namespace NTwain.Data
         /// <param name="capability">The capability.</param>
         /// <param name="value">The value.</param>
         public TWCapability(CapabilityId capability, TWArray value)
-            : this(capability, value, PlatformInfo.Current.MemoryManager) { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCapability" /> class.
-        /// </summary>
-        /// <param name="capability">The capability.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="memoryManager">The memory manager.</param>
-        public TWCapability(CapabilityId capability, TWArray value, IMemoryManager memoryManager)
         {
             Capability = capability;
-            SetArrayValue(value, memoryManager);
+            SetArrayValue(value, PlatformInfo.Current.MemoryManager);
         }
         #endregion
 
@@ -736,6 +721,45 @@ namespace NTwain.Data
         #endregion
 
         #region value functions
+
+        void SetOneValue(string value, ItemType type, IMemoryManager memoryManager)
+        {
+            ContainerType = ContainerType.OneValue;
+            switch (type)
+            {
+                case ItemType.String128:
+                case ItemType.String255:
+                case ItemType.String32:
+                case ItemType.String64:
+
+                    _hContainer = memoryManager.Allocate((uint)(Marshal.SizeOf(typeof(TWFrame)) + 2));
+                    if (_hContainer != IntPtr.Zero)
+                    {
+                        IntPtr baseAddr = memoryManager.Lock(_hContainer);
+                        int offset = 0;
+                        baseAddr.WriteValue(ref offset, ItemType.UInt16, type);
+                        baseAddr.WriteValue(ref offset, type, value);
+                        memoryManager.Unlock(_hContainer);
+                    }
+                    break;
+                default:
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Type {0} is not valid for string.", type));
+            }
+        }
+        void SetOneValue(TWFrame value, IMemoryManager memoryManager)
+        {
+            ContainerType = ContainerType.OneValue;
+
+            _hContainer = memoryManager.Allocate((uint)(Marshal.SizeOf(typeof(TWFrame)) + 2));
+            if (_hContainer != IntPtr.Zero)
+            {
+                IntPtr baseAddr = memoryManager.Lock(_hContainer);
+                int offset = 0;
+                baseAddr.WriteValue(ref offset, ItemType.UInt16, ItemType.Frame);
+                baseAddr.WriteValue(ref offset, ItemType.Frame, value);
+                memoryManager.Unlock(_hContainer);
+            }
+        }
 
         void SetOneValue(TWOneValue value, IMemoryManager memoryManager)
         {
@@ -762,19 +786,21 @@ namespace NTwain.Data
 
             int offset = 0;
             _hContainer = memoryManager.Allocate((uint)valueSize);
-            IntPtr baseAddr = memoryManager.Lock(_hContainer);
-
-            // can't safely use StructureToPtr here so write it our own
-            baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
-            baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
-            baseAddr.WriteValue(ref offset, ItemType.UInt32, value.CurrentIndex);
-            baseAddr.WriteValue(ref offset, ItemType.UInt32, value.DefaultIndex);
-            foreach (var item in value.ItemList)
+            if (_hContainer != IntPtr.Zero)
             {
-                baseAddr.WriteValue(ref offset, value.ItemType, item);
+                IntPtr baseAddr = memoryManager.Lock(_hContainer);
+
+                // can't safely use StructureToPtr here so write it our own
+                baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
+                baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
+                baseAddr.WriteValue(ref offset, ItemType.UInt32, value.CurrentIndex);
+                baseAddr.WriteValue(ref offset, ItemType.UInt32, value.DefaultIndex);
+                foreach (var item in value.ItemList)
+                {
+                    baseAddr.WriteValue(ref offset, value.ItemType, item);
+                }
+                memoryManager.Unlock(_hContainer);
             }
-            //memoryManager.Unlock(baseAddr);
-            memoryManager.Unlock(_hContainer);
         }
 
         void SetRangeValue(TWRange value, IMemoryManager memoryManager)
@@ -801,17 +827,19 @@ namespace NTwain.Data
 
             int offset = 0;
             _hContainer = memoryManager.Allocate((uint)valueSize);
-            IntPtr baseAddr = memoryManager.Lock(_hContainer);
-
-            // can't safely use StructureToPtr here so write it our own
-            baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
-            baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
-            foreach (var item in value.ItemList)
+            if (_hContainer != IntPtr.Zero)
             {
-                baseAddr.WriteValue(ref offset, value.ItemType, item);
+                IntPtr baseAddr = memoryManager.Lock(_hContainer);
+
+                // can't safely use StructureToPtr here so write it our own
+                baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
+                baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
+                foreach (var item in value.ItemList)
+                {
+                    baseAddr.WriteValue(ref offset, value.ItemType, item);
+                }
+                memoryManager.Unlock(_hContainer);
             }
-            memoryManager.Unlock(_hContainer);
-            //memoryManager.Unlock(baseAddr);
         }
 
         #endregion
