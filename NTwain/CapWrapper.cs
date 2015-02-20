@@ -114,7 +114,7 @@ namespace NTwain
                 var srcVersion = _source.ProtocolVersion;
                 if (srcVersion >= ProtocolVersions.GetMinimumVersion(Capability))
                 {
-                    _supports = _source.CapQuerySupport(Capability);
+                    _supports = _source.Capabilities.QuerySupport(Capability);
 
                     if (!_supports.HasValue)
                     {
@@ -275,7 +275,7 @@ namespace NTwain
         {
             if (CanGetDefault)
             {
-                return _getConvertRoutine(_source.CapGetDefault(Capability));
+                return _getConvertRoutine(_source.Capabilities.GetDefault(Capability));
             }
             return default(TValue);
         }
@@ -288,7 +288,7 @@ namespace NTwain
         {
             if (CanGetCurrent)
             {
-                return _getConvertRoutine(_source.CapGetCurrent(Capability));
+                return _getConvertRoutine(_source.Capabilities.GetCurrent(Capability));
             }
             return default(TValue);
         }
@@ -299,7 +299,7 @@ namespace NTwain
         /// <returns></returns>
         public IList<TValue> GetValues()
         {
-            return _source.CapGet(Capability).Select(o => _getConvertRoutine(o)).ToList();
+            return _source.Capabilities.GetValues(Capability).Select(o => _getConvertRoutine(o)).ToList();
         }
 
         /// <summary>
@@ -384,7 +384,7 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode Reset()
         {
-            return _source.CapReset(Capability);
+            return _source.Capabilities.Reset(Capability);
         }
 
         /// <summary>

@@ -55,10 +55,10 @@ namespace NTwain
                 Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseSource.", Thread.CurrentThread.ManagedThreadId));
 
                 rc = _session.DGControl.Identity.CloseDS();
-                if (rc == ReturnCode.Success)
-                {
-                    SupportedCaps = null;
-                }
+                //if (rc == ReturnCode.Success)
+                //{
+                //    SupportedCaps = null;
+                //}
                 _session.UpdateCallback();
             });
             return rc;
@@ -158,32 +158,46 @@ namespace NTwain
         /// </value>
         public bool IsOpen { get { return _session.IsSourceOpen; } }
 
-        static readonly CapabilityId[] _emptyCapList = new CapabilityId[0];
+        //static readonly CapabilityId[] _emptyCapList = new CapabilityId[0];
 
-        private IList<CapabilityId> _supportedCapsList;
+        //private IList<CapabilityId> _supportedCapsList;
+        ///// <summary>
+        ///// Gets the list of supported caps for this source. 
+        ///// </summary>
+        ///// <value>
+        ///// The supported caps.
+        ///// </value>
+        //[Obsolete("Use CapSupportedCaps.Get() instead.")]
+        //public IList<CapabilityId> SupportedCaps
+        //{
+        //    get
+        //    {
+        //        if (_supportedCapsList == null && _session.State > 3)
+        //        {
+        //            _supportedCapsList = CapSupportedCaps.GetValues();
+        //        }
+        //        return _supportedCapsList ?? _emptyCapList;
+        //    }
+        //    private set
+        //    {
+        //        _supportedCapsList = value;
+        //        //OnPropertyChanged("SupportedCaps");
+        //    }
+        //}
+
+        private Capabilities _caps;
+
         /// <summary>
-        /// Gets the list of supported caps for this source. 
+        /// Gets the capabilities for this data source.
         /// </summary>
         /// <value>
-        /// The supported caps.
+        /// The capabilities.
         /// </value>
-        [Obsolete("Use CapSupportedCaps.Get() instead.")]
-        public IList<CapabilityId> SupportedCaps
+        public Capabilities Capabilities
         {
-            get
-            {
-                if (_supportedCapsList == null && _session.State > 3)
-                {
-                    _supportedCapsList = CapSupportedCaps.GetValues();
-                }
-                return _supportedCapsList ?? _emptyCapList;
-            }
-            private set
-            {
-                _supportedCapsList = value;
-                //OnPropertyChanged("SupportedCaps");
-            }
+            get { return _caps ?? (_caps = new Capabilities(this)); }
         }
+
 
 
         /// <summary>

@@ -120,7 +120,7 @@ namespace Tester.WPF
                     }
                 }, () =>
                 {
-                    return _session.State == 4 && _session.CurrentSource.CapEnableDSUIOnly.GetCurrent() == BoolType.True;
+                    return _session.State == 4 && _session.CurrentSource.Capabilities.CapEnableDSUIOnly.GetCurrent() == BoolType.True;
                 }));
             }
         }
@@ -246,9 +246,9 @@ namespace Tester.WPF
 
         void _session_TransferReady(object sender, TransferReadyEventArgs e)
         {
-            if (_session.CurrentSource.ICapXferMech.GetCurrent() == XferMech.File)
+            if (_session.CurrentSource.Capabilities.ICapXferMech.GetCurrent() == XferMech.File)
             {
-                var formats = _session.CurrentSource.ICapImageFileFormat.GetValues();
+                var formats = _session.CurrentSource.Capabilities.ICapImageFileFormat.GetValues();
                 var wantFormat = formats.Contains(FileFormat.Tiff) ? FileFormat.Tiff : FileFormat.Bmp;
 
                 var fileSetup = new TWSetupFileXfer

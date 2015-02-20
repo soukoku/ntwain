@@ -6,7 +6,7 @@ namespace NTwain
     /// <summary>
     /// Represents a TWAIN data source.
     /// </summary>
-    public interface IDataSource : ICapControl
+    public interface IDataSource : ITripletControl
     {
         /// <summary>
         /// Gets the source's product name.
@@ -49,14 +49,6 @@ namespace NTwain
         Version ProtocolVersion { get; }
 
         /// <summary>
-        /// Gets the supported caps for this source.
-        /// </summary>
-        /// <value>
-        /// The supported caps.
-        /// </value>
-        IList<CapabilityId> SupportedCaps { get; }
-
-        /// <summary>
         /// Gets the source's version information.
         /// </summary>
         /// <value>
@@ -71,6 +63,14 @@ namespace NTwain
         ///   <c>true</c> if this data source is open; otherwise, <c>false</c>.
         /// </value>
         bool IsOpen { get; }
+
+        /// <summary>
+        /// Gets the capabilities for this data source.
+        /// </summary>
+        /// <value>
+        /// The capabilities.
+        /// </value>
+        Capabilities Capabilities { get; }
 
         /// <summary>
         /// Opens the source for capability negotiation.

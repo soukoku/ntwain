@@ -63,7 +63,6 @@
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IDataSource.cs" />
-    <Compile Include="ICapControl.cs" />
     <Compile Include="Internals\Extensions.cs" />
     <Compile Include="DataTransferredEventArgs.cs" />
     <Compile Include="IMemoryManager.cs" />
@@ -108,7 +107,7 @@
     <Compile Include="Triplets\Dsm.WinOld.cs" />
     <Compile Include="Triplets\Dsm.WinNew.cs" />
     <Compile Include="TwainSessionInternal.cs" />
-    <Compile Include="DataSource.Caps.cs" />
+    <Compile Include="Capabilities.cs" />
     <Compile Include="TwainSession.cs" />
     <Compile Include="DataSource.cs" />
     <Compile Include="TwainStateException.cs" />

@@ -24,17 +24,17 @@ namespace Tester.WPF
 
 
             var capName = cap.ToString();
-            var wrapProperty = ds.GetType().GetProperty(capName);
+            var wrapProperty = ds.Capabilities.GetType().GetProperty(capName);
             if (wrapProperty != null)
             {
-                _wrapper = wrapProperty.GetGetMethod().Invoke(ds, null);
+                _wrapper = wrapProperty.GetGetMethod().Invoke(ds.Capabilities, null);
                 var wrapperType = _wrapper.GetType();
                 _getMethod = wrapperType.GetMethod("GetValues");
                 _getCurrentMethod = wrapperType.GetMethod("GetCurrent");
                 _setMethod = wrapperType.GetMethods().FirstOrDefault(m => m.Name == "SetValue");
             }
 
-            var supportTest = ds.CapQuerySupport(cap);
+            var supportTest = ds.Capabilities.QuerySupport(cap);
             if (supportTest.HasValue)
             {
                 Supports = supportTest.Value;
@@ -55,7 +55,7 @@ namespace Tester.WPF
         {
             if (_getMethod == null)
             {
-                return _ds.CapGet(Cap);
+                return _ds.Capabilities.GetValues(Cap);
             }
             return _getMethod.Invoke(_wrapper, null) as IEnumerable;
         }
@@ -63,7 +63,7 @@ namespace Tester.WPF
         {
             if (_getMethod == null)
             {
-                return _ds.CapGetCurrent(Cap);
+                return _ds.Capabilities.GetCurrent(Cap);
             }
             return _getCurrentMethod.Invoke(_wrapper, null);
         }

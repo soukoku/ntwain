@@ -68,7 +68,7 @@ namespace NTwain.Internals
                         // some DS end up getting none but we will assume it's image
                         if (xferImage)
                         {
-                            var mech = session.CurrentSource.ICapXferMech.GetCurrent();
+                            var mech = session.CurrentSource.Capabilities.ICapXferMech.GetCurrent();
 
                             switch (mech)
                             {
@@ -90,7 +90,7 @@ namespace NTwain.Internals
                         }
                         if (xferAudio)
                         {
-                            var mech = session.CurrentSource.ACapXferMech.GetCurrent();
+                            var mech = session.CurrentSource.Capabilities.ACapXferMech.GetCurrent();
                             switch (mech)
                             {
                                 case XferMech.File:

@@ -230,7 +230,7 @@ namespace Tester.Winform
 
                 _stopScan = false;
 
-                if (_twain.CurrentSource.CapUIControllable.IsSupported)//.SupportedCaps.Contains(CapabilityId.CapUIControllable))
+                if (_twain.CurrentSource.Capabilities.CapUIControllable.IsSupported)//.SupportedCaps.Contains(CapabilityId.CapUIControllable))
                 {
                     // hide scanner ui if possible
                     if (_twain.CurrentSource.Enable(SourceEnableMode.NoUI, false, this.Handle) == ReturnCode.Success)
@@ -301,26 +301,26 @@ namespace Tester.Winform
             var src = _twain.CurrentSource;
             _loadingCaps = true;
 
-            var test = src.SupportedCaps;
+            //var test = src.SupportedCaps;
 
-            if (groupDepth.Enabled = src.ICapPixelType.IsSupported)
+            if (groupDepth.Enabled = src.Capabilities.ICapPixelType.IsSupported)
             {
-                LoadDepth(src.ICapPixelType);
+                LoadDepth(src.Capabilities.ICapPixelType);
             }
-            if (groupDPI.Enabled = src.ICapXResolution.IsSupported && src.ICapYResolution.IsSupported)
+            if (groupDPI.Enabled = src.Capabilities.ICapXResolution.IsSupported && src.Capabilities.ICapYResolution.IsSupported)
             {
-                LoadDPI(src.ICapXResolution);
+                LoadDPI(src.Capabilities.ICapXResolution);
             }
             // TODO: find out if this is how duplex works or also needs the other option
-            if (groupDuplex.Enabled = src.CapDuplexEnabled.IsSupported)
+            if (groupDuplex.Enabled = src.Capabilities.CapDuplexEnabled.IsSupported)
             {
-                LoadDuplex(src.CapDuplexEnabled);
+                LoadDuplex(src.Capabilities.CapDuplexEnabled);
             }
-            if (groupSize.Enabled = src.ICapSupportedSizes.IsSupported)
+            if (groupSize.Enabled = src.Capabilities.ICapSupportedSizes.IsSupported)
             {
-                LoadPaperSize(src.ICapSupportedSizes);
+                LoadPaperSize(src.Capabilities.ICapSupportedSizes);
             }
-            btnAllSettings.Enabled = src.CapEnableDSUIOnly.IsSupported;
+            btnAllSettings.Enabled = src.Capabilities.CapEnableDSUIOnly.IsSupported;
             _loadingCaps = false;
         }
 
@@ -380,7 +380,7 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (SupportedSize)comboSize.SelectedItem;
-                _twain.CurrentSource.ICapSupportedSizes.SetValue(sel);
+                _twain.CurrentSource.Capabilities.ICapSupportedSizes.SetValue(sel);
             }
         }
 
@@ -389,7 +389,7 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (PixelType)comboDepth.SelectedItem;
-                _twain.CurrentSource.ICapPixelType.SetValue(sel);
+                _twain.CurrentSource.Capabilities.ICapPixelType.SetValue(sel);
             }
         }
 
@@ -398,8 +398,8 @@ namespace Tester.Winform
             if (!_loadingCaps && _twain.State == 4)
             {
                 var sel = (TWFix32)comboDPI.SelectedItem;
-                _twain.CurrentSource.ICapXResolution.SetValue(sel);
-                _twain.CurrentSource.ICapYResolution.SetValue(sel);
+                _twain.CurrentSource.Capabilities.ICapXResolution.SetValue(sel);
+                _twain.CurrentSource.Capabilities.ICapYResolution.SetValue(sel);
             }
         }
 
@@ -407,7 +407,7 @@ namespace Tester.Winform
         {
             if (!_loadingCaps && _twain.State == 4)
             {
-                _twain.CurrentSource.CapDuplexEnabled.SetValue(ckDuplex.Checked ? BoolType.True : BoolType.False);
+                _twain.CurrentSource.Capabilities.CapDuplexEnabled.SetValue(ckDuplex.Checked ? BoolType.True : BoolType.False);
             }
         }
 

@@ -87,7 +87,7 @@ myDS.DGImage...;
 
 ```
 
-Additionally, the DataSource class itself has some handy pre-defined wrappers for common capability 
+Additionally, the DataSource class has a Capabilities property with pre-defined wrappers for capability 
 negotiation. You can use the wrapper properties to see what capabilities or their operations are 
 supported. You also won't have to keep track of what value types to use since the wrapper defines it
 for you. Most capabilities only require a simple single value to set
@@ -107,10 +107,10 @@ and the wrapper makes it easy to do that (see example below):
 // (note: the name of the wrapper property is the same as the CapabilityId enum)
 PixelType myValue = PixelType.BlackWhite; 
 
-if (myDS.ICapPixelType.CanSet  &&
-    myDS.ICapPixelType.GetValues().Contains(myValue))
+if (myDS.Capabilities.ICapPixelType.CanSet  &&
+    myDS.Capabilities.ICapPixelType.GetValues().Contains(myValue))
 {
-    myDS.ICapPixelType.SetValue(myValue);
+    myDS.Capabilities.ICapPixelType.SetValue(myValue);
 }
 
 

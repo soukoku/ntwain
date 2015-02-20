@@ -6,27 +6,37 @@ using System.Text;
 
 namespace NTwain
 {
-    // This contains all cap-related methods prefixed with Cap.
-    // It will attempt to have all known cap abilities defined 
-    // with a wrapper unless it can only exist as part of another cap
-    // or it's lame & nobody uses it.
-
-
-    partial class DataSource : ICapControl
+    /// <summary>
+    /// Exposes capabilities of a data source as properties.
+    /// </summary>
+    public class Capabilities
     {
-        #region low-level cap stuff
+        IDataSource _source;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Capabilities"/> class.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        public Capabilities(IDataSource source)
+        {
+            if (source == null) { throw new ArgumentNullException("source"); }
+            _source = source;
+        }
+
+
+        #region non-wrapped cap calls
 
         /// <summary>
         /// Gets the actual supported operations for a capability. This is not supported by all sources.
         /// </summary>
         /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
-        public QuerySupports? CapQuerySupport(CapabilityId capabilityId)
+        public QuerySupports? QuerySupport(CapabilityId capabilityId)
         {
             QuerySupports? retVal = null;
             using (TWCapability cap = new TWCapability(capabilityId))
             {
-                var rc = _session.DGControl.Capability.QuerySupport(cap);
+                var rc = _source.DGControl.Capability.QuerySupport(cap);
                 if (rc == ReturnCode.Success)
                 {
                     var read = CapabilityReader.ReadValue(cap);
@@ -45,11 +55,11 @@ namespace NTwain
         /// </summary>
         /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
-        public object CapGetCurrent(CapabilityId capabilityId)
+        public object GetCurrent(CapabilityId capabilityId)
         {
             using (TWCapability cap = new TWCapability(capabilityId))
             {
-                var rc = _session.DGControl.Capability.GetCurrent(cap);
+                var rc = _source.DGControl.Capability.GetCurrent(cap);
                 if (rc == ReturnCode.Success)
                 {
                     var read = CapabilityReader.ReadValue(cap);
@@ -84,11 +94,11 @@ namespace NTwain
         /// </summary>
         /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
-        public object CapGetDefault(CapabilityId capabilityId)
+        public object GetDefault(CapabilityId capabilityId)
         {
             using (TWCapability cap = new TWCapability(capabilityId))
             {
-                var rc = _session.DGControl.Capability.GetDefault(cap);
+                var rc = _source.DGControl.Capability.GetDefault(cap);
                 if (rc == ReturnCode.Success)
                 {
                     var read = CapabilityReader.ReadValue(cap);
@@ -123,12 +133,12 @@ namespace NTwain
         /// </summary>
         /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
-        public IList<object> CapGet(CapabilityId capabilityId)
+        public IList<object> GetValues(CapabilityId capabilityId)
         {
             var list = new List<object>();
             using (TWCapability cap = new TWCapability(capabilityId))
             {
-                var rc = _session.DGControl.Capability.Get(cap);
+                var rc = _source.DGControl.Capability.Get(cap);
                 if (rc == ReturnCode.Success)
                 {
                     CapabilityReader.ReadValue(cap).PopulateFromCapValues(list);
@@ -141,11 +151,11 @@ namespace NTwain
         /// Resets all values and constraint to power-on defaults.
         /// </summary>
         /// <returns></returns>
-        public ReturnCode CapResetAll()
+        public ReturnCode ResetAll()
         {
             using (TWCapability cap = new TWCapability(CapabilityId.CapSupportedCaps))
             {
-                var rc = DGControl.Capability.ResetAll(cap);
+                var rc = _source.DGControl.Capability.ResetAll(cap);
                 return rc;
             }
         }
@@ -155,11 +165,11 @@ namespace NTwain
         /// </summary>
         /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
-        public ReturnCode CapReset(CapabilityId capabilityId)
+        public ReturnCode Reset(CapabilityId capabilityId)
         {
             using (TWCapability cap = new TWCapability(capabilityId))
             {
-                var rc = DGControl.Capability.Reset(cap);
+                var rc = _source.DGControl.Capability.Reset(cap);
                 return rc;
             }
         }
@@ -180,7 +190,7 @@ namespace NTwain
         {
             get
             {
-                return _audXferMech ?? (_audXferMech = new CapWrapper<XferMech>(this, CapabilityId.ACapXferMech, ValueExtensions.ConvertToEnum<XferMech>,
+                return _audXferMech ?? (_audXferMech = new CapWrapper<XferMech>(_source, CapabilityId.ACapXferMech, ValueExtensions.ConvertToEnum<XferMech>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -207,7 +217,7 @@ namespace NTwain
         {
             get
             {
-                return _compression ?? (_compression = new CapWrapper<CompressionType>(this, CapabilityId.ICapCompression, ValueExtensions.ConvertToEnum<CompressionType>,
+                return _compression ?? (_compression = new CapWrapper<CompressionType>(_source, CapabilityId.ICapCompression, ValueExtensions.ConvertToEnum<CompressionType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -229,7 +239,7 @@ namespace NTwain
         {
             get
             {
-                return _pixelType ?? (_pixelType = new CapWrapper<PixelType>(this, CapabilityId.ICapPixelType, ValueExtensions.ConvertToEnum<PixelType>,
+                return _pixelType ?? (_pixelType = new CapWrapper<PixelType>(_source, CapabilityId.ICapPixelType, ValueExtensions.ConvertToEnum<PixelType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -250,7 +260,7 @@ namespace NTwain
         {
             get
             {
-                return _imgUnits ?? (_imgUnits = new CapWrapper<Unit>(this, CapabilityId.ICapUnits, ValueExtensions.ConvertToEnum<Unit>,
+                return _imgUnits ?? (_imgUnits = new CapWrapper<Unit>(_source, CapabilityId.ICapUnits, ValueExtensions.ConvertToEnum<Unit>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -271,7 +281,7 @@ namespace NTwain
         {
             get
             {
-                return _imgXferMech ?? (_imgXferMech = new CapWrapper<XferMech>(this, CapabilityId.ICapXferMech, ValueExtensions.ConvertToEnum<XferMech>,
+                return _imgXferMech ?? (_imgXferMech = new CapWrapper<XferMech>(_source, CapabilityId.ICapXferMech, ValueExtensions.ConvertToEnum<XferMech>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -294,7 +304,7 @@ namespace NTwain
         {
             get
             {
-                return _autoBright ?? (_autoBright = new CapWrapper<BoolType>(this, CapabilityId.ICapAutoBright, ValueExtensions.ConvertToEnum<BoolType>,
+                return _autoBright ?? (_autoBright = new CapWrapper<BoolType>(_source, CapabilityId.ICapAutoBright, ValueExtensions.ConvertToEnum<BoolType>,
                     value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -315,7 +325,7 @@ namespace NTwain
         {
             get
             {
-                return _brightness ?? (_brightness = new CapWrapper<TWFix32>(this, CapabilityId.ICapBrightness, ValueExtensions.ConvertToFix32,
+                return _brightness ?? (_brightness = new CapWrapper<TWFix32>(_source, CapabilityId.ICapBrightness, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -336,7 +346,7 @@ namespace NTwain
         {
             get
             {
-                return _contrast ?? (_contrast = new CapWrapper<TWFix32>(this, CapabilityId.ICapContrast, ValueExtensions.ConvertToFix32,
+                return _contrast ?? (_contrast = new CapWrapper<TWFix32>(_source, CapabilityId.ICapContrast, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -357,7 +367,7 @@ namespace NTwain
         {
             get
             {
-                return _custHalftone ?? (_custHalftone = new CapWrapper<byte>(this, CapabilityId.ICapCustHalftone, ValueExtensions.ConvertToEnum<byte>,
+                return _custHalftone ?? (_custHalftone = new CapWrapper<byte>(_source, CapabilityId.ICapCustHalftone, ValueExtensions.ConvertToEnum<byte>,
                         value => new TWOneValue
                         {
                             Item = value,
@@ -378,7 +388,7 @@ namespace NTwain
         {
             get
             {
-                return _exposureTime ?? (_exposureTime = new CapWrapper<TWFix32>(this, CapabilityId.ICapExposureTime, ValueExtensions.ConvertToFix32,
+                return _exposureTime ?? (_exposureTime = new CapWrapper<TWFix32>(_source, CapabilityId.ICapExposureTime, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -399,7 +409,7 @@ namespace NTwain
         {
             get
             {
-                return _filter ?? (_filter = new CapWrapper<FilterType>(this, CapabilityId.ICapFilter, ValueExtensions.ConvertToEnum<FilterType>,
+                return _filter ?? (_filter = new CapWrapper<FilterType>(_source, CapabilityId.ICapFilter, ValueExtensions.ConvertToEnum<FilterType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -420,7 +430,7 @@ namespace NTwain
         {
             get
             {
-                return _gamma ?? (_gamma = new CapWrapper<TWFix32>(this, CapabilityId.ICapGamma, ValueExtensions.ConvertToFix32,
+                return _gamma ?? (_gamma = new CapWrapper<TWFix32>(_source, CapabilityId.ICapGamma, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -441,7 +451,7 @@ namespace NTwain
         {
             get
             {
-                return _halftones ?? (_halftones = new CapWrapper<string>(this, CapabilityId.ICapHalftones, ValueExtensions.ConvertToString, false));
+                return _halftones ?? (_halftones = new CapWrapper<string>(_source, CapabilityId.ICapHalftones, ValueExtensions.ConvertToString, false));
             }
         }
 
@@ -457,7 +467,7 @@ namespace NTwain
         {
             get
             {
-                return _highlight ?? (_highlight = new CapWrapper<TWFix32>(this, CapabilityId.ICapHighlight, ValueExtensions.ConvertToFix32,
+                return _highlight ?? (_highlight = new CapWrapper<TWFix32>(_source, CapabilityId.ICapHighlight, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -478,7 +488,7 @@ namespace NTwain
         {
             get
             {
-                return _fileFormat ?? (_fileFormat = new CapWrapper<FileFormat>(this, CapabilityId.ICapImageFileFormat, ValueExtensions.ConvertToEnum<FileFormat>,
+                return _fileFormat ?? (_fileFormat = new CapWrapper<FileFormat>(_source, CapabilityId.ICapImageFileFormat, ValueExtensions.ConvertToEnum<FileFormat>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -500,7 +510,7 @@ namespace NTwain
         {
             get
             {
-                return _lampState ?? (_lampState = new CapWrapper<BoolType>(this, CapabilityId.ICapLampState, ValueExtensions.ConvertToEnum<BoolType>,
+                return _lampState ?? (_lampState = new CapWrapper<BoolType>(_source, CapabilityId.ICapLampState, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -521,7 +531,7 @@ namespace NTwain
         {
             get
             {
-                return _lightSource ?? (_lightSource = new CapWrapper<LightSource>(this, CapabilityId.ICapLightSource, ValueExtensions.ConvertToEnum<LightSource>,
+                return _lightSource ?? (_lightSource = new CapWrapper<LightSource>(_source, CapabilityId.ICapLightSource, ValueExtensions.ConvertToEnum<LightSource>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -542,7 +552,7 @@ namespace NTwain
         {
             get
             {
-                return _orientation ?? (_orientation = new CapWrapper<OrientationType>(this, CapabilityId.ICapOrientation, ValueExtensions.ConvertToEnum<OrientationType>,
+                return _orientation ?? (_orientation = new CapWrapper<OrientationType>(_source, CapabilityId.ICapOrientation, ValueExtensions.ConvertToEnum<OrientationType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -563,7 +573,7 @@ namespace NTwain
         {
             get
             {
-                return _physicalWidth ?? (_physicalWidth = new CapWrapper<TWFix32>(this, CapabilityId.ICapPhysicalWidth, ValueExtensions.ConvertToFix32, true));
+                return _physicalWidth ?? (_physicalWidth = new CapWrapper<TWFix32>(_source, CapabilityId.ICapPhysicalWidth, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -579,7 +589,7 @@ namespace NTwain
         {
             get
             {
-                return _physicalHeight ?? (_physicalHeight = new CapWrapper<TWFix32>(this, CapabilityId.ICapPhysicalHeight, ValueExtensions.ConvertToFix32, true));
+                return _physicalHeight ?? (_physicalHeight = new CapWrapper<TWFix32>(_source, CapabilityId.ICapPhysicalHeight, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -595,7 +605,7 @@ namespace NTwain
         {
             get
             {
-                return _shadow ?? (_shadow = new CapWrapper<TWFix32>(this, CapabilityId.ICapShadow, ValueExtensions.ConvertToFix32,
+                return _shadow ?? (_shadow = new CapWrapper<TWFix32>(_source, CapabilityId.ICapShadow, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -616,12 +626,12 @@ namespace NTwain
         {
             get
             {
-                return _frames ?? (_frames = new CapWrapper<TWFrame>(this, CapabilityId.ICapFrames, ValueExtensions.ConvertToFrame,
+                return _frames ?? (_frames = new CapWrapper<TWFrame>(_source, CapabilityId.ICapFrames, ValueExtensions.ConvertToFrame,
                         value =>
                         {
                             using (var cap = new TWCapability(CapabilityId.ICapFrames, value))
                             {
-                                return DGControl.Capability.Set(cap);
+                                return _source.DGControl.Capability.Set(cap);
                             }
                         }));
             }
@@ -639,7 +649,7 @@ namespace NTwain
         {
             get
             {
-                return _nativeXRes ?? (_nativeXRes = new CapWrapper<TWFix32>(this, CapabilityId.ICapXNativeResolution, ValueExtensions.ConvertToFix32, true));
+                return _nativeXRes ?? (_nativeXRes = new CapWrapper<TWFix32>(_source, CapabilityId.ICapXNativeResolution, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -655,7 +665,7 @@ namespace NTwain
         {
             get
             {
-                return _nativeYRes ?? (_nativeYRes = new CapWrapper<TWFix32>(this, CapabilityId.ICapYNativeResolution, ValueExtensions.ConvertToFix32, true));
+                return _nativeYRes ?? (_nativeYRes = new CapWrapper<TWFix32>(_source, CapabilityId.ICapYNativeResolution, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -671,7 +681,7 @@ namespace NTwain
         {
             get
             {
-                return _xResolution ?? (_xResolution = new CapWrapper<TWFix32>(this, CapabilityId.ICapXResolution, ValueExtensions.ConvertToFix32,
+                return _xResolution ?? (_xResolution = new CapWrapper<TWFix32>(_source, CapabilityId.ICapXResolution, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -693,7 +703,7 @@ namespace NTwain
         {
             get
             {
-                return _yResolution ?? (_yResolution = new CapWrapper<TWFix32>(this, CapabilityId.ICapYResolution, ValueExtensions.ConvertToFix32,
+                return _yResolution ?? (_yResolution = new CapWrapper<TWFix32>(_source, CapabilityId.ICapYResolution, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -714,7 +724,7 @@ namespace NTwain
         {
             get
             {
-                return _maxFrames ?? (_maxFrames = new CapWrapper<int>(this, CapabilityId.ICapMaxFrames, ValueExtensions.ConvertToEnum<int>,
+                return _maxFrames ?? (_maxFrames = new CapWrapper<int>(_source, CapabilityId.ICapMaxFrames, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -735,7 +745,7 @@ namespace NTwain
         {
             get
             {
-                return _tiles ?? (_tiles = new CapWrapper<BoolType>(this, CapabilityId.ICapTiles, ValueExtensions.ConvertToEnum<BoolType>,
+                return _tiles ?? (_tiles = new CapWrapper<BoolType>(_source, CapabilityId.ICapTiles, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -756,7 +766,7 @@ namespace NTwain
         {
             get
             {
-                return _bitOrder ?? (_bitOrder = new CapWrapper<BitOrder>(this, CapabilityId.ICapBitOrder, ValueExtensions.ConvertToEnum<BitOrder>,
+                return _bitOrder ?? (_bitOrder = new CapWrapper<BitOrder>(_source, CapabilityId.ICapBitOrder, ValueExtensions.ConvertToEnum<BitOrder>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -777,7 +787,7 @@ namespace NTwain
         {
             get
             {
-                return _ccittKFactor ?? (_ccittKFactor = new CapWrapper<int>(this, CapabilityId.ICapCCITTKFactor, ValueExtensions.ConvertToEnum<int>,
+                return _ccittKFactor ?? (_ccittKFactor = new CapWrapper<int>(_source, CapabilityId.ICapCCITTKFactor, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -798,7 +808,7 @@ namespace NTwain
         {
             get
             {
-                return _lightPath ?? (_lightPath = new CapWrapper<LightPath>(this, CapabilityId.ICapLightPath, ValueExtensions.ConvertToEnum<LightPath>,
+                return _lightPath ?? (_lightPath = new CapWrapper<LightPath>(_source, CapabilityId.ICapLightPath, ValueExtensions.ConvertToEnum<LightPath>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -819,7 +829,7 @@ namespace NTwain
         {
             get
             {
-                return _pixelFlavor ?? (_pixelFlavor = new CapWrapper<PixelFlavor>(this, CapabilityId.ICapPixelFlavor, ValueExtensions.ConvertToEnum<PixelFlavor>,
+                return _pixelFlavor ?? (_pixelFlavor = new CapWrapper<PixelFlavor>(_source, CapabilityId.ICapPixelFlavor, ValueExtensions.ConvertToEnum<PixelFlavor>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -840,7 +850,7 @@ namespace NTwain
         {
             get
             {
-                return _planarChunky ?? (_planarChunky = new CapWrapper<PlanarChunky>(this, CapabilityId.ICapPlanarChunky, ValueExtensions.ConvertToEnum<PlanarChunky>,
+                return _planarChunky ?? (_planarChunky = new CapWrapper<PlanarChunky>(_source, CapabilityId.ICapPlanarChunky, ValueExtensions.ConvertToEnum<PlanarChunky>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -861,7 +871,7 @@ namespace NTwain
         {
             get
             {
-                return _rotation ?? (_rotation = new CapWrapper<TWFix32>(this, CapabilityId.ICapRotation, ValueExtensions.ConvertToFix32,
+                return _rotation ?? (_rotation = new CapWrapper<TWFix32>(_source, CapabilityId.ICapRotation, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -882,7 +892,7 @@ namespace NTwain
         {
             get
             {
-                return _supportSize ?? (_supportSize = new CapWrapper<SupportedSize>(this, CapabilityId.ICapSupportedSizes, ValueExtensions.ConvertToEnum<SupportedSize>,
+                return _supportSize ?? (_supportSize = new CapWrapper<SupportedSize>(_source, CapabilityId.ICapSupportedSizes, ValueExtensions.ConvertToEnum<SupportedSize>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -903,7 +913,7 @@ namespace NTwain
         {
             get
             {
-                return _threshold ?? (_threshold = new CapWrapper<TWFix32>(this, CapabilityId.ICapThreshold, ValueExtensions.ConvertToFix32,
+                return _threshold ?? (_threshold = new CapWrapper<TWFix32>(_source, CapabilityId.ICapThreshold, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -924,7 +934,7 @@ namespace NTwain
         {
             get
             {
-                return _xscaling ?? (_xscaling = new CapWrapper<TWFix32>(this, CapabilityId.ICapXScaling, ValueExtensions.ConvertToFix32,
+                return _xscaling ?? (_xscaling = new CapWrapper<TWFix32>(_source, CapabilityId.ICapXScaling, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -945,7 +955,7 @@ namespace NTwain
         {
             get
             {
-                return _yscaling ?? (_yscaling = new CapWrapper<TWFix32>(this, CapabilityId.ICapYScaling, ValueExtensions.ConvertToFix32,
+                return _yscaling ?? (_yscaling = new CapWrapper<TWFix32>(_source, CapabilityId.ICapYScaling, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -966,7 +976,7 @@ namespace NTwain
         {
             get
             {
-                return _bitorderCodes ?? (_bitorderCodes = new CapWrapper<BitOrder>(this, CapabilityId.ICapBitOrderCodes, ValueExtensions.ConvertToEnum<BitOrder>,
+                return _bitorderCodes ?? (_bitorderCodes = new CapWrapper<BitOrder>(_source, CapabilityId.ICapBitOrderCodes, ValueExtensions.ConvertToEnum<BitOrder>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -987,7 +997,7 @@ namespace NTwain
         {
             get
             {
-                return _pixelFlavorCodes ?? (_pixelFlavorCodes = new CapWrapper<PixelFlavor>(this, CapabilityId.ICapPixelFlavorCodes, ValueExtensions.ConvertToEnum<PixelFlavor>,
+                return _pixelFlavorCodes ?? (_pixelFlavorCodes = new CapWrapper<PixelFlavor>(_source, CapabilityId.ICapPixelFlavorCodes, ValueExtensions.ConvertToEnum<PixelFlavor>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1008,7 +1018,7 @@ namespace NTwain
         {
             get
             {
-                return _jpegPixelType ?? (_jpegPixelType = new CapWrapper<PixelType>(this, CapabilityId.ICapJpegPixelType, ValueExtensions.ConvertToEnum<PixelType>,
+                return _jpegPixelType ?? (_jpegPixelType = new CapWrapper<PixelType>(_source, CapabilityId.ICapJpegPixelType, ValueExtensions.ConvertToEnum<PixelType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1029,7 +1039,7 @@ namespace NTwain
         {
             get
             {
-                return _timeFill ?? (_timeFill = new CapWrapper<int>(this, CapabilityId.ICapTimeFill, ValueExtensions.ConvertToEnum<int>,
+                return _timeFill ?? (_timeFill = new CapWrapper<int>(_source, CapabilityId.ICapTimeFill, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1050,7 +1060,7 @@ namespace NTwain
         {
             get
             {
-                return _bitDepth ?? (_bitDepth = new CapWrapper<int>(this, CapabilityId.ICapBitDepth, ValueExtensions.ConvertToEnum<int>,
+                return _bitDepth ?? (_bitDepth = new CapWrapper<int>(_source, CapabilityId.ICapBitDepth, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1071,7 +1081,7 @@ namespace NTwain
         {
             get
             {
-                return _bitDepthReduction ?? (_bitDepthReduction = new CapWrapper<BitDepthReduction>(this, CapabilityId.ICapBitDepthReduction, ValueExtensions.ConvertToEnum<BitDepthReduction>,
+                return _bitDepthReduction ?? (_bitDepthReduction = new CapWrapper<BitDepthReduction>(_source, CapabilityId.ICapBitDepthReduction, ValueExtensions.ConvertToEnum<BitDepthReduction>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1092,7 +1102,7 @@ namespace NTwain
         {
             get
             {
-                return _undefinedImgSize ?? (_undefinedImgSize = new CapWrapper<BoolType>(this, CapabilityId.ICapUndefinedImageSize, ValueExtensions.ConvertToEnum<BoolType>,
+                return _undefinedImgSize ?? (_undefinedImgSize = new CapWrapper<BoolType>(_source, CapabilityId.ICapUndefinedImageSize, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1114,7 +1124,7 @@ namespace NTwain
         {
             get
             {
-                return _imgDataSet ?? (_imgDataSet = new CapWrapper<uint>(this, CapabilityId.ICapImageDataSet, ValueExtensions.ConvertToEnum<uint>,
+                return _imgDataSet ?? (_imgDataSet = new CapWrapper<uint>(_source, CapabilityId.ICapImageDataSet, ValueExtensions.ConvertToEnum<uint>,
                         value => new TWOneValue
                         {
                             Item = value,
@@ -1135,7 +1145,7 @@ namespace NTwain
         {
             get
             {
-                return _extImgInfo ?? (_extImgInfo = new CapWrapper<BoolType>(this, CapabilityId.ICapExtImageInfo, ValueExtensions.ConvertToEnum<BoolType>,
+                return _extImgInfo ?? (_extImgInfo = new CapWrapper<BoolType>(_source, CapabilityId.ICapExtImageInfo, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1156,7 +1166,7 @@ namespace NTwain
         {
             get
             {
-                return _minHeight ?? (_minHeight = new CapWrapper<TWFix32>(this, CapabilityId.ICapMinimumHeight, ValueExtensions.ConvertToFix32, true));
+                return _minHeight ?? (_minHeight = new CapWrapper<TWFix32>(_source, CapabilityId.ICapMinimumHeight, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -1172,7 +1182,7 @@ namespace NTwain
         {
             get
             {
-                return _minWidth ?? (_minWidth = new CapWrapper<TWFix32>(this, CapabilityId.ICapMinimumWidth, ValueExtensions.ConvertToFix32, true));
+                return _minWidth ?? (_minWidth = new CapWrapper<TWFix32>(_source, CapabilityId.ICapMinimumWidth, ValueExtensions.ConvertToFix32, true));
             }
         }
 
@@ -1188,7 +1198,7 @@ namespace NTwain
         {
             get
             {
-                return _autoDiscBlankPg ?? (_autoDiscBlankPg = new CapWrapper<BlankPage>(this, CapabilityId.ICapAutoDiscardBlankPages, ValueExtensions.ConvertToEnum<BlankPage>,
+                return _autoDiscBlankPg ?? (_autoDiscBlankPg = new CapWrapper<BlankPage>(_source, CapabilityId.ICapAutoDiscardBlankPages, ValueExtensions.ConvertToEnum<BlankPage>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1209,7 +1219,7 @@ namespace NTwain
         {
             get
             {
-                return _flipRotation ?? (_flipRotation = new CapWrapper<FlipRotation>(this, CapabilityId.ICapFlipRotation, ValueExtensions.ConvertToEnum<FlipRotation>,
+                return _flipRotation ?? (_flipRotation = new CapWrapper<FlipRotation>(_source, CapabilityId.ICapFlipRotation, ValueExtensions.ConvertToEnum<FlipRotation>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1230,7 +1240,7 @@ namespace NTwain
         {
             get
             {
-                return _barcodeDetectEnabled ?? (_barcodeDetectEnabled = new CapWrapper<BoolType>(this, CapabilityId.ICapBarcodeDetectionEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                return _barcodeDetectEnabled ?? (_barcodeDetectEnabled = new CapWrapper<BoolType>(_source, CapabilityId.ICapBarcodeDetectionEnabled, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1251,7 +1261,7 @@ namespace NTwain
         {
             get
             {
-                return _barcodeType ?? (_barcodeType = new CapWrapper<BarcodeType>(this, CapabilityId.ICapSupportedBarcodeTypes, ValueExtensions.ConvertToEnum<BarcodeType>, true));
+                return _barcodeType ?? (_barcodeType = new CapWrapper<BarcodeType>(_source, CapabilityId.ICapSupportedBarcodeTypes, ValueExtensions.ConvertToEnum<BarcodeType>, true));
             }
         }
 
@@ -1267,7 +1277,7 @@ namespace NTwain
         {
             get
             {
-                return _barcodeMaxPriority ?? (_barcodeMaxPriority = new CapWrapper<uint>(this, CapabilityId.ICapBarcodeMaxSearchPriorities, ValueExtensions.ConvertToEnum<uint>,
+                return _barcodeMaxPriority ?? (_barcodeMaxPriority = new CapWrapper<uint>(_source, CapabilityId.ICapBarcodeMaxSearchPriorities, ValueExtensions.ConvertToEnum<uint>,
                         value => new TWOneValue
                         {
                             Item = value,
@@ -1288,7 +1298,7 @@ namespace NTwain
         {
             get
             {
-                return _barcodeSearchPriority ?? (_barcodeSearchPriority = new CapWrapper<BarcodeType>(this, CapabilityId.ICapBarcodeSearchPriorities, ValueExtensions.ConvertToEnum<BarcodeType>,
+                return _barcodeSearchPriority ?? (_barcodeSearchPriority = new CapWrapper<BarcodeType>(_source, CapabilityId.ICapBarcodeSearchPriorities, ValueExtensions.ConvertToEnum<BarcodeType>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -1309,7 +1319,7 @@ namespace NTwain
         {
             get
             {
-                return _barcodeSearchMode ?? (_barcodeSearchMode = new CapWrapper<BarcodeDirection>(this, CapabilityId.ICapBarcodeSearchMode, ValueExtensions.ConvertToEnum<BarcodeDirection>,
+                return _barcodeSearchMode ?? (_barcodeSearchMode = new CapWrapper<BarcodeDirection>(_source, CapabilityId.ICapBarcodeSearchMode, ValueExtensions.ConvertToEnum<BarcodeDirection>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -1330,7 +1340,7 @@ namespace NTwain
         {
             get
             {
-                return _barcodeMaxRetries ?? (_barcodeMaxRetries = new CapWrapper<uint>(this, CapabilityId.ICapBarcodeMaxRetries, ValueExtensions.ConvertToEnum<uint>,
+                return _barcodeMaxRetries ?? (_barcodeMaxRetries = new CapWrapper<uint>(_source, CapabilityId.ICapBarcodeMaxRetries, ValueExtensions.ConvertToEnum<uint>,
                         value => new TWOneValue
                         {
                             Item = value,
@@ -1351,7 +1361,7 @@ namespace NTwain
         {
             get
             {
-                return _barcodeTimeout ?? (_barcodeTimeout = new CapWrapper<uint>(this, CapabilityId.ICapBarcodeTimeout, ValueExtensions.ConvertToEnum<uint>,
+                return _barcodeTimeout ?? (_barcodeTimeout = new CapWrapper<uint>(_source, CapabilityId.ICapBarcodeTimeout, ValueExtensions.ConvertToEnum<uint>,
                         value => new TWOneValue
                         {
                             Item = value,
@@ -1372,7 +1382,7 @@ namespace NTwain
         {
             get
             {
-                return _zoomFactor ?? (_zoomFactor = new CapWrapper<int>(this, CapabilityId.ICapZoomFactor, ValueExtensions.ConvertToEnum<int>,
+                return _zoomFactor ?? (_zoomFactor = new CapWrapper<int>(_source, CapabilityId.ICapZoomFactor, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1393,7 +1403,7 @@ namespace NTwain
         {
             get
             {
-                return _patchcodeDetectEnabled ?? (_patchcodeDetectEnabled = new CapWrapper<BoolType>(this, CapabilityId.ICapPatchCodeDetectionEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                return _patchcodeDetectEnabled ?? (_patchcodeDetectEnabled = new CapWrapper<BoolType>(_source, CapabilityId.ICapPatchCodeDetectionEnabled, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1414,7 +1424,7 @@ namespace NTwain
         {
             get
             {
-                return _patchcodeType ?? (_patchcodeType = new CapWrapper<PatchCode>(this, CapabilityId.ICapSupportedPatchCodeTypes, ValueExtensions.ConvertToEnum<PatchCode>, true));
+                return _patchcodeType ?? (_patchcodeType = new CapWrapper<PatchCode>(_source, CapabilityId.ICapSupportedPatchCodeTypes, ValueExtensions.ConvertToEnum<PatchCode>, true));
             }
         }
 
@@ -1430,7 +1440,7 @@ namespace NTwain
         {
             get
             {
-                return _patchcodeMaxPriority ?? (_patchcodeMaxPriority = new CapWrapper<uint>(this, CapabilityId.ICapPatchCodeMaxSearchPriorities, ValueExtensions.ConvertToEnum<uint>,
+                return _patchcodeMaxPriority ?? (_patchcodeMaxPriority = new CapWrapper<uint>(_source, CapabilityId.ICapPatchCodeMaxSearchPriorities, ValueExtensions.ConvertToEnum<uint>,
                         value => new TWOneValue
                         {
                             Item = value,
@@ -1451,7 +1461,7 @@ namespace NTwain
         {
             get
             {
-                return _patchcodeSearchPriority ?? (_patchcodeSearchPriority = new CapWrapper<PatchCode>(this, CapabilityId.ICapPatchCodeSearchPriorities, ValueExtensions.ConvertToEnum<PatchCode>,
+                return _patchcodeSearchPriority ?? (_patchcodeSearchPriority = new CapWrapper<PatchCode>(_source, CapabilityId.ICapPatchCodeSearchPriorities, ValueExtensions.ConvertToEnum<PatchCode>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -1472,7 +1482,7 @@ namespace NTwain
         {
             get
             {
-                return _patchcodeSearchMode ?? (_patchcodeSearchMode = new CapWrapper<BarcodeDirection>(this, CapabilityId.ICapPatchCodeSearchMode, ValueExtensions.ConvertToEnum<BarcodeDirection>,
+                return _patchcodeSearchMode ?? (_patchcodeSearchMode = new CapWrapper<BarcodeDirection>(_source, CapabilityId.ICapPatchCodeSearchMode, ValueExtensions.ConvertToEnum<BarcodeDirection>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -1493,7 +1503,7 @@ namespace NTwain
         {
             get
             {
-                return _patchCodeMaxRetries ?? (_patchCodeMaxRetries = new CapWrapper<uint>(this, CapabilityId.ICapPatchCodeMaxRetries, ValueExtensions.ConvertToEnum<uint>,
+                return _patchCodeMaxRetries ?? (_patchCodeMaxRetries = new CapWrapper<uint>(_source, CapabilityId.ICapPatchCodeMaxRetries, ValueExtensions.ConvertToEnum<uint>,
                         value => new TWOneValue
                         {
                             Item = value,
@@ -1514,7 +1524,7 @@ namespace NTwain
         {
             get
             {
-                return _patchCodeTimeout ?? (_patchCodeTimeout = new CapWrapper<uint>(this, CapabilityId.ICapPatchCodeTimeout, ValueExtensions.ConvertToEnum<uint>,
+                return _patchCodeTimeout ?? (_patchCodeTimeout = new CapWrapper<uint>(_source, CapabilityId.ICapPatchCodeTimeout, ValueExtensions.ConvertToEnum<uint>,
                         value => new TWOneValue
                         {
                             Item = value,
@@ -1535,7 +1545,7 @@ namespace NTwain
         {
             get
             {
-                return _flashUsed2 ?? (_flashUsed2 = new CapWrapper<FlashedUsed>(this, CapabilityId.ICapFlashUsed2, ValueExtensions.ConvertToEnum<FlashedUsed>,
+                return _flashUsed2 ?? (_flashUsed2 = new CapWrapper<FlashedUsed>(_source, CapabilityId.ICapFlashUsed2, ValueExtensions.ConvertToEnum<FlashedUsed>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1556,7 +1566,7 @@ namespace NTwain
         {
             get
             {
-                return _imgFilter ?? (_imgFilter = new CapWrapper<ImageFilter>(this, CapabilityId.ICapImageFilter, ValueExtensions.ConvertToEnum<ImageFilter>,
+                return _imgFilter ?? (_imgFilter = new CapWrapper<ImageFilter>(_source, CapabilityId.ICapImageFilter, ValueExtensions.ConvertToEnum<ImageFilter>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1577,7 +1587,7 @@ namespace NTwain
         {
             get
             {
-                return _noiseFilter ?? (_noiseFilter = new CapWrapper<NoiseFilter>(this, CapabilityId.ICapNoiseFilter, ValueExtensions.ConvertToEnum<NoiseFilter>,
+                return _noiseFilter ?? (_noiseFilter = new CapWrapper<NoiseFilter>(_source, CapabilityId.ICapNoiseFilter, ValueExtensions.ConvertToEnum<NoiseFilter>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1598,7 +1608,7 @@ namespace NTwain
         {
             get
             {
-                return _overscan ?? (_overscan = new CapWrapper<OverScan>(this, CapabilityId.ICapOverScan, ValueExtensions.ConvertToEnum<OverScan>,
+                return _overscan ?? (_overscan = new CapWrapper<OverScan>(_source, CapabilityId.ICapOverScan, ValueExtensions.ConvertToEnum<OverScan>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1619,7 +1629,7 @@ namespace NTwain
         {
             get
             {
-                return _borderDetect ?? (_borderDetect = new CapWrapper<BoolType>(this, CapabilityId.ICapAutomaticBorderDetection, ValueExtensions.ConvertToEnum<BoolType>,
+                return _borderDetect ?? (_borderDetect = new CapWrapper<BoolType>(_source, CapabilityId.ICapAutomaticBorderDetection, ValueExtensions.ConvertToEnum<BoolType>,
                     value =>
                     {
                         var rc = ReturnCode.Failure;
@@ -1634,7 +1644,7 @@ namespace NTwain
                         rc = ICapUndefinedImageSize.SetValue(value);
                         using (TWCapability capValue = new TWCapability(CapabilityId.ICapAutomaticBorderDetection, one))
                         {
-                            rc = _session.DGControl.Capability.Set(capValue);
+                            rc = _source.DGControl.Capability.Set(capValue);
                         }
 
                         return rc;
@@ -1654,7 +1664,7 @@ namespace NTwain
         {
             get
             {
-                return _autoDeskew ?? (_autoDeskew = new CapWrapper<BoolType>(this, CapabilityId.ICapAutomaticDeskew, ValueExtensions.ConvertToEnum<BoolType>,
+                return _autoDeskew ?? (_autoDeskew = new CapWrapper<BoolType>(_source, CapabilityId.ICapAutomaticDeskew, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -1675,7 +1685,7 @@ namespace NTwain
         {
             get
             {
-                return _autoRotate ?? (_autoRotate = new CapWrapper<BoolType>(this, CapabilityId.ICapAutomaticRotate, ValueExtensions.ConvertToEnum<BoolType>,
+                return _autoRotate ?? (_autoRotate = new CapWrapper<BoolType>(_source, CapabilityId.ICapAutomaticRotate, ValueExtensions.ConvertToEnum<BoolType>,
                          value => new TWOneValue
                          {
                              Item = (uint)value,
@@ -1697,7 +1707,7 @@ namespace NTwain
             get
             {
                 //TODO: verify
-                return _jpegQuality ?? (_jpegQuality = new CapWrapper<JpegQuality>(this, CapabilityId.ICapJpegQuality, ValueExtensions.ConvertToEnum<JpegQuality>,
+                return _jpegQuality ?? (_jpegQuality = new CapWrapper<JpegQuality>(_source, CapabilityId.ICapJpegQuality, ValueExtensions.ConvertToEnum<JpegQuality>,
                          value => new TWOneValue
                          {
                              Item = (uint)value,
@@ -1718,7 +1728,7 @@ namespace NTwain
         {
             get
             {
-                return _feederType ?? (_feederType = new CapWrapper<FeederType>(this, CapabilityId.ICapFeederType, ValueExtensions.ConvertToEnum<FeederType>,
+                return _feederType ?? (_feederType = new CapWrapper<FeederType>(_source, CapabilityId.ICapFeederType, ValueExtensions.ConvertToEnum<FeederType>,
                          value => new TWOneValue
                          {
                              Item = (uint)value,
@@ -1739,7 +1749,7 @@ namespace NTwain
         {
             get
             {
-                return _iccProfile ?? (_iccProfile = new CapWrapper<IccProfile>(this, CapabilityId.ICapICCProfile, ValueExtensions.ConvertToEnum<IccProfile>,
+                return _iccProfile ?? (_iccProfile = new CapWrapper<IccProfile>(_source, CapabilityId.ICapICCProfile, ValueExtensions.ConvertToEnum<IccProfile>,
                          value => new TWOneValue
                          {
                              Item = (uint)value,
@@ -1760,7 +1770,7 @@ namespace NTwain
         {
             get
             {
-                return _autoSize ?? (_autoSize = new CapWrapper<AutoSize>(this, CapabilityId.ICapAutoSize, ValueExtensions.ConvertToEnum<AutoSize>,
+                return _autoSize ?? (_autoSize = new CapWrapper<AutoSize>(_source, CapabilityId.ICapAutoSize, ValueExtensions.ConvertToEnum<AutoSize>,
                          value => new TWOneValue
                          {
                              Item = (uint)value,
@@ -1781,7 +1791,7 @@ namespace NTwain
         {
             get
             {
-                return _cropUseFrame ?? (_cropUseFrame = new CapWrapper<BoolType>(this, CapabilityId.ICapAutomaticCropUsesFrame, ValueExtensions.ConvertToEnum<BoolType>, true));
+                return _cropUseFrame ?? (_cropUseFrame = new CapWrapper<BoolType>(_source, CapabilityId.ICapAutomaticCropUsesFrame, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -1797,7 +1807,7 @@ namespace NTwain
         {
             get
             {
-                return _lengthDetect ?? (_lengthDetect = new CapWrapper<BoolType>(this, CapabilityId.ICapAutomaticLengthDetection, ValueExtensions.ConvertToEnum<BoolType>,
+                return _lengthDetect ?? (_lengthDetect = new CapWrapper<BoolType>(_source, CapabilityId.ICapAutomaticLengthDetection, ValueExtensions.ConvertToEnum<BoolType>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -1818,7 +1828,7 @@ namespace NTwain
         {
             get
             {
-                return _autoColor ?? (_autoColor = new CapWrapper<BoolType>(this, CapabilityId.ICapAutomaticColorEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                return _autoColor ?? (_autoColor = new CapWrapper<BoolType>(_source, CapabilityId.ICapAutomaticColorEnabled, ValueExtensions.ConvertToEnum<BoolType>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -1839,7 +1849,7 @@ namespace NTwain
         {
             get
             {
-                return _autoColorNonPixel ?? (_autoColorNonPixel = new CapWrapper<PixelType>(this, CapabilityId.ICapAutomaticColorNonColorPixelType, ValueExtensions.ConvertToEnum<PixelType>,
+                return _autoColorNonPixel ?? (_autoColorNonPixel = new CapWrapper<PixelType>(_source, CapabilityId.ICapAutomaticColorNonColorPixelType, ValueExtensions.ConvertToEnum<PixelType>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -1860,7 +1870,7 @@ namespace NTwain
         {
             get
             {
-                return _colorMgmt ?? (_colorMgmt = new CapWrapper<BoolType>(this, CapabilityId.ICapColorManagementEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                return _colorMgmt ?? (_colorMgmt = new CapWrapper<BoolType>(_source, CapabilityId.ICapColorManagementEnabled, ValueExtensions.ConvertToEnum<BoolType>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -1881,7 +1891,7 @@ namespace NTwain
         {
             get
             {
-                return _imgMerge ?? (_imgMerge = new CapWrapper<ImageMerge>(this, CapabilityId.ICapImageMerge, ValueExtensions.ConvertToEnum<ImageMerge>,
+                return _imgMerge ?? (_imgMerge = new CapWrapper<ImageMerge>(_source, CapabilityId.ICapImageMerge, ValueExtensions.ConvertToEnum<ImageMerge>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -1902,7 +1912,7 @@ namespace NTwain
         {
             get
             {
-                return _mergeHeight ?? (_mergeHeight = new CapWrapper<TWFix32>(this, CapabilityId.ICapImageMergeHeightThreshold, ValueExtensions.ConvertToFix32,
+                return _mergeHeight ?? (_mergeHeight = new CapWrapper<TWFix32>(_source, CapabilityId.ICapImageMergeHeightThreshold, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -1923,7 +1933,7 @@ namespace NTwain
         {
             get
             {
-                return _supportedExtInfo ?? (_supportedExtInfo = new CapWrapper<ExtendedImageInfo>(this, CapabilityId.ICapSupportedExtImageInfo, ValueExtensions.ConvertToEnum<ExtendedImageInfo>, true));
+                return _supportedExtInfo ?? (_supportedExtInfo = new CapWrapper<ExtendedImageInfo>(_source, CapabilityId.ICapSupportedExtImageInfo, ValueExtensions.ConvertToEnum<ExtendedImageInfo>, true));
             }
         }
 
@@ -1939,7 +1949,7 @@ namespace NTwain
         {
             get
             {
-                return _filmType ?? (_filmType = new CapWrapper<FilmType>(this, CapabilityId.ICapFilmType, ValueExtensions.ConvertToEnum<FilmType>,
+                return _filmType ?? (_filmType = new CapWrapper<FilmType>(_source, CapabilityId.ICapFilmType, ValueExtensions.ConvertToEnum<FilmType>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -1960,7 +1970,7 @@ namespace NTwain
         {
             get
             {
-                return _mirror ?? (_mirror = new CapWrapper<Mirror>(this, CapabilityId.ICapMirror, ValueExtensions.ConvertToEnum<Mirror>,
+                return _mirror ?? (_mirror = new CapWrapper<Mirror>(_source, CapabilityId.ICapMirror, ValueExtensions.ConvertToEnum<Mirror>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -1981,7 +1991,7 @@ namespace NTwain
         {
             get
             {
-                return _jpegSubSampling ?? (_jpegSubSampling = new CapWrapper<JpegSubsampling>(this, CapabilityId.ICapJpegSubsampling, ValueExtensions.ConvertToEnum<JpegSubsampling>,
+                return _jpegSubSampling ?? (_jpegSubSampling = new CapWrapper<JpegSubsampling>(_source, CapabilityId.ICapJpegSubsampling, ValueExtensions.ConvertToEnum<JpegSubsampling>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -2008,7 +2018,7 @@ namespace NTwain
         {
             get
             {
-                return _xferCount ?? (_xferCount = new CapWrapper<int>(this, CapabilityId.CapXferCount, ValueExtensions.ConvertToEnum<int>,
+                return _xferCount ?? (_xferCount = new CapWrapper<int>(_source, CapabilityId.CapXferCount, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = value > 0 ? (uint)value : uint.MaxValue,
@@ -2032,12 +2042,12 @@ namespace NTwain
         {
             get
             {
-                return _author ?? (_author = new CapWrapper<string>(this, CapabilityId.CapAuthor, ValueExtensions.ConvertToString,
+                return _author ?? (_author = new CapWrapper<string>(_source, CapabilityId.CapAuthor, ValueExtensions.ConvertToString,
                     value =>
                     {
                         using (var cap = new TWCapability(CapabilityId.CapAuthor, value, ItemType.String128))
                         {
-                            return DGControl.Capability.Set(cap);
+                            return _source.DGControl.Capability.Set(cap);
                         }
                     }));
             }
@@ -2056,12 +2066,12 @@ namespace NTwain
         {
             get
             {
-                return _caption ?? (_caption = new CapWrapper<string>(this, CapabilityId.CapCaption, ValueExtensions.ConvertToString,
+                return _caption ?? (_caption = new CapWrapper<string>(_source, CapabilityId.CapCaption, ValueExtensions.ConvertToString,
                     value =>
                     {
                         using (var cap = new TWCapability(CapabilityId.CapCaption, value, ItemType.String255))
                         {
-                            return DGControl.Capability.Set(cap);
+                            return _source.DGControl.Capability.Set(cap);
                         }
                     }));
             }
@@ -2079,7 +2089,7 @@ namespace NTwain
         {
             get
             {
-                return _feederEnabled ?? (_feederEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapFeederEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                return _feederEnabled ?? (_feederEnabled = new CapWrapper<BoolType>(_source, CapabilityId.CapFeederEnabled, ValueExtensions.ConvertToEnum<BoolType>,
                     value =>
                     {
                         var rc = ReturnCode.Failure;
@@ -2096,7 +2106,7 @@ namespace NTwain
                         {
                             using (TWCapability enabled = new TWCapability(CapabilityId.CapFeederEnabled, one))
                             {
-                                rc = _session.DGControl.Capability.Set(enabled);
+                                rc = _source.DGControl.Capability.Set(enabled);
                             }
                         }
                         // to really use feeder we must also set autofeed or autoscan, but only
@@ -2127,7 +2137,7 @@ namespace NTwain
         {
             get
             {
-                return _feederLoaded ?? (_feederLoaded = new CapWrapper<BoolType>(this, CapabilityId.CapFeederLoaded, ValueExtensions.ConvertToEnum<BoolType>, true));
+                return _feederLoaded ?? (_feederLoaded = new CapWrapper<BoolType>(_source, CapabilityId.CapFeederLoaded, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2143,7 +2153,7 @@ namespace NTwain
         {
             get
             {
-                return _timedate ?? (_timedate = new CapWrapper<string>(this, CapabilityId.CapTimeDate, ValueExtensions.ConvertToString, true));
+                return _timedate ?? (_timedate = new CapWrapper<string>(_source, CapabilityId.CapTimeDate, ValueExtensions.ConvertToString, true));
             }
         }
 
@@ -2159,7 +2169,7 @@ namespace NTwain
         {
             get
             {
-                return _supportedCaps ?? (_supportedCaps = new CapWrapper<CapabilityId>(this, CapabilityId.CapSupportedCaps, value => value.ConvertToEnum<CapabilityId>(false), true));
+                return _supportedCaps ?? (_supportedCaps = new CapWrapper<CapabilityId>(_source, CapabilityId.CapSupportedCaps, value => value.ConvertToEnum<CapabilityId>(false), true));
             }
         }
 
@@ -2175,7 +2185,7 @@ namespace NTwain
         {
             get
             {
-                return _extendedCaps ?? (_extendedCaps = new CapWrapper<CapabilityId>(this, CapabilityId.CapExtendedCaps, value => value.ConvertToEnum<CapabilityId>(false),
+                return _extendedCaps ?? (_extendedCaps = new CapWrapper<CapabilityId>(_source, CapabilityId.CapExtendedCaps, value => value.ConvertToEnum<CapabilityId>(false),
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -2196,7 +2206,7 @@ namespace NTwain
         {
             get
             {
-                return _autoFeed ?? (_autoFeed = new CapWrapper<BoolType>(this, CapabilityId.CapAutoFeed, ValueExtensions.ConvertToEnum<BoolType>,
+                return _autoFeed ?? (_autoFeed = new CapWrapper<BoolType>(_source, CapabilityId.CapAutoFeed, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2217,7 +2227,7 @@ namespace NTwain
         {
             get
             {
-                return _clearPage ?? (_clearPage = new CapWrapper<BoolType>(this, CapabilityId.CapClearPage, ValueExtensions.ConvertToEnum<BoolType>,
+                return _clearPage ?? (_clearPage = new CapWrapper<BoolType>(_source, CapabilityId.CapClearPage, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2238,7 +2248,7 @@ namespace NTwain
         {
             get
             {
-                return _feedPage ?? (_feedPage = new CapWrapper<BoolType>(this, CapabilityId.CapFeedPage, ValueExtensions.ConvertToEnum<BoolType>,
+                return _feedPage ?? (_feedPage = new CapWrapper<BoolType>(_source, CapabilityId.CapFeedPage, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2259,7 +2269,7 @@ namespace NTwain
         {
             get
             {
-                return _rewindPage ?? (_rewindPage = new CapWrapper<BoolType>(this, CapabilityId.CapRewindPage, ValueExtensions.ConvertToEnum<BoolType>,
+                return _rewindPage ?? (_rewindPage = new CapWrapper<BoolType>(_source, CapabilityId.CapRewindPage, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2280,7 +2290,7 @@ namespace NTwain
         {
             get
             {
-                return _indicators ?? (_indicators = new CapWrapper<BoolType>(this, CapabilityId.CapIndicators, ValueExtensions.ConvertToEnum<BoolType>,
+                return _indicators ?? (_indicators = new CapWrapper<BoolType>(_source, CapabilityId.CapIndicators, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2301,7 +2311,7 @@ namespace NTwain
         {
             get
             {
-                return _paperDetectable ?? (_paperDetectable = new CapWrapper<BoolType>(this, CapabilityId.CapPaperDetectable, ValueExtensions.ConvertToEnum<BoolType>, true));
+                return _paperDetectable ?? (_paperDetectable = new CapWrapper<BoolType>(_source, CapabilityId.CapPaperDetectable, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2317,7 +2327,7 @@ namespace NTwain
         {
             get
             {
-                return _uiControllable ?? (_uiControllable = new CapWrapper<BoolType>(this, CapabilityId.CapUIControllable, ValueExtensions.ConvertToEnum<BoolType>, true));
+                return _uiControllable ?? (_uiControllable = new CapWrapper<BoolType>(_source, CapabilityId.CapUIControllable, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2333,7 +2343,7 @@ namespace NTwain
         {
             get
             {
-                return _devOnline ?? (_devOnline = new CapWrapper<BoolType>(this, CapabilityId.CapDeviceOnline, ValueExtensions.ConvertToEnum<BoolType>, true));
+                return _devOnline ?? (_devOnline = new CapWrapper<BoolType>(_source, CapabilityId.CapDeviceOnline, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2349,7 +2359,7 @@ namespace NTwain
         {
             get
             {
-                return _autoScan ?? (_autoScan = new CapWrapper<BoolType>(this, CapabilityId.CapAutoScan, ValueExtensions.ConvertToEnum<BoolType>,
+                return _autoScan ?? (_autoScan = new CapWrapper<BoolType>(_source, CapabilityId.CapAutoScan, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2370,7 +2380,7 @@ namespace NTwain
         {
             get
             {
-                return _thumbsEnabled ?? (_thumbsEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapThumbnailsEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                return _thumbsEnabled ?? (_thumbsEnabled = new CapWrapper<BoolType>(_source, CapabilityId.CapThumbnailsEnabled, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2391,7 +2401,7 @@ namespace NTwain
         {
             get
             {
-                return _duplex ?? (_duplex = new CapWrapper<Duplex>(this, CapabilityId.CapDuplex, ValueExtensions.ConvertToEnum<Duplex>, true));
+                return _duplex ?? (_duplex = new CapWrapper<Duplex>(_source, CapabilityId.CapDuplex, ValueExtensions.ConvertToEnum<Duplex>, true));
             }
         }
 
@@ -2407,7 +2417,7 @@ namespace NTwain
         {
             get
             {
-                return _duplexEnabled ?? (_duplexEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapDuplexEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                return _duplexEnabled ?? (_duplexEnabled = new CapWrapper<BoolType>(_source, CapabilityId.CapDuplexEnabled, ValueExtensions.ConvertToEnum<BoolType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2428,7 +2438,7 @@ namespace NTwain
         {
             get
             {
-                return _dsUIonly ?? (_dsUIonly = new CapWrapper<BoolType>(this, CapabilityId.CapEnableDSUIOnly, ValueExtensions.ConvertToEnum<BoolType>, true));
+                return _dsUIonly ?? (_dsUIonly = new CapWrapper<BoolType>(_source, CapabilityId.CapEnableDSUIOnly, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2444,7 +2454,7 @@ namespace NTwain
         {
             get
             {
-                return _dsData ?? (_dsData = new CapWrapper<BoolType>(this, CapabilityId.CapCustomDSData, ValueExtensions.ConvertToEnum<BoolType>, true));
+                return _dsData ?? (_dsData = new CapWrapper<BoolType>(_source, CapabilityId.CapCustomDSData, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2460,7 +2470,7 @@ namespace NTwain
         {
             get
             {
-                return _endorser ?? (_endorser = new CapWrapper<uint>(this, CapabilityId.CapEndorser, ValueExtensions.ConvertToEnum<uint>,
+                return _endorser ?? (_endorser = new CapWrapper<uint>(_source, CapabilityId.CapEndorser, ValueExtensions.ConvertToEnum<uint>,
                         value => new TWOneValue
                         {
                             Item = value,
@@ -2481,7 +2491,7 @@ namespace NTwain
         {
             get
             {
-                return _jobControl ?? (_jobControl = new CapWrapper<JobControl>(this, CapabilityId.CapJobControl, ValueExtensions.ConvertToEnum<JobControl>,
+                return _jobControl ?? (_jobControl = new CapWrapper<JobControl>(_source, CapabilityId.CapJobControl, ValueExtensions.ConvertToEnum<JobControl>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2502,7 +2512,7 @@ namespace NTwain
         {
             get
             {
-                return _alarms ?? (_alarms = new CapWrapper<AlarmType>(this, CapabilityId.CapAlarms, ValueExtensions.ConvertToEnum<AlarmType>,
+                return _alarms ?? (_alarms = new CapWrapper<AlarmType>(_source, CapabilityId.CapAlarms, ValueExtensions.ConvertToEnum<AlarmType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2523,7 +2533,7 @@ namespace NTwain
         {
             get
             {
-                return _alarmVolume ?? (_alarmVolume = new CapWrapper<int>(this, CapabilityId.CapAlarmVolume, ValueExtensions.ConvertToEnum<int>,
+                return _alarmVolume ?? (_alarmVolume = new CapWrapper<int>(_source, CapabilityId.CapAlarmVolume, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2544,7 +2554,7 @@ namespace NTwain
         {
             get
             {
-                return _autoCapture ?? (_autoCapture = new CapWrapper<int>(this, CapabilityId.CapAutomaticCapture, ValueExtensions.ConvertToEnum<int>,
+                return _autoCapture ?? (_autoCapture = new CapWrapper<int>(_source, CapabilityId.CapAutomaticCapture, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2565,7 +2575,7 @@ namespace NTwain
         {
             get
             {
-                return _timeBeforeCap ?? (_timeBeforeCap = new CapWrapper<int>(this, CapabilityId.CapTimeBeforeFirstCapture, ValueExtensions.ConvertToEnum<int>,
+                return _timeBeforeCap ?? (_timeBeforeCap = new CapWrapper<int>(_source, CapabilityId.CapTimeBeforeFirstCapture, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2586,7 +2596,7 @@ namespace NTwain
         {
             get
             {
-                return _timeBetweenCap ?? (_timeBetweenCap = new CapWrapper<int>(this, CapabilityId.CapTimeBetweenCaptures, ValueExtensions.ConvertToEnum<int>,
+                return _timeBetweenCap ?? (_timeBetweenCap = new CapWrapper<int>(_source, CapabilityId.CapTimeBetweenCaptures, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2607,7 +2617,7 @@ namespace NTwain
         {
             get
             {
-                return _clearBuff ?? (_clearBuff = new CapWrapper<ClearBuffer>(this, CapabilityId.CapClearBuffers, ValueExtensions.ConvertToEnum<ClearBuffer>,
+                return _clearBuff ?? (_clearBuff = new CapWrapper<ClearBuffer>(_source, CapabilityId.CapClearBuffers, ValueExtensions.ConvertToEnum<ClearBuffer>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2628,7 +2638,7 @@ namespace NTwain
         {
             get
             {
-                return _maxBatchBuff ?? (_maxBatchBuff = new CapWrapper<uint>(this, CapabilityId.CapMaxBatchBuffers, ValueExtensions.ConvertToEnum<uint>,
+                return _maxBatchBuff ?? (_maxBatchBuff = new CapWrapper<uint>(_source, CapabilityId.CapMaxBatchBuffers, ValueExtensions.ConvertToEnum<uint>,
                         value => new TWOneValue
                         {
                             Item = value,
@@ -2649,12 +2659,12 @@ namespace NTwain
         {
             get
             {
-                return _devTimeDate ?? (_devTimeDate = new CapWrapper<string>(this, CapabilityId.CapDeviceTimeDate, ValueExtensions.ConvertToString,
+                return _devTimeDate ?? (_devTimeDate = new CapWrapper<string>(_source, CapabilityId.CapDeviceTimeDate, ValueExtensions.ConvertToString,
                     value =>
                     {
                         using (var cap = new TWCapability(CapabilityId.CapDeviceTimeDate, value, ItemType.String32))
                         {
-                            return DGControl.Capability.Set(cap);
+                            return _source.DGControl.Capability.Set(cap);
                         }
                     }));
             }
@@ -2672,7 +2682,7 @@ namespace NTwain
         {
             get
             {
-                return _powerSup ?? (_powerSup = new CapWrapper<PowerSupply>(this, CapabilityId.CapPowerSupply, ValueExtensions.ConvertToEnum<PowerSupply>, true));
+                return _powerSup ?? (_powerSup = new CapWrapper<PowerSupply>(_source, CapabilityId.CapPowerSupply, ValueExtensions.ConvertToEnum<PowerSupply>, true));
             }
         }
 
@@ -2688,7 +2698,7 @@ namespace NTwain
         {
             get
             {
-                return _camPreviewUI ?? (_camPreviewUI = new CapWrapper<BoolType>(this, CapabilityId.CapCameraPreviewUI, ValueExtensions.ConvertToEnum<BoolType>, true));
+                return _camPreviewUI ?? (_camPreviewUI = new CapWrapper<BoolType>(_source, CapabilityId.CapCameraPreviewUI, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2704,7 +2714,7 @@ namespace NTwain
         {
             get
             {
-                return _devEvent ?? (_devEvent = new CapWrapper<DeviceEvent>(this, CapabilityId.CapDeviceEvent, ValueExtensions.ConvertToEnum<DeviceEvent>,
+                return _devEvent ?? (_devEvent = new CapWrapper<DeviceEvent>(_source, CapabilityId.CapDeviceEvent, ValueExtensions.ConvertToEnum<DeviceEvent>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2725,7 +2735,7 @@ namespace NTwain
         {
             get
             {
-                return _serialNo ?? (_serialNo = new CapWrapper<string>(this, CapabilityId.CapSerialNumber, ValueExtensions.ConvertToString, true));
+                return _serialNo ?? (_serialNo = new CapWrapper<string>(_source, CapabilityId.CapSerialNumber, ValueExtensions.ConvertToString, true));
             }
         }
 
@@ -2741,7 +2751,7 @@ namespace NTwain
         {
             get
             {
-                return _printer ?? (_printer = new CapWrapper<Printer>(this, CapabilityId.CapPrinter, ValueExtensions.ConvertToEnum<Printer>,
+                return _printer ?? (_printer = new CapWrapper<Printer>(_source, CapabilityId.CapPrinter, ValueExtensions.ConvertToEnum<Printer>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2762,7 +2772,7 @@ namespace NTwain
         {
             get
             {
-                return _printerEnabled ?? (_printerEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapPrinterEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                return _printerEnabled ?? (_printerEnabled = new CapWrapper<BoolType>(_source, CapabilityId.CapPrinterEnabled, ValueExtensions.ConvertToEnum<BoolType>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -2783,7 +2793,7 @@ namespace NTwain
         {
             get
             {
-                return _printerIndex ?? (_printerIndex = new CapWrapper<int>(this, CapabilityId.CapPrinterIndex, ValueExtensions.ConvertToEnum<int>,
+                return _printerIndex ?? (_printerIndex = new CapWrapper<int>(_source, CapabilityId.CapPrinterIndex, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2804,7 +2814,7 @@ namespace NTwain
         {
             get
             {
-                return _printerMode ?? (_printerMode = new CapWrapper<PrinterMode>(this, CapabilityId.CapPrinterMode, ValueExtensions.ConvertToEnum<PrinterMode>,
+                return _printerMode ?? (_printerMode = new CapWrapper<PrinterMode>(_source, CapabilityId.CapPrinterMode, ValueExtensions.ConvertToEnum<PrinterMode>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2826,12 +2836,12 @@ namespace NTwain
         {
             get
             {
-                return _printerString ?? (_printerString = new CapWrapper<string>(this, CapabilityId.CapPrinterString, ValueExtensions.ConvertToString,
+                return _printerString ?? (_printerString = new CapWrapper<string>(_source, CapabilityId.CapPrinterString, ValueExtensions.ConvertToString,
                     value =>
                     {
                         using (var cap = new TWCapability(CapabilityId.CapPrinterString, value, ItemType.String255))
                         {
-                            return DGControl.Capability.Set(cap);
+                            return _source.DGControl.Capability.Set(cap);
                         }
                     }));
             }
@@ -2849,12 +2859,12 @@ namespace NTwain
         {
             get
             {
-                return _printerSuffix ?? (_printerSuffix = new CapWrapper<string>(this, CapabilityId.CapPrinterSuffix, ValueExtensions.ConvertToString,
+                return _printerSuffix ?? (_printerSuffix = new CapWrapper<string>(_source, CapabilityId.CapPrinterSuffix, ValueExtensions.ConvertToString,
                     value =>
                     {
                         using (var cap = new TWCapability(CapabilityId.CapPrinterSuffix, value, ItemType.String255))
                         {
-                            return DGControl.Capability.Set(cap);
+                            return _source.DGControl.Capability.Set(cap);
                         }
                     }));
             }
@@ -2872,7 +2882,7 @@ namespace NTwain
         {
             get
             {
-                return _language ?? (_language = new CapWrapper<Language>(this, CapabilityId.CapLanguage, ValueExtensions.ConvertToEnum<Language>,
+                return _language ?? (_language = new CapWrapper<Language>(_source, CapabilityId.CapLanguage, ValueExtensions.ConvertToEnum<Language>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2893,7 +2903,7 @@ namespace NTwain
         {
             get
             {
-                return _feedAlign ?? (_feedAlign = new CapWrapper<FeederAlignment>(this, CapabilityId.CapFeederAlignment, ValueExtensions.ConvertToEnum<FeederAlignment>,
+                return _feedAlign ?? (_feedAlign = new CapWrapper<FeederAlignment>(_source, CapabilityId.CapFeederAlignment, ValueExtensions.ConvertToEnum<FeederAlignment>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2914,7 +2924,7 @@ namespace NTwain
         {
             get
             {
-                return _feedOrder ?? (_feedOrder = new CapWrapper<FeederOrder>(this, CapabilityId.CapFeederOrder, ValueExtensions.ConvertToEnum<FeederOrder>,
+                return _feedOrder ?? (_feedOrder = new CapWrapper<FeederOrder>(_source, CapabilityId.CapFeederOrder, ValueExtensions.ConvertToEnum<FeederOrder>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -2935,7 +2945,7 @@ namespace NTwain
         {
             get
             {
-                return _reacuireAllow ?? (_reacuireAllow = new CapWrapper<BoolType>(this, CapabilityId.CapReacquireAllowed, ValueExtensions.ConvertToEnum<BoolType>, true));
+                return _reacuireAllow ?? (_reacuireAllow = new CapWrapper<BoolType>(_source, CapabilityId.CapReacquireAllowed, ValueExtensions.ConvertToEnum<BoolType>, true));
             }
         }
 
@@ -2951,7 +2961,7 @@ namespace NTwain
         {
             get
             {
-                return _battMinutes ?? (_battMinutes = new CapWrapper<int>(this, CapabilityId.CapBatteryMinutes, ValueExtensions.ConvertToEnum<int>, true));
+                return _battMinutes ?? (_battMinutes = new CapWrapper<int>(_source, CapabilityId.CapBatteryMinutes, ValueExtensions.ConvertToEnum<int>, true));
             }
         }
 
@@ -2967,7 +2977,7 @@ namespace NTwain
         {
             get
             {
-                return _battPercent ?? (_battPercent = new CapWrapper<int>(this, CapabilityId.CapBatteryPercentage, ValueExtensions.ConvertToEnum<int>, true));
+                return _battPercent ?? (_battPercent = new CapWrapper<int>(_source, CapabilityId.CapBatteryPercentage, ValueExtensions.ConvertToEnum<int>, true));
             }
         }
 
@@ -2983,7 +2993,7 @@ namespace NTwain
         {
             get
             {
-                return _camSide ?? (_camSide = new CapWrapper<CameraSide>(this, CapabilityId.CapCameraSide, ValueExtensions.ConvertToEnum<CameraSide>,
+                return _camSide ?? (_camSide = new CapWrapper<CameraSide>(_source, CapabilityId.CapCameraSide, ValueExtensions.ConvertToEnum<CameraSide>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3004,7 +3014,7 @@ namespace NTwain
         {
             get
             {
-                return _segmented ?? (_segmented = new CapWrapper<Segmented>(this, CapabilityId.CapSegmented, ValueExtensions.ConvertToEnum<Segmented>,
+                return _segmented ?? (_segmented = new CapWrapper<Segmented>(_source, CapabilityId.CapSegmented, ValueExtensions.ConvertToEnum<Segmented>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3025,7 +3035,7 @@ namespace NTwain
         {
             get
             {
-                return _camEnabled ?? (_camEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapCameraEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                return _camEnabled ?? (_camEnabled = new CapWrapper<BoolType>(_source, CapabilityId.CapCameraEnabled, ValueExtensions.ConvertToEnum<BoolType>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -3046,7 +3056,7 @@ namespace NTwain
         {
             get
             {
-                return _camOrder ?? (_camOrder = new CapWrapper<PixelType>(this, CapabilityId.CapCameraOrder, ValueExtensions.ConvertToEnum<PixelType>,
+                return _camOrder ?? (_camOrder = new CapWrapper<PixelType>(_source, CapabilityId.CapCameraOrder, ValueExtensions.ConvertToEnum<PixelType>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3067,7 +3077,7 @@ namespace NTwain
         {
             get
             {
-                return _micrEnabled ?? (_micrEnabled = new CapWrapper<BoolType>(this, CapabilityId.CapMicrEnabled, ValueExtensions.ConvertToEnum<BoolType>,
+                return _micrEnabled ?? (_micrEnabled = new CapWrapper<BoolType>(_source, CapabilityId.CapMicrEnabled, ValueExtensions.ConvertToEnum<BoolType>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -3088,7 +3098,7 @@ namespace NTwain
         {
             get
             {
-                return _feederPrep ?? (_feederPrep = new CapWrapper<BoolType>(this, CapabilityId.CapFeederPrep, ValueExtensions.ConvertToEnum<BoolType>,
+                return _feederPrep ?? (_feederPrep = new CapWrapper<BoolType>(_source, CapabilityId.CapFeederPrep, ValueExtensions.ConvertToEnum<BoolType>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -3109,7 +3119,7 @@ namespace NTwain
         {
             get
             {
-                return _feedPocket ?? (_feedPocket = new CapWrapper<FeederPocket>(this, CapabilityId.CapFeederPocket, ValueExtensions.ConvertToEnum<FeederPocket>,
+                return _feedPocket ?? (_feedPocket = new CapWrapper<FeederPocket>(_source, CapabilityId.CapFeederPocket, ValueExtensions.ConvertToEnum<FeederPocket>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3130,7 +3140,7 @@ namespace NTwain
         {
             get
             {
-                return _autoMedium ?? (_autoMedium = new CapWrapper<BoolType>(this, CapabilityId.CapAutomaticSenseMedium, ValueExtensions.ConvertToEnum<BoolType>,
+                return _autoMedium ?? (_autoMedium = new CapWrapper<BoolType>(_source, CapabilityId.CapAutomaticSenseMedium, ValueExtensions.ConvertToEnum<BoolType>,
                     value => new TWOneValue
                     {
                         Item = (uint)value,
@@ -3151,7 +3161,7 @@ namespace NTwain
         {
             get
             {
-                return _custGuid ?? (_custGuid = new CapWrapper<string>(this, CapabilityId.CapCustomInterfaceGuid, ValueExtensions.ConvertToString, true));
+                return _custGuid ?? (_custGuid = new CapWrapper<string>(_source, CapabilityId.CapCustomInterfaceGuid, ValueExtensions.ConvertToString, true));
             }
         }
 
@@ -3167,7 +3177,7 @@ namespace NTwain
         {
             get
             {
-                return _supportedCapsUnique ?? (_supportedCapsUnique = new CapWrapper<CapabilityId>(this, CapabilityId.CapSupportedCapsSegmentUnique, value => value.ConvertToEnum<CapabilityId>(false), true));
+                return _supportedCapsUnique ?? (_supportedCapsUnique = new CapWrapper<CapabilityId>(_source, CapabilityId.CapSupportedCapsSegmentUnique, value => value.ConvertToEnum<CapabilityId>(false), true));
             }
         }
 
@@ -3183,7 +3193,7 @@ namespace NTwain
         {
             get
             {
-                return _supportedDat ?? (_supportedDat = new CapWrapper<uint>(this, CapabilityId.CapSupportedDATs, ValueExtensions.ConvertToEnum<uint>, true));
+                return _supportedDat ?? (_supportedDat = new CapWrapper<uint>(_source, CapabilityId.CapSupportedDATs, ValueExtensions.ConvertToEnum<uint>, true));
             }
         }
 
@@ -3199,7 +3209,7 @@ namespace NTwain
         {
             get
             {
-                return _dblFeedDetect ?? (_dblFeedDetect = new CapWrapper<DoubleFeedDetection>(this, CapabilityId.CapDoubleFeedDetection, ValueExtensions.ConvertToEnum<DoubleFeedDetection>,
+                return _dblFeedDetect ?? (_dblFeedDetect = new CapWrapper<DoubleFeedDetection>(_source, CapabilityId.CapDoubleFeedDetection, ValueExtensions.ConvertToEnum<DoubleFeedDetection>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3220,7 +3230,7 @@ namespace NTwain
         {
             get
             {
-                return _dblFeedLength ?? (_dblFeedLength = new CapWrapper<TWFix32>(this, CapabilityId.CapDoubleFeedDetectionLength, ValueExtensions.ConvertToFix32,
+                return _dblFeedLength ?? (_dblFeedLength = new CapWrapper<TWFix32>(_source, CapabilityId.CapDoubleFeedDetectionLength, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -3241,7 +3251,7 @@ namespace NTwain
         {
             get
             {
-                return _dblFeedSensitivity ?? (_dblFeedSensitivity = new CapWrapper<DoubleFeedDetectionSensitivity>(this, CapabilityId.CapDoubleFeedDetectionSensitivity, ValueExtensions.ConvertToEnum<DoubleFeedDetectionSensitivity>,
+                return _dblFeedSensitivity ?? (_dblFeedSensitivity = new CapWrapper<DoubleFeedDetectionSensitivity>(_source, CapabilityId.CapDoubleFeedDetectionSensitivity, ValueExtensions.ConvertToEnum<DoubleFeedDetectionSensitivity>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3262,7 +3272,7 @@ namespace NTwain
         {
             get
             {
-                return _dblFeedResp ?? (_dblFeedResp = new CapWrapper<DoubleFeedDetectionResponse>(this, CapabilityId.CapDoubleFeedDetectionResponse, ValueExtensions.ConvertToEnum<DoubleFeedDetectionResponse>,
+                return _dblFeedResp ?? (_dblFeedResp = new CapWrapper<DoubleFeedDetectionResponse>(_source, CapabilityId.CapDoubleFeedDetectionResponse, ValueExtensions.ConvertToEnum<DoubleFeedDetectionResponse>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3283,7 +3293,7 @@ namespace NTwain
         {
             get
             {
-                return _paperHandling ?? (_paperHandling = new CapWrapper<PaperHandling>(this, CapabilityId.CapPaperHandling, ValueExtensions.ConvertToEnum<PaperHandling>,
+                return _paperHandling ?? (_paperHandling = new CapWrapper<PaperHandling>(_source, CapabilityId.CapPaperHandling, ValueExtensions.ConvertToEnum<PaperHandling>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3304,7 +3314,7 @@ namespace NTwain
         {
             get
             {
-                return _indicatorMode ?? (_indicatorMode = new CapWrapper<IndicatorsMode>(this, CapabilityId.CapIndicatorsMode, ValueExtensions.ConvertToEnum<IndicatorsMode>,
+                return _indicatorMode ?? (_indicatorMode = new CapWrapper<IndicatorsMode>(_source, CapabilityId.CapIndicatorsMode, ValueExtensions.ConvertToEnum<IndicatorsMode>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3325,7 +3335,7 @@ namespace NTwain
         {
             get
             {
-                return _printVOffset ?? (_printVOffset = new CapWrapper<TWFix32>(this, CapabilityId.CapPrinterVerticalOffset, ValueExtensions.ConvertToFix32,
+                return _printVOffset ?? (_printVOffset = new CapWrapper<TWFix32>(_source, CapabilityId.CapPrinterVerticalOffset, ValueExtensions.ConvertToFix32,
                         value => new TWOneValue
                         {
                             Item = (uint)value,// ((uint)dpi) << 16;
@@ -3346,7 +3356,7 @@ namespace NTwain
         {
             get
             {
-                return _powerSaveTime ?? (_powerSaveTime = new CapWrapper<int>(this, CapabilityId.CapPowerSaveTime, ValueExtensions.ConvertToEnum<int>,
+                return _powerSaveTime ?? (_powerSaveTime = new CapWrapper<int>(_source, CapabilityId.CapPowerSaveTime, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3367,7 +3377,7 @@ namespace NTwain
         {
             get
             {
-                return _printCharRot ?? (_printCharRot = new CapWrapper<int>(this, CapabilityId.CapPrinterCharRotation, ValueExtensions.ConvertToEnum<int>,
+                return _printCharRot ?? (_printCharRot = new CapWrapper<int>(_source, CapabilityId.CapPrinterCharRotation, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3388,7 +3398,7 @@ namespace NTwain
         {
             get
             {
-                return _printFontStyle ?? (_printFontStyle = new CapWrapper<PrinterFontStyle>(this, CapabilityId.CapPrinterFontStyle, ValueExtensions.ConvertToEnum<PrinterFontStyle>, false));
+                return _printFontStyle ?? (_printFontStyle = new CapWrapper<PrinterFontStyle>(_source, CapabilityId.CapPrinterFontStyle, ValueExtensions.ConvertToEnum<PrinterFontStyle>, false));
             }
         }
 
@@ -3405,12 +3415,12 @@ namespace NTwain
         {
             get
             {
-                return _printerIdxLeadChar ?? (_printerIdxLeadChar = new CapWrapper<string>(this, CapabilityId.CapPrinterIndexLeadChar, ValueExtensions.ConvertToString,
+                return _printerIdxLeadChar ?? (_printerIdxLeadChar = new CapWrapper<string>(_source, CapabilityId.CapPrinterIndexLeadChar, ValueExtensions.ConvertToString,
                     value =>
                     {
                         using (var cap = new TWCapability(CapabilityId.CapPrinterIndexLeadChar, value, ItemType.String32))
                         {
-                            return DGControl.Capability.Set(cap);
+                            return _source.DGControl.Capability.Set(cap);
                         }
                     }));
             }
@@ -3428,7 +3438,7 @@ namespace NTwain
         {
             get
             {
-                return _printIdxMax ?? (_printIdxMax = new CapWrapper<uint>(this, CapabilityId.CapPrinterIndexMaxValue, ValueExtensions.ConvertToEnum<uint>,
+                return _printIdxMax ?? (_printIdxMax = new CapWrapper<uint>(_source, CapabilityId.CapPrinterIndexMaxValue, ValueExtensions.ConvertToEnum<uint>,
                         value => new TWOneValue
                         {
                             Item = value,
@@ -3449,7 +3459,7 @@ namespace NTwain
         {
             get
             {
-                return _printNumDigit ?? (_printNumDigit = new CapWrapper<int>(this, CapabilityId.CapPrinterIndexNumDigits, ValueExtensions.ConvertToEnum<int>,
+                return _printNumDigit ?? (_printNumDigit = new CapWrapper<int>(_source, CapabilityId.CapPrinterIndexNumDigits, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3470,7 +3480,7 @@ namespace NTwain
         {
             get
             {
-                return _printIdxStep ?? (_printIdxStep = new CapWrapper<int>(this, CapabilityId.CapPrinterIndexStep, ValueExtensions.ConvertToEnum<int>,
+                return _printIdxStep ?? (_printIdxStep = new CapWrapper<int>(_source, CapabilityId.CapPrinterIndexStep, ValueExtensions.ConvertToEnum<int>,
                         value => new TWOneValue
                         {
                             Item = (uint)value,
@@ -3491,7 +3501,7 @@ namespace NTwain
         {
             get
             {
-                return _printIdxTrig ?? (_printIdxTrig = new CapWrapper<PrinterIndexTrigger>(this, CapabilityId.CapPrinterIndexTrigger, ValueExtensions.ConvertToEnum<PrinterIndexTrigger>, false));
+                return _printIdxTrig ?? (_printIdxTrig = new CapWrapper<PrinterIndexTrigger>(_source, CapabilityId.CapPrinterIndexTrigger, ValueExtensions.ConvertToEnum<PrinterIndexTrigger>, false));
             }
         }
 
@@ -3507,7 +3517,7 @@ namespace NTwain
         {
             get
             {
-                return _printPreview ?? (_printPreview = new CapWrapper<string>(this, CapabilityId.CapPrinterStringPreview, ValueExtensions.ConvertToString, true));
+                return _printPreview ?? (_printPreview = new CapWrapper<string>(_source, CapabilityId.CapPrinterStringPreview, ValueExtensions.ConvertToString, true));
             }
         }
 
