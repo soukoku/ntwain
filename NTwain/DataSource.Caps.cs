@@ -429,7 +429,21 @@ namespace NTwain
             }
         }
 
-        // TODO: add ICapHalftones
+        private CapWrapper<string> _halftones;
+
+        /// <summary>
+        /// Gets the property to work with image halftone patterns for the current source.
+        /// </summary>
+        /// <value>
+        /// The image halftone patterns.
+        /// </value>
+        public ICapWrapper<string> ICapHalftones
+        {
+            get
+            {
+                return _halftones ?? (_halftones = new CapWrapper<string>(this, CapabilityId.ICapHalftones, ValueExtensions.ConvertToString, false));
+            }
+        }
 
         private CapWrapper<TWFix32> _highlight;
 
@@ -590,7 +604,28 @@ namespace NTwain
             }
         }
 
-        // TODO: add ICapFrames
+        private CapWrapper<TWFrame> _frames;
+
+        /// <summary>
+        /// Gets the property to work with the list of frames the source will acquire on each page.
+        /// </summary>
+        /// <value>
+        /// The capture frames.
+        /// </value>
+        public ICapWrapper<TWFrame> ICapFrames
+        {
+            get
+            {
+                return _frames ?? (_frames = new CapWrapper<TWFrame>(this, CapabilityId.ICapFrames, ValueExtensions.ConvertToFrame,
+                        value =>
+                        {
+                            using (var cap = new TWCapability(CapabilityId.ICapFrames, value))
+                            {
+                                return DGControl.Capability.Set(cap);
+                            }
+                        }));
+            }
+        }
 
         private CapWrapper<TWFix32> _nativeXRes;
 
@@ -1066,7 +1101,27 @@ namespace NTwain
             }
         }
 
-        // TODO: add ICAP_IMAGEDATASET
+        private CapWrapper<uint> _imgDataSet;
+
+        /// <summary>
+        /// Gets or sets the image indices that will be delivered during the standard image transfer done in
+        /// States 6 and 7.
+        /// </summary>
+        /// <value>
+        /// The image indicies.
+        /// </value>
+        public ICapWrapper<uint> ICapImageDataSet
+        {
+            get
+            {
+                return _imgDataSet ?? (_imgDataSet = new CapWrapper<uint>(this, CapabilityId.ICapImageDataSet, ValueExtensions.ConvertToEnum<uint>,
+                        value => new TWOneValue
+                        {
+                            Item = value,
+                            ItemType = ItemType.UInt32
+                        }));
+            }
+        }
 
         private CapWrapper<BoolType> _extImgInfo;
 
@@ -1964,7 +2019,53 @@ namespace NTwain
 
         #endregion
 
-        // TODO: add CAP_AUTHOR,CAP_CAPTION
+        private CapWrapper<string> _author;
+
+        /// <summary>
+        /// Gets the property to work with the name or other identifying information about the 
+        /// Author of the image. It may include a copyright string.
+        /// </summary>
+        /// <value>
+        /// The author string.
+        /// </value>
+        public ICapWrapper<string> CapAuthor
+        {
+            get
+            {
+                return _author ?? (_author = new CapWrapper<string>(this, CapabilityId.CapAuthor, ValueExtensions.ConvertToString,
+                    value =>
+                    {
+                        using (var cap = new TWCapability(CapabilityId.CapAuthor, value, ItemType.String128))
+                        {
+                            return DGControl.Capability.Set(cap);
+                        }
+                    }));
+            }
+        }
+
+
+        private CapWrapper<string> _caption;
+
+        /// <summary>
+        /// Gets the property to work with the general note about the acquired image.
+        /// </summary>
+        /// <value>
+        /// The general note string.
+        /// </value>
+        public ICapWrapper<string> CapCaption
+        {
+            get
+            {
+                return _caption ?? (_caption = new CapWrapper<string>(this, CapabilityId.CapCaption, ValueExtensions.ConvertToString,
+                    value =>
+                    {
+                        using (var cap = new TWCapability(CapabilityId.CapCaption, value, ItemType.String255))
+                        {
+                            return DGControl.Capability.Set(cap);
+                        }
+                    }));
+            }
+        }
 
         private CapWrapper<BoolType> _feederEnabled;
 
@@ -2030,7 +2131,21 @@ namespace NTwain
             }
         }
 
-        // TODO: add CAP_TIMEDATE
+        private CapWrapper<string> _timedate;
+
+        /// <summary>
+        /// Gets the property to get the image acquired time and date.
+        /// </summary>
+        /// <value>
+        /// The time and date string.
+        /// </value>
+        public IReadOnlyCapWrapper<string> CapTimeDate
+        {
+            get
+            {
+                return _timedate ?? (_timedate = new CapWrapper<string>(this, CapabilityId.CapTimeDate, ValueExtensions.ConvertToString, true));
+            }
+        }
 
         private CapWrapper<CapabilityId> _supportedCaps;
 
@@ -2522,7 +2637,28 @@ namespace NTwain
             }
         }
 
-        // TODO: add CAP_DEVICETIMEDATE
+        private CapWrapper<string> _devTimeDate;
+
+        /// <summary>
+        /// Gets the property to work with the device's time and date.
+        /// </summary>
+        /// <value>
+        /// The device time and date.
+        /// </value>
+        public ICapWrapper<string> CapDeviceTimeDate
+        {
+            get
+            {
+                return _devTimeDate ?? (_devTimeDate = new CapWrapper<string>(this, CapabilityId.CapDeviceTimeDate, ValueExtensions.ConvertToString,
+                    value =>
+                    {
+                        using (var cap = new TWCapability(CapabilityId.CapDeviceTimeDate, value, ItemType.String32))
+                        {
+                            return DGControl.Capability.Set(cap);
+                        }
+                    }));
+            }
+        }
 
         private CapWrapper<PowerSupply> _powerSup;
 
@@ -2589,7 +2725,7 @@ namespace NTwain
         {
             get
             {
-                return _serialNo ?? (_serialNo = new CapWrapper<string>(this, CapabilityId.CapSerialNumber, value => { return value.ToString(); }, true));
+                return _serialNo ?? (_serialNo = new CapWrapper<string>(this, CapabilityId.CapSerialNumber, ValueExtensions.ConvertToString, true));
             }
         }
 
@@ -2677,7 +2813,52 @@ namespace NTwain
             }
         }
 
-        // TODO: add CAP_PRINTERSTRING, CAP_PRINTERSUFFIX
+        private CapWrapper<string> _printerString;
+
+        /// <summary>
+        /// Specifies the string(s) that are to be used in the string component when the current <see cref="CapPrinter"/>
+        /// device is enabled.
+        /// </summary>
+        /// <value>
+        /// The printer string.
+        /// </value>
+        public ICapWrapper<string> CapPrinterString
+        {
+            get
+            {
+                return _printerString ?? (_printerString = new CapWrapper<string>(this, CapabilityId.CapPrinterString, ValueExtensions.ConvertToString,
+                    value =>
+                    {
+                        using (var cap = new TWCapability(CapabilityId.CapPrinterString, value, ItemType.String255))
+                        {
+                            return DGControl.Capability.Set(cap);
+                        }
+                    }));
+            }
+        }
+
+        private CapWrapper<string> _printerSuffix;
+
+        /// <summary>
+        /// Specifies the string that shall be used as the current <see cref="CapPrinter"/> device’s suffix.
+        /// </summary>
+        /// <value>
+        /// The printer suffix string.
+        /// </value>
+        public ICapWrapper<string> CapPrinterSuffix
+        {
+            get
+            {
+                return _printerSuffix ?? (_printerSuffix = new CapWrapper<string>(this, CapabilityId.CapPrinterSuffix, ValueExtensions.ConvertToString,
+                    value =>
+                    {
+                        using (var cap = new TWCapability(CapabilityId.CapPrinterSuffix, value, ItemType.String255))
+                        {
+                            return DGControl.Capability.Set(cap);
+                        }
+                    }));
+            }
+        }
 
         private CapWrapper<Language> _language;
 
@@ -2970,7 +3151,7 @@ namespace NTwain
         {
             get
             {
-                return _custGuid ?? (_custGuid = new CapWrapper<string>(this, CapabilityId.CapCustomInterfaceGuid, value => { return value.ToString(); }, true));
+                return _custGuid ?? (_custGuid = new CapWrapper<string>(this, CapabilityId.CapCustomInterfaceGuid, ValueExtensions.ConvertToString, true));
             }
         }
 
@@ -3211,7 +3392,29 @@ namespace NTwain
             }
         }
 
-        // TODO: add CAP_PRINTERINDEXLEADCHAR
+        private CapWrapper<string> _printerIdxLeadChar;
+
+        /// <summary>
+        /// Set the character to be used for filling the leading digits before the counter value if the
+        /// counter digits are fewer than <see cref="CapPrinterIndexNumDigits"/>.
+        /// </summary>
+        /// <value>
+        /// The printer leading string.
+        /// </value>
+        public ICapWrapper<string> CapPrinterIndexLeadChar
+        {
+            get
+            {
+                return _printerIdxLeadChar ?? (_printerIdxLeadChar = new CapWrapper<string>(this, CapabilityId.CapPrinterIndexLeadChar, ValueExtensions.ConvertToString,
+                    value =>
+                    {
+                        using (var cap = new TWCapability(CapabilityId.CapPrinterIndexLeadChar, value, ItemType.String32))
+                        {
+                            return DGControl.Capability.Set(cap);
+                        }
+                    }));
+            }
+        }
 
         private CapWrapper<uint> _printIdxMax;
 
@@ -3304,7 +3507,7 @@ namespace NTwain
         {
             get
             {
-                return _printPreview ?? (_printPreview = new CapWrapper<string>(this, CapabilityId.CapPrinterStringPreview, value => { return value.ToString(); }, true));
+                return _printPreview ?? (_printPreview = new CapWrapper<string>(this, CapabilityId.CapPrinterStringPreview, ValueExtensions.ConvertToString, true));
             }
         }
 

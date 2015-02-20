@@ -102,7 +102,7 @@ namespace NTwain.Data
         }
 
         /// <summary>
-        /// Tries to convert to a value to <see cref="TWFix32"/> if possible.
+        /// Tries to convert a value to <see cref="TWFix32"/> if possible.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
@@ -117,6 +117,34 @@ namespace NTwain.Data
                 return (TWFix32)Convert.ToSingle(value, CultureInfo.InvariantCulture);
             }
             return default(TWFix32);
+        }
+
+        /// <summary>
+        /// Tries to cast a value to <see cref="TWFrame"/> if possible.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public static TWFrame ConvertToFrame(this object value)
+        {
+            if (value != null)
+            {
+                if (value is TWFrame)
+                {
+                    return (TWFrame)value;
+                }
+            }
+            return default(TWFrame);
+        }
+
+        /// <summary>
+        /// Converts object to string.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public static string ConvertToString(this object value)
+        {
+            if (value == null) { return null; }
+            return value.ToString();
         }
 
 
