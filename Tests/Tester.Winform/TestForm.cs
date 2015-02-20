@@ -90,7 +90,11 @@ namespace Tester.Winform
                 Image img = null;
                 if (e.NativeData != IntPtr.Zero)
                 {
-                    img = e.GetNativeImage();
+                    var stream = e.GetNativeImageStream();
+                    if (stream != null)
+                    {
+                        img = Image.FromStream(stream);
+                    }
                 }
                 else if (!string.IsNullOrEmpty(e.FileDataPath))
                 {

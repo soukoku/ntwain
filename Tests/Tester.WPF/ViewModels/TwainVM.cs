@@ -289,22 +289,28 @@ namespace Tester.WPF
             BitmapSource img = null;
             if (e.NativeData != IntPtr.Zero)
             {
-                img = e.GetNativeImage().ConvertToWpfBitmap();
+                using (var stream = e.GetNativeImageStream())
+                {
+                    if (stream != null)
+                    {
+                        img = stream.ConvertToWpfBitmap(300, 0);
+                    }
+                }
             }
             else if (!string.IsNullOrEmpty(e.FileDataPath))
             {
                 img = new BitmapImage(new Uri(e.FileDataPath));
             }
 
-            if (img != null)
-            {
-                // from http://stackoverflow.com/questions/18189501/create-thumbnail-image-directly-from-header-less-image-byte-array
-                var scale = MaxThumbnailSize / img.PixelWidth;
-                var transform = new ScaleTransform(scale, scale);
-                var thumbnail = new TransformedBitmap(img, transform);
-                img = new WriteableBitmap(new TransformedBitmap(img, transform));
-                img.Freeze();
-            }
+            //if (img != null)
+            //{
+            //    // from http://stackoverflow.com/questions/18189501/create-thumbnail-image-directly-from-header-less-image-byte-array
+            //    var scale = MaxThumbnailSize / img.PixelWidth;
+            //    var transform = new ScaleTransform(scale, scale);
+            //    var thumbnail = new TransformedBitmap(img, transform);
+            //    img = new WriteableBitmap(new TransformedBitmap(img, transform));
+            //    img.Freeze();
+            //}
             return img;
         }
 

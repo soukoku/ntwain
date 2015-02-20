@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
@@ -140,26 +141,28 @@ namespace NTwain
 
 
         /// <summary>
-        /// Gets the bitmap from the <see cref="NativeData"/> if it's an image.
+        /// Gets the image stream from the <see cref="NativeData"/> if it's an image.
         /// </summary>
         /// <returns></returns>
-        public Image GetNativeImage()
+        public Stream GetNativeImageStream()
         {
-            Image image = null;
+            Stream retVal = null;
+
             if (NativeData != IntPtr.Zero)
             {
                 if (ImageTools.IsDib(NativeData))
                 {
-                    image = ImageTools.ReadBitmapImage(NativeData);
+                    retVal = ImageTools.GetBitmapStream(NativeData);
                 }
                 else if (ImageTools.IsTiff(NativeData))
                 {
-                    image = ImageTools.ReadTiffImage(NativeData);
+                    retVal = ImageTools.GetTiffStream(NativeData);
                 }
+                
             }
-            return image;
+            return retVal; ;
         }
 
-        
+
     }
 }

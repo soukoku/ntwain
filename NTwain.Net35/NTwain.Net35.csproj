@@ -88,9 +88,6 @@
     <Compile Include="..\NTwain\IDataSource.cs">
       <Link>IDataSource.cs</Link>
     </Compile>
-    <Compile Include="..\NTwain\ImageTools.cs">
-      <Link>ImageTools.cs</Link>
-    </Compile>
     <Compile Include="..\NTwain\IMemoryManager.cs">
       <Link>IMemoryManager.cs</Link>
     </Compile>
@@ -99,6 +96,9 @@
     </Compile>
     <Compile Include="..\NTwain\Internals\ICommittable.cs">
       <Link>Internals\ICommittable.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\ImageTools.cs">
+      <Link>Internals\ImageTools.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Internals\InternalMessageLoopHook.cs">
       <Link>Internals\InternalMessageLoopHook.cs</Link>
@@ -330,6 +330,9 @@
     </Compile>
     <Compile Include="..\NTwain\TwainStateException.cs">
       <Link>TwainStateException.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\WpfImageTools.cs">
+      <Link>WpfImageTools.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

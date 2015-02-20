@@ -45,17 +45,18 @@ session.Open();
 
 ```
 
-TwainSession class provides many events, but these 2 are the most important
+TwainSession class provides many events, but these 3 are the most important
 
 * TransferReady - fired before a transfer occurs. You can cancel the current transfer 
 or all subsequent transfers using the event object.
 * DataTransferred - fired after the transfer has occurred. The data available depends on 
 what you've specified using the TWAIN API before starting the transfer. If using image
-native transfer, the event arg provides a quick GetNativeImage() method to convert the
-data to a System.Drawing.Image.
+native transfer, the event arg provides a quick GetNativeImageStream() method to convert the
+data to a System.IO.Stream for use in .net.
+* TransferError - fired when exceptions are encountered during during the transfer phase.
 
-NOTE: do not try to close the source/session in the handler of these 2 events or something
-unpredictable will happen. Either let the scan run its course or cancel the scan using the flag 
+NOTE: do not try to close the source/session in the handler of these 3 events or 
+unpredictable things will happen. Either let the scan run its course or cancel the scan using the flag 
 in the TransferReady event arg.
 
 Once you've setup and opened the session, you can get available sources, pick one to use,
@@ -140,7 +141,7 @@ session.Close();
 Caveats
 --------------------------------------
 At the moment the DataTransferredEventArgs only provides conversion routine to 
-an image when using native transfer.
+an image stream when using native transfer.
 If other transfer methods are used you'll have to deal with them yourself.
 
 If you just call session.Open() without passing a message loop hook argument, an 

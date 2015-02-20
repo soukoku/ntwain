@@ -68,7 +68,7 @@
     <Compile Include="DataTransferredEventArgs.cs" />
     <Compile Include="IMemoryManager.cs" />
     <Compile Include="Internals\ICommittable.cs" />
-    <Compile Include="ImageTools.cs" />
+    <Compile Include="Internals\ImageTools.cs" />
     <Compile Include="Internals\InternalMessageLoopHook.cs" />
     <Compile Include="Internals\ITwainSessionInternal.cs" />
     <Compile Include="Internals\LinuxMemoryManager.cs" />
@@ -155,6 +155,7 @@
     <Compile Include="Data\TwainValues.cs" />
     <Compile Include="SourceEnableMode.cs" />
     <Compile Include="Data\ValueExtensions.cs" />
+    <Compile Include="WpfImageTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NTwain.nuspec" />
