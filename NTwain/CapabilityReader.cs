@@ -35,55 +35,61 @@ namespace NTwain
         /// <param name="capability">The capability.</param>
         /// <param name="memoryManager">The memory manager.</param>
         /// <returns></returns>
-        /// <exception cref="System.ArgumentNullException">capability
+        /// <exception cref="System.ArgumentNullException">
+        /// capability
         /// or
-        /// platformInfo</exception>
-        /// <exception cref="System.ArgumentException">Capability contains no data.;capability
-        /// or
-        /// capability</exception>
+        /// memoryManager
+        /// </exception>
+        /// <exception cref="System.ArgumentException">capability</exception>
         public static CapabilityReader ReadValue(TWCapability capability, IMemoryManager memoryManager)
         {
             if (capability == null) { throw new ArgumentNullException("capability"); }
-            if (capability.Container == IntPtr.Zero) { throw new ArgumentException(Resources.CapHasNoData, "capability"); }
             if (memoryManager == null) { throw new ArgumentNullException("memoryManager"); }
 
-            IntPtr baseAddr = IntPtr.Zero;
-            try
+            if (capability.Container != IntPtr.Zero)
             {
-                baseAddr = memoryManager.Lock(capability.Container);
-                switch (capability.ContainerType)
+                IntPtr baseAddr = IntPtr.Zero;
+                try
                 {
-                    case ContainerType.Array:
-                        return new CapabilityReader
-                        {
-                            ContainerType = capability.ContainerType,
-                        }.ReadArrayValue(baseAddr);
-                    case ContainerType.Enum:
-                        return new CapabilityReader
-                        {
-                            ContainerType = capability.ContainerType,
-                        }.ReadEnumValue(baseAddr);
-                    case ContainerType.OneValue:
-                        return new CapabilityReader
-                        {
-                            ContainerType = capability.ContainerType,
-                        }.ReadOneValue(baseAddr);
-                    case ContainerType.Range:
-                        return new CapabilityReader
-                        {
-                            ContainerType = capability.ContainerType,
-                        }.ReadRangeValue(baseAddr);
-                    default:
-                        throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.CapHasBadContainer, capability.ContainerType), "capability");
+                    baseAddr = memoryManager.Lock(capability.Container);
+                    switch (capability.ContainerType)
+                    {
+                        case ContainerType.Array:
+                            return new CapabilityReader
+                            {
+                                ContainerType = capability.ContainerType,
+                            }.ReadArrayValue(baseAddr);
+                        case ContainerType.Enum:
+                            return new CapabilityReader
+                            {
+                                ContainerType = capability.ContainerType,
+                            }.ReadEnumValue(baseAddr);
+                        case ContainerType.OneValue:
+                            return new CapabilityReader
+                            {
+                                ContainerType = capability.ContainerType,
+                            }.ReadOneValue(baseAddr);
+                        case ContainerType.Range:
+                            return new CapabilityReader
+                            {
+                                ContainerType = capability.ContainerType,
+                            }.ReadRangeValue(baseAddr);
+                        default:
+                            throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.CapHasBadContainer, capability.ContainerType), "capability");
+                    }
+                }
+                finally
+                {
+                    if (baseAddr != IntPtr.Zero)
+                    {
+                        //memoryManager.Unlock(baseAddr);
+                        memoryManager.Unlock(capability.Container);
+                    }
                 }
             }
-            finally
+            else
             {
-                if (baseAddr != IntPtr.Zero)
-                {
-                    //memoryManager.Unlock(baseAddr);
-                    memoryManager.Unlock(capability.Container);
-                }
+                return new CapabilityReader();
             }
         }
 
