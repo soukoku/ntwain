@@ -1032,7 +1032,7 @@ namespace NTwain.Data
     /// <summary>
     /// Allows for a data source and application to pass custom data to each other.
     /// </summary>
-    public partial class TWCustomDSData
+    partial class TWCustomDSData
     {
         /// <summary>
         /// Length, in bytes, of data.

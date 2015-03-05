@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
@@ -157,6 +158,69 @@ namespace NTwain
         ///   <c>true</c> if this data source is open; otherwise, <c>false</c>.
         /// </value>
         public bool IsOpen { get { return _session.IsSourceOpen; } }
+
+        /// <summary>
+        /// Gets or sets the current settings (CustomDSData) of this source if supported.
+        /// </summary>
+        /// <value>
+        /// The source settings.
+        /// </value>
+        public byte[] Settings
+        {
+            get
+            {
+                byte[] value = null;
+                if (Capabilities.CapCustomDSData.GetCurrent() == BoolType.True)
+                {
+                    TWCustomDSData data;
+                    if (DGControl.CustomDSData.Get(out data) == ReturnCode.Success && data.InfoLength > 0)
+                    {
+                        try
+                        {
+                            value = new byte[data.InfoLength];
+                            var ptr = PlatformInfo.Current.MemoryManager.Lock(data.hData);
+                            Marshal.Copy(ptr, value, 0, (int)data.InfoLength);
+                        }
+                        finally
+                        {
+                            PlatformInfo.Current.MemoryManager.Unlock(data.hData);
+                            PlatformInfo.Current.MemoryManager.Free(data.hData);
+                        }
+                    }
+                }
+                return value;
+            }
+            set
+            {
+                if (value != null && value.Length > 0 &&
+                    Capabilities.CapCustomDSData.GetCurrent() == BoolType.True)
+                {
+                    TWCustomDSData data = new TWCustomDSData
+                    {
+                        InfoLength = (uint)value.Length
+                    };
+                    try
+                    {
+                        data.hData = PlatformInfo.Current.MemoryManager.Allocate(data.InfoLength);
+                        var ptr = PlatformInfo.Current.MemoryManager.Lock(data.hData);
+                        Marshal.Copy(value, 0, ptr, value.Length);
+                        var rc = DGControl.CustomDSData.Set(data);
+                        if (rc != ReturnCode.Success)
+                        {
+                            // do something
+                        }
+                    }
+                    finally
+                    {
+                        if (data.hData != IntPtr.Zero)
+                        {
+                            PlatformInfo.Current.MemoryManager.Unlock(data.hData);
+                            PlatformInfo.Current.MemoryManager.Free(data.hData);
+                        }
+                    }
+                }
+            }
+        }
 
         //static readonly CapabilityId[] _emptyCapList = new CapabilityId[0];
 

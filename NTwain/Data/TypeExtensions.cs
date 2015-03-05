@@ -114,7 +114,7 @@ namespace NTwain.Data
         /// <param name="offset">The offset.</param>
         /// <param name="type">The TWAIN type.</param>
         /// <param name="value">The value.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "1#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         public static void WriteValue(this IntPtr baseAddr, ref int offset, ItemType type, object value)
         {
             switch (type)

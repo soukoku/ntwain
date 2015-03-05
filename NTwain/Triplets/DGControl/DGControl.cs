@@ -59,10 +59,7 @@ namespace NTwain.Triplets
             }
         }
         CustomDSData _customDSData;
-        /// <summary>
-        /// Gets the operations defined for DAT_CUSTOMDSDATA.
-        /// </summary>
-		public CustomDSData CustomDSData
+		internal CustomDSData CustomDSData
 		{
 			get
 			{

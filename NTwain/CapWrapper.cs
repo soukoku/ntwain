@@ -19,7 +19,6 @@ namespace NTwain
         Func<object, TValue> _getConvertRoutine;
         Func<TValue, ReturnCode> _setCustomRoutine;
         Func<TValue, TWOneValue> _setOneValueFunc;
-        bool _readOnly;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CapWrapper{TValue}" /> class.
@@ -40,7 +39,7 @@ namespace NTwain
 
             _source = source;
             _getConvertRoutine = getConversionRoutine;
-            _readOnly = readOnly;
+            IsReadOnly = readOnly;
             Capability = capability;
 
             CheckSupports();
@@ -125,7 +124,7 @@ namespace NTwain
                             if (rc == ReturnCode.Success)
                             {
                                 // assume can do common things
-                                if (_readOnly)
+                                if (IsReadOnly)
                                 {
                                     _supports = QuerySupports.Get | QuerySupports.GetCurrent | QuerySupports.GetDefault;
                                 }
@@ -190,6 +189,14 @@ namespace NTwain
         /// <c>true</c> if this capability is supported; otherwise, <c>false</c>.
         /// </value>
         public bool IsSupported { get { return SupportedActions > QuerySupports.None; } }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is read only.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is read only; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsReadOnly { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether <see cref="GetValues"/> is supported.

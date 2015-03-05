@@ -134,6 +134,14 @@ namespace NTwain
         /// <c>true</c> if this capability is supported; otherwise, <c>false</c>.
         /// </value>
         bool IsSupported { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is read only.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is read only; otherwise, <c>false</c>.
+        /// </value>
+        bool IsReadOnly { get; }
     }
 
     /// <summary>

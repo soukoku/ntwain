@@ -73,6 +73,14 @@ namespace NTwain
         Capabilities Capabilities { get; }
 
         /// <summary>
+        /// Gets or sets the current settings (CustomDSData) of this source if supported.
+        /// </summary>
+        /// <value>
+        /// The source settings.
+        /// </value>
+        byte[] Settings { get; set; }
+
+        /// <summary>
         /// Opens the source for capability negotiation.
         /// </summary>
         /// <returns></returns>
