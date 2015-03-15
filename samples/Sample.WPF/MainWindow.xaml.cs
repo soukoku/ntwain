@@ -14,7 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
-namespace Tester.WPF
+namespace Sample.WPF
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

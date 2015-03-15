@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Tester.Winform
+namespace Sample.Winform
 {
     static class Program
     {

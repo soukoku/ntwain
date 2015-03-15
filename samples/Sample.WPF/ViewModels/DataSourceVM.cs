@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 
-namespace Tester.WPF
+namespace Sample.WPF
 {
     /// <summary>
     /// Wraps a data source as view model.

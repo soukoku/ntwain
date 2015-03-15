@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Tester.WPF
+namespace Sample.WPF
 {
     /// <summary>
     /// Interaction logic for Launcher.xaml

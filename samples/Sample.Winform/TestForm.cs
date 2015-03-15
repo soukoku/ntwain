@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Tester.Winform
+namespace Sample.Winform
 {
     sealed partial class TestForm : Form
     {

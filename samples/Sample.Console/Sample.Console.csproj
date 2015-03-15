@@ -7,8 +7,8 @@
     <ProjectGuid>{12D761EF-68DF-41CE-92EF-0C7AE81857A3}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tester</RootNamespace>
-    <AssemblyName>Tester.Console</AssemblyName>
+    <RootNamespace>Sample</RootNamespace>
+    <AssemblyName>Sample.Console</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -46,7 +46,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NTwain\NTwain.csproj">
+    <ProjectReference Include="..\..\src\NTwain\NTwain.csproj">
       <Project>{0c5a6fb1-0282-4d61-8354-68deb1515001}</Project>
       <Name>NTwain</Name>
     </ProjectReference>

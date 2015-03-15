@@ -4,7 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 
-namespace Tester.WPF
+namespace Sample.WPF
 {
     /// <summary>
     /// Wraps a capability as a view model.

@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Tester.Winform")]
+[assembly: AssemblyTitle("Sample.Winform")]
 [assembly: AssemblyDescription("Winform app for quick testing implementations in the TWAIN lib.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Yin-Chun Wang")]
-[assembly: AssemblyProduct("Tester.Winform")]
+[assembly: AssemblyProduct("Sample.Winform")]
 [assembly: AssemblyCopyright("Copyright © Yin-Chun Wang 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

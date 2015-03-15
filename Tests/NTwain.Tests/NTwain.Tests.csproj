@@ -72,7 +72,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NTwain\NTwain.csproj">
+    <ProjectReference Include="..\..\src\NTwain\NTwain.csproj">
       <Project>{0C5A6FB1-0282-4D61-8354-68DEB1515001}</Project>
       <Name>NTwain</Name>
     </ProjectReference>

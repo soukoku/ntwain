@@ -8,8 +8,8 @@
     <ProjectGuid>{4FC243F1-318E-4FA9-9EBD-2CA3A8F35425}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tester.Winform</RootNamespace>
-    <AssemblyName>Tester.Winform</AssemblyName>
+    <RootNamespace>Sample.Winform</RootNamespace>
+    <AssemblyName>Sample.Winform</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -77,7 +77,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NTwain.Net35\NTwain.Net35.csproj">
+    <ProjectReference Include="..\..\src\NTwain.Net35\NTwain.Net35.csproj">
       <Project>{2e965494-94b0-4ec7-960c-24e5d7d04278}</Project>
       <Name>NTwain.Net35</Name>
     </ProjectReference>

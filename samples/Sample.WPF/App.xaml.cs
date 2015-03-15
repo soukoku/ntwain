@@ -1,7 +1,7 @@
 ﻿using ModernWPF;
 using System.Windows;
 
-namespace Tester.WPF
+namespace Sample.WPF
 {
 	/// <summary>
 	/// Interaction logic for App.xaml

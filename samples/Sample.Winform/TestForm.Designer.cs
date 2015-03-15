@@ -1,4 +1,4 @@
-﻿namespace Tester.Winform
+﻿namespace Sample.Winform
 {
 	partial class TestForm
 	{

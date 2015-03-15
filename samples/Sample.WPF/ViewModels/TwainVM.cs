@@ -16,7 +16,7 @@ using GalaSoft.MvvmLight.Command;
 using ModernWPF;
 using ModernWPF.Messages;
 
-namespace Tester.WPF
+namespace Sample.WPF
 {
     /// <summary>
     /// Wraps the twain session as a view model for databinding.
