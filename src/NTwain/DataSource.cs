@@ -157,7 +157,7 @@ namespace NTwain
         /// <value>
         ///   <c>true</c> if this data source is open; otherwise, <c>false</c>.
         /// </value>
-        public bool IsOpen { get { return _session.IsSourceOpen; } }
+        public bool IsOpen { get { return _session.IsSourceOpen && _session.CurrentSource == this; } }
 
         /// <summary>
         /// Gets or sets the current settings (CustomDSData) of this source if supported.
