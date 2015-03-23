@@ -124,10 +124,7 @@
     <value>Invalid value type for {0}.</value>
   </data>
   <data name="CapHasBadContainer" xml:space="preserve">
-    <value>Capability has invalid container type {0}.</value>
-  </data>
-  <data name="CapHasNoData" xml:space="preserve">
-    <value>Capability contains no data.</value>
+    <value>Capability {0} has invalid container type {1}.</value>
   </data>
   <data name="MaxStringLengthExceeded" xml:space="preserve">
     <value>The string value has exceeded the maximum length allowed.</value>

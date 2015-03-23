@@ -75,7 +75,8 @@ namespace NTwain
                                 ContainerType = capability.ContainerType,
                             }.ReadRangeValue(baseAddr);
                         default:
-                            throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.CapHasBadContainer, capability.ContainerType), "capability");
+                            throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, 
+                                Resources.CapHasBadContainer, capability.Capability, capability.ContainerType), "capability");
                     }
                 }
                 finally
