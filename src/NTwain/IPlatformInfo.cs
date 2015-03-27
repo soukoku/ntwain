@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 namespace NTwain
 {
     /// <summary>
@@ -45,6 +46,14 @@ namespace NTwain
         ///   <c>true</c> if using the new DSM; otherwise, <c>false</c>.
         /// </value>
         bool UseNewWinDSM { get; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to prefer using the new DSM on Windows over old twain_32 dsm if applicable.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> to prefer new DSM; otherwise, <c>false</c>.
+        /// </value>
+        bool PreferNewDSM { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the current runtime is mono.

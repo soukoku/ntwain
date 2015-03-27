@@ -2,6 +2,7 @@
 using NTwain.Triplets;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -36,32 +37,13 @@ namespace NTwain
             {
                 _defaultMemManager = new WinMemoryManager();
 
-                var newDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_NEW_DSM_NAME);
+                newDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_NEW_DSM_NAME);
 #if NET35
-                var oldDsmPath = Path.Combine(Environment.GetEnvironmentVariable("windir"), Dsm.WIN_OLD_DSM_NAME);
+                oldDsmPath = Path.Combine(Environment.GetEnvironmentVariable("windir"), Dsm.WIN_OLD_DSM_NAME);
 #else
-                var oldDsmPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), Dsm.WIN_OLD_DSM_NAME);
+                oldDsmPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), Dsm.WIN_OLD_DSM_NAME);
 #endif
-
-                if (IsApp64Bit)
-                {
-                    ExpectedDsmPath = newDsmPath;
-                    IsSupported = DsmExists = File.Exists(ExpectedDsmPath);
-                    UseNewWinDSM = true;
-                }
-                else
-                {
-                    if (File.Exists(newDsmPath))
-                    {
-                        ExpectedDsmPath = newDsmPath;
-                        UseNewWinDSM = IsSupported = DsmExists = true;
-                    }
-                    else
-                    {
-                        ExpectedDsmPath = oldDsmPath;
-                        IsSupported = DsmExists = File.Exists(ExpectedDsmPath);
-                    }
-                }
+                PreferNewDSM = true;
             }
             else if (IsLinux)
             {
@@ -76,6 +58,54 @@ namespace NTwain
                 // mac? not gonna happen
             }
         }
+
+        string oldDsmPath;
+        string newDsmPath;
+
+        private bool _preferNewDSM;
+
+        /// <summary>
+        /// Gets a value indicating whether to prefer using the new DSM on Windows over old twain_32 dsm if applicable.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> to prefer new DSM; otherwise, <c>false</c>.
+        /// </value>
+        public bool PreferNewDSM
+        {
+            get { return _preferNewDSM; }
+            set
+            {
+                if (IsWindows)
+                {
+                    _preferNewDSM = value;
+
+                    if (IsApp64Bit)
+                    {
+                        ExpectedDsmPath = newDsmPath;
+                        IsSupported = DsmExists = File.Exists(ExpectedDsmPath);
+                        UseNewWinDSM = true;
+                        Debug.WriteLine("Using new dsm in windows.");
+                    }
+                    else
+                    {
+                        if (_preferNewDSM && File.Exists(newDsmPath))
+                        {
+                            ExpectedDsmPath = newDsmPath;
+                            UseNewWinDSM = IsSupported = DsmExists = true;
+                            Debug.WriteLine("Using new dsm in windows.");
+                        }
+                        else
+                        {
+                            ExpectedDsmPath = oldDsmPath;
+                            IsSupported = DsmExists = File.Exists(ExpectedDsmPath);
+                            UseNewWinDSM = false;
+                            Debug.WriteLine("Using old dsm in windows.");
+                        }
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// Gets a value indicating whether the lib is expecting to use new DSM.

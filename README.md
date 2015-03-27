@@ -154,13 +154,24 @@ application due to their use of modal dialogs, so if you find yourself in that p
 you'll have to find another way to synchronize data to UI threads. 
 
 
-64-bit OS
+Using the new twaindsm.dll
 --------------------------------------
-If the application process is going to be running in 64-bit then you will need to have the 
-newer data source manager (twaindsm.dll) from below installed. 
+By default NTwain will use the newer [data source manager](http://sourceforge.net/projects/twain-dsm/files/TWAIN%20DSM%202%20Win/)
+(twaindsm.dll) if available. To override this behavior
+set the PlatformInfo's PreferNewDSM flag to false. Some older sources does not work with the newer dsm so it's
+necessary to set it.
 
-[DSM from TWAIN.org](http://sourceforge.net/projects/twain-dsm/files/TWAIN%20DSM%202%20Win/)
+```
+#!c#
+// go back to using twain_32.dll under windows,
+// do this once at app startup.
+NTwain.PlatformInfo.Current.PreferNewDSM = false;
 
-In fact, installing the new DSM is recommended whether you're running in 64-bit or not.
+```
 
-If the scanner's TWAIN driver is still 32-bit then you'll have no choice but to compile the application exe in x86 or you won't see the driver.
+
+If the application process is going to be running in 64-bit then this flag will have no effect and you will 
+always need to have the newer dsm installed. 
+
+If the scanner's TWAIN driver is still 32-bit then you'll have need to compile the application exe in x86 or you won't see the driver.
+
