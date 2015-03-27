@@ -297,6 +297,14 @@ namespace NTwain
             }
         }
 
+        internal DGAudio DGAudio
+        {
+            get
+            {
+                return _session.DGAudio;
+            }
+        }
+
         #endregion
 
         //#region INotifyPropertyChanged Members

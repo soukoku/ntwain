@@ -23,25 +23,21 @@ namespace NTwain
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="nativeData">The native data.</param>
-        /// <param name="imageInfo">The image information.</param>
-        public DataTransferredEventArgs(DataSource source, IntPtr nativeData, TWImageInfo imageInfo)
+        public DataTransferredEventArgs(DataSource source, IntPtr nativeData)
         {
             DataSource = source;
             NativeData = nativeData;
-            ImageInfo = imageInfo;
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="DataTransferredEventArgs"/> class.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="fileDataPath">The file data path.</param>
-        /// <param name="imageInfo">The image information.</param>
         /// <param name="imageFileFormat">The image file format.</param>
-        public DataTransferredEventArgs(DataSource source, string fileDataPath, TWImageInfo imageInfo, FileFormat imageFileFormat)
+        public DataTransferredEventArgs(DataSource source, string fileDataPath, FileFormat imageFileFormat)
         {
             DataSource = source;
             FileDataPath = fileDataPath;
-            ImageInfo = imageInfo;
             ImageFileFormat = imageFileFormat;
         }
         /// <summary>
@@ -49,12 +45,10 @@ namespace NTwain
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="memoryData">The memory data.</param>
-        /// <param name="imageInfo">The image information.</param>
-        public DataTransferredEventArgs(DataSource source, byte[] memoryData, TWImageInfo imageInfo)
+        public DataTransferredEventArgs(DataSource source, byte[] memoryData)
         {
             DataSource = source;
             MemoryData = memoryData;
-            ImageInfo = imageInfo;
         }
 
         /// <summary>
@@ -94,13 +88,27 @@ namespace NTwain
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public byte[] MemoryData { get; private set; }
 
+        TWImageInfo _imgInfo;
         /// <summary>
         /// Gets the final image information if applicable.
         /// </summary>
         /// <value>
         /// The final image information.
         /// </value>
-        public TWImageInfo ImageInfo { get; private set; }
+        public TWImageInfo ImageInfo
+        {
+            get
+            {
+                if (_imgInfo == null)
+                {
+                    if (DataSource.DGImage.ImageInfo.Get(out _imgInfo) != ReturnCode.Success)
+                    {
+                        _imgInfo = null;
+                    }
+                }
+                return _imgInfo;
+            }
+        }
 
         /// <summary>
         /// Gets the data source.

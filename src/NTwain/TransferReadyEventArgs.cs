@@ -11,17 +11,23 @@ namespace NTwain
         /// <summary>
         /// Initializes a new instance of the <see cref="TransferReadyEventArgs"/> class.
         /// </summary>
+        /// <param name="source">The source.</param>
         /// <param name="pendingCount">The pending count.</param>
-        /// <param name="endOfJob">if set to <c>true</c> [end of job].</param>
-        /// <param name="imageInfo">The image information.</param>
-        /// <param name="audioInfo">The audio information.</param>
-        public TransferReadyEventArgs(int pendingCount, bool endOfJob, TWImageInfo imageInfo, TWAudioInfo audioInfo)
+        /// <param name="endOfJob">if set to <c>true</c> then it's the end of job.</param>
+        public TransferReadyEventArgs(DataSource source, int pendingCount, bool endOfJob)
         {
+            DataSource = source;
             PendingTransferCount = pendingCount;
             EndOfJob = endOfJob;
-            PendingImageInfo = imageInfo;
-            AudioInfo = audioInfo;
         }
+
+        /// <summary>
+        /// Gets the data source.
+        /// </summary>
+        /// <value>
+        /// The data source.
+        /// </value>
+        public DataSource DataSource { get; private set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the current transfer should be canceled
@@ -49,6 +55,7 @@ namespace NTwain
         /// <value>The pending count.</value>
         public int PendingTransferCount { get; private set; }
 
+        TWImageInfo _imgInfo;
         /// <summary>
         /// Gets the tentative image information for the current transfer if applicable.
         /// This may differ from the final image depending on the transfer mode used (mostly when doing mem xfer).
@@ -56,15 +63,42 @@ namespace NTwain
         /// <value>
         /// The image info.
         /// </value>
-        public TWImageInfo PendingImageInfo { get; private set; }
+        public TWImageInfo PendingImageInfo
+        {
+            get
+            {
+                if (_imgInfo == null)
+                {
+                    if (DataSource.DGImage.ImageInfo.Get(out _imgInfo) != ReturnCode.Success)
+                    {
+                        _imgInfo = null;
+                    }
+                }
+                return _imgInfo;
+            }
+        }
 
+        TWAudioInfo _audInfo;
         /// <summary>
         /// Gets the audio information for the current transfer if applicable.
         /// </summary>
         /// <value>
         /// The audio information.
         /// </value>
-        public TWAudioInfo AudioInfo { get; private set; }
+        public TWAudioInfo AudioInfo
+        {
+            get
+            {
+                if (_audInfo == null)
+                {
+                    if (DataSource.DGAudio.AudioInfo.Get(out _audInfo) != ReturnCode.Success)
+                    {
+                        _audInfo = null;
+                    }
+                }
+                return _audInfo;
+            }
+        }
 
     }
 }

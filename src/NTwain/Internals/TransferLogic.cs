@@ -19,37 +19,37 @@ namespace NTwain.Internals
         /// </summary>
         public static void DoTransferRoutine(ITwainSessionInternal session)
         {
+            #region get xfer types
+
+            bool xferImage = true; // default to always xfer image
+            bool xferAudio = false;
+            DataGroups xferGroup = DataGroups.None;
+            XferMech imgXferMech = XferMech.Native;
+            XferMech audXferMech = XferMech.Native;
+            if (session.DGControl.XferGroup.Get(ref xferGroup) == ReturnCode.Success)
+            {
+                xferAudio = (xferGroup & DataGroups.Audio) == DataGroups.Audio;
+                xferImage = xferGroup == DataGroups.None || (xferGroup & DataGroups.Image) == DataGroups.Image;
+            }
+            // some DS end up getting none but we will assume it's image
+            if (xferImage)
+            {
+                imgXferMech = session.CurrentSource.Capabilities.ICapXferMech.GetCurrent();
+            }
+            if (xferAudio)
+            {
+                var mech = session.CurrentSource.Capabilities.ACapXferMech.GetCurrent();
+            }
+
+            #endregion
+
             var pending = new TWPendingXfers();
-            //var rc = ReturnCode.Success;
             var rc = session.DGControl.PendingXfers.Get(pending);
             do
             {
-                #region build and raise xfer ready
+                #region raise xfer ready
 
-                bool xferImage = true; // default to always xfer image
-                bool xferAudio = false;
-                DataGroups xferGroup = DataGroups.None;
-                if (session.DGControl.XferGroup.Get(ref xferGroup) == ReturnCode.Success)
-                {
-                    xferAudio = (xferGroup & DataGroups.Audio) == DataGroups.Audio;
-                    xferImage = xferGroup == DataGroups.None || (xferGroup & DataGroups.Image) == DataGroups.Image;
-                }
-
-
-                TWAudioInfo audInfo = null;
-                if (xferAudio && session.DGAudio.AudioInfo.Get(out audInfo) != ReturnCode.Success)
-                {
-                    audInfo = null;
-                }
-
-                TWImageInfo imgInfo = null;
-                if (xferImage && session.DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
-                {
-                    imgInfo = null;
-                }
-
-                // ask consumer for xfer details
-                var preXferArgs = new TransferReadyEventArgs(pending.Count, pending.EndOfJob == 0, imgInfo, audInfo); ;
+                var preXferArgs = new TransferReadyEventArgs(session.CurrentSource, pending.Count, pending.EndOfJob == 0); ;
                 session.SafeSyncableRaiseEvent(preXferArgs);
 
                 #endregion
@@ -64,13 +64,9 @@ namespace NTwain.Internals
                 {
                     if (!preXferArgs.CancelCurrent)
                     {
-
-                        // some DS end up getting none but we will assume it's image
                         if (xferImage)
                         {
-                            var mech = session.CurrentSource.Capabilities.ICapXferMech.GetCurrent();
-
-                            switch (mech)
+                            switch (imgXferMech)
                             {
                                 case XferMech.Memory:
                                     DoImageMemoryXfer(session);
@@ -85,13 +81,11 @@ namespace NTwain.Internals
                                 default: // always assume native
                                     DoImageNativeXfer(session);
                                     break;
-
                             }
                         }
                         if (xferAudio)
                         {
-                            var mech = session.CurrentSource.Capabilities.ACapXferMech.GetCurrent();
-                            switch (mech)
+                            switch (audXferMech)
                             {
                                 case XferMech.File:
                                     DoAudioFileXfer(session);
@@ -135,7 +129,7 @@ namespace NTwain.Internals
                         lockedPtr = PlatformInfo.Current.MemoryManager.Lock(dataPtr);
                     }
 
-                    session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(session.CurrentSource, lockedPtr, null));
+                    session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(session.CurrentSource, lockedPtr));
                 }
                 else
                 {
@@ -176,7 +170,7 @@ namespace NTwain.Internals
             var xrc = session.DGAudio.AudioFileXfer.Get();
             if (xrc == ReturnCode.XferDone)
             {
-                session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(session.CurrentSource, filePath, null, (FileFormat)0));
+                session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(session.CurrentSource, filePath, (FileFormat)0));
             }
             else
             {
@@ -421,23 +415,18 @@ namespace NTwain.Internals
         static void DoImageXferredEventRoutine(ITwainSessionInternal session, IntPtr dataPtr, byte[] dataArray, string filePath, FileFormat format)
         {
             DataTransferredEventArgs args = null;
-            TWImageInfo imgInfo;
 
-            if (session.DGImage.ImageInfo.Get(out imgInfo) != ReturnCode.Success)
-            {
-                imgInfo = null;
-            }
             if (dataPtr != IntPtr.Zero)
             {
-                args = new DataTransferredEventArgs(session.CurrentSource, dataPtr, imgInfo);
+                args = new DataTransferredEventArgs(session.CurrentSource, dataPtr);
             }
             else if (dataArray != null)
             {
-                args = new DataTransferredEventArgs(session.CurrentSource, dataArray, imgInfo);
+                args = new DataTransferredEventArgs(session.CurrentSource, dataArray);
             }
             else
             {
-                args = new DataTransferredEventArgs(session.CurrentSource, filePath, imgInfo, format);
+                args = new DataTransferredEventArgs(session.CurrentSource, filePath, format);
             }
             session.SafeSyncableRaiseEvent(args);
         }
