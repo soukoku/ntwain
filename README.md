@@ -158,8 +158,7 @@ Using the new twaindsm.dll
 --------------------------------------
 By default NTwain will use the newer [data source manager](http://sourceforge.net/projects/twain-dsm/files/TWAIN%20DSM%202%20Win/)
 (twaindsm.dll) if available. To override this behavior
-set the PlatformInfo's PreferNewDSM flag to false. Some older sources does not work with the newer dsm so it's
-necessary to set it.
+set the PlatformInfo's PreferNewDSM flag to false. This is necessary due to some older sources that do not work with the newer dsm.
 
 ```
 #!c#
