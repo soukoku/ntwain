@@ -9,6 +9,14 @@ namespace NTwain
     public interface IDataSource : ITripletControl
     {
         /// <summary>
+        /// Gets the id of the source.
+        /// </summary>
+        /// <value>
+        /// The identifier.
+        /// </value>
+        int Id { get; }
+
+        /// <summary>
         /// Gets the source's product name.
         /// </summary>
         /// <value>

@@ -104,6 +104,14 @@ namespace NTwain
         internal TWIdentity Identity { get; private set; }
 
         /// <summary>
+        /// Gets the id of the source.
+        /// </summary>
+        /// <value>
+        /// The identifier.
+        /// </value>
+        public int Id { get { return Identity.Id; } }
+
+        /// <summary>
         /// Gets the source's product name.
         /// </summary>
         /// <value>

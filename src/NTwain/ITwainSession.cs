@@ -137,6 +137,13 @@ namespace NTwain
         ReturnCode OpenSource(string sourceName);
 
         /// <summary>
+        /// Quick shortcut to open a source.
+        /// </summary>
+        /// <param name="sourceId">Id of the source.</param>
+        /// <returns></returns>
+        ReturnCode OpenSource(int sourceId);
+
+        /// <summary>
         /// Gets the manager status. Only call this at state 2 or higher.
         /// </summary>
         /// <returns></returns>

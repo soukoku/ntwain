@@ -310,6 +310,28 @@ namespace NTwain
         }
 
         /// <summary>
+        /// Quick shortcut to open a source.
+        /// </summary>
+        /// <param name="sourceId">Id of the source.</param>
+        /// <returns></returns>
+        public ReturnCode OpenSource(int sourceId)
+        {
+            var curSrc = CurrentSource;
+            if (curSrc != null)
+            {
+                // TODO: close any open sources first
+
+            }
+
+            var hit = this.Where(s => s.Id == sourceId).FirstOrDefault();
+            if (hit != null)
+            {
+                return hit.Open();
+            }
+            return ReturnCode.Failure;
+        }
+
+        /// <summary>
         /// Gets the manager status. Only call this at state 2 or higher.
         /// </summary>
         /// <returns></returns>
