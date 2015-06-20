@@ -36,6 +36,7 @@ namespace NTwain
             QuerySupports? retVal = null;
             using (TWCapability cap = new TWCapability(capabilityId))
             {
+                cap.ContainerType = ContainerType.OneValue;
                 var rc = _source.DGControl.Capability.QuerySupport(cap);
                 if (rc == ReturnCode.Success)
                 {
