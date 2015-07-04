@@ -85,6 +85,9 @@
     <Compile Include="..\NTwain\IDataSource.cs">
       <Link>IDataSource.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\ILog.cs">
+      <Link>ILog.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\IMemoryManager.cs">
       <Link>IMemoryManager.cs</Link>
     </Compile>
@@ -111,6 +114,9 @@
     </Compile>
     <Compile Include="..\NTwain\Internals\TentativeStateCommitable.cs">
       <Link>Internals\TentativeStateCommitable.cs</Link>
+    </Compile>
+    <Compile Include="..\NTwain\Internals\TraceLog.cs">
+      <Link>Internals\TraceLog.cs</Link>
     </Compile>
     <Compile Include="..\NTwain\Internals\TransferLogic.cs">
       <Link>Internals\TransferLogic.cs</Link>

@@ -47,7 +47,6 @@ namespace NTwain.Internals
             }
             if (!handled)
             {
-                Debug.WriteLine("Hwnd=" + hwnd);
                 handled = true;
                 // unnecessary to do default wndproc?
                 return NativeMethods.DefWindowProc(hwnd, (uint)msg, wParam, lParam);

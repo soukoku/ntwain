@@ -86,5 +86,13 @@ namespace NTwain
         /// The memory manager.
         /// </value>
         IMemoryManager MemoryManager { get; }
+
+        /// <summary>
+        /// Gets or sets the log used by NTwain.
+        /// </summary>
+        /// <value>
+        /// The log.
+        /// </value>
+        ILog Log { get; set; }
     }
 }

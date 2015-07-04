@@ -67,22 +67,22 @@ namespace Sample.Winform
             _twain = new TwainSession(appId);
             _twain.StateChanged += (s, e) =>
             {
-                Debug.WriteLine("State changed to " + _twain.State + " on thread " + Thread.CurrentThread.ManagedThreadId);
+                PlatformInfo.Current.Log.Info("State changed to " + _twain.State + " on thread " + Thread.CurrentThread.ManagedThreadId);
             };
             _twain.TransferError += (s, e) =>
             {
-                Debug.WriteLine("Got xfer error on thread " + Thread.CurrentThread.ManagedThreadId);
+                PlatformInfo.Current.Log.Info("Got xfer error on thread " + Thread.CurrentThread.ManagedThreadId);
             };
             _twain.DataTransferred += (s, e) =>
             {
-                Debug.WriteLine("Transferred data event on thread " + Thread.CurrentThread.ManagedThreadId);
+                PlatformInfo.Current.Log.Info("Transferred data event on thread " + Thread.CurrentThread.ManagedThreadId);
 
                 // example on getting ext image info
                 var infos = e.GetExtImageInfo(ExtendedImageInfo.Camera).Where(it => it.ReturnCode == ReturnCode.Success);
                 foreach (var it in infos)
                 {
                     var values = it.ReadValues();
-                    Debug.WriteLine(string.Format("{0} = {1}", it.InfoID, values.FirstOrDefault()));
+                    PlatformInfo.Current.Log.Info(string.Format("{0} = {1}", it.InfoID, values.FirstOrDefault()));
                     break;
                 }
 
@@ -115,7 +115,7 @@ namespace Sample.Winform
             };
             _twain.SourceDisabled += (s, e) =>
             {
-                Debug.WriteLine("Source disabled event on thread " + Thread.CurrentThread.ManagedThreadId);
+                PlatformInfo.Current.Log.Info("Source disabled event on thread " + Thread.CurrentThread.ManagedThreadId);
                 this.BeginInvoke(new Action(() =>
                 {
                     btnStopScan.Enabled = false;
@@ -126,13 +126,13 @@ namespace Sample.Winform
             };
             _twain.TransferReady += (s, e) =>
             {
-                Debug.WriteLine("Transferr ready event on thread " + Thread.CurrentThread.ManagedThreadId);
+                PlatformInfo.Current.Log.Info("Transferr ready event on thread " + Thread.CurrentThread.ManagedThreadId);
                 e.CancelAll = _stopScan;
             };
 
             // either set sync context and don't worry about threads during events,
             // or don't and use control.invoke during the events yourself
-            Debug.WriteLine("Setup thread = " + Thread.CurrentThread.ManagedThreadId);
+            PlatformInfo.Current.Log.Info("Setup thread = " + Thread.CurrentThread.ManagedThreadId);
             _twain.SynchronizationContext = SynchronizationContext.Current;
             if (_twain.State < 3)
             {

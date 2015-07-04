@@ -36,7 +36,7 @@ namespace NTwain
             var rc = ReturnCode.Failure;
             _session.MessageLoopHook.Invoke(() =>
             {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId));
+                PlatformInfo.Current.Log.Debug("Thread {0}: OpenSource.", Thread.CurrentThread.ManagedThreadId);
 
                 rc = _session.DGControl.Identity.OpenDS(this);
                 _session.UpdateCallback();
@@ -53,7 +53,7 @@ namespace NTwain
             var rc = ReturnCode.Failure;
             _session.MessageLoopHook.Invoke(() =>
             {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseSource.", Thread.CurrentThread.ManagedThreadId));
+                PlatformInfo.Current.Log.Debug("Thread {0}: CloseSource.", Thread.CurrentThread.ManagedThreadId);
 
                 rc = _session.DGControl.Identity.CloseDS();
                 //if (rc == ReturnCode.Success)

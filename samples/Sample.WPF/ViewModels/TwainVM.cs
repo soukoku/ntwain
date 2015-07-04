@@ -225,7 +225,7 @@ namespace Sample.WPF
             {
                 if (e.Exception != null)
                 {
-                    Messenger.Default.Send(new DialogMessage(e.Exception.Message, null)
+                    Messenger.Default.Send(new MessageBoxMessage    (e.Exception.Message, null)
                     {
                         Caption = "Transfer Error Exception",
                         Icon = System.Windows.MessageBoxImage.Error,
@@ -234,7 +234,7 @@ namespace Sample.WPF
                 }
                 else
                 {
-                    Messenger.Default.Send(new DialogMessage(string.Format("Return Code: {0}\nCondition Code: {1}", e.ReturnCode, e.SourceStatus.ConditionCode), null)
+                    Messenger.Default.Send(new MessageBoxMessage(string.Format("Return Code: {0}\nCondition Code: {1}", e.ReturnCode, e.SourceStatus.ConditionCode), null)
                     {
                         Caption = "Transfer Error",
                         Icon = System.Windows.MessageBoxImage.Error,

@@ -45,7 +45,7 @@ namespace NTwain
 
                     if (rc == ReturnCode.Success)
                     {
-                        Debug.WriteLine("Registered callback2 OK.");
+                        PlatformInfo.Current.Log.Debug("Registered callback2 OK.");
                         _callbackObj = cb;
                     }
                 }
@@ -59,7 +59,7 @@ namespace NTwain
 
                     if (rc == ReturnCode.Success)
                     {
-                        Debug.WriteLine("Registered callback OK.");
+                        PlatformInfo.Current.Log.Debug("Registered callback OK.");
                         _callbackObj = cb;
                     }
                 }
@@ -159,7 +159,7 @@ namespace NTwain
 
             _msgLoopHook.Invoke(() =>
             {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: EnableSource with {1}.", Thread.CurrentThread.ManagedThreadId, mode));
+                PlatformInfo.Current.Log.Debug("Thread {0}: EnableSource with {1}.", Thread.CurrentThread.ManagedThreadId, mode);
 
 
                 _twui = new TWUserInterface();
@@ -190,7 +190,7 @@ namespace NTwain
                 {
                     _msgLoopHook.Invoke(() =>
                     {
-                        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId));
+                        PlatformInfo.Current.Log.Debug("Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId);
 
                         rc = ((ITwainSessionInternal)this).DGControl.UserInterface.DisableDS(_twui);
                         if (rc == ReturnCode.Success)
@@ -242,7 +242,7 @@ namespace NTwain
                     evt.pEvent = msgPtr;
                     if (handled = (((ITwainSessionInternal)this).DGControl.Event.ProcessEvent(evt) == ReturnCode.DSEvent))
                     {
-                        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: HandleWndProcMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, evt.TWMessage));
+                        PlatformInfo.Current.Log.Debug("Thread {0}: HandleWndProcMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, evt.TWMessage);
 
                         HandleSourceMsg(evt.TWMessage);
                     }
@@ -264,7 +264,7 @@ namespace NTwain
         {
             if (origin != null && CurrentSource != null && origin.Id == CurrentSource.Identity.Id && _state >= 5)
             {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CallbackHandler at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg));
+                PlatformInfo.Current.Log.Debug("Thread {0}: CallbackHandler at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, msg);
                 // spec says we must handle this on the thread that enabled the DS.
                 // by using the internal dispatcher this will be the case.
 
@@ -282,6 +282,7 @@ namespace NTwain
         // final method that handles msg from the source, whether it's from wndproc or callbacks
         void HandleSourceMsg(Message msg)
         {
+            PlatformInfo.Current.Log.Debug("Got TWAIN msg " + msg);
             switch (msg)
             {
                 case Message.XferReady:
@@ -301,7 +302,6 @@ namespace NTwain
                     break;
                 case Message.CloseDSReq:
                 case Message.CloseDSOK:
-                    Debug.WriteLine("Got msg " + msg);
                     // even though it says closeDS it's really disable.
                     // dsok is sent if source is enabled with uionly
 

@@ -63,6 +63,8 @@
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IDataSource.cs" />
+    <Compile Include="ILog.cs" />
+    <Compile Include="Internals\TraceLog.cs" />
     <Compile Include="Internals\Extensions.cs" />
     <Compile Include="DataTransferredEventArgs.cs" />
     <Compile Include="IMemoryManager.cs" />

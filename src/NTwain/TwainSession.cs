@@ -62,7 +62,7 @@ namespace NTwain
         DataSource GetSourceInstance(ITwainSessionInternal session, TWIdentity sourceId)
         {
             DataSource source = null;
-            Debug.WriteLine("Source id = " + sourceId.Id);
+            PlatformInfo.Current.Log.Debug("Source id = {0}", sourceId.Id);
             var key = string.Format(CultureInfo.InvariantCulture, "{0}|{1}|{2}|{3}", sourceId.Id, sourceId.Manufacturer, sourceId.ProductFamily, sourceId.ProductName);
             if (_ownedSources.ContainsKey(key))
             {
@@ -230,7 +230,7 @@ namespace NTwain
             var rc = ReturnCode.Failure;
             _msgLoopHook.Invoke(() =>
             {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId));
+                PlatformInfo.Current.Log.Debug("Thread {0}: OpenManager.", Thread.CurrentThread.ManagedThreadId);
 
                 rc = ((ITwainSessionInternal)this).DGControl.Parent.OpenDsm(_msgLoopHook.Handle);
                 if (rc == ReturnCode.Success)
@@ -243,7 +243,7 @@ namespace NTwain
                         if (rc == ReturnCode.Success)
                         {
                             PlatformInfo.InternalCurrent.MemoryManager = entry;
-                            Debug.WriteLine("Using TWAIN2 memory functions.");
+                            PlatformInfo.Current.Log.Debug("Using TWAIN2 memory functions.");
                         }
                         else
                         {
@@ -264,7 +264,7 @@ namespace NTwain
             var rc = ReturnCode.Failure;
             _msgLoopHook.Invoke(() =>
             {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId));
+                PlatformInfo.Current.Log.Debug("Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId);
 
                 rc = ((ITwainSessionInternal)this).DGControl.Parent.CloseDsm(_msgLoopHook.Handle);
                 if (rc == ReturnCode.Success)
@@ -360,7 +360,7 @@ namespace NTwain
         /// <param name="targetState">State of the target.</param>
         public void ForceStepDown(int targetState)
         {
-            Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Thread {0}: ForceStepDown.", Thread.CurrentThread.ManagedThreadId));
+            PlatformInfo.Current.Log.Debug("Thread {0}: ForceStepDown.", Thread.CurrentThread.ManagedThreadId);
 
             bool origFlag = EnforceState;
             EnforceState = false;
@@ -462,7 +462,7 @@ namespace NTwain
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("PropertyChanged event error: " + ex.ToString());
+                    PlatformInfo.Current.Log.Error("PropertyChanged event error.", ex);
                 }
             }
             else
@@ -476,7 +476,7 @@ namespace NTwain
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine("PropertyChanged event error: " + ex.ToString());
+                        PlatformInfo.Current.Log.Error("PropertyChanged event error.", ex);
                     }
                 }, null);
             }
@@ -533,7 +533,7 @@ namespace NTwain
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                    PlatformInfo.Current.Log.Error("{0} event error.", ex, handler.Method.Name);
                 }
             }
             else
@@ -547,7 +547,7 @@ namespace NTwain
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                        PlatformInfo.Current.Log.Error("{0} event error.", ex, handler.Method.Name);
                     }
                 }, null);
             }
@@ -566,7 +566,7 @@ namespace NTwain
             var syncer = SynchronizationContext;
             if (syncer == null)
             {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Trying to raise event {0} on thread {1} without sync.", e.GetType().Name, Thread.CurrentThread.ManagedThreadId));
+                PlatformInfo.Current.Log.Debug("Trying to raise event {0} on thread {1} without sync.", e.GetType().Name, Thread.CurrentThread.ManagedThreadId);
 
                 try
                 {
@@ -575,12 +575,12 @@ namespace NTwain
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                    PlatformInfo.Current.Log.Error("{0} event error.", ex, handler.Method.Name);
                 }
             }
             else
             {
-                Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Trying to raise event {0} on thread {1} with sync.", e.GetType().Name, Thread.CurrentThread.ManagedThreadId));
+                PlatformInfo.Current.Log.Debug("Trying to raise event {0} on thread {1} with sync.", e.GetType().Name, Thread.CurrentThread.ManagedThreadId);
                 // on some consumer desktop scanner with poor drivers this can frequently hang. there's nothing I can do here.
                 syncer.Send(o =>
                 {
@@ -591,7 +591,7 @@ namespace NTwain
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine(handler.Method.Name + " event error: " + ex.ToString());
+                        PlatformInfo.Current.Log.Error("{0} event error.", ex, handler.Method.Name);
                     }
                 }, null);
             }

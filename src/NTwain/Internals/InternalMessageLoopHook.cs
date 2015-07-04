@@ -34,7 +34,7 @@ namespace NTwain.Internals
                 {
                     var loopThread = new Thread(new ThreadStart(() =>
                     {
-                        Debug.WriteLine("NTwain message loop is starting.");
+                        PlatformInfo.Current.Log.Debug("NTwain internal message loop is starting.");
                         _dispatcher = Dispatcher.CurrentDispatcher;
                         if (!PlatformInfo.Current.IsOnMono)
                         {

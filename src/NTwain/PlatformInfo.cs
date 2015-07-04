@@ -32,7 +32,7 @@ namespace NTwain
             IsOnMono = Type.GetType("Mono.Runtime") != null;
             IsWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
             IsLinux = Environment.OSVersion.Platform == PlatformID.Unix;
-
+            _defaultLog = new TraceLog();
             if (IsWindows)
             {
                 _defaultMemManager = new WinMemoryManager();
@@ -84,7 +84,7 @@ namespace NTwain
                         ExpectedDsmPath = newDsmPath;
                         IsSupported = DsmExists = File.Exists(ExpectedDsmPath);
                         UseNewWinDSM = true;
-                        Debug.WriteLine("Using new dsm in windows.");
+                        Log.Debug("Using new dsm in windows.");
                     }
                     else
                     {
@@ -92,14 +92,14 @@ namespace NTwain
                         {
                             ExpectedDsmPath = newDsmPath;
                             UseNewWinDSM = IsSupported = DsmExists = true;
-                            Debug.WriteLine("Using new dsm in windows.");
+                            Log.Debug("Using new dsm in windows.");
                         }
                         else
                         {
                             ExpectedDsmPath = oldDsmPath;
                             IsSupported = DsmExists = File.Exists(ExpectedDsmPath);
                             UseNewWinDSM = false;
-                            Debug.WriteLine("Using old dsm in windows.");
+                            Log.Debug("Using old dsm in windows.");
                         }
                     }
                 }
@@ -186,13 +186,29 @@ namespace NTwain
         {
             get
             {
-                if (_specifiedMemManager == null) { return _defaultMemManager; }
-                return _specifiedMemManager;
+                return _specifiedMemManager ?? _defaultMemManager;
             }
             internal set
             {
                 _specifiedMemManager = value;
             }
         }
+
+
+        readonly ILog _defaultLog;
+        private ILog _log;
+
+        /// <summary>
+        /// Gets or sets the log used by NTwain.
+        /// </summary>
+        /// <value>
+        /// The log.
+        /// </value>
+        public ILog Log
+        {
+            get { return _log ?? _defaultLog; }
+            set { _log = value; }
+        }
+
     }
 }

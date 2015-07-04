@@ -30,18 +30,18 @@ namespace Sample.WPF
             {
                 _twainVM = this.DataContext as TwainVM;
 
-                Messenger.Default.Register<RefreshCommandsMessage>(this, m => m.HandleRefreshCommands());
-                Messenger.Default.Register<DialogMessage>(this, msg =>
+                Messenger.Default.Register<RefreshCommandsMessage>(this, m => m.HandleIt());
+                Messenger.Default.Register<MessageBoxMessage>(this, msg =>
                 {
                     if (Dispatcher.CheckAccess())
                     {
-                        this.HandleDialogMessageModern(msg);
+                        msg.HandleWithModern(this);
                     }
                     else
                     {
                         Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            this.HandleDialogMessageModern(msg);
+                            msg.HandleWithModern(this);
                         }));
                     }
                 });
