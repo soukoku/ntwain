@@ -326,7 +326,7 @@ namespace Sample.Winform
 
         private void LoadPaperSize(ICapWrapper<SupportedSize> cap)
         {
-            var list = cap.GetValues();
+            var list = cap.GetValues().ToList();
             comboSize.DataSource = list;
             var cur = cap.GetCurrent();
             if (list.Contains(cur))
@@ -361,7 +361,7 @@ namespace Sample.Winform
 
         private void LoadDepth(ICapWrapper<PixelType> cap)
         {
-            var list = cap.GetValues();
+            var list = cap.GetValues().ToList();
             comboDepth.DataSource = list;
             var cur = cap.GetCurrent();
             if (list.Contains(cur))
