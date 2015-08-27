@@ -134,18 +134,17 @@ namespace NTwain
         /// </summary>
         /// <param name="capabilityId">The capability id.</param>
         /// <returns></returns>
-        public IList<object> GetValues(CapabilityId capabilityId)
+        public IEnumerable<object> GetValues(CapabilityId capabilityId)
         {
-            var list = new List<object>();
             using (TWCapability cap = new TWCapability(capabilityId))
             {
                 var rc = _source.DGControl.Capability.Get(cap);
                 if (rc == ReturnCode.Success)
                 {
-                    CapabilityReader.ReadValue(cap).PopulateFromCapValues(list);
+                    return CapabilityReader.ReadValue(cap).EnumerateCapValues();
                 }
             }
-            return list;
+            return Enumerable.Empty<object>();
         }
 
         /// <summary>

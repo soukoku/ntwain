@@ -301,12 +301,42 @@ namespace NTwain
         }
 
         /// <summary>
+        /// Gets all the possible values of this capability without expanding.
+        /// This may be required to work with large range values that cannot be safely enumerated
+        /// with <see cref="GetValues"/>.
+        /// </summary>
+        /// <returns></returns>
+        public CapabilityReader GetValuesRaw()
+        {
+            using (TWCapability cap = new TWCapability(Capability))
+            {
+                var rc = _source.DGControl.Capability.Get(cap);
+                if (rc == ReturnCode.Success)
+                {
+                    return CapabilityReader.ReadValue(cap);
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Converts the object values into typed values using the conversion routine
+        /// for this capability.
+        /// </summary>
+        /// <param name="values">The values.</param>
+        /// <returns></returns>
+        public IEnumerable<TValue> ConvertValues(IEnumerable<object> values)
+        {
+            return values.Select(o => _getConvertRoutine(o));
+        }
+
+        /// <summary>
         /// Gets all the possible values of this capability.
         /// </summary>
         /// <returns></returns>
-        public IList<TValue> GetValues()
+        public IEnumerable<TValue> GetValues()
         {
-            return _source.Capabilities.GetValues(Capability).Select(o => _getConvertRoutine(o)).ToList();
+            return _source.Capabilities.GetValues(Capability).Select(o => _getConvertRoutine(o));//.ToList();
         }
 
         /// <summary>
@@ -366,7 +396,7 @@ namespace NTwain
         /// [Experimental] Gets the display names for possible values of this capability.
         /// </summary>
         /// <returns></returns>
-        public IList<string> GetLabelEnum()
+        public IEnumerable<string> GetLabelEnum()
         {
             var list = new List<object>();
 
@@ -375,10 +405,10 @@ namespace NTwain
                 var rc = _source.DGControl.Capability.GetLabelEnum(cap);
                 if (rc == ReturnCode.Success)
                 {
-                    CapabilityReader.ReadValue(cap).PopulateFromCapValues(list);
+                    return CapabilityReader.ReadValue(cap).EnumerateCapValues().Select(o => o.ToString());
                 }
             }
-            return list.Select(o => o.ToString()).ToList();
+            return Enumerable.Empty<string>();
         }
 
         #endregion

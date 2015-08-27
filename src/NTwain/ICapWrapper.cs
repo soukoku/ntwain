@@ -92,10 +92,26 @@ namespace NTwain
         CapabilityId Capability { get; }
 
         /// <summary>
+        /// Gets all the possible values of this capability without expanding.
+        /// This may be required to work with large range values that cannot be safely enumerated
+        /// with <see cref="GetValues"/>.
+        /// </summary>
+        /// <returns></returns>
+        CapabilityReader GetValuesRaw();
+
+        /// <summary>
+        /// Converts the object values into typed values using the conversion routine
+        /// for this capability.
+        /// </summary>
+        /// <param name="values">The values.</param>
+        /// <returns></returns>
+        IEnumerable<TValue> ConvertValues(IEnumerable<object> values);
+
+        /// <summary>
         /// Gets all the possible values of this capability.
         /// </summary>
         /// <returns></returns>
-        IList<TValue> GetValues();
+        IEnumerable<TValue> GetValues();
 
         /// <summary>
         /// Gets the current value of this capability.
@@ -125,7 +141,7 @@ namespace NTwain
         /// [Experimental] Gets the display names for possible values of this capability.
         /// </summary>
         /// <returns></returns>
-        IList<string> GetLabelEnum();
+        IEnumerable<string> GetLabelEnum();
 
         /// <summary>
         /// Gets a value indicating whether this capability is at all supported.
@@ -162,11 +178,11 @@ namespace NTwain
         /// <param name="value">The value.</param>
         /// <returns></returns>
         ReturnCode SetValue(TValue value);/// <summary>
-                                                 /// 
-        /// A version of Set that uses an array.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
+                                          /// 
+                                          /// A version of Set that uses an array.
+                                          /// </summary>
+                                          /// <param name="value">The value.</param>
+                                          /// <returns></returns>
         ReturnCode SetValue(TWArray value);
 
         /// <summary>

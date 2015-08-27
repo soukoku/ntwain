@@ -70,7 +70,7 @@
       <HintPath>..\..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
     </Reference>
     <Reference Include="ModernWPF, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c99d0cfbea7491ef, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ModernWPF.1.3.0\lib\net40-Client\ModernWPF.dll</HintPath>
+      <HintPath>..\..\packages\ModernWPF.1.3.4\lib\net40-Client\ModernWPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ModernWPF.Mvvm, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
