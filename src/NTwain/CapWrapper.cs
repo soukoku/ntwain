@@ -308,15 +308,7 @@ namespace NTwain
         /// <returns></returns>
         public CapabilityReader GetValuesRaw()
         {
-            using (TWCapability cap = new TWCapability(Capability))
-            {
-                var rc = _source.DGControl.Capability.Get(cap);
-                if (rc == ReturnCode.Success)
-                {
-                    return CapabilityReader.ReadValue(cap);
-                }
-            }
-            return null;
+            return _source.Capabilities.GetValuesRaw(Capability);
         }
 
         /// <summary>

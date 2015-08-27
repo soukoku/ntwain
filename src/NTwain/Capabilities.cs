@@ -148,6 +148,26 @@ namespace NTwain
         }
 
         /// <summary>
+        /// Gets all the possible values of this capability without expanding.
+        /// This may be required to work with large range values that cannot be safely enumerated
+        /// with <see cref="GetValues"/>.
+        /// </summary>
+        /// <param name="capabilityId">The capability id.</param>
+        /// <returns></returns>
+        public CapabilityReader GetValuesRaw(CapabilityId capabilityId)
+        {
+            using (TWCapability cap = new TWCapability(capabilityId))
+            {
+                var rc = _source.DGControl.Capability.Get(cap);
+                if (rc == ReturnCode.Success)
+                {
+                    return CapabilityReader.ReadValue(cap);
+                }
+            }
+            return new CapabilityReader();
+        }
+
+        /// <summary>
         /// Resets all values and constraint to power-on defaults.
         /// </summary>
         /// <returns></returns>

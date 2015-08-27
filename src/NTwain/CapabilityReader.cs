@@ -123,7 +123,7 @@ namespace NTwain
         public ItemType ItemType { get; private set; }
 
         /// <summary>
-        /// Gets the one value if container is <see cref="NTwain.Data.ContainerType.Array"/>.
+        /// Gets the one value if container is <see cref="NTwain.Data.ContainerType.OneValue"/>.
         /// </summary>
         /// <value>
         /// The one value.
@@ -280,7 +280,7 @@ namespace NTwain
                         }
                     }
                     break;
-                // these should never happen since TW_ENUM fields are 4 bytes but you never know
+                // these should never happen since TW_RANGE fields are 4 bytes but you never know
                 case Data.ItemType.UInt16:
                     {
                         var min = (ushort)RangeMinValue;
@@ -439,7 +439,7 @@ namespace NTwain
                         RangeCount = ((max - min) / step) + 1;
                     }
                     break;
-                // these should never happen since TW_ENUM fields are 4 bytes but you never know
+                // these should never happen since TW_RANGE fields are 4 bytes but you never know
                 case Data.ItemType.UInt16:
                     {
                         var min = (ushort)RangeMinValue;
