@@ -2129,7 +2129,7 @@ namespace NTwain.Data
         /// than None. If this is not 0, the application should expect more data
         /// from the driver according to CapJobControl settings.
         /// </summary>
-        public uint EndOfJob { get { return _eOJ; } }
+        public EndXferJob EndOfJob { get { return (EndXferJob)_eOJ; } }
     }
 
 

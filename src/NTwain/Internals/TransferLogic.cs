@@ -49,7 +49,7 @@ namespace NTwain.Internals
             {
                 #region raise xfer ready
 
-                var preXferArgs = new TransferReadyEventArgs(session.CurrentSource, pending.Count, pending.EndOfJob == 0); ;
+                var preXferArgs = new TransferReadyEventArgs(session.CurrentSource, pending.Count, pending.EndOfJob); ;
                 session.SafeSyncableRaiseEvent(preXferArgs);
 
                 #endregion

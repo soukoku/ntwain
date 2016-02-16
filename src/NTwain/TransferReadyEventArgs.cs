@@ -13,12 +13,12 @@ namespace NTwain
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="pendingCount">The pending count.</param>
-        /// <param name="endOfJob">if set to <c>true</c> then it's the end of job.</param>
-        public TransferReadyEventArgs(DataSource source, int pendingCount, bool endOfJob)
+        /// <param name="endOfJobFlag"></param>
+        public TransferReadyEventArgs(DataSource source, int pendingCount, EndXferJob endOfJobFlag)
         {
             DataSource = source;
             PendingTransferCount = pendingCount;
-            EndOfJob = endOfJob;
+            EndOfJobFlag = endOfJobFlag;
         }
 
         /// <summary>
@@ -46,7 +46,15 @@ namespace NTwain
         /// Gets a value indicating whether current transfer signifies an end of job in TWAIN world.
         /// </summary>
         /// <value><c>true</c> if transfer is end of job; otherwise, <c>false</c>.</value>
-        public bool EndOfJob { get; private set; }
+        public bool EndOfJob { get { return EndOfJobFlag != EndXferJob.None; } }
+
+        /// <summary>
+        /// Gets the end of job flag value for this transfer (if job control is enabled).
+        /// </summary>
+        /// <value>
+        /// The end of job flag.
+        /// </value>
+        public EndXferJob EndOfJobFlag { get; private set; }
 
         /// <summary>
         /// Gets the known pending transfer count. This may not be appilicable 

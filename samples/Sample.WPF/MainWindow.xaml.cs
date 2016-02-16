@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
+using ModernWPF;
 using ModernWPF.Controls;
 using ModernWPF.Messages;
 using NTwain;
@@ -29,7 +30,7 @@ namespace Sample.WPF
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 _twainVM = this.DataContext as TwainVM;
-
+                _twainVM.PropertyChanged += _twainVM_PropertyChanged;
                 Messenger.Default.Register<RefreshCommandsMessage>(this, m => m.HandleIt());
                 Messenger.Default.Register<MessageBoxMessage>(this, msg =>
                 {
@@ -47,6 +48,22 @@ namespace Sample.WPF
                 });
             }
         }
+
+        private void _twainVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "State")
+            {
+                if (_twainVM.State == 5)
+                {
+                    ModernTheme.ApplyTheme(ModernTheme.Theme.Light, Accent.Orange);
+                }
+                else if (_twainVM.State == 4)
+                {
+                    ModernTheme.ApplyTheme(ModernTheme.Theme.Light, Accent.Green);
+                }
+            }
+        }
+
         protected override void OnClosing(CancelEventArgs e)
         {
             e.Cancel = _twainVM.State > 4;
