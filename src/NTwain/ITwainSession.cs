@@ -86,6 +86,15 @@ namespace NTwain
         bool IsTransferring { get; }
 
         /// <summary>
+        /// Whether to stop the transfer process when transfer error is encountered.
+        /// May be required on some sources.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to stop on transfer error; otherwise, <c>false</c>.
+        /// </value>
+        bool StopOnTransferError { get; set; }
+
+        /// <summary>
         /// Try to show the built-in source selector dialog and return the selected source.
         /// This is not recommended and is only included for completeness.
         /// </summary>

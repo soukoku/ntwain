@@ -203,6 +203,15 @@ namespace NTwain
         public bool IsTransferring { get { return State > 5; } }
 
         /// <summary>
+        /// Whether to stop the transfer process when transfer error is encountered.
+        /// May be required on some sources.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to stop on transfer error; otherwise, <c>false</c>.
+        /// </value>
+        public bool StopOnTransferError { get; set; }
+
+        /// <summary>
         /// Opens the data source manager. This must be the first method used
         /// before using other TWAIN functions. Calls to this must be followed by
         /// <see cref="Close" /> when done with a TWAIN session.

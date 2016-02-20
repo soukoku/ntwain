@@ -45,63 +45,89 @@ namespace NTwain.Internals
 
             var pending = new TWPendingXfers();
             var rc = session.DGControl.PendingXfers.Get(pending);
-            do
+            if (rc == ReturnCode.Success)
             {
-                #region raise xfer ready
-
-                var preXferArgs = new TransferReadyEventArgs(session.CurrentSource, pending.Count, pending.EndOfJob); ;
-                session.SafeSyncableRaiseEvent(preXferArgs);
-
-                #endregion
-
-                #region actually handle xfer
-
-                if (preXferArgs.CancelAll)
+                do
                 {
-                    rc = session.DGControl.PendingXfers.Reset(pending);
-                }
-                else
-                {
-                    if (!preXferArgs.CancelCurrent)
+                    #region raise xfer ready
+
+                    var preXferArgs = new TransferReadyEventArgs(session.CurrentSource, pending.Count, pending.EndOfJob); ;
+                    session.SafeSyncableRaiseEvent(preXferArgs);
+
+                    #endregion
+
+                    #region actually handle xfer
+
+                    if (preXferArgs.CancelAll)
                     {
-                        if (xferImage)
+                        rc = session.DGControl.PendingXfers.Reset(pending);
+                    }
+                    else
+                    {
+                        if (!preXferArgs.CancelCurrent)
                         {
-                            switch (imgXferMech)
+                            if (xferImage)
                             {
-                                case XferMech.Memory:
-                                    DoImageMemoryXfer(session);
-                                    break;
-                                case XferMech.File:
-                                    DoImageFileXfer(session);
-                                    break;
-                                case XferMech.MemFile:
-                                    DoImageMemoryFileXfer(session);
-                                    break;
-                                case XferMech.Native:
-                                default: // always assume native
-                                    DoImageNativeXfer(session);
-                                    break;
+                                switch (imgXferMech)
+                                {
+                                    case XferMech.Memory:
+                                        rc = DoImageMemoryXfer(session);
+                                        break;
+                                    case XferMech.File:
+                                        rc = DoImageFileXfer(session);
+                                        break;
+                                    case XferMech.MemFile:
+                                        rc = DoImageMemoryFileXfer(session);
+                                        break;
+                                    case XferMech.Native:
+                                    default: // always assume native
+                                        rc = DoImageNativeXfer(session);
+                                        break;
+                                }
+                            }
+                            if (xferAudio)
+                            {
+                                switch (audXferMech)
+                                {
+                                    case XferMech.File:
+                                        rc = DoAudioFileXfer(session);
+                                        break;
+                                    case XferMech.Native:
+                                    default: // always assume native
+                                        rc = DoAudioNativeXfer(session);
+                                        break;
+                                }
                             }
                         }
-                        if (xferAudio)
+
+
+                        switch (rc)
                         {
-                            switch (audXferMech)
-                            {
-                                case XferMech.File:
-                                    DoAudioFileXfer(session);
-                                    break;
-                                case XferMech.Native:
-                                default: // always assume native
-                                    DoAudioNativeXfer(session);
-                                    break;
-                            }
+                            case ReturnCode.Cancel:
+                            default:
+                                // as usual
+                                rc = session.DGControl.PendingXfers.EndXfer(pending);
+                                break;
+                        }
+
+                        if (rc != ReturnCode.Success && session.StopOnTransferError)
+                        {
+                            // end xfer without setting rc to exit (good/bad?)
+                            session.DGControl.PendingXfers.EndXfer(pending);
+                        }
+                        else
+                        {
+                            rc = session.DGControl.PendingXfers.EndXfer(pending);
                         }
                     }
-                    rc = session.DGControl.PendingXfers.EndXfer(pending);
-                }
-                #endregion
+                    #endregion
 
-            } while (rc == ReturnCode.Success && pending.Count != 0);
+                } while (rc == ReturnCode.Success && pending.Count != 0);
+            }
+            else
+            {
+                HandleReturnCode(session, rc);
+            }
 
             // some poorly written scanner drivers return failure on EndXfer so also check for pending count now.
             // this may break with other sources but we'll see
@@ -112,15 +138,32 @@ namespace NTwain.Internals
             }
         }
 
+        private static void HandleReturnCode(ITwainSessionInternal session, ReturnCode rc)
+        {
+            switch (rc)
+            {
+                case ReturnCode.Success:
+                case ReturnCode.XferDone:
+                case ReturnCode.Cancel:
+                    // ok to keep going
+                    break;
+                default:
+                    var status = session.CurrentSource.GetStatus();
+                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(rc, status));
+                    break;
+            }
+        }
+
         #region audio xfers
 
-        static void DoAudioNativeXfer(ITwainSessionInternal session)
+        static ReturnCode DoAudioNativeXfer(ITwainSessionInternal session)
         {
             IntPtr dataPtr = IntPtr.Zero;
             IntPtr lockedPtr = IntPtr.Zero;
+            ReturnCode xrc = ReturnCode.Failure;
             try
             {
-                var xrc = session.DGAudio.AudioNativeXfer.Get(ref dataPtr);
+                xrc = session.DGAudio.AudioNativeXfer.Get(ref dataPtr);
                 if (xrc == ReturnCode.XferDone)
                 {
                     session.ChangeState(7, true);
@@ -133,7 +176,7 @@ namespace NTwain.Internals
                 }
                 else
                 {
-                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
+                    HandleReturnCode(session, xrc);
                 }
             }
             catch (Exception ex)
@@ -156,39 +199,43 @@ namespace NTwain.Internals
                     dataPtr = IntPtr.Zero;
                 }
             }
+            return xrc;
         }
 
-        static void DoAudioFileXfer(ITwainSessionInternal session)
+        static ReturnCode DoAudioFileXfer(ITwainSessionInternal session)
         {
             string filePath = null;
             TWSetupFileXfer setupInfo;
-            if (session.DGControl.SetupFileXfer.Get(out setupInfo) == ReturnCode.Success)
+            ReturnCode xrc = session.DGControl.SetupFileXfer.Get(out setupInfo);
+            if (xrc == ReturnCode.Success)
             {
                 filePath = setupInfo.FileName;
-            }
 
-            var xrc = session.DGAudio.AudioFileXfer.Get();
-            if (xrc == ReturnCode.XferDone)
-            {
-                session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(session.CurrentSource, filePath, (FileFormat)0));
+                xrc = session.DGAudio.AudioFileXfer.Get();
+                if (xrc == ReturnCode.XferDone)
+                {
+                    session.SafeSyncableRaiseEvent(new DataTransferredEventArgs(session.CurrentSource, filePath, (FileFormat)0));
+                }
+                else
+                {
+                    HandleReturnCode(session, xrc);
+                }
             }
-            else
-            {
-                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
-            }
+            return xrc;
         }
 
         #endregion
 
         #region image xfers
 
-        static void DoImageNativeXfer(ITwainSessionInternal session)
+        static ReturnCode DoImageNativeXfer(ITwainSessionInternal session)
         {
             IntPtr dataPtr = IntPtr.Zero;
             IntPtr lockedPtr = IntPtr.Zero;
+            ReturnCode xrc = ReturnCode.Failure;
             try
             {
-                var xrc = session.DGImage.ImageNativeXfer.Get(ref dataPtr);
+                xrc = session.DGImage.ImageNativeXfer.Get(ref dataPtr);
                 if (xrc == ReturnCode.XferDone)
                 {
                     session.ChangeState(7, true);
@@ -200,7 +247,7 @@ namespace NTwain.Internals
                 }
                 else
                 {
-                    session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
+                    HandleReturnCode(session, xrc);
                 }
             }
             catch (Exception ex)
@@ -223,9 +270,10 @@ namespace NTwain.Internals
                     dataPtr = IntPtr.Zero;
                 }
             }
+            return xrc;
         }
 
-        static void DoImageFileXfer(ITwainSessionInternal session)
+        static ReturnCode DoImageFileXfer(ITwainSessionInternal session)
         {
             string filePath = null;
             TWSetupFileXfer setupInfo;
@@ -241,14 +289,16 @@ namespace NTwain.Internals
             }
             else
             {
-                session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
+                HandleReturnCode(session, xrc);
             }
+            return xrc;
         }
 
-        static void DoImageMemoryXfer(ITwainSessionInternal session)
+        static ReturnCode DoImageMemoryXfer(ITwainSessionInternal session)
         {
             TWSetupMemXfer memInfo;
-            if (session.DGControl.SetupMemXfer.Get(out memInfo) == ReturnCode.Success)
+            ReturnCode xrc = session.DGControl.SetupMemXfer.Get(out memInfo);
+            if (xrc == ReturnCode.Success)
             {
                 TWImageMemXfer xferInfo = new TWImageMemXfer();
                 try
@@ -269,7 +319,6 @@ namespace NTwain.Internals
                     // todo: use array instead of memory stream?
                     using (MemoryStream xferredData = new MemoryStream())
                     {
-                        var xrc = ReturnCode.Success;
                         do
                         {
                             xrc = session.DGImage.ImageMemXfer.Get(xferInfo);
@@ -305,7 +354,7 @@ namespace NTwain.Internals
                         }
                         else
                         {
-                            session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
+                            HandleReturnCode(session, xrc);
                         }
                     }
                 }
@@ -323,13 +372,15 @@ namespace NTwain.Internals
                 }
 
             }
+            return xrc;
         }
 
-        static void DoImageMemoryFileXfer(ITwainSessionInternal session)
+        static ReturnCode DoImageMemoryFileXfer(ITwainSessionInternal session)
         {
             // since it's memory-file xfer need info from both (maybe)
             TWSetupMemXfer memInfo;
             TWSetupFileXfer fileInfo;
+            ReturnCode xrc = ReturnCode.Failure;
             if (session.DGControl.SetupMemXfer.Get(out memInfo) == ReturnCode.Success &&
                 session.DGControl.SetupFileXfer.Get(out fileInfo) == ReturnCode.Success)
             {
@@ -346,7 +397,7 @@ namespace NTwain.Internals
                         TheMem = PlatformInfo.Current.MemoryManager.Allocate(memInfo.Preferred)
                     };
 
-                    var xrc = ReturnCode.Success;
+                    xrc = ReturnCode.Success;
                     using (var outStream = File.OpenWrite(tempFile))
                     {
                         do
@@ -385,7 +436,7 @@ namespace NTwain.Internals
                     }
                     else
                     {
-                        session.SafeSyncableRaiseEvent(new TransferErrorEventArgs(xrc, session.CurrentSource.GetStatus()));
+                        HandleReturnCode(session, xrc);
                     }
                 }
                 catch (Exception ex)
@@ -410,6 +461,7 @@ namespace NTwain.Internals
                     DoImageXferredEventRoutine(session, IntPtr.Zero, null, finalFile, fileInfo.Format);
                 }
             }
+            return xrc;
         }
 
         static void DoImageXferredEventRoutine(ITwainSessionInternal session, IntPtr dataPtr, byte[] dataArray, string filePath, FileFormat format)
