@@ -28,6 +28,9 @@ namespace NTwain
         /// <value>The app id.</value>
         TWIdentity ITwainSessionInternal.AppId { get { return _appId; } }
 
+        bool _closeRequested;
+        bool ITwainSessionInternal.CloseDSRequested { get { return _closeRequested; } }
+
         void ITwainSessionInternal.UpdateCallback()
         {
             if (State < 4)
@@ -155,6 +158,7 @@ namespace NTwain
         /// <returns></returns>
         ReturnCode ITwainSessionInternal.EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle)
         {
+            _closeRequested = false;
             var rc = ReturnCode.Failure;
 
             _msgLoopHook.Invoke(() =>
@@ -308,7 +312,9 @@ namespace NTwain
                     // some sources send this at other states so do a step down
                     if (State > 5)
                     {
-                        ForceStepDown(4);
+                        // rather than do a close here let the transfer logic handle the close down now
+                        //ForceStepDown(4);
+                        _closeRequested = true;
                     }
                     else if (State == 5)
                     {

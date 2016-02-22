@@ -46,6 +46,8 @@ namespace NTwain.Internals
 
         ReturnCode EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle);
 
+        bool CloseDSRequested { get; }
+
         /// <summary>
         /// Gets the triplet operations defined for audio data group.
         /// </summary>

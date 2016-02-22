@@ -393,11 +393,30 @@ namespace NTwain
             {
                 if (targetState < 7 && CurrentSource != null)
                 {
-                    ((ITwainSessionInternal)this).DGControl.PendingXfers.EndXfer(new TWPendingXfers());
+                    // not sure if really necessary but can't hurt to pin it
+                    var pending = new TWPendingXfers();
+                    var handle = GCHandle.Alloc(pending, GCHandleType.Pinned);
+                    try
+                    {
+                        ((ITwainSessionInternal)this).DGControl.PendingXfers.EndXfer(pending);
+                    }
+                    finally
+                    {
+                        handle.Free();
+                    }
                 }
                 if (targetState < 6 && CurrentSource != null)
                 {
-                    ((ITwainSessionInternal)this).DGControl.PendingXfers.Reset(new TWPendingXfers());
+                    var pending = new TWPendingXfers();
+                    var handle = GCHandle.Alloc(pending, GCHandleType.Pinned);
+                    try
+                    {
+                        ((ITwainSessionInternal)this).DGControl.PendingXfers.Reset(pending);
+                    }
+                    finally
+                    {
+                        handle.Free();
+                    }
                 }
                 if (targetState < 5 && CurrentSource != null)
                 {

@@ -58,7 +58,7 @@ namespace NTwain.Internals
 
                     #region actually handle xfer
 
-                    if (preXferArgs.CancelAll)
+                    if (preXferArgs.CancelAll || session.CloseDSRequested)
                     {
                         rc = session.DGControl.PendingXfers.Reset(pending);
                     }
@@ -99,21 +99,11 @@ namespace NTwain.Internals
                                 }
                             }
                         }
-
-
-                        switch (rc)
-                        {
-                            case ReturnCode.Cancel:
-                            default:
-                                // as usual
-                                rc = session.DGControl.PendingXfers.EndXfer(pending);
-                                break;
-                        }
-
+                        
                         if (rc != ReturnCode.Success && session.StopOnTransferError)
                         {
                             // end xfer without setting rc to exit (good/bad?)
-                            session.DGControl.PendingXfers.EndXfer(pending);
+                            session.DGControl.PendingXfers.Reset(pending);
                         }
                         else
                         {
@@ -122,7 +112,7 @@ namespace NTwain.Internals
                     }
                     #endregion
 
-                } while (rc == ReturnCode.Success && pending.Count != 0);
+                } while (rc == ReturnCode.Success && pending.Count != 0 && !session.CloseDSRequested);
             }
             else
             {
@@ -131,7 +121,8 @@ namespace NTwain.Internals
 
             // some poorly written scanner drivers return failure on EndXfer so also check for pending count now.
             // this may break with other sources but we'll see
-            if (pending.Count == 0 && session.State > 5)
+            if (//pending.Count == 0 && 
+                session.State > 5)
             {
                 session.ChangeState(5, true);
                 session.DisableSource();
