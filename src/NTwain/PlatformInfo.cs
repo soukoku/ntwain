@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace NTwain
@@ -37,14 +38,19 @@ namespace NTwain
             {
                 _defaultMemManager = new WinMemoryManager();
 
-                // only the new dsm can be loaded outside of windows folder
-                newDsmPath = GetFirstFilePathThatExists(Dsm.WIN_NEW_DSM_NAME, Environment.CurrentDirectory, Environment.SystemDirectory) ??
+                // only the new twaindsm can be loaded outside of windows folder, twain_32 can't
+                newDsmPath = GetFirstFilePathThatExists(Dsm.WIN_NEW_DSM_NAME,
+                    // should be same order as dllimport search order
+                    GetExeFolder(),
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    Environment.SystemDirectory,
+                    GetWindowsFolder(),
+                    Environment.CurrentDirectory)
+                    ??
                     Path.Combine(Environment.SystemDirectory, Dsm.WIN_NEW_DSM_NAME);
-#if NET35
-                oldDsmPath = Path.Combine(Environment.GetEnvironmentVariable("windir"), Dsm.WIN_OLD_DSM_NAME);
-#else
-                oldDsmPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), Dsm.WIN_OLD_DSM_NAME);
-#endif
+
+                oldDsmPath = Path.Combine(GetWindowsFolder(), Dsm.WIN_OLD_DSM_NAME);
+
                 PreferNewDSM = true;
             }
             else if (IsLinux)
@@ -61,9 +67,29 @@ namespace NTwain
             }
         }
 
+        private string GetExeFolder()
+        {
+            var assembly = Assembly.GetEntryAssembly();
+            if (assembly != null)
+            {
+                return Path.GetDirectoryName(assembly.Location);
+            }
+            return null;
+        }
+        private string GetWindowsFolder()
+        {
+#if NET35
+            return Environment.GetEnvironmentVariable("windir");
+#else
+            return Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+#endif
+        }
+
         static string GetFirstFilePathThatExists(string filename, params string[] folders)
         {
-            return folders.Select(fdr => Path.Combine(fdr, filename)).FirstOrDefault(path => File.Exists(path));
+            return folders.Where(fdr => fdr != null)
+                .Select(fdr => Path.Combine(fdr, filename))
+                .FirstOrDefault(path => File.Exists(path));
         }
 
         string oldDsmPath;
