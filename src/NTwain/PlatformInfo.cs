@@ -37,7 +37,9 @@ namespace NTwain
             {
                 _defaultMemManager = new WinMemoryManager();
 
-                newDsmPath = Path.Combine(Environment.SystemDirectory, Dsm.WIN_NEW_DSM_NAME);
+                // only the new dsm can be loaded outside of windows folder
+                newDsmPath = GetFirstFilePathThatExists(Dsm.WIN_NEW_DSM_NAME, Environment.CurrentDirectory, Environment.SystemDirectory) ??
+                    Path.Combine(Environment.SystemDirectory, Dsm.WIN_NEW_DSM_NAME);
 #if NET35
                 oldDsmPath = Path.Combine(Environment.GetEnvironmentVariable("windir"), Dsm.WIN_OLD_DSM_NAME);
 #else
@@ -57,6 +59,11 @@ namespace NTwain
             {
                 // mac? not gonna happen
             }
+        }
+
+        static string GetFirstFilePathThatExists(string filename, params string[] folders)
+        {
+            return folders.Select(fdr => Path.Combine(fdr, filename)).FirstOrDefault(path => File.Exists(path));
         }
 
         string oldDsmPath;
@@ -84,7 +91,7 @@ namespace NTwain
                         ExpectedDsmPath = newDsmPath;
                         IsSupported = DsmExists = File.Exists(ExpectedDsmPath);
                         UseNewWinDSM = true;
-                        Log.Debug("Using new dsm in windows.");
+                        Log.Debug("Using new dsm.");
                     }
                     else
                     {
@@ -92,7 +99,7 @@ namespace NTwain
                         {
                             ExpectedDsmPath = newDsmPath;
                             UseNewWinDSM = IsSupported = DsmExists = true;
-                            Log.Debug("Using new dsm in windows.");
+                            Log.Debug("Using new dsm.");
                         }
                         else
                         {
