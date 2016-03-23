@@ -212,6 +212,15 @@ namespace NTwain
         public bool StopOnTransferError { get; set; }
 
         /// <summary>
+        /// Gets the reason a source was disabled (dropped from state 5) if it's due to user action.
+        /// Mostly only <see cref="Message.CloseDSOK" /> or <see cref="Message.CloseDSReq" />.
+        /// </summary>
+        /// <value>
+        /// The dialog result.
+        /// </value>
+        public Message DisableReason { get; private set; }
+
+        /// <summary>
         /// Opens the data source manager. This must be the first method used
         /// before using other TWAIN functions. Calls to this must be followed by
         /// <see cref="Close" /> when done with a TWAIN session.

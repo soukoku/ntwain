@@ -95,6 +95,15 @@ namespace NTwain
         bool StopOnTransferError { get; set; }
 
         /// <summary>
+        /// Gets the reason a source was disabled (dropped from state 5) if it's due to user action.
+        /// Mostly only <see cref="Message.CloseDSOK"/> or <see cref="Message.CloseDSReq"/>.
+        /// </summary>
+        /// <value>
+        /// The dialog result.
+        /// </value>
+        Message DisableReason { get; }
+
+        /// <summary>
         /// Try to show the built-in source selector dialog and return the selected source.
         /// This is not recommended and is only included for completeness.
         /// </summary>

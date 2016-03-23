@@ -159,6 +159,7 @@ namespace NTwain
         ReturnCode ITwainSessionInternal.EnableSource(SourceEnableMode mode, bool modal, IntPtr windowHandle)
         {
             _closeRequested = false;
+            DisableReason = Message.Null;
             var rc = ReturnCode.Failure;
 
             _msgLoopHook.Invoke(() =>
@@ -306,6 +307,7 @@ namespace NTwain
                     break;
                 case Message.CloseDSReq:
                 case Message.CloseDSOK:
+                    DisableReason = msg;
                     // even though it says closeDS it's really disable.
                     // dsok is sent if source is enabled with uionly
 
