@@ -79,14 +79,16 @@
         <StackPanel Orientation="Horizontal" Grid.Column="3" >
             <Label Content="State:"></Label>
             <TextBlock Text="{Binding State}"></TextBlock>
-            <Button Content="_Driver settings" Command="{Binding ShowDriverCommand}"></Button>
-            <Button Content="_Start capture" Command="{Binding CaptureCommand}"></Button>
+            <Button Content="S_ettings" Command="{Binding ShowDriverCommand}"></Button>
+            <Button Content="S_tart" Command="{Binding CaptureCommand}"></Button>
+            <CheckBox Content="Show _UI" IsChecked="{Binding ShowUI}"></CheckBox>
             <Slider Maximum="{Binding MaxThumbnailSize}" Minimum="{Binding MinThumbnailSize}" 
                     Value="{Binding ThumbnailSize}" Width="100" LargeChange="20" SmallChange="10"
                     VerticalAlignment="Center"
                     ToolTip="{Binding ThumbnailSize}"></Slider>
             <TextBlock Text="{Binding CapturedImages.Count, StringFormat='{}{0} pages'}"></TextBlock>
             <Button Content="_Clear pages" Command="{Binding ClearCommand}"></Button>
+            <!--<Button Content="_Save" Command="{Binding SaveCommand}"></Button>-->
         </StackPanel>
 
         <ListBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="3"

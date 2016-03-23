@@ -87,6 +87,7 @@ namespace NTwain
         void ITwainSessionInternal.ChangeCurrentSource(DataSource source)
         {
             CurrentSource = source;
+            DisableReason = Message.Null;
             OnPropertyChanged("CurrentSource");
             SafeAsyncSyncableRaiseOnEvent(OnSourceChanged, SourceChanged);
         }

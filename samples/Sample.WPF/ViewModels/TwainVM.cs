@@ -1,20 +1,17 @@
-﻿using CommonWin32;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using ModernWpf.Messages;
 using NTwain;
 using NTwain.Data;
 using System;
-using System.Linq;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Threading;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight;
-using System.Windows.Input;
-using GalaSoft.MvvmLight.Command;
-using ModernWPF;
-using ModernWPF.Messages;
 
 namespace Sample.WPF
 {
@@ -106,6 +103,12 @@ namespace Sample.WPF
             }
         }
 
+        public bool ShowUI
+        {
+            get; set;
+        }
+
+
 
         private ICommand _showDriverCommand;
         public ICommand ShowDriverCommand
@@ -144,7 +147,8 @@ namespace Sample.WPF
                         //    this.CurrentSource.ICapXferMech.Set(XferMech.File);
                         //}
 
-                        var rc = _session.CurrentSource.Enable(SourceEnableMode.NoUI, false, WindowHandle);
+                        var rc = _session.CurrentSource.Enable(
+                            ShowUI ? SourceEnableMode.ShowUI : SourceEnableMode.NoUI, false, WindowHandle);
                     }
                 }, () =>
                 {
@@ -153,6 +157,30 @@ namespace Sample.WPF
             }
         }
 
+
+        //private ICommand _saveCommand;
+        //public ICommand SaveCommand
+        //{
+        //    get
+        //    {
+        //        return _saveCommand ?? (_saveCommand = new RelayCommand(() =>
+        //        {
+        //            Messenger.Default.Send(new ChooseFileMessage(this, files =>
+        //            {
+        //                var tiffPath = files.FirstOrDefault();
+
+        //                var srcFiles = CapturedImages.Select(ci=>ci.)
+        //            })
+        //            {
+        //                Caption = "Save to File",
+        //                Filters = "Tiff files|*.tif,*.tiff"
+        //            });
+        //        }, () =>
+        //        {
+        //            return CapturedImages.Count > 0;
+        //        }));
+        //    }
+        //}
 
         private ICommand _clearCommand;
         public ICommand ClearCommand
@@ -225,7 +253,7 @@ namespace Sample.WPF
             {
                 if (e.Exception != null)
                 {
-                    Messenger.Default.Send(new MessageBoxMessage    (e.Exception.Message, null)
+                    Messenger.Default.Send(new MessageBoxMessage(e.Exception.Message, null)
                     {
                         Caption = "Transfer Error Exception",
                         Icon = System.Windows.MessageBoxImage.Error,

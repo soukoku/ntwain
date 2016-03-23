@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
-using ModernWPF;
-using ModernWPF.Controls;
-using ModernWPF.Messages;
+using ModernWpf;
+using ModernWpf.Controls;
+using ModernWpf.Messages;
 using NTwain;
 using NTwain.Data;
 using System;
@@ -32,6 +32,13 @@ namespace Sample.WPF
                 _twainVM = this.DataContext as TwainVM;
                 _twainVM.PropertyChanged += _twainVM_PropertyChanged;
                 Messenger.Default.Register<RefreshCommandsMessage>(this, m => m.HandleIt());
+                Messenger.Default.Register<ChooseFileMessage>(this, m =>
+                {
+                    if (m.Sender == DataContext)
+                    {
+                        m.HandleWithPlatform(this);
+                    }
+                });
                 Messenger.Default.Register<MessageBoxMessage>(this, msg =>
                 {
                     if (Dispatcher.CheckAccess())
@@ -55,11 +62,11 @@ namespace Sample.WPF
             {
                 if (_twainVM.State == 5)
                 {
-                    ModernTheme.ApplyTheme(ModernTheme.Theme.Light, Accent.Orange);
+                    Theme.ApplyTheme(ThemeColor.Light, Accent.Orange);
                 }
                 else if (_twainVM.State == 4)
                 {
-                    ModernTheme.ApplyTheme(ModernTheme.Theme.Light, Accent.Green);
+                    Theme.ApplyTheme(ThemeColor.Light, Accent.Green);
                 }
             }
         }

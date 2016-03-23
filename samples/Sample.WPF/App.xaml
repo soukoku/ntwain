@@ -8,12 +8,12 @@
             <Style TargetType="{x:Type Rectangle}" />
 
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/ModernWPF;component/Themes/ModernBaseDesktop.xaml" />
-                <ResourceDictionary Source="/ModernWPF;component/Themes/ModernLight.xaml" />
-                <ResourceDictionary Source="/ModernWPF;component/Themes/ModernStyles.xaml" />
+                <ResourceDictionary Source="/ModernWpf;component/Themes/BaseValues.xaml" />
+                <ResourceDictionary Source="/ModernWpf;component/Themes/ColorLight.xaml" />
+                <ResourceDictionary Source="/ModernWpf;component/Themes/ModernStyles.xaml" />
                 
                 <ResourceDictionary>
-                    <Style x:Key="AppWindow" TargetType="Window" BasedOn="{StaticResource ModernWindowV2}"/>
+                    <Style x:Key="AppWindow" TargetType="Window" BasedOn="{StaticResource ModernWindow}"/>
                     <Style x:Key="AppListBoxItem" TargetType="ListBoxItem" BasedOn="{StaticResource ModernListBoxItem}">
                         <Setter Property="BorderThickness" Value="1"/>
                         <Style.Triggers>

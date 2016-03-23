@@ -1,16 +1,17 @@
-﻿using ModernWPF;
+﻿using ModernWpf;
 using System.Windows;
 
 namespace Sample.WPF
 {
-	/// <summary>
-	/// Interaction logic for App.xaml
-	/// </summary>
-	public partial class App : Application
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
 	{
 		protected override void OnStartup(StartupEventArgs e)
 		{
-            ModernTheme.ApplyTheme(ModernTheme.Theme.Light, Accent.Green);
+            UIHooks.EnableHighDpiSupport();
+            Theme.ApplyTheme(ThemeColor.Light, Accent.Green);
 			base.OnStartup(e);
 		}
 	}

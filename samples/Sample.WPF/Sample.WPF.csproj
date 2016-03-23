@@ -25,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -43,10 +44,6 @@
     <ApplicationIcon>scanner.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommonWin32, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a0a4edcfe233918d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CommonWin32.2.0.5.6\lib\net35-Client\CommonWin32.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.2.0.37223, Culture=neutral, PublicKeyToken=0e453835af4ee6ce, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MvvmLightLibs.5.2.0.0\lib\net40\GalaSoft.MvvmLight.dll</HintPath>
       <Private>True</Private>
@@ -69,8 +66,12 @@
     <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions">
       <HintPath>..\..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
     </Reference>
-    <Reference Include="ModernWPF, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c99d0cfbea7491ef, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ModernWPF.1.3.9\lib\net40-Client\ModernWPF.dll</HintPath>
+    <Reference Include="ModernWpf, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c99d0cfbea7491ef, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ModernWpf.2.0.0-alpha1\lib\net40-Client\ModernWpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ModernWpf.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c99d0cfbea7491ef, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ModernWpf.Core.2.0.0-alpha1\lib\net40-Client\ModernWpf.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ModernWPF.Mvvm, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
