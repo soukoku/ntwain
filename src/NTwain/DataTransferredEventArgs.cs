@@ -25,17 +25,19 @@ namespace NTwain
         /// <param name="nativeData">The native data.</param>
         public DataTransferredEventArgs(DataSource source, IntPtr nativeData)
         {
+            TransferType = XferMech.Native;
             DataSource = source;
             NativeData = nativeData;
         }
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataTransferredEventArgs"/> class.
+        /// Initializes a new instance of the <see cref="DataTransferredEventArgs" /> class.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="fileDataPath">The file data path.</param>
         /// <param name="imageFileFormat">The image file format.</param>
         public DataTransferredEventArgs(DataSource source, string fileDataPath, FileFormat imageFileFormat)
         {
+            TransferType = XferMech.File;
             DataSource = source;
             FileDataPath = fileDataPath;
             ImageFileFormat = imageFileFormat;
@@ -44,15 +46,26 @@ namespace NTwain
         /// Initializes a new instance of the <see cref="DataTransferredEventArgs" /> class.
         /// </summary>
         /// <param name="source">The source.</param>
+        /// <param name="memoryInfo">The memory information.</param>
         /// <param name="memoryData">The memory data.</param>
-        public DataTransferredEventArgs(DataSource source, byte[] memoryData)
+        public DataTransferredEventArgs(DataSource source, TWImageMemXfer memoryInfo, byte[] memoryData)
         {
+            TransferType = XferMech.Memory;
             DataSource = source;
+            MemoryInfo = memoryInfo;
             MemoryData = memoryData;
         }
 
         /// <summary>
-        /// Gets pointer to the complete data if the transfer was native.
+        /// Gets the type of the transfer mode.
+        /// </summary>
+        /// <value>
+        /// The type of the transfer.
+        /// </value>
+        public XferMech TransferType { get; private set; }
+
+        /// <summary>
+        /// Gets the raw pointer to the complete data if <see cref="TransferType"/> is <see cref="XferMech.Native"/>.
         /// The data will be freed once the event handler ends
         /// so consumers must complete whatever processing before then.
         /// For image type this data is DIB (Windows) or TIFF (Linux).
@@ -63,6 +76,7 @@ namespace NTwain
 
         /// <summary>
         /// Gets the file path to the complete data if the transfer was file or memory-file.
+        /// This is only available if <see cref="TransferType"/> is <see cref="XferMech.File"/>.
         /// </summary>
         /// <value>
         /// The file path.
@@ -71,11 +85,21 @@ namespace NTwain
 
         /// <summary>
         /// Gets the file format if applicable.
+        /// This is only available if <see cref="TransferType"/> is <see cref="XferMech.Memory"/>.
         /// </summary>
         /// <value>
         /// The file format.
         /// </value>
         public FileFormat ImageFileFormat { get; private set; }
+
+        /// <summary>
+        /// Gets the info object if the transfer was memory. 
+        /// This is only available if <see cref="TransferType"/> is <see cref="XferMech.Memory"/>.
+        /// </summary>
+        /// <value>
+        /// The memory information.
+        /// </value>
+        public TWImageMemXfer MemoryInfo { get; private set; }
 
         /// <summary>
         /// Gets the raw memory data if the transfer was memory.
@@ -166,7 +190,7 @@ namespace NTwain
                 {
                     retVal = ImageTools.GetTiffStream(NativeData);
                 }
-                
+
             }
             return retVal; ;
         }

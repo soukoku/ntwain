@@ -1921,9 +1921,9 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// Describes the form of the acquired data being passed from the Source to the application.
+    /// Describes the form of the acquired data being passed from the Source to the application in memory transfer mode.
     /// </summary>
-    partial class TWImageMemXfer
+    public partial class TWImageMemXfer
     {
         /// <summary>
         /// The compression method used to process the data being transferred.
@@ -1965,7 +1965,7 @@ namespace NTwain.Data
         /// buffer, the actual size of the buffer, in bytes, and where the buffer is
         /// located in memory.
         /// </summary>
-        public TWMemory Memory { get { return _memory; } internal set { _memory = value; } }
+        internal TWMemory Memory { get { return _memory; } set { _memory = value; } }
     }
 
     /// <summary>

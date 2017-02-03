@@ -99,7 +99,7 @@ namespace NTwain.Internals
                                 }
                             }
                         }
-                        
+
                         if (rc != ReturnCode.Success && session.StopOnTransferError)
                         {
                             // end xfer without setting rc to exit (good/bad?)
@@ -234,7 +234,7 @@ namespace NTwain.Internals
                     {
                         lockedPtr = PlatformInfo.Current.MemoryManager.Lock(dataPtr);
                     }
-                    DoImageXferredEventRoutine(session, lockedPtr, null, null, (FileFormat)0);
+                    DoImageXferredEventRoutine(session, lockedPtr, null, null, null, (FileFormat)0);
                 }
                 else
                 {
@@ -276,7 +276,7 @@ namespace NTwain.Internals
             var xrc = session.DGImage.ImageFileXfer.Get();
             if (xrc == ReturnCode.XferDone)
             {
-                DoImageXferredEventRoutine(session, IntPtr.Zero, null, filePath, setupInfo.Format);
+                DoImageXferredEventRoutine(session, IntPtr.Zero, null, null, filePath, setupInfo.Format);
             }
             else
             {
@@ -304,50 +304,37 @@ namespace NTwain.Internals
                         TheMem = PlatformInfo.Current.MemoryManager.Allocate(memInfo.Preferred)
                     };
 
-                    // do the unthinkable and keep all xferred batches in memory, 
-                    // possibly defeating the purpose of mem xfer
-                    // unless compression is used.
-                    // todo: use array instead of memory stream?
-                    using (MemoryStream xferredData = new MemoryStream())
+
+                    do
                     {
-                        do
+                        xrc = session.DGImage.ImageMemXfer.Get(xferInfo);
+
+                        if (xrc == ReturnCode.Success ||
+                            xrc == ReturnCode.XferDone)
                         {
-                            xrc = session.DGImage.ImageMemXfer.Get(xferInfo);
+                            if (session.State != 7) { session.ChangeState(7, true); }
 
-                            if (xrc == ReturnCode.Success ||
-                                xrc == ReturnCode.XferDone)
+                            // optimize and allocate buffer only once instead of inside the loop?
+                            byte[] buffer = new byte[(int)xferInfo.BytesWritten];
+
+                            IntPtr lockPtr = IntPtr.Zero;
+                            try
                             {
-                                session.ChangeState(7, true);
-                                // optimize and allocate buffer only once instead of inside the loop?
-                                byte[] buffer = new byte[(int)xferInfo.BytesWritten];
-
-                                IntPtr lockPtr = IntPtr.Zero;
-                                try
+                                lockPtr = PlatformInfo.Current.MemoryManager.Lock(xferInfo.Memory.TheMem);
+                                Marshal.Copy(lockPtr, buffer, 0, buffer.Length);
+                            }
+                            finally
+                            {
+                                if (lockPtr != IntPtr.Zero)
                                 {
-                                    lockPtr = PlatformInfo.Current.MemoryManager.Lock(xferInfo.Memory.TheMem);
-                                    Marshal.Copy(lockPtr, buffer, 0, buffer.Length);
-                                    xferredData.Write(buffer, 0, buffer.Length);
-                                }
-                                finally
-                                {
-                                    if (lockPtr != IntPtr.Zero)
-                                    {
-                                        PlatformInfo.Current.MemoryManager.Unlock(xferInfo.Memory.TheMem);
-                                        //PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
-                                    }
+                                    PlatformInfo.Current.MemoryManager.Unlock(xferInfo.Memory.TheMem);
                                 }
                             }
-                        } while (xrc == ReturnCode.Success);
+                            DoImageXferredEventRoutine(session, IntPtr.Zero, xferInfo, buffer, null, (FileFormat)0);
+                        }
+                    } while (xrc == ReturnCode.Success);
 
-                        if (xrc == ReturnCode.XferDone)
-                        {
-                            DoImageXferredEventRoutine(session, IntPtr.Zero, xferredData.ToArray(), null, (FileFormat)0);
-                        }
-                        else
-                        {
-                            HandleReturnCode(session, xrc);
-                        }
-                    }
+                    HandleReturnCode(session, xrc);
                 }
                 catch (Exception ex)
                 {
@@ -449,13 +436,13 @@ namespace NTwain.Internals
 
                 if (File.Exists(finalFile))
                 {
-                    DoImageXferredEventRoutine(session, IntPtr.Zero, null, finalFile, fileInfo.Format);
+                    DoImageXferredEventRoutine(session, IntPtr.Zero, null, null, finalFile, fileInfo.Format);
                 }
             }
             return xrc;
         }
 
-        static void DoImageXferredEventRoutine(ITwainSessionInternal session, IntPtr dataPtr, byte[] dataArray, string filePath, FileFormat format)
+        static void DoImageXferredEventRoutine(ITwainSessionInternal session, IntPtr dataPtr, TWImageMemXfer memInfo, byte[] memData, string filePath, FileFormat format)
         {
             DataTransferredEventArgs args = null;
 
@@ -463,9 +450,9 @@ namespace NTwain.Internals
             {
                 args = new DataTransferredEventArgs(session.CurrentSource, dataPtr);
             }
-            else if (dataArray != null)
+            else if (memData != null)
             {
-                args = new DataTransferredEventArgs(session.CurrentSource, dataArray);
+                args = new DataTransferredEventArgs(session.CurrentSource, memInfo, memData);
             }
             else
             {

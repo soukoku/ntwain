@@ -274,7 +274,8 @@ namespace Sample.WPF
 
         void _session_TransferReady(object sender, TransferReadyEventArgs e)
         {
-            if (_session.CurrentSource.Capabilities.ICapXferMech.GetCurrent() == XferMech.File)
+            var mech = _session.CurrentSource.Capabilities.ICapXferMech.GetCurrent();
+            if (mech == XferMech.File)
             {
                 var formats = _session.CurrentSource.Capabilities.ICapImageFileFormat.GetValues();
                 var wantFormat = formats.Contains(FileFormat.Tiff) ? FileFormat.Tiff : FileFormat.Bmp;
@@ -285,6 +286,11 @@ namespace Sample.WPF
                     FileName = GetUniqueName(Path.GetTempPath(), "twain-test", "." + wantFormat)
                 };
                 var rc = _session.CurrentSource.DGControl.SetupFileXfer.Set(fileSetup);
+            }
+            else if (mech == XferMech.Memory)
+            {
+                // ?
+
             }
         }
 
@@ -315,19 +321,28 @@ namespace Sample.WPF
         ImageSource GenerateThumbnail(DataTransferredEventArgs e)
         {
             BitmapSource img = null;
-            if (e.NativeData != IntPtr.Zero)
+
+            switch (e.TransferType)
             {
-                using (var stream = e.GetNativeImageStream())
-                {
-                    if (stream != null)
+                case XferMech.Native:
+                    using (var stream = e.GetNativeImageStream())
                     {
-                        img = stream.ConvertToWpfBitmap(300, 0);
+                        if (stream != null)
+                        {
+                            img = stream.ConvertToWpfBitmap(300, 0);
+                        }
                     }
-                }
-            }
-            else if (!string.IsNullOrEmpty(e.FileDataPath))
-            {
-                img = new BitmapImage(new Uri(e.FileDataPath));
+                    break;
+                case XferMech.File:
+                    img = new BitmapImage(new Uri(e.FileDataPath));
+                    if (img.CanFreeze)
+                    {
+                        img.Freeze();
+                    }
+                    break;
+                case XferMech.Memory:
+                    // TODO: build current image from multiple data-xferred event
+                    break;
             }
 
             //if (img != null)

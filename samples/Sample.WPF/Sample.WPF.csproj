@@ -71,8 +71,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ModernWpf.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c99d0cfbea7491ef, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ModernWpf.Core.2.0.0-alpha94\lib\net40-Client\ModernWpf.Core.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\ModernWpf.Core.2.0.0-alpha96\lib\net40-Client\ModernWpf.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
