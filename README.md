@@ -1,8 +1,6 @@
-TWAIN Application-Side Library
-==============================
+# TWAIN Application-Side Library
 
-Info
---------------------------------------
+## Info
 This is a library created to make working with [TWAIN](http://twain.org/) interface possible in dotnet. 
 This project has these features/goals:
 
@@ -14,8 +12,7 @@ The solution contains tester projects in winform, wpf, and even console usage.
 A nuget package is also [available here](https://www.nuget.org/packages/ntwain) 
 (NOTE: this doc describes v3. For older version go to Source and choose v2 branch for its doc.)
 
-Using the lib
---------------------------------------
+## Using the lib
 To properly use this lib you will need to be reasonably familiar with the TWAIN spec
 and understand how it works in general (especially capability). 
 The TWAIN spec can be downloaded from [twain.org](http://twain.org/). 
@@ -133,8 +130,7 @@ session.Close();
 ```
 
 
-Caveats
---------------------------------------
+## Caveats
 At the moment the DataTransferredEventArgs only provides conversion routine to 
 an image stream when using native transfer.
 If other transfer methods are used you'll have to deal with them yourself.
@@ -154,8 +150,7 @@ application due to their use of modal dialogs, so if you find yourself in that p
 you'll have to find another way to synchronize data to UI threads. 
 
 
-Using the new twaindsm.dll
---------------------------------------
+## Using the new twaindsm.dll
 By default NTwain will use the newer [data source manager](http://sourceforge.net/projects/twain-dsm/files/TWAIN%20DSM%202%20Win/)
 (twaindsm.dll) if available. To override this behavior
 set the PlatformInfo's PreferNewDSM flag to false. This is necessary due to some older sources not working with the newer dsm.
