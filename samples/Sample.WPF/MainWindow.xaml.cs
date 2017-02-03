@@ -34,10 +34,7 @@ namespace Sample.WPF
                 Messenger.Default.Register<RefreshCommandsMessage>(this, m => m.HandleIt());
                 Messenger.Default.Register<ChooseFileMessage>(this, m =>
                 {
-                    if (m.Sender == DataContext)
-                    {
                         m.HandleWithPlatform(this);
-                    }
                 });
                 Messenger.Default.Register<MessageBoxMessage>(this, msg =>
                 {
@@ -78,6 +75,7 @@ namespace Sample.WPF
         }
         protected override void OnClosed(EventArgs e)
         {
+            Messenger.Default.Unregister(this);
             _twainVM.CloseDown();
             base.OnClosed(e);
         }

@@ -44,7 +44,10 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Label Content="Caps" Grid.Column="1"></Label>
+        <StackPanel Orientation="Horizontal" Grid.Column="1">
+            <Label Content="Caps" Grid.Column="1"></Label>
+            <Button Content="Save Reported" Command="{Binding SaveCapValuesCommand}" DataContext="{Binding SelectedSource}"></Button>
+        </StackPanel>
         <TextBox Text="{Binding CapFilter, UpdateSourceTrigger=PropertyChanged}" DataContext="{Binding SelectedSource}"
                  Grid.Column="1" Grid.Row="1"
                  modern:TextBoxUI.WatermarkText="Find cap name"></TextBox>

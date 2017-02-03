@@ -1,6 +1,7 @@
 ﻿using NTwain.Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -111,7 +112,9 @@ namespace NTwain
             if (!_supports.HasValue && _source.IsOpen)
             {
                 var srcVersion = _source.ProtocolVersion;
-                if (srcVersion >= ProtocolVersions.GetMinimumVersion(Capability))
+                var minVer = ProtocolVersions.GetMinimumVersion(Capability);
+
+                if (srcVersion >= minVer)
                 {
                     _supports = _source.Capabilities.QuerySupport(Capability);
 
@@ -137,6 +140,7 @@ namespace NTwain
                             }
                             else
                             {
+                                Debug.WriteLine("Cap " + Capability + " supports set to None due to rc=" + rc + ", cc=" + _source.GetStatus().ConditionCode);
                                 _supports = QuerySupports.None;
                             }
                         }
@@ -144,6 +148,7 @@ namespace NTwain
                 }
                 else
                 {
+                    Debug.WriteLine("Cap " + Capability + " supports set to None due to not in required TWAIN version (" + minVer + ") not met by source (" + srcVersion + ").");
                     _supports = QuerySupports.None;
                 }
             }

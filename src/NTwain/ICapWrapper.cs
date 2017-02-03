@@ -177,12 +177,13 @@ namespace NTwain
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        ReturnCode SetValue(TValue value);/// <summary>
-                                          /// 
-                                          /// A version of Set that uses an array.
-                                          /// </summary>
-                                          /// <param name="value">The value.</param>
-                                          /// <returns></returns>
+        ReturnCode SetValue(TValue value);
+        
+        /// <summary>
+        /// A version of Set that uses an array.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         ReturnCode SetValue(TWArray value);
 
         /// <summary>

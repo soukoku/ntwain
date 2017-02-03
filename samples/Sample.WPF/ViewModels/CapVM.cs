@@ -75,8 +75,6 @@ namespace Sample.WPF
             }
         }
 
-        public object MyProperty { get; set; }
-
         public CapabilityId Cap { get; private set; }
 
         public string Name
@@ -85,7 +83,7 @@ namespace Sample.WPF
             {
                 if (Cap > CapabilityId.CustomBase)
                 {
-                    return "[Custom] " + ((int)Cap - (int)CapabilityId.CustomBase);
+                    return "[CustomBase]+" + ((int)Cap - (int)CapabilityId.CustomBase);
                 }
                 return Cap.ToString();
             }
