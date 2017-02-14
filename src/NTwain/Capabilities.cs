@@ -326,10 +326,10 @@ namespace NTwain
             {
                 return _autoBright ?? (_autoBright = new CapWrapper<BoolType>(_source, CapabilityId.ICapAutoBright, ValueExtensions.ConvertToEnum<BoolType>,
                     value => new TWOneValue
-                        {
-                            Item = (uint)value,
-                            ItemType = ItemType.Bool
-                        }));
+                    {
+                        Item = (uint)value,
+                        ItemType = ItemType.Bool
+                    }));
             }
         }
 
@@ -345,12 +345,7 @@ namespace NTwain
         {
             get
             {
-                return _brightness ?? (_brightness = new CapWrapper<TWFix32>(_source, CapabilityId.ICapBrightness, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _brightness ?? (_brightness = new CapWrapper<TWFix32>(_source, CapabilityId.ICapBrightness, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -366,12 +361,7 @@ namespace NTwain
         {
             get
             {
-                return _contrast ?? (_contrast = new CapWrapper<TWFix32>(_source, CapabilityId.ICapContrast, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _contrast ?? (_contrast = new CapWrapper<TWFix32>(_source, CapabilityId.ICapContrast, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -408,12 +398,7 @@ namespace NTwain
         {
             get
             {
-                return _exposureTime ?? (_exposureTime = new CapWrapper<TWFix32>(_source, CapabilityId.ICapExposureTime, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _exposureTime ?? (_exposureTime = new CapWrapper<TWFix32>(_source, CapabilityId.ICapExposureTime, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -450,12 +435,7 @@ namespace NTwain
         {
             get
             {
-                return _gamma ?? (_gamma = new CapWrapper<TWFix32>(_source, CapabilityId.ICapGamma, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _gamma ?? (_gamma = new CapWrapper<TWFix32>(_source, CapabilityId.ICapGamma, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -487,12 +467,7 @@ namespace NTwain
         {
             get
             {
-                return _highlight ?? (_highlight = new CapWrapper<TWFix32>(_source, CapabilityId.ICapHighlight, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _highlight ?? (_highlight = new CapWrapper<TWFix32>(_source, CapabilityId.ICapHighlight, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -625,12 +600,7 @@ namespace NTwain
         {
             get
             {
-                return _shadow ?? (_shadow = new CapWrapper<TWFix32>(_source, CapabilityId.ICapShadow, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _shadow ?? (_shadow = new CapWrapper<TWFix32>(_source, CapabilityId.ICapShadow, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -701,12 +671,7 @@ namespace NTwain
         {
             get
             {
-                return _xResolution ?? (_xResolution = new CapWrapper<TWFix32>(_source, CapabilityId.ICapXResolution, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _xResolution ?? (_xResolution = new CapWrapper<TWFix32>(_source, CapabilityId.ICapXResolution, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -723,12 +688,7 @@ namespace NTwain
         {
             get
             {
-                return _yResolution ?? (_yResolution = new CapWrapper<TWFix32>(_source, CapabilityId.ICapYResolution, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _yResolution ?? (_yResolution = new CapWrapper<TWFix32>(_source, CapabilityId.ICapYResolution, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -891,12 +851,7 @@ namespace NTwain
         {
             get
             {
-                return _rotation ?? (_rotation = new CapWrapper<TWFix32>(_source, CapabilityId.ICapRotation, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _rotation ?? (_rotation = new CapWrapper<TWFix32>(_source, CapabilityId.ICapRotation, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -933,12 +888,7 @@ namespace NTwain
         {
             get
             {
-                return _threshold ?? (_threshold = new CapWrapper<TWFix32>(_source, CapabilityId.ICapThreshold, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _threshold ?? (_threshold = new CapWrapper<TWFix32>(_source, CapabilityId.ICapThreshold, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -954,12 +904,7 @@ namespace NTwain
         {
             get
             {
-                return _xscaling ?? (_xscaling = new CapWrapper<TWFix32>(_source, CapabilityId.ICapXScaling, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _xscaling ?? (_xscaling = new CapWrapper<TWFix32>(_source, CapabilityId.ICapXScaling, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -975,12 +920,7 @@ namespace NTwain
         {
             get
             {
-                return _yscaling ?? (_yscaling = new CapWrapper<TWFix32>(_source, CapabilityId.ICapYScaling, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _yscaling ?? (_yscaling = new CapWrapper<TWFix32>(_source, CapabilityId.ICapYScaling, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -1932,12 +1872,7 @@ namespace NTwain
         {
             get
             {
-                return _mergeHeight ?? (_mergeHeight = new CapWrapper<TWFix32>(_source, CapabilityId.ICapImageMergeHeightThreshold, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _mergeHeight ?? (_mergeHeight = new CapWrapper<TWFix32>(_source, CapabilityId.ICapImageMergeHeightThreshold, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -3250,12 +3185,7 @@ namespace NTwain
         {
             get
             {
-                return _dblFeedLength ?? (_dblFeedLength = new CapWrapper<TWFix32>(_source, CapabilityId.CapDoubleFeedDetectionLength, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _dblFeedLength ?? (_dblFeedLength = new CapWrapper<TWFix32>(_source, CapabilityId.CapDoubleFeedDetectionLength, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 
@@ -3355,12 +3285,7 @@ namespace NTwain
         {
             get
             {
-                return _printVOffset ?? (_printVOffset = new CapWrapper<TWFix32>(_source, CapabilityId.CapPrinterVerticalOffset, ValueExtensions.ConvertToFix32,
-                        value => new TWOneValue
-                        {
-                            Item = (uint)value,// ((uint)dpi) << 16;
-                            ItemType = ItemType.Fix32
-                        }));
+                return _printVOffset ?? (_printVOffset = new CapWrapper<TWFix32>(_source, CapabilityId.CapPrinterVerticalOffset, ValueExtensions.ConvertToFix32, value => value.ToOneValue()));
             }
         }
 

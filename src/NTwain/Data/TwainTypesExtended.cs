@@ -70,6 +70,33 @@ namespace NTwain.Data
             return ToFloat().ToString(CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        /// Converts this to <see cref="TWOneValue"/> for capability set methods.
+        /// </summary>
+        /// <returns></returns>
+        public TWOneValue ToOneValue()
+        {
+            // copy struct parts as-is.
+            // probably has a faster way but can't think now
+
+            byte[] array = new byte[4];
+            var part = BitConverter.GetBytes(Whole);
+            Buffer.BlockCopy(part, 0, array, 0, 2);
+
+            part = BitConverter.GetBytes(Fraction);
+            Buffer.BlockCopy(part, 0, array, 2, 2);
+
+            var converted = BitConverter.ToUInt32(array, 0);
+            
+            return new TWOneValue
+            {
+                ItemType = ItemType.Fix32,
+                Item = converted
+                // old wrong conversion
+                // (uint)this,// ((uint)dpi) << 16;
+            };
+        }
+
         #region equals
 
         /// <summary>

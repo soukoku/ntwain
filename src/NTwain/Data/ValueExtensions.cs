@@ -16,7 +16,7 @@ namespace NTwain.Data
         /// <typeparam name="TEnum">The type of the enum.</typeparam>
         /// <param name="list">The list.</param>
         /// <returns></returns>
-        public static IList<TEnum> CastToEnum<TEnum>(this IEnumerable<object> list) where TEnum : struct,IConvertible
+        public static IList<TEnum> CastToEnum<TEnum>(this IEnumerable<object> list) where TEnum : struct, IConvertible
         {
             return list.CastToEnum<TEnum>(true);
         }
@@ -27,7 +27,7 @@ namespace NTwain.Data
         /// <param name="list">The list.</param>
         /// <param name="tryUpperWord">set to <c>true</c> for working with bad values.</param>
         /// <returns></returns>
-        public static IList<TEnum> CastToEnum<TEnum>(this IEnumerable<object> list, bool tryUpperWord) where TEnum : struct,IConvertible
+        public static IList<TEnum> CastToEnum<TEnum>(this IEnumerable<object> list, bool tryUpperWord) where TEnum : struct, IConvertible
         {
             return list.Select(o => o.ConvertToEnum<TEnum>(tryUpperWord)).ToList();
         }
@@ -38,7 +38,7 @@ namespace NTwain.Data
         /// <typeparam name="TEnum">The type of the enum.</typeparam>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public static TEnum ConvertToEnum<TEnum>(this object value) where TEnum : struct,IConvertible
+        public static TEnum ConvertToEnum<TEnum>(this object value) where TEnum : struct, IConvertible
         {
             return ConvertToEnum<TEnum>(value, true);
         }
@@ -49,7 +49,7 @@ namespace NTwain.Data
         /// <param name="value">The value.</param>
         /// <param name="tryUpperWord">if set to <c>true</c> [try upper word].</param>
         /// <returns></returns>
-        public static TEnum ConvertToEnum<TEnum>(this object value, bool tryUpperWord) where TEnum : struct,IConvertible
+        public static TEnum ConvertToEnum<TEnum>(this object value, bool tryUpperWord) where TEnum : struct, IConvertible
         {
             if (value != null)
             {
@@ -59,7 +59,7 @@ namespace NTwain.Data
                 if (returnType.IsEnum)
                 {
                     var rawType = Enum.GetUnderlyingType(returnType);
-                        
+
                     if (tryUpperWord)
                     {
                         // small routine to work with bad sources that may put
@@ -76,7 +76,7 @@ namespace NTwain.Data
                     }
                     // old method:
                     // return (TEnum)Enum.ToObject(returnType, value);
-                    
+
                     // new method:
                     // try to convert to enum's underlying type first then cast to the enum
                     return (TEnum)Convert.ChangeType(value, rawType, CultureInfo.InvariantCulture);

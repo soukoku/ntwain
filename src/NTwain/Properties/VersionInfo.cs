@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-[assembly: AssemblyCopyright("Copyright \x00a9 Yin-Chun Wang 2012-2016")]
+[assembly: AssemblyCopyright("Copyright \x00a9 Yin-Chun Wang 2012-2017")]
 [assembly: AssemblyCompany("Yin-Chun Wang")]
 
 [assembly: AssemblyVersion(NTwain.VersionInfo.Release)]
@@ -23,7 +23,7 @@ namespace NTwain
         /// <summary>
         /// The build release version number.
         /// </summary>
-        public const string Build = "3.4.0"; // change this for each nuget release
+        public const string Build = "3.4.1"; // change this for each nuget release
 
 
     }
