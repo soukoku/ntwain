@@ -85,7 +85,7 @@ namespace NTwain
 
         /// <summary>
         /// Gets the file format if applicable.
-        /// This is only available if <see cref="TransferType"/> is <see cref="XferMech.Memory"/>.
+        /// This is only available if <see cref="TransferType"/> is <see cref="XferMech.File"/>.
         /// </summary>
         /// <value>
         /// The file format.

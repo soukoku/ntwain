@@ -97,8 +97,8 @@ namespace Sample.WPF
                             report.Append(cap.Name).AppendLine(":");
                             try
                             {
-                                report.Append('\t').Append("Maybe: ").Append(cap.Supports).AppendLine();
-                                report.Append('\t').Append("Get: ");
+                                report.Append('\t').Append("Supports: ").Append(cap.Supports).AppendLine();
+                                report.Append('\t').Append("Values: ");
                                 foreach (var v in cap.Get())
                                 {
                                     report.Append(v).Append(',');

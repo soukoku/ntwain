@@ -7,12 +7,16 @@ namespace Sample.WPF
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
-	{
-		protected override void OnStartup(StartupEventArgs e)
-		{
+    {
+        public App()
+        {
             UIHooks.EnableHighDpiSupport();
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
             Theme.ApplyTheme(ThemeColor.Light, Accent.Green);
-			base.OnStartup(e);
-		}
-	}
+            base.OnStartup(e);
+        }
+    }
 }
