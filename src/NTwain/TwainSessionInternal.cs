@@ -163,7 +163,7 @@ namespace NTwain
             DisableReason = Message.Null;
             var rc = ReturnCode.Failure;
 
-            _msgLoopHook.Invoke(() =>
+            _msgLoopHook?.Invoke(() =>
             {
                 PlatformInfo.Current.Log.Debug("Thread {0}: EnableSource with {1}.", Thread.CurrentThread.ManagedThreadId, mode);
 
@@ -194,7 +194,7 @@ namespace NTwain
                 _disabling = true;
                 try
                 {
-                    _msgLoopHook.Invoke(() =>
+                    _msgLoopHook?.Invoke(() =>
                     {
                         PlatformInfo.Current.Log.Debug("Thread {0}: DisableSource.", Thread.CurrentThread.ManagedThreadId);
 
@@ -276,7 +276,7 @@ namespace NTwain
 
                 // In any event the trick to get this thing working is to return from the callback first
                 // before trying to process the msg or there will be unpredictable errors.
-                _msgLoopHook.BeginInvoke(() =>
+                _msgLoopHook?.BeginInvoke(() =>
                 {
                     HandleSourceMsg(msg);
                 });

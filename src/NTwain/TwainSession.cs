@@ -280,7 +280,7 @@ namespace NTwain
         public ReturnCode Close()
         {
             var rc = ReturnCode.Failure;
-            _msgLoopHook.Invoke(() =>
+            _msgLoopHook?.Invoke(() =>
             {
                 PlatformInfo.Current.Log.Debug("Thread {0}: CloseManager.", Thread.CurrentThread.ManagedThreadId);
 
@@ -289,6 +289,7 @@ namespace NTwain
                 {
                     PlatformInfo.InternalCurrent.MemoryManager = null;
                     _msgLoopHook.Stop();
+                    _msgLoopHook = null;
                 }
             });
             return rc;
@@ -398,7 +399,7 @@ namespace NTwain
             // success, the return status from DG_CONTROL / DAT_PENDINGXFERS / MSG_ENDXFER may
             // be ignored.
 
-            _msgLoopHook.Invoke(() =>
+            _msgLoopHook?.Invoke(() =>
             {
                 if (targetState < 7 && CurrentSource != null)
                 {
