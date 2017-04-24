@@ -87,7 +87,7 @@ namespace NTwain.Data
             Buffer.BlockCopy(part, 0, array, 2, 2);
 
             var converted = BitConverter.ToUInt32(array, 0);
-            
+
             return new TWOneValue
             {
                 ItemType = ItemType.Fix32,
@@ -1685,7 +1685,7 @@ namespace NTwain.Data
         public DataGroups DataGroup
         {
             get { return (DataGroups)(_supportedGroups & 0xffff); }
-            set { _supportedGroups |= (uint)value; }
+            set { _supportedGroups = ((uint)value & 0xffff) | (0xffff0000 & _supportedGroups); }
         }
 
         /// <summary>
@@ -1710,7 +1710,7 @@ namespace NTwain.Data
         public DataFunctionalities DataFunctionalities
         {
             get { return (DataFunctionalities)(_supportedGroups & 0xffff0000); }
-            set { _supportedGroups |= (uint)value; }
+            set { _supportedGroups = ((uint)value & 0xffff0000) | (0x0000ffff & _supportedGroups); }
         }
 
         /// <summary>

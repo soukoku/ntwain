@@ -49,5 +49,27 @@ namespace NTwain.Tests.Data
             string badString = new String('a', overLength);
             target.ProductName = badString;
         }
+
+        [TestMethod]
+        public void Setting_and_Unsetting_the_Shared_Flag_Properties_Works()
+        {
+            TWIdentity id = new TWIdentity();
+
+            // these 2 flag properties are store in same int value so needs to test together
+
+            id.DataFunctionalities = DataFunctionalities.App2;
+            id.DataGroup = DataGroups.Audio;
+            Assert.AreEqual(DataFunctionalities.App2, id.DataFunctionalities);
+            Assert.AreEqual(DataGroups.Audio, id.DataGroup);
+
+            // clear needs to be tested 
+            id.DataFunctionalities = DataFunctionalities.None;
+            Assert.AreEqual(DataFunctionalities.None, id.DataFunctionalities);
+            Assert.AreEqual(DataGroups.Audio, id.DataGroup, "Cleared incorrectly.");
+
+            id.DataGroup = DataGroups.None;
+            Assert.AreEqual(DataGroups.None, id.DataGroup);
+        }
+        
     }
 }
