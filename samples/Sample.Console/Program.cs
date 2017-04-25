@@ -22,7 +22,14 @@ namespace Sample
             // just an amusing example to do twain in console without UI
             ThreadPool.QueueUserWorkItem(o =>
             {
-                DoTwainWork();
+                try
+                {
+                    DoTwainWork();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("ERROR: " + ex.ToString());
+                }
             });
             Console.WriteLine("Test started, press Enter to exit.");
             Console.ReadLine();

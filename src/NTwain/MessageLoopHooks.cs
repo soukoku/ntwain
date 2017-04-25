@@ -1,5 +1,6 @@
 ﻿using NTwain.Internals;
 using System;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Interop;
 
@@ -47,11 +48,32 @@ namespace NTwain
             }
             else
             {
+                Exception error = null;
                 SyncContext.Send(o =>
                 {
-                    action();
+                    try
+                    {
+                        action();
+                    }
+                    catch (Exception ex)
+                    {
+                        error = ex;
+                    }
                 }, null);
+
+                if (error != null) { Rethrow(error); }
             }
+        }
+
+        /// <summary>
+        /// Rethrows the specified excetion while keeping stack trace.
+        /// </summary>
+        /// <param name="ex">The ex.</param>
+        protected static void Rethrow(Exception ex)
+        {
+            typeof(Exception).GetMethod("PrepForRemoting",
+                BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(ex, new object[0]);
+            throw ex;
         }
 
         internal void ThrowInvalidOp()

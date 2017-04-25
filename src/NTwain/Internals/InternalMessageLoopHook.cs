@@ -71,6 +71,8 @@ namespace NTwain.Internals
         {
             if (_dispatcher == null) { throw new InvalidOperationException(Resources.MsgLoopUnavailble); }
 
+            Exception error = null;
+
             if (_dispatcher.CheckAccess())
             {
                 action();
@@ -85,6 +87,7 @@ namespace NTwain.Internals
                         {
                             action();
                         }
+                        catch (Exception ex) { error = ex; }
                         finally
                         {
                             man.Set();
@@ -95,8 +98,17 @@ namespace NTwain.Internals
             }
             else
             {
-                _dispatcher.Invoke(DispatcherPriority.Normal, action);
+                _dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+                {
+                    try
+                    {
+                        action();
+                    }
+                    catch (Exception ex) { error = ex; }
+                }));
             }
+
+            if (error != null) { Rethrow(error); }
         }
     }
 }
