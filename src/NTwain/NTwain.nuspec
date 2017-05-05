@@ -8,7 +8,7 @@
     <owners>$author$</owners>
     <licenseUrl>https://bitbucket.org/soukoku/ntwain/src/15de55c6314f14ab2b1cb22f64397d9487c783d0/LICENSE.txt?at=master</licenseUrl>
     <projectUrl>https://bitbucket.org/soukoku/ntwain</projectUrl>
-    <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
+    <iconUrl>https://bytebucket.org/soukoku/ntwain/raw/6927ac18780cebbfa33ee7bc4864b9a6777c5fb6/Scanner-Icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>This release supports TWAIN 2.3.</releaseNotes>
