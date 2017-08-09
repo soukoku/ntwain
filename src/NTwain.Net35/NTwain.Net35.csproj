@@ -79,6 +79,9 @@
     <Compile Include="..\NTwain\DeviceEventArgs.cs">
       <Link>DeviceEventArgs.cs</Link>
     </Compile>
+    <Compile Include="..\NTwain\ICapabilities.cs">
+      <Link>ICapabilities.cs</Link>
+    </Compile>
     <Compile Include="..\NTwain\ICapWrapper.cs">
       <Link>ICapWrapper.cs</Link>
     </Compile>

@@ -265,7 +265,7 @@ namespace NTwain
         /// <value>
         /// The capabilities.
         /// </value>
-        public Capabilities Capabilities
+        public ICapabilities Capabilities
         {
             get { return _caps ?? (_caps = new Capabilities(this)); }
         }

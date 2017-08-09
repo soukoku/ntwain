@@ -9,7 +9,7 @@ namespace NTwain
     /// <summary>
     /// Exposes capabilities of a data source as properties.
     /// </summary>
-    public class Capabilities
+    public class Capabilities : ICapabilities
     {
         IDataSource _source;
 

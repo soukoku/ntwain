@@ -10,7 +10,7 @@ namespace NTwain
     /// </summary>
     public static class WpfImageTools
     {
-        // <summary>
+        /// <summary>
         /// Loads a <see cref="Stream" /> into WPF <see cref="BitmapSource" />. The image created
         /// will be a copy so the stream can be disposed once this call returns.
         /// </summary>

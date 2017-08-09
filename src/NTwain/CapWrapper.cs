@@ -27,11 +27,15 @@ namespace NTwain
         /// <param name="source">The source.</param>
         /// <param name="capability">The capability.</param>
         /// <param name="getConversionRoutine">The value conversion routine in Get methods.</param>
-        /// <exception cref="System.ArgumentNullException">
+        /// <param name="readOnly">if set to <c>true</c> then make this cap read-only.</param>
+        /// <exception cref="ArgumentNullException">
         /// source
         /// or
         /// getConversionRoutine
         /// </exception>
+        /// <exception cref="System.ArgumentNullException">source
+        /// or
+        /// getConversionRoutine</exception>
         public CapWrapper(IDataSource source, CapabilityId capability,
             Func<object, TValue> getConversionRoutine, bool readOnly)
         {

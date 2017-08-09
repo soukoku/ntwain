@@ -78,7 +78,7 @@ namespace NTwain
         /// <value>
         /// The capabilities.
         /// </value>
-        Capabilities Capabilities { get; }
+        ICapabilities Capabilities { get; }
 
         /// <summary>
         /// Gets or sets the current settings (CustomDSData) of this source if supported.

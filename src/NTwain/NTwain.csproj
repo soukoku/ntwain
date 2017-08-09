@@ -62,6 +62,7 @@
     <Compile Include="Data\TwainTypesExtended.cs" />
     <Compile Include="DeviceEventArgs.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="ICapabilities.cs" />
     <Compile Include="IDataSource.cs" />
     <Compile Include="ILog.cs" />
     <Compile Include="Internals\TraceLog.cs" />
