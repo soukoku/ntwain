@@ -276,7 +276,9 @@ namespace NTwain
 
                 // In any event the trick to get this thing working is to return from the callback first
                 // before trying to process the msg or there will be unpredictable errors.
-                _msgLoopHook?.BeginInvoke(() =>
+
+                // changed to sync invoke instead of begininvoke for hp scanjet, not sure if will break other scanners :(
+                _msgLoopHook?.Invoke(() =>
                 {
                     HandleSourceMsg(msg);
                 });
