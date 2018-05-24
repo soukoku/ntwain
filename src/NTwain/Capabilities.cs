@@ -2055,15 +2055,11 @@ namespace NTwain
                             ItemType = ItemType.Bool
                         };
 
-                        // we will never set feeder off, only autofeed and autoscan
-                        // but if it is true then enable feeder needs to be set first
-                        if (value == BoolType.True)
+                        using (TWCapability enabled = new TWCapability(CapabilityId.CapFeederEnabled, one))
                         {
-                            using (TWCapability enabled = new TWCapability(CapabilityId.CapFeederEnabled, one))
-                            {
-                                rc = _source.DGControl.Capability.Set(enabled);
-                            }
+                            rc = _source.DGControl.Capability.Set(enabled);
                         }
+
                         // to really use feeder we must also set autofeed or autoscan, but only
                         // for one of them since setting autoscan also sets autofeed
                         if (CapAutoScan.CanSet)
