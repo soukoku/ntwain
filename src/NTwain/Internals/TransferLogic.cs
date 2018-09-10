@@ -29,7 +29,17 @@ namespace NTwain.Internals
             if (session.DGControl.XferGroup.Get(ref xferGroup) == ReturnCode.Success)
             {
                 xferAudio = (xferGroup & DataGroups.Audio) == DataGroups.Audio;
-                xferImage = xferGroup == DataGroups.None || (xferGroup & DataGroups.Image) == DataGroups.Image;
+                // check for Plustek OpticSlim 2680H, this scanner returns wrong xferGroup after first scanning
+                if (session.CurrentSource.Identity.ProductName.IndexOf("Plustek", StringComparison.OrdinalIgnoreCase) > -1 && 
+                    session.CurrentSource.Identity.ProductName.IndexOf("OpticSlim", StringComparison.OrdinalIgnoreCase) > -1 && 
+                    session.CurrentSource.Identity.ProductName.IndexOf("2680H", StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    xferImage = true;
+                }
+                else
+                {
+                    xferImage = xferGroup == DataGroups.None || (xferGroup & DataGroups.Image) == DataGroups.Image;
+                }
             }
             // some DS end up getting none but we will assume it's image
             if (xferImage)
