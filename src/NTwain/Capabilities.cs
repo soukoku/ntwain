@@ -1977,7 +1977,7 @@ namespace NTwain
                         value => new TWOneValue
                         {
                             Item = value > 0 ? (uint)value : uint.MaxValue,
-                            ItemType = ItemType.UInt16
+                            ItemType = ItemType.Int16
                         }));
             }
         }
