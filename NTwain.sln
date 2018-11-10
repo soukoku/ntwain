@@ -7,8 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{4CE0B9
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
-		Spec\TWAIN-2.4-Specification.pdf = Spec\TWAIN-2.4-Specification.pdf
-		Spec\twain2.4.h = Spec\twain2.4.h
+		twain-doc\TWAIN-2.4-Specification.pdf = twain-doc\TWAIN-2.4-Specification.pdf
+		twain-doc\twain2.4.h = twain-doc\twain2.4.h
 	EndProjectSection
 EndProject
 Global
