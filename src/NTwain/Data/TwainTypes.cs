@@ -87,7 +87,7 @@ namespace NTwain.Data
 
     [StructLayout(LayoutKind.Sequential, Pack = 2),
     BestFitMapping(false, ThrowOnUnmappableChar = true)]
-    partial class TW_AUDIOINFO
+    partial struct TW_AUDIOINFO
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _name;
@@ -150,7 +150,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_CUSTOMDSDATA
+    partial struct TW_CUSTOMDSDATA
     {
         TW_UINT32 _infoLength;
         TW_HANDLE _hData;
@@ -158,7 +158,7 @@ namespace NTwain.Data
 
     [StructLayout(LayoutKind.Sequential, Pack = 2),
     BestFitMapping(false, ThrowOnUnmappableChar = true)]
-    partial class TW_DEVICEEVENT
+    partial struct TW_DEVICEEVENT
     {
         TW_UINT32 _event;
 
@@ -198,7 +198,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_EVENT
+    partial struct TW_EVENT
     {
         TW_MEMREF _pEvent;
         TW_UINT16 _tWMessage;
@@ -217,7 +217,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_EXTIMAGEINFO
+    partial struct TW_EXTIMAGEINFO
     {
         TW_UINT32 _numInfos;
 
@@ -334,8 +334,28 @@ namespace NTwain.Data
         string _productName;
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 2),
+    BestFitMapping(false, ThrowOnUnmappableChar = true)]
+    partial class TW_IDENTITY_64
+    {
+        ulong _id;
+        TW_VERSION _version;
+        TW_UINT16 _protocolMajor;
+        TW_UINT16 _protocolMinor;
+        TW_UINT32 _supportedGroups;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
+        string _manufacturer;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
+        string _productFamily;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
+        string _productName;
+    }
+
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_IMAGEINFO
+    partial struct TW_IMAGEINFO
     {
         TW_FIX32 _xResolution;
         TW_FIX32 _yResolution;
@@ -353,7 +373,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_IMAGELAYOUT
+    partial struct TW_IMAGELAYOUT
     {
         TW_FRAME _frame;
         TW_UINT32 _documentNumber;
@@ -372,7 +392,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_IMAGEMEMXFER
+    partial struct TW_IMAGEMEMXFER
     {
         // TODO: mac & linux are different?
 
@@ -387,7 +407,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_JPEGCOMPRESSION
+    partial struct TW_JPEGCOMPRESSION
     {
         TW_UINT16 _colorSpace;
         TW_UINT32 _subSampling;
@@ -411,7 +431,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_METRICS
+    partial struct TW_METRICS
     {
         TW_UINT32 _sizeOf;
         TW_UINT32 _imageCount;
@@ -427,7 +447,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_PALETTE8
+    partial struct TW_PALETTE8
     {
         TW_UINT16 _numColors;
         TW_UINT16 _paletteType;
@@ -437,7 +457,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_PASSTHRU
+    partial struct TW_PASSTHRU
     {
         TW_MEMREF _pCommand;
         TW_UINT32 _commandBytes;
@@ -448,7 +468,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_PENDINGXFERS
+    partial struct TW_PENDINGXFERS
     {
         TW_UINT16 _count;
         TW_UINT32 _eOJ;
@@ -476,17 +496,17 @@ namespace NTwain.Data
 
     [StructLayout(LayoutKind.Sequential, Pack = 2),
     BestFitMapping(false, ThrowOnUnmappableChar = true)]
-    partial class TW_SETUPFILEXFER
+    partial struct TW_SETUPFILEXFER
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _fileName;
 
         TW_UINT16 _format;
-        TW_INT16 _vRefNum = -1;
+        TW_INT16 _vRefNum;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_SETUPMEMXFER
+    partial struct TW_SETUPMEMXFER
     {
         TW_UINT32 _minBufSize;
         TW_UINT32 _maxBufSize;
@@ -494,14 +514,14 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_STATUS
+    partial struct TW_STATUS
     {
         TW_UINT16 _conditionCode;
         TW_UINT16 _data;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_STATUSUTF8
+    partial struct TW_STATUSUTF8
     {
         // NOTE: rather than embedding the TWStatus directly I'm using its fields instead
         // so the TWStatus could become a class object. 
@@ -512,7 +532,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_TWAINDIRECT
+    partial struct TW_TWAINDIRECT
     {
         TW_UINT32 _SizeOf;
         TW_UINT16 _CommunicationManager;
@@ -523,7 +543,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_USERINTERFACE
+    partial struct TW_USERINTERFACE
     {
         TW_BOOL _showUI;
         TW_BOOL _modalUI;
@@ -534,7 +554,7 @@ namespace NTwain.Data
             DataGroups dg, DataArgumentType dat, Message msg, TW_MEMREF data);
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_ENTRYPOINT
+    partial struct TW_ENTRYPOINT
     {
         // TODO: linux 64 is different?
         TW_UINT32 _size;
@@ -561,7 +581,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_FILTER_DESCRIPTOR
+    partial struct TW_FILTER_DESCRIPTOR
     {
         TW_UINT32 _size;
         TW_UINT32 _hueStart;
@@ -574,7 +594,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_FILTER
+    partial struct TW_FILTER
     {
         TW_UINT32 _size;
         TW_UINT32 _descriptorCount;

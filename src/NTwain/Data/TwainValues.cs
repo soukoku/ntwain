@@ -1354,7 +1354,7 @@ namespace NTwain.Data
         Ussr = 7,
         UAEmirates = 971,
         UnitedKingdom = 44,
-        Usa = 1,
+        USA = 1,
         Uruguay = 598,
         Vanuatu = 1041,
         VaticanCity = 39,
@@ -1395,7 +1395,7 @@ namespace NTwain.Data
         Slovenia = 386,
         SouthKorea = 82,
         Ukraine = 380,
-        USVirginIs = 340,
+        USVirginIslands = 340,
         Vietnam = 84,
     }
 
