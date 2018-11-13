@@ -570,68 +570,7 @@ namespace NTwain.Data
         public string Name { get { return _name; } }
     }
 
-    /// <summary>
-    /// Used in Callback mechanism for sending messages from the Source to the Application.
-    /// Applications version 2.2 or higher must use <see cref="TW_CALLBACK2"/>.
-    /// </summary>
-    partial class TW_CALLBACK
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TW_CALLBACK"/> class.
-        /// </summary>
-        /// <param name="callback">The callback function’s entry point.</param>
-        public TW_CALLBACK(CallbackDelegate callback)
-        {
-            _callBackProc = callback;
-        }
 
-        ///// <summary>
-        ///// An application defined reference constant.
-        ///// </summary>
-        ///// <value>
-        ///// The reference constant.
-        ///// </value>
-        //public uint RefCon { get { return _refCon; } set { _refCon = value; } }
-
-        ///// <summary>
-        ///// Initialized to any valid DG_CONTROL / DAT_NULL message.
-        ///// </summary>
-        ///// <value>
-        ///// The message.
-        ///// </value>
-        //public short Message { get { return _message; } set { _message = value; } }
-    }
-    /// <summary>
-    /// Used in the Callback mechanism for sending messages from the Source to the Application.
-    /// </summary>
-    partial class TW_CALLBACK2
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TW_CALLBACK2"/> class.
-        /// </summary>
-        /// <param name="callback">The callback function’s entry point.</param>
-        public TW_CALLBACK2(CallbackDelegate callback)
-        {
-            _callBackProc = callback;
-        }
-
-        ///// <summary>
-        ///// An application defined reference constant. It has a different size on different
-        ///// platforms.
-        ///// </summary>
-        ///// <value>
-        ///// The reference constant.
-        ///// </value>
-        //public UIntPtr RefCon { get { return _refCon; } set { _refCon = value; } }
-
-        ///// <summary>
-        ///// Initialized to any valid DG_CONTROL / DAT_NULL message.
-        ///// </summary>
-        ///// <value>
-        ///// The message.
-        ///// </value>
-        //public short Message { get { return _message; } set { _message = value; } }
-    }
 
     //    /// <summary>
     //    /// Used by an application either to get information about, or control the setting of a capability.
@@ -978,7 +917,7 @@ namespace NTwain.Data
     //    /// <summary>
     //    /// Defines the mapping from an RGB color space device into CIE 1931 (XYZ) color space.
     //    /// </summary>
-    //    public partial class TW_CIECOLOR
+    //    public partial struct TW_CIECOLOR
     //    {
     //        internal TW_CIECOLOR() { }
 
@@ -1442,89 +1381,137 @@ namespace NTwain.Data
         public TW_INFO[] Info { get { return _info; } }
     }
 
-    //    /// <summary>
-    //    /// Provides information about the currently selected device.
-    //    /// </summary>
-    //    public partial class TW_FILESYSTEM
-    //    {
-    //        /// <summary>
-    //        /// The name of the input or source file.
-    //        /// </summary>
-    //        public string InputName { get { return _inputName; } set { _inputName = value; } }
-    //        /// <summary>
-    //        /// The result of an operation or the name of a destination file.
-    //        /// </summary>
-    //        public string OutputName { get { return _outputName; } set { _outputName = value; } }
-    //        /// <summary>
-    //        /// A pointer to Source specific data used to remember state
-    //        /// information, such as the current directory.
-    //        /// </summary>
-    //        public IntPtr Context { get { return _context; } set { _context = value; } }
+    /// <summary>
+    /// Provides information about the currently selected device.
+    /// </summary>
+    public partial struct TW_FILESYSTEM
+    {
+        /// <summary>
+        /// The name of the input or source file.
+        /// </summary>
+        public string InputName
+        {
+            get { return _inputName; }
+            set { _inputName = value; }
+        }
+        /// <summary>
+        /// The result of an operation or the name of a destination file.
+        /// </summary>
+        public string OutputName
+        {
+            get { return _outputName; }
+            set { _outputName = value; }
+        }
+        /// <summary>
+        /// A pointer to Source specific data used to remember state
+        /// information, such as the current directory.
+        /// </summary>
+        public IntPtr Context
+        {
+            get { return _context; }
+            set { _context = value; }
+        }
 
-    //        /// <summary>
-    //        /// When set to TRUE recursively apply the operation. (ex: deletes
-    //        /// all subdirectories in the directory being deleted; or copies all
-    //        /// sub-directories in the directory being copied.
-    //        /// </summary>
-    //        public bool Recursive { get { return _subdirectories == TwainConst.True; } set { _subdirectories = value ? TwainConst.True : TwainConst.False; } }
+        /// <summary>
+        /// When set to TRUE recursively apply the operation. (ex: deletes
+        /// all subdirectories in the directory being deleted; or copies all
+        /// sub-directories in the directory being copied.
+        /// </summary>
+        public bool Recursive
+        {
+            get { return _subdirectories == TwainConst.True; }
+            set { _subdirectories = value ? TwainConst.True : TwainConst.False; }
+        }
 
-    //        /// <summary>
-    //        /// Gets the type of the file.
-    //        /// </summary>
-    //        /// <value>
-    //        /// The type of the file.
-    //        /// </value>
-    //        public FileType FileType { get { return (FileType)_fileType; } set { _fileType = (int)value; } }
+        /// <summary>
+        /// Gets the type of the file.
+        /// </summary>
+        /// <value>
+        /// The type of the file.
+        /// </value>
+        public FileType FileType
+        {
+            get { return (FileType)_fileType; }
+            set { _fileType = (int)value; }
+        }
 
-    //        /// <summary>
-    //        /// If <see cref="NTwain.Data.FileType.Directory"/>, total size of media in bytes.
-    //        /// If <see cref="NTwain.Data.FileType.Image"/>, size of image in bytes.
-    //        /// </summary>
-    //        /// <value>
-    //        /// The size.
-    //        /// </value>
-    //        public uint Size { get { return _size; } set { _size = value; } }
-    //        /// <summary>
-    //        /// The create date of the file, in the form "YYYY/MM/DD
-    //        /// HH:mm:SS:sss" where YYYY is the year, MM is the numerical
-    //        /// month, DD is the numerical day, HH is the hour, mm is the
-    //        /// minute, SS is the second, and sss is the millisecond.
-    //        /// </summary>
-    //        public string CreateTimeDate { get { return _createTimeDate; } set { _createTimeDate = value; } }
-    //        /// <summary>
-    //        /// Last date the file was modified. Same format as <see cref="CreateTimeDate"/>.
-    //        /// </summary>
-    //        public string ModifiedTimeDate { get { return _modifiedTimeDate; } set { _modifiedTimeDate = value; } }
-    //        /// <summary>
-    //        /// The bytes of free space left on the current device.
-    //        /// </summary>
-    //        public uint FreeSpace { get { return _freeSpace; } set { _freeSpace = value; } }
-    //        /// <summary>
-    //        /// An estimate of the amount of space a new image would take
-    //        /// up, based on image layout, resolution and compression.
-    //        /// Dividing this value into the FreeSpace will yield the
-    //        /// approximate number of images that the Device has room for.
-    //        /// </summary>
-    //        public int NewImageSize { get { return _newImageSize; } set { _newImageSize = value; } }
-    //        /// <summary>
-    //        /// If applicable, return the number of <see cref="NTwain.Data.FileType.Image"/> files on the file system including those in all sub-directories.
-    //        /// </summary>
-    //        /// <value>
-    //        /// The number of files.
-    //        /// </value>
-    //        public uint NumberOfFiles { get { return _numberOfFiles; } set { _numberOfFiles = value; } }
-    //        /// <summary>
-    //        /// The number of audio snippets associated with a file of type <see cref="NTwain.Data.FileType.Image"/>.
-    //        /// </summary>
-    //        /// <value>
-    //        /// The number of snippets.
-    //        /// </value>
-    //        public uint NumberOfSnippets { get { return _numberOfSnippets; } set { _numberOfSnippets = value; } }
-    //        /// <summary>
-    //        /// Used to group cameras (ex: front/rear bitonal, front/rear grayscale...).
-    //        /// </summary>
-    //        public uint DeviceGroupMask { get { return _deviceGroupMask; } set { _deviceGroupMask = value; } }
-    //    }
+        /// <summary>
+        /// If <see cref="NTwain.Data.FileType.Directory"/>, total size of media in bytes.
+        /// If <see cref="NTwain.Data.FileType.Image"/>, size of image in bytes.
+        /// </summary>
+        /// <value>
+        /// The size.
+        /// </value>
+        public uint Size { get { return _size; } set { _size = value; } }
+        /// <summary>
+        /// The create date of the file, in the form "YYYY/MM/DD
+        /// HH:mm:SS:sss" where YYYY is the year, MM is the numerical
+        /// month, DD is the numerical day, HH is the hour, mm is the
+        /// minute, SS is the second, and sss is the millisecond.
+        /// </summary>
+        public string CreateTimeDate
+        {
+            get { return _createTimeDate; }
+            set { _createTimeDate = value; }
+        }
+        /// <summary>
+        /// Last date the file was modified. Same format as <see cref="CreateTimeDate"/>.
+        /// </summary>
+        public string ModifiedTimeDate
+        {
+            get { return _modifiedTimeDate; }
+            set { _modifiedTimeDate = value; }
+        }
+        /// <summary>
+        /// The bytes of free space left on the current device.
+        /// </summary>
+        public uint FreeSpace
+        {
+            get { return _freeSpace; }
+            set { _freeSpace = value; }
+        }
+        /// <summary>
+        /// An estimate of the amount of space a new image would take
+        /// up, based on image layout, resolution and compression.
+        /// Dividing this value into the FreeSpace will yield the
+        /// approximate number of images that the Device has room for.
+        /// </summary>
+        public int NewImageSize
+        {
+            get { return _newImageSize; }
+            set { _newImageSize = value; }
+        }
+        /// <summary>
+        /// If applicable, return the number of <see cref="NTwain.Data.FileType.Image"/> files on the file system including those in all sub-directories.
+        /// </summary>
+        /// <value>
+        /// The number of files.
+        /// </value>
+        public uint NumberOfFiles
+        {
+            get { return _numberOfFiles; }
+            set { _numberOfFiles = value; }
+        }
+        /// <summary>
+        /// The number of audio snippets associated with a file of type <see cref="NTwain.Data.FileType.Image"/>.
+        /// </summary>
+        /// <value>
+        /// The number of snippets.
+        /// </value>
+        public uint NumberOfSnippets
+        {
+            get { return _numberOfSnippets; }
+            set { _numberOfSnippets = value; }
+        }
+        /// <summary>
+        /// Used to group cameras (ex: front/rear bitonal, front/rear grayscale...).
+        /// </summary>
+        public uint DeviceGroupMask
+        {
+            get { return _deviceGroupMask; }
+            set { _deviceGroupMask = value; }
+        }
+    }
 
     //    ///// <summary>
     //    ///// This structure is used by the application to specify a set of mapping values to be applied to
@@ -2216,7 +2203,7 @@ namespace NTwain.Data
     //    /// Translates the contents of Status into a localized UTF8string, with the total number of bytes
     //    /// in the string.
     //    /// </summary>
-    //    public sealed partial class TW_STATUSUTF8 : IDisposable
+    //    public sealed partial struct TW_STATUSUTF8 : IDisposable
     //    {
     //        /// <summary>
     //        /// <see cref="TW_STATUS"/> data received from a previous call.
@@ -2295,18 +2282,49 @@ namespace NTwain.Data
     //        #endregion
     //    }
 
-
+    /// <summary>
+    /// Provides identification information about a TWAIN entity. Used to maintain consistent
+    /// communication between entities.
+    /// </summary>
     public partial struct TW_TWAINDIRECT
     {
-        //public TW_TWAINDIRECT()
-        //{
-        //    _SizeOf = (uint)Marshal.SizeOf(this);
-        //}
+        public TW_TWAINDIRECT(ushort manager, IntPtr send, uint sendSize)
+        {
+            _SizeOf = (uint)Marshal.SizeOf(typeof(TW_TWAINDIRECT));
+            _CommunicationManager = manager;
+            _Send = send;
+            _SendSize = sendSize;
+            _Receive = IntPtr.Zero;
+            _ReceiveSize = 0;
+        }
 
+        /// <summary>
+        /// The interpretation of the Send data may be influenced by the communication
+        /// manager that is helping the application connect to the scanner.
+        /// For instance, a task action to “scan” may need to be ignored under some
+        /// circumstances.
+        /// </summary>
         public ushort CommunicationManager { get => _CommunicationManager; }
+        /// <summary>
+        /// A handle to data to be sent from the application to the driver. The application
+        /// owns this handle.If there is no data, this field is set to NULL.
+        /// </summary>
         public IntPtr Send { get => _Send; set => _Send = value; }
+        /// <summary>
+        /// The number of bytes in the Send buffer.
+        /// If there is no data this field is set to 0.
+        /// </summary>
         public uint SendSize { get => _SendSize; set => _SendSize = value; }
+        /// <summary>
+        /// A handle to data sent from the driver to the application.
+        /// The driver creates this handle, the application must free it.
+        /// If there is no data this field is set to NULL.
+        /// </summary>
         public IntPtr Receive { get => _Receive; }
+        /// <summary>
+        /// The number of bytes in the Receive buffer, set by the driver.
+        /// If there is no data this field is set to 0.
+        /// </summary>
         public uint ReceiveSize { get => _ReceiveSize; }
     }
 

@@ -97,19 +97,19 @@ namespace NTwain.Data
 
     
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_CALLBACK
+    partial struct TW_CALLBACK
     {
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        CallbackDelegate _callBackProc;
+        public CallbackDelegate _callBackProc;
         TW_UINT32 _refCon;
         TW_INT16 _message;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_CALLBACK2
+    partial struct TW_CALLBACK2
     {
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        CallbackDelegate _callBackProc;
+        public CallbackDelegate _callBackProc;
         TW_UINTPTR _refCon;
         TW_INT16 _message;
     }
@@ -131,7 +131,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_CIECOLOR
+    partial struct TW_CIECOLOR
     {
         TW_UINT16 _colorSpace;
         TW_INT16 _lowEndian;
@@ -227,7 +227,7 @@ namespace NTwain.Data
 
     [StructLayout(LayoutKind.Explicit, Pack = 2),
     BestFitMapping(false, ThrowOnUnmappableChar = true)]
-    partial class TW_FILESYSTEM
+    partial struct TW_FILESYSTEM
     {
         [FieldOffset(0)]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
