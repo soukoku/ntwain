@@ -1419,8 +1419,8 @@ namespace NTwain.Data
         /// </summary>
         public bool Recursive
         {
-            get { return _subdirectories == TwainConst.True; }
-            set { _subdirectories = value ? TwainConst.True : TwainConst.False; }
+            get { return _recursive == 1; }
+            set { _recursive = value ? 1 : 0; }
         }
 
         /// <summary>
@@ -1687,7 +1687,6 @@ namespace NTwain.Data
             get { return (DataFunctionalities)(_supportedGroups & 0xffff0000); }
             internal set { _supportedGroups = ((uint)value & 0xffff0000) | (0x0000ffff & _supportedGroups); }
         }
-
 
         public string Manufacturer
         {

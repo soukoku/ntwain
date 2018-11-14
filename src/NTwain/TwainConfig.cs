@@ -13,9 +13,11 @@ namespace NTwain
     {
         internal TwainConfig() { }
 
-        public bool PreferLegacyDsm { get; internal set; }
+        //public bool PreferLegacyDsm { get; internal set; }
 
-        public ITW_IDENTITY App { get; internal set; }
+        internal TW_IDENTITY AppWin32 { get; set; }
+
+        internal TW_IDENTITY SrcWin32 { get; set; }
 
         internal IMemoryManager MemoryManager { get; set; }
     }

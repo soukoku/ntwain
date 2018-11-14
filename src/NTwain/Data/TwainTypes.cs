@@ -27,14 +27,6 @@ using TW_UINT8 = System.Byte;    // unsigned char
 // http://www.mono-project.com/Interop_with_Native_Libraries (old)
 // http://www.mono-project.com/docs/advanced/pinvoke/ (new url)
 
-//////////////////////////////////
-// Data structures that
-// are passed to the TWAIN method
-// are defined as classes to reduce
-// ref/out in the low-level calls. 
-// Others continue to be structs.
-//////////////////////////////////
-
 
 namespace NTwain.Data
 {
@@ -241,7 +233,7 @@ namespace NTwain.Data
         TW_MEMREF _context;
 
         [FieldOffset(520)] // not sure why it should be 520 but whatev
-        Int32 Recursive;
+        Int32 _recursive;
         [FieldOffset(520)]
         TW_BOOL _subdirectories;
 

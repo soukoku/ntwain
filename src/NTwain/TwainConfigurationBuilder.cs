@@ -26,20 +26,20 @@ namespace NTwain
             _platform = Environment.OSVersion.Platform;
         }
 
-        /// <summary>
-        /// Specifies which DSM to use. 
-        /// </summary>
-        /// <param name="legacyDsm"></param>
-        /// <returns></returns>
-        public TwainConfigurationBuilder UseDsm(bool legacyDsm = false)
-        {
-            if (legacyDsm)
-            {
-                if (_64bit) throw new InvalidOperationException("Cannot use legacy DSM under 64bit.");
-            }
-            _legacy = legacyDsm;
-            return this;
-        }
+        ///// <summary>
+        ///// Specifies which DSM to use. 
+        ///// </summary>
+        ///// <param name="legacyDsm"></param>
+        ///// <returns></returns>
+        //public TwainConfigurationBuilder UseDsm(bool legacyDsm = false)
+        //{
+        //    if (legacyDsm)
+        //    {
+        //        if (_64bit) throw new InvalidOperationException("Cannot use legacy DSM under 64bit.");
+        //    }
+        //    _legacy = legacyDsm;
+        //    return this;
+        //}
 
         /// <summary>
         /// Specifies what kind of data the app can to handle from TWAIN devices.
@@ -101,7 +101,7 @@ namespace NTwain
         /// <returns></returns>
         public TwainConfig Build()
         {
-            ITW_IDENTITY app = null;
+            var config = new TwainConfig();
 
             // todo: change id based on platform
             switch (_platform)
@@ -110,7 +110,7 @@ namespace NTwain
                 case PlatformID.Unix:
                 case PlatformID.MacOSX:
                 default:
-                    app = new TW_IDENTITY
+                    config.AppWin32 = new TW_IDENTITY
                     {
                         DataFunctionalities = DataFunctionalities.App2,
                         DataGroup = DataGroups.Control | _dg,
@@ -130,12 +130,7 @@ namespace NTwain
                     };
                     break;
             }
-
-            return new TwainConfig
-            {
-                PreferLegacyDsm = _legacy,
-                App = app
-            };
+            return config;
         }
     }
 }
