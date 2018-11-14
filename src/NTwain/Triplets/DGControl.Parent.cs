@@ -10,7 +10,7 @@ namespace NTwain.Triplets
     {
         internal Parent(TwainSession session) : base(session) { }
 
-        public ReturnCode OpenDSM(ref IntPtr hWnd)
+        public ReturnCode OpenDSM(IntPtr hWnd)
         {
             var rc = NativeMethods.DsmWin32(Session.Config.AppWin32, null, 
                 DataGroups.Control, DataArgumentType.Parent, Message.OpenDSM, ref hWnd);
@@ -29,14 +29,14 @@ namespace NTwain.Triplets
                     }
                     else
                     {
-                        rc = CloseDSM(ref hWnd);
+                        rc = CloseDSM(hWnd);
                     }
                 }
             }
             return rc;
         }
 
-        public ReturnCode CloseDSM(ref IntPtr hWnd)
+        public ReturnCode CloseDSM(IntPtr hWnd)
         {
             var rc = NativeMethods.DsmWin32(Session.Config.AppWin32, null, DataGroups.Control, 
                 DataArgumentType.Parent, Message.CloseDSM, ref hWnd);

@@ -89,21 +89,19 @@ namespace NTwain.Data
 
     
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_CALLBACK
+    partial struct TW_CALLBACK
     {
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        CallbackDelegate _callBackProc;
-        TW_UINT32 _refCon;
-        TW_INT16 _message;
+        public TW_MEMREF CallBackProc;
+        TW_UINT32 RefCon;
+        TW_INT16 Message;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_CALLBACK2
+    partial struct TW_CALLBACK2
     {
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        CallbackDelegate _callBackProc;
-        TW_UINTPTR _refCon;
-        TW_INT16 _message;
+        public TW_MEMREF CallBackProc;
+        TW_UINTPTR RefCon;
+        TW_INT16 Message;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -542,6 +540,7 @@ namespace NTwain.Data
         TW_HANDLE _hParent;
     }
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate ReturnCode CallbackDelegate(TW_IDENTITY origin, TW_IDENTITY destination,
             DataGroups dg, DataArgumentType dat, Message msg, TW_MEMREF data);
 

@@ -3,8 +3,11 @@ using NTwain.Triplets;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace NTwain
 {
@@ -14,10 +17,12 @@ namespace NTwain
     public partial class TwainSession
     {
         internal readonly TwainConfig Config;
+
         private IntPtr _hWnd;
-        object _callbackObj; // kept around in this class so it doesn't get gc'ed
         // cache generated twain sources so if you get same source from same session it'll return the same object
         readonly Dictionary<string, DataSource> _ownedSources = new Dictionary<string, DataSource>();
+        // need to keep delegate around to prevent GC?
+        readonly CallbackDelegate _callbackDelegate;
 
         /// <summary>
         /// Constructs a new <see cref="TwainSession"/>.
@@ -26,6 +31,14 @@ namespace NTwain
         public TwainSession(TwainConfig config)
         {
             Config = config;
+            switch (config.Platform)
+            {
+                case PlatformID.MacOSX:
+                case PlatformID.Unix:
+                default:
+                    _callbackDelegate = new CallbackDelegate(HandleWin32Callback);
+                    break;
+            }
         }
 
         /// <summary>
@@ -36,7 +49,7 @@ namespace NTwain
         public ReturnCode Open(IntPtr hWnd)
         {
             _hWnd = hWnd;
-            return DGControl.Parent.OpenDSM(ref hWnd);
+            return DGControl.Parent.OpenDSM(hWnd);
         }
 
         /// <summary>
@@ -52,7 +65,7 @@ namespace NTwain
                 switch (State)
                 {
                     case TwainState.DsmOpened:
-                        rc = DGControl.Parent.CloseDSM(ref _hWnd);
+                        rc = DGControl.Parent.CloseDSM(_hWnd);
                         if (rc != ReturnCode.Success) return rc;
                         break;
                     case TwainState.SourceOpened:
@@ -64,38 +77,37 @@ namespace NTwain
             return rc;
         }
 
-        internal void UpdateCallback()
+        internal void RegisterCallback()
         {
-            if (State < TwainState.S4)
+            if (State == TwainState.S4)
             {
-                _callbackObj = null;
-            }
-            else
-            {
+                var callbackPtr = Marshal.GetFunctionPointerForDelegate(_callbackDelegate);
+
                 var rc = ReturnCode.Failure;
                 // per the spec (8-10) apps for 2.2 or higher uses callback2 so try this first
                 if (Config.AppWin32.ProtocolMajor > 2 ||
                     (Config.AppWin32.ProtocolMajor >= 2 && Config.AppWin32.ProtocolMinor >= 2))
                 {
-                    var cb = new TW_CALLBACK2(HandleCallback);
-                    rc = DGControl.Callback2.RegisterCallback(cb);
-
-                    if (rc == ReturnCode.Success)
+                    var cb = new TW_CALLBACK2 { CallBackProc = callbackPtr };
+                    rc = DGControl.Callback2.RegisterCallback(ref cb);
+                    if (rc == ReturnCode.Success) Debug.WriteLine("Registed Callback2 success.");
+                    else
                     {
-                        _callbackObj = cb;
+
                     }
                 }
 
                 if (rc != ReturnCode.Success)
                 {
                     // always try old callback
-                    var cb = new TW_CALLBACK(HandleCallback);
+                    var cb = new TW_CALLBACK { CallBackProc = callbackPtr };
 
-                    rc = DGControl.Callback.RegisterCallback(cb);
+                    rc = DGControl.Callback.RegisterCallback(ref cb);
 
-                    if (rc == ReturnCode.Success)
+                    if (rc == ReturnCode.Success) Debug.WriteLine("Registed Callback success.");
+                    else
                     {
-                        _callbackObj = cb;
+
                     }
                 }
             }
@@ -108,8 +120,7 @@ namespace NTwain
         /// <returns></returns>
         public IEnumerable<DataSource> GetSources()
         {
-            TW_IDENTITY srcId;
-            var rc = DGControl.Identity.GetFirst(out srcId);
+            var rc = DGControl.Identity.GetFirst(out TW_IDENTITY srcId);
             while (rc == ReturnCode.Success)
             {
                 yield return GetSourceSingleton(srcId);
@@ -124,8 +135,7 @@ namespace NTwain
         {
             get
             {
-                TW_IDENTITY src;
-                if (DGControl.Identity.GetDefault(out src) == ReturnCode.Success)
+                if (DGControl.Identity.GetDefault(out TW_IDENTITY src) == ReturnCode.Success)
                 {
                     return GetSourceSingleton(src);
                 }
@@ -151,8 +161,7 @@ namespace NTwain
         /// <returns></returns>
         public DataSource ShowSourceSelector()
         {
-            TW_IDENTITY id;
-            if (DGControl.Identity.UserSelect(out id) == ReturnCode.Success)
+            if (DGControl.Identity.UserSelect(out TW_IDENTITY id) == ReturnCode.Success)
             {
                 return GetSourceSingleton(id);
             }
@@ -182,35 +191,12 @@ namespace NTwain
             return source;
         }
 
-        ReturnCode HandleCallback(TW_IDENTITY origin, TW_IDENTITY destination,
+        ReturnCode HandleWin32Callback(TW_IDENTITY origin, TW_IDENTITY destination,
             DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
         {
-            //if (origin != null && CurrentSource != null && origin.Id == CurrentSource.Identity.Id && State >= S5)
-            //{
-            //    // spec says we must handle this on the thread that enabled the DS.
-            //    // by using the internal dispatcher this will be the case.
-
-            //    // In any event the trick to get this thing working is to return from the callback first
-            //    // before trying to process the msg or there will be unpredictable errors.
-
-            //    // changed to sync invoke instead of begininvoke for hp scanjet.
-            //    if (origin.ProductName.IndexOf("scanjet", StringComparison.OrdinalIgnoreCase) > -1)
-            //    {
-            //        _msgLoopHook?.Invoke(() =>
-            //        {
-            //            HandleSourceMsg(msg);
-            //        });
-            //    }
-            //    else
-            //    {
-            //        _msgLoopHook?.BeginInvoke(() =>
-            //        {
-            //            HandleSourceMsg(msg);
-            //        });
-            //    }
-            //    return ReturnCode.Success;
-            //}
-            return ReturnCode.Failure;
+            Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: {nameof(HandleWin32Callback)}({dg}, {dat}, {msg}, {data})");
+            HandleSourceMsg(msg);
+            return ReturnCode.Success;
         }
     }
 }
