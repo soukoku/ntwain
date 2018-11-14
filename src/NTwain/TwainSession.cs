@@ -54,6 +54,10 @@ namespace NTwain
                         rc = DGControl.Parent.CloseDSM(ref _hWnd);
                         if (rc != ReturnCode.Success) return rc;
                         break;
+                    case TwainState.SourceOpened:
+                        rc = DGControl.Identity.CloseDS(CurrentSource.Identity);
+                        if (rc != ReturnCode.Success) return rc;
+                        break;
                 }
             }
             return rc;
