@@ -16,6 +16,7 @@ namespace NTwain.Triplets
             {
                 Session.State = TwainState.S3;
                 Session.CurrentSource = null;
+                Session.UpdateCallback();
             }
             return rc;
         }
@@ -50,6 +51,7 @@ namespace NTwain.Triplets
             {
                 Session.CurrentSource = Session.GetSourceSingleton(source);
                 Session.State = TwainState.S4;
+                Session.UpdateCallback();
             }
             return rc;
         }

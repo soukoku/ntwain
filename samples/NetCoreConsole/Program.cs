@@ -22,12 +22,14 @@ namespace NetCoreConsole
                 {
                     session.PropertyChanged += Session_PropertyChanged;
 
-                    var handle = IntPtr.Zero;
-                    if (session.Open(ref handle) == NTwain.Data.ReturnCode.Success)
+                    if (session.Open(IntPtr.Zero) == NTwain.Data.ReturnCode.Success)
                     {
                         Console.WriteLine("Available data sources:");
+
+                        DataSource firstSrc = null;
                         foreach (var src in session.GetSources())
                         {
+                            if (firstSrc == null) firstSrc = src;
                             Console.WriteLine($"\t{src}");
                         }
                         Console.WriteLine();
@@ -39,6 +41,18 @@ namespace NetCoreConsole
                         var selectSrc = session.ShowSourceSelector();
                         Console.WriteLine($"Selected data source = {selectSrc}");
                         Console.WriteLine();
+
+                        var targetSrc = selectSrc ?? defaultSrc ?? firstSrc;
+
+                        if (targetSrc != null)
+                        {
+                            TestThisSource(targetSrc);
+                        }
+                        else
+                        {
+                            Console.WriteLine("No data source to test.");
+                            Console.WriteLine();
+                        }
                     }
 
                 }
@@ -50,6 +64,15 @@ namespace NetCoreConsole
 
             Console.WriteLine("Test ended, press Enter to exit...");
             Console.ReadLine();
+        }
+
+        private static void TestThisSource(DataSource targetSrc)
+        {
+            Console.WriteLine($"Testing data source {targetSrc}");
+            Console.WriteLine();
+
+            targetSrc.Open();
+            targetSrc.Close();
         }
 
         private static void Session_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

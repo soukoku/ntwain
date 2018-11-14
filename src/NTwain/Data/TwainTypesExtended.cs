@@ -571,6 +571,69 @@ namespace NTwain.Data
     }
 
 
+    /// <summary>
+    /// Used in Callback mechanism for sending messages from the Source to the Application.
+    /// Applications version 2.2 or higher must use <see cref="TW_CALLBACK2"/>.
+    /// </summary>
+    partial class TW_CALLBACK
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TWCallback"/> class.
+        /// </summary>
+        /// <param name="callback">The callback function’s entry point.</param>
+        public TW_CALLBACK(CallbackDelegate callback)
+        {
+            _callBackProc = callback;
+        }
+
+        ///// <summary>
+        ///// An application defined reference constant.
+        ///// </summary>
+        ///// <value>
+        ///// The reference constant.
+        ///// </value>
+        //public uint RefCon { get { return _refCon; } set { _refCon = value; } }
+
+        ///// <summary>
+        ///// Initialized to any valid DG_CONTROL / DAT_NULL message.
+        ///// </summary>
+        ///// <value>
+        ///// The message.
+        ///// </value>
+        //public short Message { get { return _message; } set { _message = value; } }
+    }
+    /// <summary>
+    /// Used in the Callback mechanism for sending messages from the Source to the Application.
+    /// </summary>
+    partial class TW_CALLBACK2
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TW_CALLBACK2"/> class.
+        /// </summary>
+        /// <param name="callback">The callback function’s entry point.</param>
+        public TW_CALLBACK2(CallbackDelegate callback)
+        {
+            _callBackProc = callback;
+        }
+
+        ///// <summary>
+        ///// An application defined reference constant. It has a different size on different
+        ///// platforms.
+        ///// </summary>
+        ///// <value>
+        ///// The reference constant.
+        ///// </value>
+        //public UIntPtr RefCon { get { return _refCon; } set { _refCon = value; } }
+
+        ///// <summary>
+        ///// Initialized to any valid DG_CONTROL / DAT_NULL message.
+        ///// </summary>
+        ///// <value>
+        ///// The message.
+        ///// </value>
+        //public short Message { get { return _message; } set { _message = value; } }
+    }
+
 
     //    /// <summary>
     //    /// Used by an application either to get information about, or control the setting of a capability.

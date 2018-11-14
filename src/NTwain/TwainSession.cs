@@ -15,6 +15,7 @@ namespace NTwain
     {
         internal readonly TwainConfig Config;
         private IntPtr _hWnd;
+        object _callbackObj; // kept around in this class so it doesn't get gc'ed
         // cache generated twain sources so if you get same source from same session it'll return the same object
         readonly Dictionary<string, DataSource> _ownedSources = new Dictionary<string, DataSource>();
 
@@ -32,7 +33,7 @@ namespace NTwain
         /// </summary>
         /// <param name="hWnd"></param>
         /// <returns></returns>
-        public ReturnCode Open(ref IntPtr hWnd)
+        public ReturnCode Open(IntPtr hWnd)
         {
             _hWnd = hWnd;
             return DGControl.Parent.OpenDSM(ref hWnd);
@@ -62,6 +63,44 @@ namespace NTwain
             }
             return rc;
         }
+
+        internal void UpdateCallback()
+        {
+            if (State < TwainState.S4)
+            {
+                _callbackObj = null;
+            }
+            else
+            {
+                var rc = ReturnCode.Failure;
+                // per the spec (8-10) apps for 2.2 or higher uses callback2 so try this first
+                if (Config.AppWin32.ProtocolMajor > 2 ||
+                    (Config.AppWin32.ProtocolMajor >= 2 && Config.AppWin32.ProtocolMinor >= 2))
+                {
+                    var cb = new TW_CALLBACK2(HandleCallback);
+                    rc = DGControl.Callback2.RegisterCallback(cb);
+
+                    if (rc == ReturnCode.Success)
+                    {
+                        _callbackObj = cb;
+                    }
+                }
+
+                if (rc != ReturnCode.Success)
+                {
+                    // always try old callback
+                    var cb = new TW_CALLBACK(HandleCallback);
+
+                    rc = DGControl.Callback.RegisterCallback(cb);
+
+                    if (rc == ReturnCode.Success)
+                    {
+                        _callbackObj = cb;
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// Gets list of sources available on the machine.
@@ -141,6 +180,37 @@ namespace NTwain
                 _ownedSources[key] = source = new DataSource(this, sourceId);
             }
             return source;
+        }
+
+        ReturnCode HandleCallback(TW_IDENTITY origin, TW_IDENTITY destination,
+            DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
+        {
+            //if (origin != null && CurrentSource != null && origin.Id == CurrentSource.Identity.Id && State >= S5)
+            //{
+            //    // spec says we must handle this on the thread that enabled the DS.
+            //    // by using the internal dispatcher this will be the case.
+
+            //    // In any event the trick to get this thing working is to return from the callback first
+            //    // before trying to process the msg or there will be unpredictable errors.
+
+            //    // changed to sync invoke instead of begininvoke for hp scanjet.
+            //    if (origin.ProductName.IndexOf("scanjet", StringComparison.OrdinalIgnoreCase) > -1)
+            //    {
+            //        _msgLoopHook?.Invoke(() =>
+            //        {
+            //            HandleSourceMsg(msg);
+            //        });
+            //    }
+            //    else
+            //    {
+            //        _msgLoopHook?.BeginInvoke(() =>
+            //        {
+            //            HandleSourceMsg(msg);
+            //        });
+            //    }
+            //    return ReturnCode.Success;
+            //}
+            return ReturnCode.Failure;
         }
     }
 }

@@ -89,19 +89,19 @@ namespace NTwain.Data
 
     
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial struct TW_CALLBACK
+    partial class TW_CALLBACK
     {
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public CallbackDelegate _callBackProc;
+        CallbackDelegate _callBackProc;
         TW_UINT32 _refCon;
         TW_INT16 _message;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial struct TW_CALLBACK2
+    partial class TW_CALLBACK2
     {
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public CallbackDelegate _callBackProc;
+        CallbackDelegate _callBackProc;
         TW_UINTPTR _refCon;
         TW_INT16 _message;
     }

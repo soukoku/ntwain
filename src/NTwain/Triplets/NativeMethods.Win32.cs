@@ -70,7 +70,7 @@ namespace NTwain.Triplets
             DataGroups dg,
             DataArgumentType dat,
             Message msg,
-            ref TW_CALLBACK data);
+            [In, Out]TW_CALLBACK data);
 
         [DllImport(WinDsmDll, EntryPoint = EntryName)]
         public static extern ReturnCode DsmWin32(
@@ -79,7 +79,7 @@ namespace NTwain.Triplets
             DataGroups dg,
             DataArgumentType dat,
             Message msg,
-            ref TW_CALLBACK2 data);
+            [In, Out]TW_CALLBACK2 data);
 
         [DllImport(WinDsmDll, EntryPoint = EntryName)]
         public static extern ReturnCode DsmWin32(

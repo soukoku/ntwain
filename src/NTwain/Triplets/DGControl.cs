@@ -21,5 +21,11 @@ namespace NTwain.Triplets
 
         Identity _identity;
         internal Identity Identity => _identity ?? (_identity = new Identity(Session));
+
+        Callback _callback;
+        internal Callback Callback => _callback ?? (_callback = new Callback(Session));
+
+        Callback2 _callback2;
+        internal Callback2 Callback2 => _callback2 ?? (_callback2 = new Callback2(Session));
     }
 }
