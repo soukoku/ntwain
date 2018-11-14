@@ -1,5 +1,7 @@
 ﻿using System;
 
+#pragma warning disable 1591
+
 namespace NTwain.Data
 {
     // these are from the corresponding twain.h sections
@@ -2081,3 +2083,5 @@ namespace NTwain.Data
         True = 1
     }
 }
+
+#pragma warning restore 1591

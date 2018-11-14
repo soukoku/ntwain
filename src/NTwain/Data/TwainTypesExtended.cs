@@ -2288,6 +2288,12 @@ namespace NTwain.Data
     /// </summary>
     public partial struct TW_TWAINDIRECT
     {
+        /// <summary>
+        /// Constructs this struct.
+        /// </summary>
+        /// <param name="manager"></param>
+        /// <param name="send"></param>
+        /// <param name="sendSize"></param>
         public TW_TWAINDIRECT(ushort manager, IntPtr send, uint sendSize)
         {
             _SizeOf = (uint)Marshal.SizeOf(typeof(TW_TWAINDIRECT));

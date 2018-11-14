@@ -13,6 +13,7 @@ namespace NetCoreConsole
                 var config = new TwainConfigBuilder()
                     .DefineApp(Assembly.GetExecutingAssembly())
                     .Build();
+
                 Console.WriteLine($"App = {(config.Is64Bit ? "64bit" : "32bit")}");
                 Console.WriteLine($"Platform = {config.Platform}");
                 Console.WriteLine();
@@ -38,8 +39,6 @@ namespace NetCoreConsole
                         var selectSrc = session.ShowSourceSelector();
                         Console.WriteLine($"Selected data source = {selectSrc}");
                         Console.WriteLine();
-
-                        //session.DefaultSource = null;
                     }
 
                 }

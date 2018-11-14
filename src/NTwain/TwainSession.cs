@@ -75,7 +75,7 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Gets/sets the default data source.
+        /// Gets/sets the default data source. Setting to null is not supported.
         /// </summary>
         public DataSource DefaultSource
         {
@@ -90,12 +90,15 @@ namespace NTwain
             }
             set
             {
-                //if (value != null && value.Session != this)
-                //{
-                //    throw new InvalidOperationException("Source is not from this session.");
-                //}
-                DGControl.Identity.Set(value);
-                RaisePropertyChanged(nameof(DefaultSource));
+                if (value != null)
+                {
+                    if (value.Session != this)
+                    {
+                        throw new InvalidOperationException("Source is not from this session.");
+                    }
+                    var rc = DGControl.Identity.Set(value);
+                    RaisePropertyChanged(nameof(DefaultSource));
+                }
             }
         }
 
