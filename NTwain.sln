@@ -11,11 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{4CE0B9
 		twain-doc\twain2.4.h = twain-doc\twain2.4.h
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTwain", "src\NTwain\NTwain.csproj", "{99A8D582-2CC1-479C-859D-C5A528A7B5C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain", "src\NTwain\NTwain.csproj", "{99A8D582-2CC1-479C-859D-C5A528A7B5C3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{FC732BDB-39BD-4064-B6D8-B79E25CFDA4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreConsole", "samples\NetCoreConsole\NetCoreConsole.csproj", "{51EFA206-A46B-48B6-8110-67B07D85C5A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreConsole", "samples\NetCoreConsole\NetCoreConsole.csproj", "{51EFA206-A46B-48B6-8110-67B07D85C5A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetFXConsole", "samples\NetFXConsole\NetFXConsole.csproj", "{30C684E3-7C3E-4579-9E81-6E66236C253D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,12 +33,17 @@ Global
 		{51EFA206-A46B-48B6-8110-67B07D85C5A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51EFA206-A46B-48B6-8110-67B07D85C5A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51EFA206-A46B-48B6-8110-67B07D85C5A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30C684E3-7C3E-4579-9E81-6E66236C253D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30C684E3-7C3E-4579-9E81-6E66236C253D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30C684E3-7C3E-4579-9E81-6E66236C253D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30C684E3-7C3E-4579-9E81-6E66236C253D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{51EFA206-A46B-48B6-8110-67B07D85C5A2} = {FC732BDB-39BD-4064-B6D8-B79E25CFDA4A}
+		{30C684E3-7C3E-4579-9E81-6E66236C253D} = {FC732BDB-39BD-4064-B6D8-B79E25CFDA4A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7459323B-44F6-4E07-8574-E1B4B525086B}

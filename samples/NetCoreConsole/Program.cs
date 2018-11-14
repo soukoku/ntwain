@@ -2,7 +2,7 @@
 using System;
 using System.Reflection;
 
-namespace NetCoreConsole
+namespace ConsoleApp
 {
     class Program
     {
@@ -62,6 +62,7 @@ namespace NetCoreConsole
                 Console.WriteLine("ERROR: " + ex.ToString());
             }
 
+            Console.WriteLine("----------------------------------");
             Console.WriteLine("Test ended, press Enter to exit...");
             Console.ReadLine();
         }
