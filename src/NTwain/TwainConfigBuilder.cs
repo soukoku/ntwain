@@ -1,11 +1,15 @@
 ﻿using NTwain.Data;
+using NTwain.Internals;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 
 namespace NTwain
 {
-    public class TwainConfigurationBuilder
+    /// <summary>
+    /// Builder for generating a <see cref="TwainConfig"/> object.
+    /// </summary>
+    public class TwainConfigBuilder
     {
         private bool _legacy;
         private string _appName;
@@ -20,7 +24,7 @@ namespace NTwain
         /// <summary>
         /// Default ctor.
         /// </summary>
-        public TwainConfigurationBuilder()
+        public TwainConfigBuilder()
         {
             _64bit = IntPtr.Size == 8;
             _platform = Environment.OSVersion.Platform;
@@ -47,7 +51,7 @@ namespace NTwain
         /// <param name="image"></param>
         /// <param name="audio"></param>
         /// <returns></returns>
-        public TwainConfigurationBuilder HandlesDataType(bool image = true, bool audio = false)
+        public TwainConfigBuilder HandlesDataType(bool image = true, bool audio = false)
         {
             DataGroups dg = DataGroups.None;
             if (image) dg |= DataGroups.Image;
@@ -68,7 +72,7 @@ namespace NTwain
         /// <param name="language"></param>
         /// <param name="country"></param>
         /// <returns></returns>
-        public TwainConfigurationBuilder DefineApp(string appName,
+        public TwainConfigBuilder DefineApp(string appName,
             Version appVersion, string companyName = null,
             Language language = Language.EnglishUSA, Country country = Country.USA)
         {
@@ -87,7 +91,7 @@ namespace NTwain
         /// <param name="language"></param>
         /// <param name="country"></param>
         /// <returns></returns>
-        public TwainConfigurationBuilder DefineApp(Assembly appAssembly,
+        public TwainConfigBuilder DefineApp(Assembly appAssembly,
             Language language = Language.EnglishUSA, Country country = Country.USA)
         {
             var info = FileVersionInfo.GetVersionInfo(appAssembly.Location);
@@ -101,15 +105,17 @@ namespace NTwain
         /// <returns></returns>
         public TwainConfig Build()
         {
-            var config = new TwainConfig();
+            var config = new TwainConfig
+            {
+                Platform = _platform,
+                Is64Bit = _64bit
+            };
 
             // todo: change id based on platform
             switch (_platform)
             {
                 case PlatformID.Win32NT:
-                case PlatformID.Unix:
-                case PlatformID.MacOSX:
-                default:
+                    config.MemoryManager = new WinMemoryManager(); // initial default
                     config.AppWin32 = new TW_IDENTITY
                     {
                         DataFunctionalities = DataFunctionalities.App2,
@@ -129,6 +135,10 @@ namespace NTwain
                         },
                     };
                     break;
+                case PlatformID.Unix:
+                case PlatformID.MacOSX:
+                default:
+                    throw new PlatformNotSupportedException($"This platform {_platform} is not supported.");
             }
             return config;
         }

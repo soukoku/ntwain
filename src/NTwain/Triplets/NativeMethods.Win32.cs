@@ -88,7 +88,7 @@ namespace NTwain.Triplets
             DataGroups dg,
             DataArgumentType dat,
             Message msg,
-            ref TW_ENTRYPOINT data);
+            [In, Out]TW_ENTRYPOINT data);
 
         [DllImport(WinDsmDll, EntryPoint = EntryName)]
         public static extern ReturnCode DsmWin32(

@@ -8,18 +8,33 @@ namespace NetCoreConsole
     {
         static void Main(string[] args)
         {
-            var config = new TwainConfigurationBuilder()
-                .DefineApp(Assembly.GetExecutingAssembly())
-                .Build();
-            using (var session = new TwainSession(config))
+            try
             {
-                session.PropertyChanged += Session_PropertyChanged;
+                var config = new TwainConfigBuilder()
+                    .DefineApp(Assembly.GetExecutingAssembly())
+                    .Build();
+                Console.WriteLine($"App = {(config.Is64Bit ? "64bit" : "32bit")}");
+                Console.WriteLine($"Platform = {config.Platform}");
 
-                var handle = IntPtr.Zero;
-                session.Open(ref handle);
+                using (var session = new TwainSession(config))
+                {
+                    session.PropertyChanged += Session_PropertyChanged;
 
+                    var handle = IntPtr.Zero;
+                    if (session.Open(ref handle) == NTwain.Data.ReturnCode.Success)
+                    {
+
+                    }
+
+                }
+
+                Console.WriteLine("Test ended, press Enter to exit...");
+                Console.ReadLine();
             }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR: " + ex.ToString());
+            }
         }
 
         private static void Session_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -27,7 +42,7 @@ namespace NetCoreConsole
             var session = (TwainSession)sender;
             if (e.PropertyName == "State")
             {
-                Console.WriteLine($"State changed to {session.State}");
+                Console.WriteLine($"Session state changed to {session.State}");
             }
         }
     }

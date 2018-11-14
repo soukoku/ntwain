@@ -2364,19 +2364,18 @@ namespace NTwain.Data
     }
 
 
-
     /// <summary>
     /// Provides entry points required by TWAIN 2.0 Applications and Sources.
     /// </summary>
-    partial struct TW_ENTRYPOINT : IMemoryManager
+    partial class TW_ENTRYPOINT : IMemoryManager
     {
-        ///// <summary>
-        ///// Initializes a new instance of the <see cref="TW_ENTRYPOINT"/> class.
-        ///// </summary>
-        //public TW_ENTRYPOINT()
-        //{
-        //    _size = (uint)Marshal.SizeOf(this);
-        //}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TW_ENTRYPOINT"/> class.
+        /// </summary>
+        public TW_ENTRYPOINT()
+        {
+            _size = (uint)Marshal.SizeOf(this);
+        }
 
         #region IMemoryManager Members
 

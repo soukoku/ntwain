@@ -546,7 +546,7 @@ namespace NTwain.Data
             DataGroups dg, DataArgumentType dat, Message msg, TW_MEMREF data);
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial struct TW_ENTRYPOINT
+    partial class TW_ENTRYPOINT
     {
         // TODO: linux 64 is different?
         TW_UINT32 _size;

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace NTwain.Internals
+namespace NTwain
 {
     /// <summary>
     /// Interface that provides the correct methods for managing memory on data exchanged with TWAIN sources.
     /// </summary>
-    interface IMemoryManager
+    public interface IMemoryManager
     {
         /// <summary>
         /// Function to allocate memory. Calls to this must be coupled with <see cref="Free"/> later.
