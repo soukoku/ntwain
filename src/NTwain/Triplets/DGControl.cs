@@ -14,9 +14,12 @@ namespace NTwain.Triplets
         internal DGControl(TwainSession session) : base(session) { }
 
         Parent _parent;
-        internal Parent Parent => _parent ?? (_parent = new Parent(session));
+        internal Parent Parent => _parent ?? (_parent = new Parent(Session));
 
         EntryPoint _entryPoint;
-        internal EntryPoint EntryPoint => _entryPoint ?? (_entryPoint = new EntryPoint(session));
+        internal EntryPoint EntryPoint => _entryPoint ?? (_entryPoint = new EntryPoint(Session));
+
+        Identity _identity;
+        internal Identity Identity => _identity ?? (_identity = new Identity(Session));
     }
 }

@@ -1,12 +1,25 @@
-﻿namespace NTwain.Triplets
+﻿using System;
+
+namespace NTwain.Triplets
 {
+    /// <summary>
+    /// Base class for grouping triplet operations.
+    /// </summary>
     public abstract class BaseTriplet
     {
-        protected TwainSession session;
+        /// <summary>
+        /// Gets the associated <see cref="TwainSession"/>.
+        /// </summary>
+        protected readonly TwainSession Session;
 
-        public BaseTriplet(TwainSession session)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseTriplet" /> class.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <exception cref="System.ArgumentNullException"></exception>
+        protected BaseTriplet(TwainSession session)
         {
-            this.session = session;
+            this.Session = session ?? throw new ArgumentNullException(nameof(session));
         }
     }
 }

@@ -11,7 +11,7 @@ namespace NTwain
     /// </summary>
     public class TwainConfigBuilder
     {
-        private bool _legacy;
+        //private bool _legacy;
         private string _appName;
         private Version _version;
         private string _companyName;

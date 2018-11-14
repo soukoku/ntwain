@@ -1584,7 +1584,8 @@ namespace NTwain.Data
         /// </returns>
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}.{1} {2}", Major, Minor, Info);
+            if (Info == null) return $"v{Major}.{Minor}";
+            return $"v{Major}.{Minor} ({Info})";
         }
 
         #region equals

@@ -12,20 +12,20 @@ namespace NTwain.Triplets
 
         public ReturnCode OpenDSM(ref IntPtr hWnd)
         {
-            var rc = NativeMethods.DsmWin32(session.Config.AppWin32, null, 
+            var rc = NativeMethods.DsmWin32(Session.Config.AppWin32, null, 
                 DataGroups.Control, DataArgumentType.Parent, Message.OpenDSM, ref hWnd);
             if (rc == ReturnCode.Success)
             {
-                session.State = TwainState.DsmOpened;
+                Session.State = TwainState.DsmOpened;
 
                 // if twain2 then get memory management functions
-                if ((session.Config.AppWin32.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
+                if ((Session.Config.AppWin32.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
                 {
                     TW_ENTRYPOINT entry;
-                    rc = session.DGControl.EntryPoint.Get(out entry);
+                    rc = Session.DGControl.EntryPoint.Get(out entry);
                     if (rc == ReturnCode.Success)
                     {
-                        session.Config.MemoryManager = entry;
+                        Session.Config.MemoryManager = entry;
                     }
                     else
                     {
@@ -38,9 +38,9 @@ namespace NTwain.Triplets
 
         public ReturnCode CloseDSM(ref IntPtr hWnd)
         {
-            var rc = NativeMethods.DsmWin32(session.Config.AppWin32, null, DataGroups.Control, 
+            var rc = NativeMethods.DsmWin32(Session.Config.AppWin32, null, DataGroups.Control, 
                 DataArgumentType.Parent, Message.CloseDSM, ref hWnd);
-            if (rc == ReturnCode.Success) session.State = TwainState.DsmLoaded;
+            if (rc == ReturnCode.Success) Session.State = TwainState.DsmLoaded;
             return rc;
         }
     }

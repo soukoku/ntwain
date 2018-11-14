@@ -310,7 +310,7 @@ namespace NTwain.Data
     partial class TW_IDENTITY
     {
         // TODO: id needs to be 64bit in 64bit?
-        TW_UINT32 _id;
+        internal TW_UINT32 Id;
         TW_VERSION _version;
         TW_UINT16 _protocolMajor;
         TW_UINT16 _protocolMinor;
