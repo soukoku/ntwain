@@ -11,6 +11,10 @@ using System.Threading;
 
 namespace NTwain
 {
+    //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    delegate ReturnCode CallbackDelegate(TW_IDENTITY origin, TW_IDENTITY destination,
+            DataGroups dg, DataArgumentType dat, Message msg, IntPtr data);
+
     /// <summary>
     /// Manages a TWAIN session.
     /// </summary>
@@ -23,6 +27,7 @@ namespace NTwain
         readonly Dictionary<string, DataSource> _ownedSources = new Dictionary<string, DataSource>();
         // need to keep delegate around to prevent GC?
         readonly CallbackDelegate _callbackDelegate;
+
 
         /// <summary>
         /// Constructs a new <see cref="TwainSession"/>.
@@ -79,43 +84,36 @@ namespace NTwain
 
         internal void RegisterCallback()
         {
-            if (State == TwainState.S4)
+            var callbackPtr = Marshal.GetFunctionPointerForDelegate(_callbackDelegate);
+
+            // try new callback first
+            var cb2 = new TW_CALLBACK2 { CallBackProc = callbackPtr };
+            var rc = DGControl.Callback2.RegisterCallback(ref cb2);
+            if (rc == ReturnCode.Success) Debug.WriteLine("Registed Callback2 success.");
+            else
             {
-                var callbackPtr = Marshal.GetFunctionPointerForDelegate(_callbackDelegate);
 
-                var rc = ReturnCode.Failure;
-                // per the spec (8-10) apps for 2.2 or higher uses callback2 so try this first
-                if (Config.AppWin32.ProtocolMajor > 2 ||
-                    (Config.AppWin32.ProtocolMajor >= 2 && Config.AppWin32.ProtocolMinor >= 2))
+            }
+
+
+            if (rc != ReturnCode.Success)
+            {
+                // always register old callback
+                var cb = new TW_CALLBACK { CallBackProc = callbackPtr };
+
+                rc = DGControl.Callback.RegisterCallback(ref cb);
+
+                if (rc == ReturnCode.Success) Debug.WriteLine("Registed Callback success.");
+                else
                 {
-                    var cb = new TW_CALLBACK2 { CallBackProc = callbackPtr };
-                    rc = DGControl.Callback2.RegisterCallback(ref cb);
-                    if (rc == ReturnCode.Success) Debug.WriteLine("Registed Callback2 success.");
-                    else
-                    {
 
-                    }
-                }
-
-                if (rc != ReturnCode.Success)
-                {
-                    // always try old callback
-                    var cb = new TW_CALLBACK { CallBackProc = callbackPtr };
-
-                    rc = DGControl.Callback.RegisterCallback(ref cb);
-
-                    if (rc == ReturnCode.Success) Debug.WriteLine("Registed Callback success.");
-                    else
-                    {
-
-                    }
                 }
             }
         }
 
 
         /// <summary>
-        /// Gets list of sources available on the machine.
+        /// Enumerate list of sources available on the machine.
         /// </summary>
         /// <returns></returns>
         public IEnumerable<DataSource> GetSources()
@@ -168,13 +166,25 @@ namespace NTwain
             return null;
         }
 
+        private DataSource _currentSource;
+
         /// <summary>
         /// Gets the currently open data source.
         /// </summary>
-        /// <value>
-        /// The current source.
-        /// </value>
-        public DataSource CurrentSource { get; internal set; }
+        public DataSource CurrentSource
+        {
+            get { return _currentSource; }
+            internal set
+            {
+                var old = _currentSource;
+                _currentSource = value;
+
+                RaisePropertyChanged(nameof(CurrentSource));
+                old?.RaisePropertyChanged(nameof(DataSource.IsOpen));
+                value?.RaisePropertyChanged(nameof(DataSource.IsOpen));
+            }
+        }
+
 
         internal DataSource GetSourceSingleton(TW_IDENTITY sourceId)
         {
@@ -197,6 +207,17 @@ namespace NTwain
             Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: {nameof(HandleWin32Callback)}({dg}, {dat}, {msg}, {data})");
             HandleSourceMsg(msg);
             return ReturnCode.Success;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return $"Session: {State}";
         }
     }
 }

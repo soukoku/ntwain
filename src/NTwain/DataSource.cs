@@ -9,7 +9,7 @@ namespace NTwain
     /// <summary>
     /// A TWAIN data source.
     /// </summary>
-    public class DataSource
+    public partial class DataSource
     {
         internal readonly TwainSession Session;
 
@@ -21,43 +21,6 @@ namespace NTwain
             this.Identity = src;
             ProtocolVersion = new Version(src.ProtocolMajor, src.ProtocolMinor);
         }
-
-        /// <summary>
-        /// Gets the source name.
-        /// </summary>
-        public string Name => Identity.ProductName;
-
-        /// <summary>
-        /// Gets the source's manufacturer name.
-        /// </summary>
-        public string Manufacturer => Identity.Manufacturer;
-
-        /// <summary>
-        /// Gets the source's product family.
-        /// </summary>
-        public string ProductFamily => Identity.ProductFamily;
-
-        /// <summary>
-        /// Gets the source's version info.
-        /// </summary>
-        public TW_VERSION Version => Identity.Version;
-
-        /// <summary>
-        /// Gets the supported data group.
-        /// </summary>
-        public DataGroups DataGroup => Identity.DataGroup;
-
-        /// <summary>
-        /// Gets the supported TWAIN protocol version.
-        /// </summary>
-        public Version ProtocolVersion { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether this data source is open.
-        /// </summary>
-        public bool IsOpen => Session.State > TwainState.DsmOpened && Session.CurrentSource == this;
-
-
 
         /// <summary>
         /// Opens the source for capability negotiation.

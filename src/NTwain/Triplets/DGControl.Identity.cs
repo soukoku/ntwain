@@ -44,6 +44,8 @@ namespace NTwain.Triplets
 
         public ReturnCode OpenDS(TW_IDENTITY source)
         {
+            Session.StepDown(TwainState.DsmOpened);
+
             var rc = NativeMethods.DsmWin32(Session.Config.AppWin32, IntPtr.Zero,
                 DataGroups.Control, DataArgumentType.Identity, Message.OpenDS, source);
             if (rc == ReturnCode.Success)

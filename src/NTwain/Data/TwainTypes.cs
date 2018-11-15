@@ -540,10 +540,6 @@ namespace NTwain.Data
         TW_HANDLE _hParent;
     }
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    delegate ReturnCode CallbackDelegate(TW_IDENTITY origin, TW_IDENTITY destination,
-            DataGroups dg, DataArgumentType dat, Message msg, TW_MEMREF data);
-
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial class TW_ENTRYPOINT
     {
