@@ -35,6 +35,17 @@ namespace NTwain
         public ReturnCode Close() => Session.DGControl.Identity.CloseDS(Identity);
 
 
+        /// <summary>
+        /// Gets the source status. Useful after getting a non-success return code.
+        /// </summary>
+        /// <returns></returns>
+        public TW_STATUS GetStatus()
+        {
+            TW_STATUS stat = default;
+            var rc = Session.DGControl.Status.GetSourceStatus(ref stat);
+            return stat;
+        }
+
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.

@@ -27,5 +27,8 @@ namespace NTwain.Triplets
 
         Callback2 _callback2;
         internal Callback2 Callback2 => _callback2 ?? (_callback2 = new Callback2(Session));
+
+        Status _status;
+        internal Status Status => _status ?? (_status = new Status(Session));
     }
 }

@@ -82,6 +82,17 @@ namespace NTwain
             return rc;
         }
 
+        /// <summary>
+        /// Gets the manager status. Useful after getting a non-success return code.
+        /// </summary>
+        /// <returns></returns>
+        public TW_STATUS GetStatus()
+        {
+            TW_STATUS stat = default;
+            var rc = DGControl.Status.GetManagerStatus(ref stat);
+            return stat;
+        }
+
         internal void RegisterCallback()
         {
             var callbackPtr = Marshal.GetFunctionPointerForDelegate(_callbackDelegate);
@@ -92,7 +103,8 @@ namespace NTwain
             if (rc == ReturnCode.Success) Debug.WriteLine("Registed Callback2 success.");
             else
             {
-
+                var status = GetStatus();
+                Debug.WriteLine($"Register Callback2 failed with condition code: {status.ConditionCode}.");
             }
 
 
@@ -106,7 +118,8 @@ namespace NTwain
                 if (rc == ReturnCode.Success) Debug.WriteLine("Registed Callback success.");
                 else
                 {
-
+                    var status = GetStatus();
+                    Debug.WriteLine($"Register Callback failed with {status.ConditionCode}.");
                 }
             }
         }
