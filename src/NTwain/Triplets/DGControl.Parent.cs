@@ -21,8 +21,7 @@ namespace NTwain.Triplets
                 // if twain2 then get memory management functions
                 if ((Session.Config.AppWin32.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2)
                 {
-                    TW_ENTRYPOINT entry;
-                    rc = Session.DGControl.EntryPoint.Get(out entry);
+                    rc = Session.DGControl.EntryPoint.Get(out TW_ENTRYPOINT entry);
                     if (rc == ReturnCode.Success)
                     {
                         Session.Config.MemoryManager = entry;

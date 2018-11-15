@@ -989,7 +989,7 @@ namespace NTwain.Data
         /// <summary>
         /// Handle to memory containing InfoLength bytes of data.
         /// </summary>
-        public IntPtr hData { get { return _hData; } set { _hData = value; } }
+        public IntPtr Data { get { return _hData; } set { _hData = value; } }
     }
 
     /// <summary>
@@ -1046,7 +1046,6 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// Embedded in the <see cref="TWGrayResponse"/>, <see cref="TW_PALETTE8"/>, and <see cref="TWRgbResponse"/> structures.
     /// This structure holds the tri-stimulus color palette information for <see cref="TW_PALETTE8"/> structures.
     /// The order of the channels shall match their alphabetic representation. That is, for RGB data, R
     /// shall be channel 1. For CMY data, C shall be channel 1. This allows the application and Source
@@ -1194,7 +1193,7 @@ namespace NTwain.Data
         /// Windows MSG struct). That is, the message the application received from
         /// GetMessage(). On the Macintosh, pEvent is a pointer to an EventRecord.
         /// </summary>
-        public IntPtr pEvent { get { return _pEvent; } set { _pEvent = value; } }
+        public IntPtr Event { get { return _pEvent; } set { _pEvent = value; } }
         /// <summary>
         /// Any message the Source needs to send to the application in
         /// response to processing the event/message. The messages currently defined for
@@ -1970,10 +1969,29 @@ namespace NTwain.Data
         public TW_MEMORY[] HuffmanAC { get { return _huffmanAC; } set { _huffmanAC = value; } }
     }
 
+    /// <summary>
+    /// Provides metrics since the last call to DG_CONTROL / DAT_USERINTERFACE / MSG_ENABLEDS
+    /// </summary>
     public partial struct TW_METRICS
     {
+        /// <summary>
+        /// Set by the application. Specifies the number of bytes in the structure
+        /// </summary>
         public uint SizeOf => _sizeOf;
+        /// <summary>
+        /// The number of images made available for transfer by the driver. This is not
+        /// necessarily the same as the number of images actually transferred, since the
+        /// application may opt to skip transfers or to end without transferring all images.
+        /// This value starts as 0 when the driver is opened with 
+        /// DG_CONTROL / DAT_IDENTITY / MSG_OPENDS, and resets to zero any time 
+        /// DG_CONTROL / DAT_USERINTERFACE / MSG_ENABLEDS is received.
+        /// </summary>
         public uint ImageCount => _imageCount;
+        /// <summary>
+        /// The number of sheets of paper processed by the scanner. This value starts as 0
+        /// when the driver is opened with DG_CONTROL / DAT_IDENTITY / MSG_OPENDS, 
+        /// and resets to zero any time DG_CONTROL / DAT_USERINTERFACE / MSG_ENABLEDS is received.
+        /// </summary>
         public uint SheetCount => _sheetCount;
     }
 
@@ -2024,7 +2042,7 @@ namespace NTwain.Data
         /// <summary>
         /// Pointer to Command buffer.
         /// </summary>
-        public IntPtr pCommand { get { return _pCommand; } set { _pCommand = value; } }
+        public IntPtr Command { get { return _pCommand; } set { _pCommand = value; } }
         /// <summary>
         /// Number of bytes in Command buffer.
         /// </summary>
@@ -2036,7 +2054,7 @@ namespace NTwain.Data
         /// <summary>
         /// Pointer to Data buffer.
         /// </summary>
-        public IntPtr pData { get { return _pData; } set { _pData = value; } }
+        public IntPtr Data { get { return _pData; } set { _pData = value; } }
         /// <summary>
         /// Number of bytes in Data buffer.
         /// </summary>
@@ -2361,7 +2379,7 @@ namespace NTwain.Data
         /// Microsoft Windows only: Application’s window handle. The Source designates
         /// the hWnd as its parent when creating the Source dialog.
         /// </summary>
-        public IntPtr hParent
+        public IntPtr Parent
         {
             //get { return _hParent; } 
             set { _hParent = value; }
@@ -2503,7 +2521,7 @@ namespace NTwain.Data
         /// <value>
         /// The descriptors.
         /// </value>
-        public IntPtr hDescriptors { get { return _hDescriptors; } set { _hDescriptors = value; } }
+        public IntPtr Descriptors { get { return _hDescriptors; } set { _hDescriptors = value; } }
     }
 
 
