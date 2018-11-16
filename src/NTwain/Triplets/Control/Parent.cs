@@ -22,7 +22,7 @@ namespace NTwain.Triplets.Control
                     DataGroups.Control, DataArgumentType.Parent, Message.OpenDSM, ref hWnd);
 
                 isDsm2 = rc == ReturnCode.Success &&
-                    (Session.Config.App32.DataFunctionalities & DataFunctionalities.Dsm2) == DataFunctionalities.Dsm2;
+                    (Session.Config.App32.DataFunctionalities & DataFlags.DSM2) == DataFlags.DSM2;
             }
 
             if (rc == ReturnCode.Success)

@@ -1680,9 +1680,9 @@ namespace NTwain.Data
             internal set { _version = value; }
         }
 
-        public DataFunctionalities DataFunctionalities
+        public DataFlags DataFunctionalities
         {
-            get { return (DataFunctionalities)(_supportedGroups & 0xffff0000); }
+            get { return (DataFlags)(_supportedGroups & 0xffff0000); }
             internal set { _supportedGroups = ((uint)value & 0xffff0000) | (0x0000ffff & _supportedGroups); }
         }
 

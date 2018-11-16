@@ -118,7 +118,7 @@ namespace NTwain
                     config.DefaultMemoryManager = new WinMemoryManager(); // initial default
                     config.App32 = new TW_IDENTITY
                     {
-                        DataFunctionalities = DataFunctionalities.App2,
+                        DataFunctionalities = DataFlags.App2,
                         DataGroup = DataGroups.Control | _dg,
                         Manufacturer = _companyName ?? "Unknown",
                         ProductFamily = _appName ?? "Unknown",

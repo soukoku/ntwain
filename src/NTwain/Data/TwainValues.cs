@@ -1759,12 +1759,12 @@ namespace NTwain.Data
     /// Corresponds to DF_*.
     /// </summary>
     [Flags]
-    public enum DataFunctionalities : uint
+    public enum DataFlags : uint
     {
         None = 0,
-        Dsm2 = 0x10000000,
+        DSM2 = 0x10000000,
         App2 = 0x20000000,
-        Ds2 = 0x40000000,
+        DS2 = 0x40000000,
     }
 
     /// <summary>
