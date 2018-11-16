@@ -10,7 +10,7 @@
         /// Gets the data functionalities for TWAIN 2 detection.
         /// </summary>
         /// <value>The data functionalities.</value>
-        DataFlags DataFunctionalities { get; }
+        DataFlags DataFlags { get; }
 
         /// <summary>
         /// Gets the supported data group. The application will normally set this field to specify which Data
