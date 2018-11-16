@@ -35,9 +35,19 @@ namespace NTwain
 
         //internal TW_IDENTITY Src32 { get; set; }
 
+        IMemoryManager _memMgr;
         /// <summary>
         /// Gets memory manager associated with a <see cref="TwainSession"/>.
         /// </summary>
-        public IMemoryManager MemoryManager { get; internal set; }
+        public IMemoryManager MemoryManager
+        {
+            get
+            {
+                return _memMgr ?? DefaultMemoryManager;
+            }
+            internal set { _memMgr = value; }
+        }
+
+        internal IMemoryManager DefaultMemoryManager { get; set; }
     }
 }

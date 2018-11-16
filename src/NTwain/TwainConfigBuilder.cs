@@ -115,7 +115,7 @@ namespace NTwain
             switch (_platform)
             {
                 case PlatformID.Win32NT:
-                    config.MemoryManager = new WinMemoryManager(); // initial default
+                    config.DefaultMemoryManager = new WinMemoryManager(); // initial default
                     config.App32 = new TW_IDENTITY
                     {
                         DataFunctionalities = DataFunctionalities.App2,

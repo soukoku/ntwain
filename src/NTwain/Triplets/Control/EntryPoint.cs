@@ -16,7 +16,7 @@ namespace NTwain.Triplets.Control
             if (Use32BitData)
             {
                 return NativeMethods.Dsm32(Session.Config.App32, null,
-                DataGroups.Control, DataArgumentType.EntryPoint, Message.Get, entryPoint);
+                    DataGroups.Control, DataArgumentType.EntryPoint, Message.Get, entryPoint);
             }
             return ReturnCode.Failure;
         }

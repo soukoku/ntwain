@@ -15,7 +15,7 @@ namespace NTwain.Triplets.Control
             if (Use32BitData)
             {
                 rc = NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                DataGroups.Control, DataArgumentType.Identity, Message.CloseDS, source);
+                    DataGroups.Control, DataArgumentType.Identity, Message.CloseDS, source);
             }
 
             if (rc == ReturnCode.Success)
@@ -32,7 +32,7 @@ namespace NTwain.Triplets.Control
             if (Use32BitData)
             {
                 return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                DataGroups.Control, DataArgumentType.Identity, Message.GetDefault, source);
+                    DataGroups.Control, DataArgumentType.Identity, Message.GetDefault, source);
             }
             return ReturnCode.Failure;
         }
@@ -44,7 +44,7 @@ namespace NTwain.Triplets.Control
             if (Use32BitData)
             {
                 return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                DataGroups.Control, DataArgumentType.Identity, Message.GetFirst, source);
+                    DataGroups.Control, DataArgumentType.Identity, Message.GetFirst, source);
             }
             return ReturnCode.Failure;
         }
@@ -64,7 +64,7 @@ namespace NTwain.Triplets.Control
             if (Use32BitData)
             {
                 rc = NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                DataGroups.Control, DataArgumentType.Identity, Message.OpenDS, source);
+                    DataGroups.Control, DataArgumentType.Identity, Message.OpenDS, source);
             }
 
             if (rc == ReturnCode.Success)
@@ -81,7 +81,7 @@ namespace NTwain.Triplets.Control
             if (Use32BitData)
             {
                 return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                DataGroups.Control, DataArgumentType.Identity, Message.Set, source?.Identity);
+                    DataGroups.Control, DataArgumentType.Identity, Message.Set, source?.Identity);
             }
             return ReturnCode.Failure;
         }
@@ -92,7 +92,7 @@ namespace NTwain.Triplets.Control
             if (Use32BitData)
             {
                 return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                DataGroups.Control, DataArgumentType.Identity, Message.UserSelect, source);
+                    DataGroups.Control, DataArgumentType.Identity, Message.UserSelect, source);
             }
             return ReturnCode.Failure;
         }

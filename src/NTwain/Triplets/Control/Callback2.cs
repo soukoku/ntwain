@@ -12,7 +12,7 @@ namespace NTwain.Triplets.Control
             if (Use32BitData)
             {
                 return NativeMethods.Dsm32(Session.Config.App32, Session.CurrentSource.Identity,
-                DataGroups.Control, DataArgumentType.Callback2, Message.RegisterCallback, ref callback);
+                    DataGroups.Control, DataArgumentType.Callback2, Message.RegisterCallback, ref callback);
             }
             return ReturnCode.Failure;
         }
