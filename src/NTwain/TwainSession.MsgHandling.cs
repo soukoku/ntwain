@@ -15,7 +15,23 @@ namespace NTwain
     {
         private void HandleSourceMsg(Message msg)
         {
-            
+            switch (msg)
+            {
+                case Message.DeviceEvent:
+                    TW_DEVICEEVENT de = default;
+                    var rc = DGControl.DeviceEvent.Get(ref de);
+                    if (rc == ReturnCode.Success)
+                    {
+                        OnDeviceEvent(new DeviceEventArgs { Data = de });
+                    }
+                    break;
+                case Message.XferReady:
+                    break;
+                case Message.CloseDSReq:
+                    break;
+                case Message.CloseDSOK:
+                    break;
+            }
         }
     }
 }

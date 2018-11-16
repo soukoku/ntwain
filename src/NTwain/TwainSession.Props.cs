@@ -48,6 +48,26 @@ namespace NTwain
         public DGCustom DGCustom { get; set; }
 
 
+
+
+        /// <summary>
+        /// Occurs when the source has generated an event.
+        /// </summary>
+        public event EventHandler<DeviceEventArgs> DeviceEvent;
+
+        /// <summary>
+        /// Raises the <see cref="DeviceEvent"/> event.
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnDeviceEvent(DeviceEventArgs e)
+        {
+            OnDeviceEvent(e);
+            DeviceEvent?.Invoke(this, e);
+        }
+
+
+
+
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
