@@ -836,11 +836,11 @@ namespace NTwain.Data
         /// <summary>
         /// First tri-stimulus value of the CIE space representation.
         /// </summary>
-        public float X { get { return _z; } }
+        public float X { get { return _x; } }
         /// <summary>
         /// Second tri-stimulus value of the CIE space representation.
         /// </summary>
-        public float Y { get { return _z; } }
+        public float Y { get { return _y; } }
         /// <summary>
         /// Third tri-stimulus value of the CIE space representation.
         /// </summary>

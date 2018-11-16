@@ -8,6 +8,7 @@ This project has these features/goals:
 
 * Targets latest TWAIN version (2.4 as of this writing)
 * Supports all the TWAIN functions in the spec (may never happen but will be close).
+* Works with both 32 and 64 bit data sources (eventually)
 
 ## Using the lib
 
