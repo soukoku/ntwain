@@ -48,21 +48,19 @@ namespace NTwain
         public DGCustom DGCustom { get; set; }
 
 
-
-
         /// <summary>
         /// Occurs when the source has generated an event.
         /// </summary>
-        public event EventHandler<DeviceEventArgs> DeviceEvent;
+        public event EventHandler<DeviceEventArgs> DeviceEventReceived;
 
         /// <summary>
-        /// Raises the <see cref="DeviceEvent"/> event.
+        /// Raises the <see cref="DeviceEventReceived"/> event.
         /// </summary>
         /// <param name="e"></param>
-        protected virtual void OnDeviceEvent(DeviceEventArgs e)
+        protected virtual void OnDeviceEventReceived(DeviceEventArgs e)
         {
-            OnDeviceEvent(e);
-            DeviceEvent?.Invoke(this, e);
+            var handler = DeviceEventReceived;
+            handler?.Invoke(this, e);
         }
 
 
@@ -79,8 +77,8 @@ namespace NTwain
         /// <param name="propertyName">Name of the property.</param>
         protected void RaisePropertyChanged(string propertyName)
         {
-            var handle = PropertyChanged;
-            handle?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            var handler = PropertyChanged;
+            handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

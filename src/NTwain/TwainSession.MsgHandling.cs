@@ -22,7 +22,7 @@ namespace NTwain
                     var rc = DGControl.DeviceEvent.Get(ref de);
                     if (rc == ReturnCode.Success)
                     {
-                        OnDeviceEvent(new DeviceEventArgs { Data = de });
+                        OnDeviceEventReceived(new DeviceEventArgs { Data = de });
                     }
                     break;
                 case Message.XferReady:
