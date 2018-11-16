@@ -9,8 +9,12 @@ namespace NTwain.Triplets.Control
 
         public ReturnCode RegisterCallback(ref TW_CALLBACK2 callback)
         {
-            return NativeMethods.Dsm32(Session.Config.App32, Session.CurrentSource.Identity,
+            if (Use32BitData)
+            {
+                return NativeMethods.Dsm32(Session.Config.App32, Session.CurrentSource.Identity,
                 DataGroups.Control, DataArgumentType.Callback2, Message.RegisterCallback, ref callback);
+            }
+            return ReturnCode.Failure;
         }
     }
 }

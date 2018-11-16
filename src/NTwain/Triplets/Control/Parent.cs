@@ -12,8 +12,14 @@ namespace NTwain.Triplets.Control
 
         public ReturnCode OpenDSM(IntPtr hWnd)
         {
-            var rc = NativeMethods.Dsm32(Session.Config.App32, null, 
+            var rc = ReturnCode.Failure;
+
+            if (Use32BitData)
+            {
+                rc = NativeMethods.Dsm32(Session.Config.App32, null,
                 DataGroups.Control, DataArgumentType.Parent, Message.OpenDSM, ref hWnd);
+            }
+
             if (rc == ReturnCode.Success)
             {
                 Session.State = TwainState.DsmOpened;
@@ -37,9 +43,18 @@ namespace NTwain.Triplets.Control
 
         public ReturnCode CloseDSM(IntPtr hWnd)
         {
-            var rc = NativeMethods.Dsm32(Session.Config.App32, null, DataGroups.Control, 
+            var rc = ReturnCode.Failure;
+
+            if (Use32BitData)
+            {
+                rc = NativeMethods.Dsm32(Session.Config.App32, null, DataGroups.Control,
                 DataArgumentType.Parent, Message.CloseDSM, ref hWnd);
-            if (rc == ReturnCode.Success) Session.State = TwainState.DsmLoaded;
+            }
+
+            if (rc == ReturnCode.Success)
+            {
+                Session.State = TwainState.DsmLoaded;
+            }
             return rc;
         }
     }

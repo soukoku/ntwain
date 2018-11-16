@@ -13,8 +13,12 @@ namespace NTwain.Triplets.Control
         public ReturnCode Get(out TW_ENTRYPOINT entryPoint)
         {
             entryPoint = new TW_ENTRYPOINT();
-            return NativeMethods.Dsm32(Session.Config.App32, null, 
+            if (Use32BitData)
+            {
+                return NativeMethods.Dsm32(Session.Config.App32, null,
                 DataGroups.Control, DataArgumentType.EntryPoint, Message.Get, entryPoint);
+            }
+            return ReturnCode.Failure;
         }
     }
 }

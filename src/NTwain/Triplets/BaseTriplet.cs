@@ -20,6 +20,15 @@ namespace NTwain.Triplets
         protected BaseTriplet(TwainSession session)
         {
             this.Session = session ?? throw new ArgumentNullException(nameof(session));
+
+            // windows can always use 32bit structs even in 64bit app
+            Use32BitData = session.Config.Platform == System.PlatformID.Win32NT ||
+                !session.Config.Is64Bit;
         }
+
+        /// <summary>
+        /// Whether to use 32bit data structures.
+        /// </summary>
+        protected readonly bool Use32BitData;
     }
 }
