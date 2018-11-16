@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace NTwain.Triplets
+namespace NTwain.Triplets.Control
 {
     sealed class EntryPoint : BaseTriplet
     {

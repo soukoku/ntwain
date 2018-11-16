@@ -1,7 +1,7 @@
 ﻿using NTwain.Data;
 using NTwain.Internals;
 
-namespace NTwain.Triplets
+namespace NTwain.Triplets.Control
 {
 	sealed class DeviceEvent : BaseTriplet
 	{

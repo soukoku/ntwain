@@ -2,7 +2,7 @@
 using NTwain.Internals;
 using System;
 
-namespace NTwain.Triplets
+namespace NTwain.Triplets.Control
 {
     sealed class Identity : BaseTriplet
     {
