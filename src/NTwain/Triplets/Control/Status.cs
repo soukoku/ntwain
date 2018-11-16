@@ -9,13 +9,13 @@ namespace NTwain.Triplets.Control
 
         public ReturnCode GetManagerStatus(ref TW_STATUS status)
         {
-            return NativeMethods.DsmWin32(Session.Config.AppWin32, null,
+            return NativeMethods.Dsm32(Session.Config.App32, null,
                 DataGroups.Control, DataArgumentType.Status, Message.Get, ref status);
         }
 
         public ReturnCode GetSourceStatus(ref TW_STATUS status)
         {
-            return NativeMethods.DsmWin32(Session.Config.AppWin32, Session.CurrentSource.Identity,
+            return NativeMethods.Dsm32(Session.Config.App32, Session.CurrentSource.Identity,
                 DataGroups.Control, DataArgumentType.Status, Message.Get, ref status);
         }
     }

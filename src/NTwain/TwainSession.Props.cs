@@ -42,10 +42,10 @@ namespace NTwain
         /// </summary>
         public DGAudio DGAudio => dgAudio ?? (dgAudio = new DGAudio(this));
 
-        /// <summary>
-        /// Gets/sets the direct triplet operation entry for custom values.
-        /// </summary>
-        public DGCustom DGCustom { get; set; }
+        ///// <summary>
+        ///// Gets/sets the direct triplet operation entry for custom values.
+        ///// </summary>
+        //public DGCustom DGCustom { get; set; }
 
 
         /// <summary>

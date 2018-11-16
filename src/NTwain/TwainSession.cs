@@ -41,7 +41,7 @@ namespace NTwain
                 case PlatformID.MacOSX:
                 case PlatformID.Unix:
                 default:
-                    _callbackDelegate = new CallbackDelegate(HandleWin32Callback);
+                    _callbackDelegate = new CallbackDelegate(Handle32BitCallback);
                     break;
             }
         }
@@ -214,10 +214,10 @@ namespace NTwain
             return source;
         }
 
-        ReturnCode HandleWin32Callback(TW_IDENTITY origin, TW_IDENTITY destination,
+        ReturnCode Handle32BitCallback(TW_IDENTITY origin, TW_IDENTITY destination,
             DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
         {
-            Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: {nameof(HandleWin32Callback)}({dg}, {dat}, {msg}, {data})");
+            Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: {nameof(Handle32BitCallback)}({dg}, {dat}, {msg}, {data})");
             HandleSourceMsg(msg);
             return ReturnCode.Success;
         }

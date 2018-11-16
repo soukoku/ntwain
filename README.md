@@ -1,12 +1,13 @@
-# TWAIN Application-Side Library
+# TWAIN Application-Library
 
 ## Info
 
-This is a library created to make working with [TWAIN](http://twain.org/) interface possible in dotnet. 
+This is a library created to make working with 
+[TWAIN](http://twain.org/) easier in dotnet. 
 This project has these features/goals:
 
 * Targets latest TWAIN version (2.4 as of this writing)
-* Supports all the TWAIN functions in the spec.
+* Supports all the TWAIN functions in the spec (may never happen but will be close).
 
 ## Using the lib
 

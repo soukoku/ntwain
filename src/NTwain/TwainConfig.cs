@@ -28,9 +28,12 @@ namespace NTwain
 
         //public bool PreferLegacyDsm { get; internal set; }
 
-        internal TW_IDENTITY AppWin32 { get; set; }
+        /// <summary>
+        /// 32bit version of the app identity.
+        /// </summary>
+        internal TW_IDENTITY App32 { get; set; }
 
-        internal TW_IDENTITY SrcWin32 { get; set; }
+        //internal TW_IDENTITY Src32 { get; set; }
 
         /// <summary>
         /// Gets memory manager associated with a <see cref="TwainSession"/>.

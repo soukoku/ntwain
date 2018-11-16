@@ -116,7 +116,7 @@ namespace NTwain
             {
                 case PlatformID.Win32NT:
                     config.MemoryManager = new WinMemoryManager(); // initial default
-                    config.AppWin32 = new TW_IDENTITY
+                    config.App32 = new TW_IDENTITY
                     {
                         DataFunctionalities = DataFunctionalities.App2,
                         DataGroup = DataGroups.Control | _dg,

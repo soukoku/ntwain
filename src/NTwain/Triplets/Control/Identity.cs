@@ -10,7 +10,7 @@ namespace NTwain.Triplets.Control
 
         public ReturnCode CloseDS(TW_IDENTITY source)
         {
-            var rc = NativeMethods.DsmWin32(Session.Config.AppWin32, IntPtr.Zero,
+            var rc = NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
                 DataGroups.Control, DataArgumentType.Identity, Message.CloseDS, source);
             if (rc == ReturnCode.Success)
             {
@@ -23,7 +23,7 @@ namespace NTwain.Triplets.Control
         public ReturnCode GetDefault(out TW_IDENTITY source)
         {
             source = new TW_IDENTITY();
-            return NativeMethods.DsmWin32(Session.Config.AppWin32, IntPtr.Zero,
+            return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
                 DataGroups.Control, DataArgumentType.Identity, Message.GetDefault, source);
         }
 
@@ -31,14 +31,14 @@ namespace NTwain.Triplets.Control
         public ReturnCode GetFirst(out TW_IDENTITY source)
         {
             source = new TW_IDENTITY();
-            return NativeMethods.DsmWin32(Session.Config.AppWin32, IntPtr.Zero,
+            return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
                 DataGroups.Control, DataArgumentType.Identity, Message.GetFirst, source);
         }
 
         public ReturnCode GetNext(out TW_IDENTITY source)
         {
             source = new TW_IDENTITY();
-            return NativeMethods.DsmWin32(Session.Config.AppWin32, IntPtr.Zero,
+            return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
                 DataGroups.Control, DataArgumentType.Identity, Message.GetNext, source);
         }
 
@@ -46,7 +46,7 @@ namespace NTwain.Triplets.Control
         {
             Session.StepDown(TwainState.DsmOpened);
 
-            var rc = NativeMethods.DsmWin32(Session.Config.AppWin32, IntPtr.Zero,
+            var rc = NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
                 DataGroups.Control, DataArgumentType.Identity, Message.OpenDS, source);
             if (rc == ReturnCode.Success)
             {
@@ -59,14 +59,14 @@ namespace NTwain.Triplets.Control
 
         public ReturnCode Set(DataSource source)
         {
-            return NativeMethods.DsmWin32(Session.Config.AppWin32, IntPtr.Zero,
+            return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
                 DataGroups.Control, DataArgumentType.Identity, Message.Set, source?.Identity);
         }
 
         public ReturnCode UserSelect(out TW_IDENTITY source)
         {
             source = new TW_IDENTITY();
-            return NativeMethods.DsmWin32(Session.Config.AppWin32, IntPtr.Zero,
+            return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
                 DataGroups.Control, DataArgumentType.Identity, Message.UserSelect, source);
         }
     }
