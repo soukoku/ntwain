@@ -423,19 +423,70 @@ namespace NTwain.Data
     /// </summary>
     public enum DeviceEvent : uint // using uint to support custom event values
     {
+        /// <summary>
+        /// The automatic capture settings on the device have been changed.
+        /// </summary>
         CheckAutomaticCapture = 0,
+        /// <summary>
+        /// Status of the battery has changed. Sources will report BatteryMinutes or BatteryPercentage
+        /// depending on which capabilities say they support.
+        /// </summary>
         CheckBattery = 1,
+        /// <summary>
+        /// The device has been powered off. If an Application receives this device event, it should call
+        /// CAP_DEVICEONLINE to verify the state of the Source, and then proceed as seems appropriate.
+        /// </summary>
         CheckDeviceOnline = 2,
+        /// <summary>
+        /// The flash setting on the device has been changed.
+        /// </summary>
         CheckFlash = 3,
+        /// <summary>
+        /// The power supply has changed, for example this event would be generated if AC was
+        /// removed from a device, putting it on battery. Scanners may also provide this event to notify
+        /// that a power on reset has taken place, indicating that the device has been power cycled.
+        /// </summary>
         CheckPowerSupply = 4,
+        /// <summary>
+        /// The resolution on the device has changed.
+        /// </summary>
         CheckResolution = 5,
+        /// <summary>
+        /// A device has been added to the Source. See DG_CONTROL / DAT_FILESYSTEM / MSG_CHANGEDIRECTORY 
+        /// and DG_CONTROL / DAT_FILESYSTEM / MSG_GETINFO to get more information about the new device.
+        /// </summary>
         DeviceAdded = 6,
+        /// <summary>
+        /// A device has become unavailable. This is different from TWDC_DEVICEREMOVED, since the
+        /// device is assumed to be connected.
+        /// </summary>
         DeviceOffline = 7,
+        /// <summary>
+        /// A device is ready to capture another image. Applications should be careful when negotiating
+        /// this event, especially in situations where images are gathered quickly, as with automatic
+        /// capture.
+        /// </summary>
         DeviceReady = 8,
+        /// <summary>
+        /// A device has been removed from the Source. This is different from TWDE_DEVICEOFFLINE.
+        /// As soon as this event is received an Application should re-negotiate its current device, since
+        /// that may have been the one that was removed. Sources must default to the TWFY_CAMERA
+        /// device if the current device is removed.
+        /// </summary>
         DeviceRemoved = 9,
         ImageCaptured = 10,
         ImageDeleted = 11,
+        /// <summary>
+        /// Report double feeds to the Application. Because of the asynchronous nature of device events
+        /// there may still be images waiting to be transferred, applications need to decide if they want to
+        /// recover these images or discard them.
+        /// </summary>
         PaperDoubleFeed = 12,
+        /// <summary>
+        /// Report paper jams to the Application. Because of the asynchronous nature of device events
+        /// there may still be images waiting to be transferred, applications need to decide if they want to
+        /// recover these images or discard them.
+        /// </summary>
         PaperJam = 13,
         LampFailure = 14,
         PowerSave = 15,
@@ -1069,59 +1120,226 @@ namespace NTwain.Data
     /// </summary>
     public enum SupportedSize : ushort
     {
+        /// <summary>
+        /// Images will match the maximum scanning dimensions of
+        /// the device. This setting is only applicable to devices that
+        /// have fixed measurable dimensions, such as most
+        /// scanners.
+        /// </summary>
         None = 0,
-        A4 = 1,
-        JisB5 = 2,
+        /// <summary>
+        /// 8.5" x 11.0" (216mm x 280mm)
+        /// </summary>
         USLetter = 3,
+        /// <summary>
+        /// 8.5" x 14.0" (216mm x 356mm)
+        /// </summary>
         USLegal = 4,
-        A5 = 5,
-        IsoB4 = 6,
-        IsoB6 = 7,
+        /// <summary>
+        /// 11.0" x 17.0" (280mm x 432mm)
+        /// </summary>
         USLedger = 9,
+        /// <summary>
+        /// 7.25" x 10.5" (184mm x 267mm)
+        /// </summary>
         USExecutive = 10,
-        A3 = 11,
-        IsoB3 = 12,
-        A6 = 13,
-        C4 = 14,
-        C5 = 15,
-        C6 = 16,
-        FourA0 = 17,
-        TwoA0 = 18,
-        A0 = 19,
-        A1 = 20,
-        A2 = 21,
-        A7 = 22,
-        A8 = 23,
-        A9 = 24,
-        A10 = 25,
-        IsoB0 = 26,
-        IsoB1 = 27,
-        IsoB2 = 28,
-        IsoB5 = 29,
-        IsoB7 = 30,
-        IsoB8 = 31,
-        IsoB9 = 31,
-        IsoB10 = 33,
-        JisB0 = 34,
-        JisB1 = 35,
-        JisB2 = 36,
-        JisB3 = 37,
-        JisB4 = 38,
-        JisB6 = 39,
-        JisB7 = 40,
-        JisB8 = 41,
-        JisB9 = 42,
-        JisB10 = 43,
-        C0 = 44,
-        C1 = 45,
-        C2 = 46,
-        C3 = 47,
-        C7 = 48,
-        C8 = 49,
-        C9 = 50,
-        C10 = 51,
+        /// <summary>
+        /// 5.5" x 8.5" (140mm x 216mm)
+        /// </summary>
         USStatement = 52,
+        /// <summary>
+        /// 90mm x 55mm
+        /// </summary>
         BusinessCard = 53,
+        /// <summary>
+        /// 1682mm x 2378mm
+        /// </summary>
+        FourA0 = 17,
+        /// <summary>
+        /// 1189mm x 1682mm
+        /// </summary>
+        TwoA0 = 18,
+        /// <summary>
+        /// 841mm x 1189mm
+        /// </summary>
+        A0 = 19,
+        /// <summary>
+        /// 594mm x 841mm
+        /// </summary>
+        A1 = 20,
+        /// <summary>
+        /// 420mm x 594mm
+        /// </summary>
+        A2 = 21,
+        /// <summary>
+        /// 297mm x 420mm
+        /// </summary>
+        A3 = 11,
+        /// <summary>
+        /// 210mm x 297mm
+        /// </summary>
+        A4 = 1,
+        /// <summary>
+        /// 148mm x 210mm
+        /// </summary>
+        A5 = 5,
+        /// <summary>
+        /// 105mm x 148mm
+        /// </summary>
+        A6 = 13,
+        /// <summary>
+        /// 74mm x 105mm
+        /// </summary>
+        A7 = 22,
+        /// <summary>
+        /// 52mm x 74mm
+        /// </summary>
+        A8 = 23,
+        /// <summary>
+        /// 37mm x 52mm
+        /// </summary>
+        A9 = 24,
+        /// <summary>
+        /// 26mm x 37mm
+        /// </summary>
+        A10 = 25,
+        /// <summary>
+        /// 1000mm x1414mm
+        /// </summary>
+        IsoB0 = 26,
+        /// <summary>
+        /// 707mm x1000mm
+        /// </summary>
+        IsoB1 = 27,
+        /// <summary>
+        /// 500mm x 707mm
+        /// </summary>
+        IsoB2 = 28,
+        /// <summary>
+        /// 353mm x 500mm
+        /// </summary>
+        IsoB3 = 12,
+        /// <summary>
+        /// 250mm x 353mm
+        /// </summary>
+        IsoB4 = 6,
+        /// <summary>
+        /// 176mm x 250mm
+        /// </summary>
+        IsoB5 = 29,
+        /// <summary>
+        /// 125mm x 176mm
+        /// </summary>
+        IsoB6 = 7,
+        /// <summary>
+        /// 88mm x 125mm
+        /// </summary>
+        IsoB7 = 30,
+        /// <summary>
+        /// 62mm x 88mm
+        /// </summary>
+        IsoB8 = 31,
+        /// <summary>
+        /// 44mm x 62mm
+        /// </summary>
+        IsoB9 = 31,
+        /// <summary>
+        /// 31mm x 44mm
+        /// </summary>
+        IsoB10 = 33,
+        /// <summary>
+        /// 1030mm x1456mm
+        /// </summary>
+        JisB0 = 34,
+        /// <summary>
+        /// 728mm x1030mm
+        /// </summary>
+        JisB1 = 35,
+        /// <summary>
+        /// 515mm x 728mm
+        /// </summary>
+        JisB2 = 36,
+        /// <summary>
+        /// 364mm x 515mm
+        /// </summary>
+        JisB3 = 37,
+        /// <summary>
+        /// 257mm x 364mm
+        /// </summary>
+        JisB4 = 38,
+        /// <summary>
+        /// 182mm x 257mm
+        /// </summary>
+        JisB5 = 2,
+        /// <summary>
+        /// 128mm x 182mm
+        /// </summary>
+        JisB6 = 39,
+        /// <summary>
+        /// 91mm x 128mm
+        /// </summary>
+        JisB7 = 40,
+        /// <summary>
+        /// 64mm x 91mm
+        /// </summary>
+        JisB8 = 41,
+        /// <summary>
+        /// 45mm x 64mm
+        /// </summary>
+        JisB9 = 42,
+        /// <summary>
+        /// 32mm x 45mm
+        /// </summary>
+        JisB10 = 43,
+        /// <summary>
+        /// 917mm x1297mm
+        /// </summary>
+        C0 = 44,
+        /// <summary>
+        /// 648mm x 917mm
+        /// </summary>
+        C1 = 45,
+        /// <summary>
+        /// 458mm x 648mm
+        /// </summary>
+        C2 = 46,
+        /// <summary>
+        /// 324mm x 458mm
+        /// </summary>
+        C3 = 47,
+        /// <summary>
+        /// 229mm x 324mm
+        /// </summary>
+        C4 = 14,
+        /// <summary>
+        /// 162mm x 229mm
+        /// </summary>
+        C5 = 15,
+        /// <summary>
+        /// 114mm x 162mm
+        /// </summary>
+        C6 = 16,
+        /// <summary>
+        /// 81mm x 114mm
+        /// </summary>
+        C7 = 48,
+        /// <summary>
+        /// 57mm x 81mm
+        /// </summary>
+        C8 = 49,
+        /// <summary>
+        /// 40mm x 57mm
+        /// </summary>
+        C9 = 50,
+        /// <summary>
+        /// 28mm x 40mm
+        /// </summary>
+        C10 = 51,
+        /// <summary>
+        /// Added to simplify negotiating for the entire acquisition area of a
+        /// device, since TWSS_NONE was overloaded to mean both "a custom frame" and "the
+        /// maximum image size."
+        /// </summary>
         MaxSize = 54
     }
 
