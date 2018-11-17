@@ -4,7 +4,7 @@
 
 This is a library created to make working with 
 [TWAIN](http://twain.org/) easier in dotnet. 
-This project has these goals:
+V4 of this lib is a work in progress and has these goals:
 
 * Targets latest TWAIN version (2.4 as of this writing)
 * Supports all the TWAIN functions in the spec

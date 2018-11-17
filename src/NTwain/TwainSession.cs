@@ -11,10 +11,6 @@ using System.Threading;
 
 namespace NTwain
 {
-    //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    delegate ReturnCode CallbackDelegate(TW_IDENTITY origin, TW_IDENTITY destination,
-            DataGroups dg, DataArgumentType dat, Message msg, IntPtr data);
-
     /// <summary>
     /// Manages a TWAIN session.
     /// </summary>
@@ -26,7 +22,7 @@ namespace NTwain
         // cache generated twain sources so if you get same source from same session it'll return the same object
         readonly Dictionary<string, DataSource> _ownedSources = new Dictionary<string, DataSource>();
         // need to keep delegate around to prevent GC?
-        readonly CallbackDelegate _callbackDelegate;
+        readonly Callback32 _callback32Delegate;
 
 
         /// <summary>
@@ -41,7 +37,7 @@ namespace NTwain
                 case PlatformID.MacOSX:
                 case PlatformID.Unix:
                 default:
-                    _callbackDelegate = new CallbackDelegate(Handle32BitCallback);
+                    _callback32Delegate = new Callback32(Handle32BitCallback);
                     break;
             }
         }
@@ -107,7 +103,8 @@ namespace NTwain
 
         internal void RegisterCallback()
         {
-            var callbackPtr = Marshal.GetFunctionPointerForDelegate(_callbackDelegate);
+            // TODO: support other platforms
+            var callbackPtr = Marshal.GetFunctionPointerForDelegate(_callback32Delegate);
 
             // try new callback first
             var cb2 = new TW_CALLBACK2 { CallBackProc = callbackPtr };
