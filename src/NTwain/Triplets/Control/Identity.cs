@@ -12,10 +12,29 @@ namespace NTwain.Triplets.Control
         {
             var rc = ReturnCode.Failure;
 
-            if (Use32BitData)
+            if (Is32Bit)
             {
-                rc = NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                    DataGroups.Control, DataArgumentType.Identity, Message.CloseDS, source);
+                if (IsWin)
+                    rc = NativeMethods.DsmWin32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.CloseDS, source);
+                else if (IsLinux)
+                    rc = NativeMethods.DsmLinux32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.CloseDS, source);
+                else if (IsMac)
+                    rc = NativeMethods.DsmMac32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.CloseDS, source);
+            }
+            else
+            {
+                if (IsWin)
+                    rc = NativeMethods.DsmWin64(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.CloseDS, source);
+                else if (IsLinux)
+                    rc = NativeMethods.DsmLinux64(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.CloseDS, source);
+                else if (IsMac)
+                    rc = NativeMethods.DsmMac64(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.CloseDS, source);
             }
 
             if (rc == ReturnCode.Success)
@@ -26,45 +45,34 @@ namespace NTwain.Triplets.Control
             return rc;
         }
 
-        public ReturnCode GetDefault(out TW_IDENTITY source)
-        {
-            source = new TW_IDENTITY();
-            if (Use32BitData)
-            {
-                return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                    DataGroups.Control, DataArgumentType.Identity, Message.GetDefault, source);
-            }
-            return ReturnCode.Failure;
-        }
-
-
-        public ReturnCode GetFirst(out TW_IDENTITY source)
-        {
-            source = new TW_IDENTITY();
-            if (Use32BitData)
-            {
-                return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                    DataGroups.Control, DataArgumentType.Identity, Message.GetFirst, source);
-            }
-            return ReturnCode.Failure;
-        }
-
-        public ReturnCode GetNext(out TW_IDENTITY source)
-        {
-            source = new TW_IDENTITY();
-            return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                DataGroups.Control, DataArgumentType.Identity, Message.GetNext, source);
-        }
-
         public ReturnCode OpenDS(TW_IDENTITY source)
         {
             Session.StepDown(TwainState.DsmOpened);
             var rc = ReturnCode.Failure;
 
-            if (Use32BitData)
+            if (Is32Bit)
             {
-                rc = NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                    DataGroups.Control, DataArgumentType.Identity, Message.OpenDS, source);
+                if (IsWin)
+                    rc = NativeMethods.DsmWin32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.OpenDS, source);
+                else if (IsLinux)
+                    rc = NativeMethods.DsmLinux32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.OpenDS, source);
+                else if (IsMac)
+                    rc = NativeMethods.DsmMac32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.OpenDS, source);
+            }
+            else
+            {
+                if (IsWin)
+                    rc = NativeMethods.DsmWin64(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.OpenDS, source);
+                else if (IsLinux)
+                    rc = NativeMethods.DsmLinux64(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.OpenDS, source);
+                else if (IsMac)
+                    rc = NativeMethods.DsmMac64(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.OpenDS, source);
             }
 
             if (rc == ReturnCode.Success)
@@ -76,24 +84,147 @@ namespace NTwain.Triplets.Control
             return rc;
         }
 
+        public ReturnCode GetDefault(out TW_IDENTITY source)
+        {
+            source = new TW_IDENTITY();
+            if (Is32Bit)
+            {
+                if (IsWin)
+                    return NativeMethods.DsmWin32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.GetDefault, source);
+                if (IsLinux)
+                    return NativeMethods.DsmLinux32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.GetDefault, source);
+                if (IsMac)
+                    return NativeMethods.DsmMac32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.GetDefault, source);
+            }
+
+            if (IsWin)
+                return NativeMethods.DsmWin64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.GetDefault, source);
+            if (IsLinux)
+                return NativeMethods.DsmLinux64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.GetDefault, source);
+            if (IsMac)
+                return NativeMethods.DsmMac64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.GetDefault, source);
+
+            return ReturnCode.Failure;
+        }
+        
+        public ReturnCode GetFirst(out TW_IDENTITY source)
+        {
+            source = new TW_IDENTITY();
+            if (Is32Bit)
+            {
+                if (IsWin)
+                    return NativeMethods.DsmWin32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.GetFirst, source);
+                if (IsLinux)
+                    return NativeMethods.DsmLinux32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.GetFirst, source);
+                if (IsMac)
+                    return NativeMethods.DsmMac32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.GetFirst, source);
+            }
+
+            if (IsWin)
+                return NativeMethods.DsmWin64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.GetFirst, source);
+            if (IsLinux)
+                return NativeMethods.DsmLinux64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.GetFirst, source);
+            if (IsMac)
+                return NativeMethods.DsmMac64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.GetFirst, source);
+
+            return ReturnCode.Failure;
+        }
+
+        public ReturnCode GetNext(out TW_IDENTITY source)
+        {
+            source = new TW_IDENTITY();
+            if (Is32Bit)
+            {
+                if (IsWin)
+                    return NativeMethods.DsmWin32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.GetNext, source);
+                if (IsLinux)
+                    return NativeMethods.DsmLinux32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.GetNext, source);
+                if (IsMac)
+                    return NativeMethods.DsmMac32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.GetNext, source);
+            }
+
+            if (IsWin)
+                return NativeMethods.DsmWin64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.GetNext, source);
+            if (IsLinux)
+                return NativeMethods.DsmLinux64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.GetNext, source);
+            if (IsMac)
+                return NativeMethods.DsmMac64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.GetNext, source);
+
+            return ReturnCode.Failure;
+        }
+
         public ReturnCode Set(DataSource source)
         {
-            if (Use32BitData)
+            if (Is32Bit)
             {
-                return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                    DataGroups.Control, DataArgumentType.Identity, Message.Set, source?.Identity);
+                if (IsWin)
+                    return NativeMethods.DsmWin32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.Set, source?.Identity32);
+                if (IsLinux)
+                    return NativeMethods.DsmLinux32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.Set, source?.Identity32);
+                if (IsMac)
+                    return NativeMethods.DsmMac32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.Set, source?.Identity32);
             }
+
+            if (IsWin)
+                return NativeMethods.DsmWin64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.Set, source?.Identity32);
+            if (IsLinux)
+                return NativeMethods.DsmLinux64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.Set, source?.Identity32);
+            if (IsMac)
+                return NativeMethods.DsmMac64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.Set, source?.Identity32);
+
             return ReturnCode.Failure;
         }
 
         public ReturnCode UserSelect(out TW_IDENTITY source)
         {
             source = new TW_IDENTITY();
-            if (Use32BitData)
+            if (Is32Bit)
             {
-                return NativeMethods.Dsm32(Session.Config.App32, IntPtr.Zero,
-                    DataGroups.Control, DataArgumentType.Identity, Message.UserSelect, source);
+                if (IsWin)
+                    return NativeMethods.DsmWin32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.UserSelect, source);
+                if (IsLinux)
+                    return NativeMethods.DsmLinux32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.UserSelect, source);
+                if (IsMac)
+                    return NativeMethods.DsmMac32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.Identity, Message.UserSelect, source);
             }
+
+            if (IsWin)
+                return NativeMethods.DsmWin64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.UserSelect, source);
+            if (IsLinux)
+                return NativeMethods.DsmLinux64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.UserSelect, source);
+            if (IsMac)
+                return NativeMethods.DsmMac64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.Identity, Message.UserSelect, source);
+
             return ReturnCode.Failure;
         }
     }

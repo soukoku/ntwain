@@ -14,7 +14,7 @@ namespace ConsoleApp
                     .DefineApp(Assembly.GetExecutingAssembly())
                     .Build();
 
-                Console.WriteLine($"App = {(config.Is64Bit ? "64bit" : "32bit")}");
+                Console.WriteLine($"App = {(config.Is32Bit ? "32bit" : "64bit")}");
                 Console.WriteLine($"Platform = {config.Platform}");
                 Console.WriteLine();
 

@@ -10,9 +10,10 @@ namespace NTwain.Triplets
     {
         const string EntryName = "DSM_Entry";
 
-        const string WinDsmDll = "twaindsm.dll";
-        const string LinuxDsmDll = "/usr/local/lib/libtwaindsm.so";
-        const string MacDsmDll = "/Library/Frameworks/TWAINDSM.framework/TWAINDSM";
+        const string WinDll = "twaindsm.dll";
+        const string LinuxDll = "/usr/local/lib/libtwaindsm.so";
+        const string Mac32Dll = "/System/Library/Frameworks/TWAIN.framework/TWAIN";
+        const string Mac64Dll = "/Library/Frameworks/TWAINDSM.framework/TWAINDSM";
 
     }
 }

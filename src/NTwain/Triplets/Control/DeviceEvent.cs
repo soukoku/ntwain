@@ -7,13 +7,31 @@ namespace NTwain.Triplets.Control
 	{
 		internal DeviceEvent(TwainSession session) : base(session) { }
 
-        public ReturnCode Get(ref TW_DEVICEEVENT sourceDeviceEvent)
+        public ReturnCode Get(ref TW_DEVICEEVENT evt)
         {
-            if (Use32BitData)
+            if (Is32Bit)
             {
-                return NativeMethods.Dsm32(Session.Config.App32, Session.CurrentSource.Identity,
-                    DataGroups.Control, DataArgumentType.DeviceEvent, Message.Get, ref sourceDeviceEvent);
+                if (IsWin)
+                    return NativeMethods.DsmWin32(Session.Config.App32, Session.CurrentSource.Identity32,
+                        DataGroups.Control, DataArgumentType.DeviceEvent, Message.Get, ref evt);
+                if (IsLinux)
+                    return NativeMethods.DsmLinux32(Session.Config.App32, Session.CurrentSource.Identity32,
+                        DataGroups.Control, DataArgumentType.DeviceEvent, Message.Get, ref evt);
+                if (IsMac)
+                    return NativeMethods.DsmMac32(Session.Config.App32, Session.CurrentSource.Identity32,
+                        DataGroups.Control, DataArgumentType.DeviceEvent, Message.Get, ref evt);
             }
+
+            if (IsWin)
+                return NativeMethods.DsmWin64(Session.Config.App32, Session.CurrentSource.Identity32,
+                    DataGroups.Control, DataArgumentType.DeviceEvent, Message.Get, ref evt);
+            if (IsLinux)
+                return NativeMethods.DsmLinux64(Session.Config.App32, Session.CurrentSource.Identity32,
+                    DataGroups.Control, DataArgumentType.DeviceEvent, Message.Get, ref evt);
+            if (IsMac)
+                return NativeMethods.DsmMac64(Session.Config.App32, Session.CurrentSource.Identity32,
+                    DataGroups.Control, DataArgumentType.DeviceEvent, Message.Get, ref evt);
+
             return ReturnCode.Failure;
         }
 	}

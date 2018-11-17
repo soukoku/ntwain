@@ -7,23 +7,30 @@ namespace NTwain.Triplets.Control
     {
         internal Status(TwainSession session) : base(session) { }
 
-        public ReturnCode GetManagerStatus(ref TW_STATUS status)
+        public ReturnCode Get(ref TW_STATUS status, DataSource source)
         {
-            if (Use32BitData)
+            if (Is32Bit)
             {
-                return NativeMethods.Dsm32(Session.Config.App32, null,
-                    DataGroups.Control, DataArgumentType.Status, Message.Get, ref status);
+                if (IsWin)
+                    return NativeMethods.DsmWin32(Session.Config.App32, source?.Identity32,
+                        DataGroups.Control, DataArgumentType.Status, Message.Get, ref status);
+                if (IsLinux)
+                    return NativeMethods.DsmLinux32(Session.Config.App32, source?.Identity32,
+                        DataGroups.Control, DataArgumentType.Status, Message.Get, ref status);
+                if (IsMac)
+                    return NativeMethods.DsmMac32(Session.Config.App32, source?.Identity32,
+                        DataGroups.Control, DataArgumentType.Status, Message.Get, ref status);
             }
-            return ReturnCode.Failure;
-        }
+            if (IsWin)
+                return NativeMethods.DsmWin64(Session.Config.App32, source?.Identity32,
+                    DataGroups.Control, DataArgumentType.Status, Message.Get, ref status);
+            if (IsLinux)
+                return NativeMethods.DsmLinux64(Session.Config.App32, source?.Identity32,
+                    DataGroups.Control, DataArgumentType.Status, Message.Get, ref status);
+            if (IsMac)
+                return NativeMethods.DsmMac64(Session.Config.App32, source?.Identity32,
+                    DataGroups.Control, DataArgumentType.Status, Message.Get, ref status);
 
-        public ReturnCode GetSourceStatus(ref TW_STATUS status)
-        {
-            if (Use32BitData)
-            {
-                return NativeMethods.Dsm32(Session.Config.App32, Session.CurrentSource.Identity,
-                    DataGroups.Control, DataArgumentType.Status, Message.Get, ref status);
-            }
             return ReturnCode.Failure;
         }
     }

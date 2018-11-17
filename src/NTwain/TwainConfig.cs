@@ -17,9 +17,9 @@ namespace NTwain
         internal TwainConfig() { }
 
         /// <summary>
-        /// Gets whether the app is running in 64bit.
+        /// Gets whether the app is running in 32bit.
         /// </summary>
-        public bool Is64Bit { get; internal set; }
+        public bool Is32Bit { get; internal set; }
 
         /// <summary>
         /// Gets the platform the app is running on.

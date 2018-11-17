@@ -74,7 +74,7 @@ namespace NTwain
                         if (rc != ReturnCode.Success) return rc;
                         break;
                     case TwainState.SourceOpened:
-                        rc = DGControl.Identity.CloseDS(CurrentSource.Identity);
+                        rc = DGControl.Identity.CloseDS(CurrentSource.Identity32);
                         if (rc != ReturnCode.Success) return rc;
                         break;
                 }
@@ -89,7 +89,7 @@ namespace NTwain
         public TW_STATUS GetStatus()
         {
             TW_STATUS stat = default;
-            var rc = DGControl.Status.GetManagerStatus(ref stat);
+            var rc = DGControl.Status.Get(ref stat, null);
             return stat;
         }
 
@@ -97,10 +97,11 @@ namespace NTwain
         /// Gets the translated string for a <see cref="TW_STATUS"/>.
         /// </summary>
         /// <param name="status"></param>
+        /// <param name="source"></param>
         /// <returns></returns>
-        public string GetLocalizedStatus(ref TW_STATUS status)
+        public string GetLocalizedStatus(ref TW_STATUS status, DataSource source = null)
         {
-            var rc = DGControl.StatusUtf8.Get(ref status, out string message);
+            var rc = DGControl.StatusUtf8.Get(ref status, source, out string message);
             return message;
         }
 

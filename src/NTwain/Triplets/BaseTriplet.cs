@@ -20,15 +20,27 @@ namespace NTwain.Triplets
         protected BaseTriplet(TwainSession session)
         {
             this.Session = session ?? throw new ArgumentNullException(nameof(session));
-
-            // windows can always use 32bit structs even in 64bit app
-            Use32BitData = session.Config.Platform == System.PlatformID.Win32NT ||
-                !session.Config.Is64Bit;
+            
+            Is32Bit = session.Config.Is32Bit;
+            IsWin = session.Config.Platform == System.PlatformID.Win32NT;
+            IsLinux = session.Config.Platform == System.PlatformID.Unix;
+            IsMac = session.Config.Platform == System.PlatformID.MacOSX;
         }
 
         /// <summary>
         /// Whether to use 32bit data structures.
         /// </summary>
-        protected readonly bool Use32BitData;
+        protected readonly bool Is32Bit;
+
+        /// <summary>
+        /// Whether platform is Windows.
+        /// </summary>
+        protected readonly bool IsWin;
+        /// <summary>
+        /// Whether platform is Linux.
+        /// </summary>
+        protected readonly bool IsLinux;
+        /// Whether platform is MacOS.
+        protected readonly bool IsMac;
     }
 }

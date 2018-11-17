@@ -16,10 +16,32 @@ namespace NTwain.Triplets.Control
 
             bool isDsm2 = false;
 
-            if (Use32BitData)
+            if (Is32Bit)
             {
-                rc = NativeMethods.Dsm32(Session.Config.App32, null,
-                    DataGroups.Control, DataArgumentType.Parent, Message.OpenDSM, ref hWnd);
+                if (IsWin)
+                    rc = NativeMethods.DsmWin32(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.OpenDSM, ref hWnd);
+                else if (IsLinux)
+                    rc = NativeMethods.DsmLinux32(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.OpenDSM, ref hWnd);
+                else if (IsMac)
+                    rc = NativeMethods.DsmMac32(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.OpenDSM, ref hWnd);
+                
+                isDsm2 = rc == ReturnCode.Success &&
+                    (Session.Config.App32.DataFlags & DataFlags.DSM2) == DataFlags.DSM2;
+            }
+            else
+            {
+                if (IsWin)
+                    rc = NativeMethods.DsmWin64(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.OpenDSM, ref hWnd);
+                else if (IsLinux)
+                    rc = NativeMethods.DsmLinux64(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.OpenDSM, ref hWnd);
+                else if (IsMac)
+                    rc = NativeMethods.DsmMac64(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.OpenDSM, ref hWnd);
 
                 isDsm2 = rc == ReturnCode.Success &&
                     (Session.Config.App32.DataFlags & DataFlags.DSM2) == DataFlags.DSM2;
@@ -45,10 +67,29 @@ namespace NTwain.Triplets.Control
         {
             var rc = ReturnCode.Failure;
 
-            if (Use32BitData)
+            if (Is32Bit)
             {
-                rc = NativeMethods.Dsm32(Session.Config.App32, null, DataGroups.Control,
-                    DataArgumentType.Parent, Message.CloseDSM, ref hWnd);
+                if (IsWin)
+                    rc = NativeMethods.DsmWin32(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.CloseDSM, ref hWnd);
+                else if (IsLinux)
+                    rc = NativeMethods.DsmLinux32(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.CloseDSM, ref hWnd);
+                else if (IsMac)
+                    rc = NativeMethods.DsmMac32(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.CloseDSM, ref hWnd);
+            }
+            else
+            {
+                if (IsWin)
+                    rc = NativeMethods.DsmWin64(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.CloseDSM, ref hWnd);
+                else if (IsLinux)
+                    rc = NativeMethods.DsmLinux64(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.CloseDSM, ref hWnd);
+                else if (IsMac)
+                    rc = NativeMethods.DsmMac64(Session.Config.App32, null, DataGroups.Control,
+                        DataArgumentType.Parent, Message.CloseDSM, ref hWnd);
             }
 
             if (rc == ReturnCode.Success)

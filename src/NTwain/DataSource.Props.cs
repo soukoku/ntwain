@@ -12,27 +12,27 @@ namespace NTwain
         /// <summary>
         /// Gets the source name.
         /// </summary>
-        public string Name => Identity.ProductName;
+        public string Name => Identity32.ProductName;
 
         /// <summary>
         /// Gets the source's manufacturer name.
         /// </summary>
-        public string Manufacturer => Identity.Manufacturer;
+        public string Manufacturer => Identity32.Manufacturer;
 
         /// <summary>
         /// Gets the source's product family.
         /// </summary>
-        public string ProductFamily => Identity.ProductFamily;
+        public string ProductFamily => Identity32.ProductFamily;
 
         /// <summary>
         /// Gets the source's version info.
         /// </summary>
-        public TW_VERSION Version => Identity.Version;
+        public TW_VERSION Version => Identity32.Version;
 
         /// <summary>
         /// Gets the supported data group.
         /// </summary>
-        public DataGroups DataGroup => Identity.DataGroup;
+        public DataGroups DataGroup => Identity32.DataGroup;
 
         /// <summary>
         /// Gets the supported TWAIN protocol version.

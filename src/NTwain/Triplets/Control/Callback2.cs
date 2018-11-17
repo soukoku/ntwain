@@ -7,13 +7,31 @@ namespace NTwain.Triplets.Control
     {
         internal Callback2(TwainSession session) : base(session) { }
 
-        public ReturnCode RegisterCallback(ref TW_CALLBACK2 callback)
+        public ReturnCode RegisterCallback(ref TW_CALLBACK2 callback2)
         {
-            if (Use32BitData)
+            if (Is32Bit)
             {
-                return NativeMethods.Dsm32(Session.Config.App32, Session.CurrentSource.Identity,
-                    DataGroups.Control, DataArgumentType.Callback2, Message.RegisterCallback, ref callback);
+                if (IsWin)
+                    return NativeMethods.DsmWin32(Session.Config.App32, Session.CurrentSource.Identity32,
+                        DataGroups.Control, DataArgumentType.Callback2, Message.RegisterCallback, ref callback2);
+                if (IsLinux)
+                    return NativeMethods.DsmLinux32(Session.Config.App32, Session.CurrentSource.Identity32,
+                        DataGroups.Control, DataArgumentType.Callback2, Message.RegisterCallback, ref callback2);
+                if (IsMac)
+                    return NativeMethods.DsmMac32(Session.Config.App32, Session.CurrentSource.Identity32,
+                        DataGroups.Control, DataArgumentType.Callback2, Message.RegisterCallback, ref callback2);
             }
+
+            if (IsWin)
+                return NativeMethods.DsmWin64(Session.Config.App32, Session.CurrentSource.Identity32,
+                    DataGroups.Control, DataArgumentType.Callback2, Message.RegisterCallback, ref callback2);
+            if (IsLinux)
+                return NativeMethods.DsmLinux64(Session.Config.App32, Session.CurrentSource.Identity32,
+                    DataGroups.Control, DataArgumentType.Callback2, Message.RegisterCallback, ref callback2);
+            if (IsMac)
+                return NativeMethods.DsmMac64(Session.Config.App32, Session.CurrentSource.Identity32,
+                    DataGroups.Control, DataArgumentType.Callback2, Message.RegisterCallback, ref callback2);
+
             return ReturnCode.Failure;
         }
     }

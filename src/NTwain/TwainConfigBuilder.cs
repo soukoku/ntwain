@@ -17,7 +17,7 @@ namespace NTwain
         private string _companyName;
         private Language _lang;
         private DataGroups _dg = DataGroups.Image;
-        private bool _64bit;
+        private bool _32bit;
         private PlatformID _platform;
         private Country _country;
 
@@ -26,7 +26,7 @@ namespace NTwain
         /// </summary>
         public TwainConfigBuilder()
         {
-            _64bit = IntPtr.Size == 8;
+            _32bit = IntPtr.Size == 4;
             _platform = Environment.OSVersion.Platform;
         }
 
@@ -108,7 +108,7 @@ namespace NTwain
             var config = new TwainConfig
             {
                 Platform = _platform,
-                Is64Bit = _64bit
+                Is32Bit = _32bit
             };
 
             // todo: change id based on platform

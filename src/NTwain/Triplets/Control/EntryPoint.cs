@@ -10,14 +10,32 @@ namespace NTwain.Triplets.Control
     {
         internal EntryPoint(TwainSession session) : base(session) { }
 
-        public ReturnCode Get(out TW_ENTRYPOINT entryPoint)
+        public ReturnCode Get(out TW_ENTRYPOINT entry)
         {
-            entryPoint = new TW_ENTRYPOINT();
-            if (Use32BitData)
+            entry = new TW_ENTRYPOINT();
+            if (Is32Bit)
             {
-                return NativeMethods.Dsm32(Session.Config.App32, null,
-                    DataGroups.Control, DataArgumentType.EntryPoint, Message.Get, entryPoint);
+                if (IsWin)
+                    return NativeMethods.DsmWin32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.EntryPoint, Message.Get, entry);
+                if (IsLinux)
+                    return NativeMethods.DsmLinux32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.EntryPoint, Message.Get, entry);
+                if (IsMac)
+                    return NativeMethods.DsmMac32(Session.Config.App32, IntPtr.Zero,
+                        DataGroups.Control, DataArgumentType.EntryPoint, Message.Get, entry);
             }
+
+            if (IsWin)
+                return NativeMethods.DsmWin64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.EntryPoint, Message.Get, entry);
+            if (IsLinux)
+                return NativeMethods.DsmLinux64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.EntryPoint, Message.Get, entry);
+            if (IsMac)
+                return NativeMethods.DsmMac64(Session.Config.App32, IntPtr.Zero,
+                    DataGroups.Control, DataArgumentType.EntryPoint, Message.Get, entry);
+
             return ReturnCode.Failure;
         }
     }

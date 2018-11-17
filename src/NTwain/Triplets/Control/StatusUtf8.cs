@@ -10,16 +10,35 @@ namespace NTwain.Triplets.Control
     {
         internal StatusUtf8(TwainSession session) : base(session) { }
 
-        public ReturnCode Get(ref TW_STATUS status, out string message)
+        public ReturnCode Get(ref TW_STATUS status, DataSource source, out string message)
         {
             message = null;
             var rc = ReturnCode.Failure;
 
             TW_STATUSUTF8 real = new TW_STATUSUTF8 { Status = status };
-            if (Use32BitData)
+            if (Is32Bit)
             {
-                rc = NativeMethods.Dsm32(Session.Config.App32, Session.CurrentSource?.Identity,
-                    DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get, ref real);
+                if (IsWin)
+                    rc = NativeMethods.DsmWin32(Session.Config.App32, source?.Identity32,
+                        DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get, ref real);
+                else if (IsLinux)
+                    rc = NativeMethods.DsmLinux32(Session.Config.App32, source?.Identity32,
+                        DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get, ref real);
+                else if (IsMac)
+                    rc = NativeMethods.DsmMac32(Session.Config.App32, source?.Identity32,
+                        DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get, ref real);
+            }
+            else
+            {
+                if (IsWin)
+                    rc = NativeMethods.DsmWin64(Session.Config.App32, source?.Identity32,
+                        DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get, ref real);
+                else if (IsLinux)
+                    rc = NativeMethods.DsmLinux64(Session.Config.App32, source?.Identity32,
+                        DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get, ref real);
+                else if (IsMac)
+                    rc = NativeMethods.DsmMac64(Session.Config.App32, source?.Identity32,
+                        DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get, ref real);
             }
 
             if (rc == ReturnCode.Success)

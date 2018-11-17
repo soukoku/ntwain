@@ -13,12 +13,12 @@ namespace NTwain
     {
         internal readonly TwainSession Session;
 
-        internal TW_IDENTITY Identity { get; }
+        internal TW_IDENTITY Identity32 { get; }
 
         internal DataSource(TwainSession session, TW_IDENTITY src)
         {
             this.Session = session;
-            this.Identity = src;
+            this.Identity32 = src;
             ProtocolVersion = new Version(src.ProtocolMajor, src.ProtocolMinor);
         }
 
@@ -26,13 +26,13 @@ namespace NTwain
         /// Opens the source for capability negotiation.
         /// </summary>
         /// <returns></returns>
-        public ReturnCode Open() => Session.DGControl.Identity.OpenDS(Identity);
+        public ReturnCode Open() => Session.DGControl.Identity.OpenDS(Identity32);
 
         /// <summary>
         /// Closes the source.
         /// </summary>
         /// <returns></returns>
-        public ReturnCode Close() => Session.DGControl.Identity.CloseDS(Identity);
+        public ReturnCode Close() => Session.DGControl.Identity.CloseDS(Identity32);
 
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace NTwain
         public TW_STATUS GetStatus()
         {
             TW_STATUS stat = default;
-            var rc = Session.DGControl.Status.GetSourceStatus(ref stat);
+            var rc = Session.DGControl.Status.Get(ref stat, this);
             return stat;
         }
 
