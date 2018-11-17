@@ -39,6 +39,9 @@ namespace NTwain.Triplets
         DeviceEvent _devEvent;
         internal DeviceEvent DeviceEvent => _devEvent ?? (_devEvent = new DeviceEvent(Session));
 
+        UserInterface _ui;
+        internal UserInterface UserInterface => _ui ?? (_ui = new UserInterface(Session));
+
         XferGroup _xferGroup;
         /// <summary>
         /// Gets the operations defined for DAT_XFERGROUP.
