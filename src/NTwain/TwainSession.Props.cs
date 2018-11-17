@@ -50,13 +50,13 @@ namespace NTwain
         /// <summary>
         /// Occurs when an enabled source has been disabled (back to state 4).
         /// </summary>
-        public event EventHandler SourceDisabled;
+        public event EventHandler<SourceDisabledEventArgs> SourceDisabled;
 
         /// <summary>
         /// Raises the <see cref="SourceDisabled"/> event.
         /// </summary>
         /// <param name="e"></param>
-        internal protected virtual void OnSourceDisabled(EventArgs e)
+        internal protected virtual void OnSourceDisabled(SourceDisabledEventArgs e)
         {
             var handler = SourceDisabled;
             handler?.Invoke(this, e);

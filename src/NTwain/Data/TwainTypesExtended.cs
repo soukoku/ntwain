@@ -980,14 +980,14 @@ namespace NTwain.Data
     /// <summary>
     /// Allows for a data source and application to pass custom data to each other.
     /// </summary>
-    partial struct TW_CUSTOMDSDATA
+    public partial struct TW_CUSTOMDSDATA
     {
         /// <summary>
         /// Length, in bytes, of data.
         /// </summary>
         public uint InfoLength { get { return _infoLength; } set { _infoLength = value; } }
         /// <summary>
-        /// Handle to memory containing InfoLength bytes of data.
+        /// Handle to memory containing <see cref="InfoLength"/> bytes of data.
         /// </summary>
         public IntPtr Data { get { return _hData; } set { _hData = value; } }
     }

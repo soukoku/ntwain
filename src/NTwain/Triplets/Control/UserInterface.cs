@@ -10,7 +10,7 @@ namespace NTwain.Triplets.Control
     {
         internal UserInterface(TwainSession session) : base(session) { }
 
-        public ReturnCode DisableDS(ref TW_USERINTERFACE ui)
+        public ReturnCode DisableDS(ref TW_USERINTERFACE ui, bool wasUIonly)
         {
             var rc = ReturnCode.Failure;
 
@@ -42,7 +42,11 @@ namespace NTwain.Triplets.Control
             if (rc == ReturnCode.Success)
             {
                 Session.State = TwainState.S4;
-                Session.OnSourceDisabled(EventArgs.Empty);
+                Session.OnSourceDisabled(new SourceDisabledEventArgs
+                {
+                    Source = Session.CurrentSource,
+                    UIOnly = wasUIonly
+                });
             }
             return rc;
         }

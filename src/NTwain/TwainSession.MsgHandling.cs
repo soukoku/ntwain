@@ -35,9 +35,10 @@ namespace NTwain
                     DoTransferRoutine();
                     break;
                 case Message.CloseDSReq:
-                    DGControl.UserInterface.DisableDS(ref _lastEnableUI);
+                    DGControl.UserInterface.DisableDS(ref _lastEnableUI, false);
                     break;
                 case Message.CloseDSOK:
+                    DGControl.UserInterface.DisableDS(ref _lastEnableUI, true);
                     break;
             }
         }
