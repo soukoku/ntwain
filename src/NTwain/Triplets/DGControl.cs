@@ -33,6 +33,9 @@ namespace NTwain.Triplets
         Status _status;
         internal Status Status => _status ?? (_status = new Status(Session));
 
+        StatusUtf8 _statusUtf8;
+        internal StatusUtf8 StatusUtf8 => _statusUtf8 ?? (_statusUtf8 = new StatusUtf8(Session));
+
         DeviceEvent _devEvent;
         internal DeviceEvent DeviceEvent => _devEvent ?? (_devEvent = new DeviceEvent(Session));
     }

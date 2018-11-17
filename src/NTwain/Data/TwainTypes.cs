@@ -513,12 +513,9 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TW_STATUSUTF8
     {
-        // NOTE: rather than embedding the TWStatus directly I'm using its fields instead
-        // so the TWStatus could become a class object. 
-        TW_UINT16 _conditionCode;
-        TW_UINT16 _data;
-        TW_UINT32 _size;
-        TW_HANDLE _uTF8string;
+        public TW_STATUS Status;
+        public TW_UINT32 Size;
+        public TW_HANDLE UTF8string;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]

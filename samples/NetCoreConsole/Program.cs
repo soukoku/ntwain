@@ -46,7 +46,7 @@ namespace ConsoleApp
 
                         if (targetSrc != null)
                         {
-                            TestThisSource(targetSrc);
+                            TestThisSource(session, targetSrc);
                         }
                         else
                         {
@@ -67,12 +67,16 @@ namespace ConsoleApp
             Console.ReadLine();
         }
 
-        private static void TestThisSource(DataSource targetSrc)
+        private static void TestThisSource(TwainSession session, DataSource targetSrc)
         {
             Console.WriteLine($"Testing data source {targetSrc}");
             Console.WriteLine();
 
             targetSrc.Open();
+
+            var testStatus = session.GetStatus();
+            var testMessage = session.GetLocalizedStatus(ref testStatus);
+
             targetSrc.Close();
         }
 

@@ -93,6 +93,17 @@ namespace NTwain
             return stat;
         }
 
+        /// <summary>
+        /// Gets the translated string for a <see cref="TW_STATUS"/>.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public string GetLocalizedStatus(ref TW_STATUS status)
+        {
+            var rc = DGControl.StatusUtf8.Get(ref status, out string message);
+            return message;
+        }
+
         internal void RegisterCallback()
         {
             var callbackPtr = Marshal.GetFunctionPointerForDelegate(_callbackDelegate);
