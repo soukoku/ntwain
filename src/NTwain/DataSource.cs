@@ -34,6 +34,50 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode Close() => Session.DGControl.Identity.CloseDS(Identity32);
 
+        /// <summary>
+        /// Showing driver configuration UI if supported.
+        /// </summary>
+        /// <param name="windowHandle">The parent window handle if on Windows. Use <see cref="IntPtr.Zero"/> if not applicable.</param>
+        /// <param name="modal">if set to <c>true</c> the driver UI may be displayed as modal.</param>
+        /// <returns></returns>
+        public ReturnCode ShowUI(IntPtr windowHandle, bool modal = false)
+        {
+            var ui = new TW_USERINTERFACE
+            {
+                ShowUI = 1,
+                ModalUI = (ushort)(modal ? 1 : 0),
+                hParent = windowHandle
+            };
+            var rc = Session.DGControl.UserInterface.EnableDSUIOnly(ref ui);
+            if (rc == ReturnCode.Success)
+            {
+                Session._lastEnableUI = ui;
+            }
+            return rc;
+        }
+
+        /// <summary>
+        /// Enables the source for transferring data.
+        /// </summary>
+        /// <param name="showUI">if set to <c>true</c> then show driver UI. Not all sources support turning UI off.</param>
+        /// <param name="windowHandle">The parent window handle if on Windows. Use <see cref="IntPtr.Zero"/> if not applicable.</param>
+        /// <param name="modal">if set to <c>true</c> any driver UI may be displayed as modal.</param>
+        /// <returns></returns>
+        public ReturnCode Enable(bool showUI, IntPtr windowHandle, bool modal = false)
+        {
+            var ui = new TW_USERINTERFACE
+            {
+                ShowUI = (ushort)(showUI ? 1 : 0),
+                ModalUI = (ushort)(modal ? 1 : 0),
+                hParent = windowHandle
+            };
+            var rc = Session.DGControl.UserInterface.EnableDS(ref ui);
+            if (rc == ReturnCode.Success)
+            {
+                Session._lastEnableUI = ui;
+            }
+            return rc;
+        }
 
         /// <summary>
         /// Gets the source status. Useful after getting a non-success return code.

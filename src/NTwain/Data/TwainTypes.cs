@@ -532,9 +532,9 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TW_USERINTERFACE
     {
-        TW_BOOL _showUI;
-        TW_BOOL _modalUI;
-        TW_HANDLE _hParent;
+        public TW_BOOL ShowUI;
+        public TW_BOOL ModalUI;
+        public TW_HANDLE hParent;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]

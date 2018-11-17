@@ -9,7 +9,7 @@ namespace NTwain.Triplets.Control
     sealed class UserInterface : BaseTriplet
     {
         internal UserInterface(TwainSession session) : base(session) { }
-        
+
         public ReturnCode DisableDS(ref TW_USERINTERFACE ui)
         {
             var rc = ReturnCode.Failure;
@@ -38,21 +38,22 @@ namespace NTwain.Triplets.Control
                     rc = NativeMethods.DsmMac64(Session.Config.App32, Session.CurrentSource.Identity32,
                         DataGroups.Control, DataArgumentType.UserInterface, Message.DisableDS, ref ui);
             }
-            
+
             if (rc == ReturnCode.Success)
             {
                 Session.State = TwainState.S4;
+                Session.OnSourceDisabled(EventArgs.Empty);
             }
             return rc;
         }
-        
+
         public ReturnCode EnableDS(ref TW_USERINTERFACE ui)
         {
             var rc = ReturnCode.Failure;
             if (Session.State == TwainState.S4)
             {
                 Session.State = TwainState.S5; //tentative
-                
+
                 if (Is32Bit)
                 {
                     if (IsWin)
@@ -79,14 +80,14 @@ namespace NTwain.Triplets.Control
                 }
 
                 if (!(rc == ReturnCode.Success &&
-                    (!ui.ShowUI && rc == ReturnCode.CheckStatus)))
+                    (ui.ShowUI == 0 && rc == ReturnCode.CheckStatus)))
                 {
                     Session.State = TwainState.S4;
                 }
             }
             return rc;
         }
-        
+
         public ReturnCode EnableDSUIOnly(ref TW_USERINTERFACE ui)
         {
             var rc = ReturnCode.Failure;

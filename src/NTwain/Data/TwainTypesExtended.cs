@@ -2266,44 +2266,7 @@ namespace NTwain.Data
         /// </summary>
         public uint ReceiveSize { get => _ReceiveSize; }
     }
-
-    /// <summary>
-    /// This structure is used to handle the user interface coordination between an application and a
-    /// Source.
-    /// </summary>
-    partial struct TW_USERINTERFACE
-    {
-        /// <summary>
-        /// Set to TRUE by the application if the Source should activate its built-in user
-        /// interface. Otherwise, set to FALSE. Note that not all sources support ShowUI =
-        /// FALSE.
-        /// </summary>
-        public bool ShowUI
-        {
-            get { return _showUI > 0; }
-            set { _showUI = value ? TwainConst.True : TwainConst.False; }
-        }
-        /// <summary>
-        /// If ShowUI is TRUE, then an application setting this to TRUE requests the Source to
-        /// run Modal.
-        /// </summary>
-        public bool ModalUI
-        {
-            //get { return _modalUI > 0; } 
-            set { _modalUI = value ? TwainConst.True : TwainConst.False; }
-        }
-        /// <summary>
-        /// Microsoft Windows only: Application’s window handle. The Source designates
-        /// the hWnd as its parent when creating the Source dialog.
-        /// </summary>
-        public IntPtr Parent
-        {
-            //get { return _hParent; } 
-            set { _hParent = value; }
-        }
-    }
-
-
+    
     /// <summary>
     /// Provides entry points required by TWAIN 2.0 Applications and Sources.
     /// </summary>

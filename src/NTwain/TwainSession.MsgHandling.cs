@@ -13,6 +13,8 @@ namespace NTwain
 {
     partial class TwainSession
     {
+        internal TW_USERINTERFACE _lastEnableUI;
+
         private void HandleSourceMsg(Message msg)
         {
             switch (msg)
@@ -26,12 +28,23 @@ namespace NTwain
                     }
                     break;
                 case Message.XferReady:
+                    if (State < TwainState.S6)
+                    {
+                        State = TwainState.S6;
+                    }
+                    DoTransferRoutine();
                     break;
                 case Message.CloseDSReq:
+                    DGControl.UserInterface.DisableDS(ref _lastEnableUI);
                     break;
                 case Message.CloseDSOK:
                     break;
             }
+        }
+
+        private void DoTransferRoutine()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -47,6 +47,20 @@ namespace NTwain
         ///// </summary>
         //public DGCustom DGCustom { get; set; }
 
+        /// <summary>
+        /// Occurs when an enabled source has been disabled (back to state 4).
+        /// </summary>
+        public event EventHandler SourceDisabled;
+
+        /// <summary>
+        /// Raises the <see cref="SourceDisabled"/> event.
+        /// </summary>
+        /// <param name="e"></param>
+        internal protected virtual void OnSourceDisabled(EventArgs e)
+        {
+            var handler = SourceDisabled;
+            handler?.Invoke(this, e);
+        }
 
         /// <summary>
         /// Occurs when the source has generated an event.

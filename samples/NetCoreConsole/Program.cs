@@ -21,6 +21,7 @@ namespace ConsoleApp
                 using (var session = new TwainSession(config))
                 {
                     session.PropertyChanged += Session_PropertyChanged;
+                    session.SourceDisabled += Session_SourceDisabled;
 
                     if (session.Open(IntPtr.Zero) == NTwain.Data.ReturnCode.Success)
                     {
@@ -67,17 +68,24 @@ namespace ConsoleApp
             Console.ReadLine();
         }
 
-        private static void TestThisSource(TwainSession session, DataSource targetSrc)
+        private static void Session_SourceDisabled(object sender, EventArgs e)
         {
-            Console.WriteLine($"Testing data source {targetSrc}");
+            var session = (TwainSession)sender;
+            Console.WriteLine($"Session source disabled.");
+            session.CurrentSource.Close();
+        }
+
+        private static void TestThisSource(TwainSession session, DataSource source)
+        {
+            Console.WriteLine($"Testing data source {source}");
             Console.WriteLine();
 
-            targetSrc.Open();
+            source.Open();
 
             var testStatus = session.GetStatus();
             var testMessage = session.GetLocalizedStatus(ref testStatus);
 
-            targetSrc.Close();
+            var rc = source.ShowUI(IntPtr.Zero);
         }
 
         private static void Session_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
