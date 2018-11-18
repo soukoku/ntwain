@@ -57,6 +57,12 @@ namespace NTwain.Triplets
         /// </summary>
         public PassThru PassThru => _passThru ?? (_passThru = new PassThru(Session));
 
+        SetupMemXfer _memXfer;
+        /// <summary>
+        /// Gets the operations defined for DAT_SETUPMEMXFER.
+        /// </summary>
+        public SetupMemXfer SetupMemXfer => _memXfer ?? (_memXfer = new SetupMemXfer(Session));
+
         XferGroup _xferGroup;
         /// <summary>
         /// Gets the operations defined for DAT_XFERGROUP.
