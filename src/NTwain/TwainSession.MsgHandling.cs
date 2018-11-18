@@ -106,7 +106,7 @@ namespace NTwain
             var xMech = GetTransferMechs();
 
             TW_PENDINGXFERS pending = default;
-            var rc = DGControl.PendingXfers.Get(pending);
+            var rc = DGControl.PendingXfers.Get(ref pending);
             if (rc == ReturnCode.Success)
             {
                 do
@@ -122,7 +122,7 @@ namespace NTwain
 
                     if (readyArgs.CancelAll || _disableDSNow)
                     {
-                        rc = DGControl.PendingXfers.Reset(pending);
+                        rc = DGControl.PendingXfers.Reset(ref pending);
                     }
                     else
                     {
@@ -165,11 +165,11 @@ namespace NTwain
                         if (rc != ReturnCode.Success)// && StopOnTransferError)
                         {
                             // end xfer without setting rc to exit (good/bad?)
-                            DGControl.PendingXfers.Reset(pending);
+                            DGControl.PendingXfers.Reset(ref pending);
                         }
                         else
                         {
-                            rc = DGControl.PendingXfers.EndXfer(pending);
+                            rc = DGControl.PendingXfers.EndXfer(ref pending);
                         }
                     }
                     #endregion
