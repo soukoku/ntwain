@@ -247,6 +247,7 @@ namespace NTwain
                 // some DS returns none but we will assume it's image
                 xferImage = xferGroup == DataGroups.None || (xferGroup & DataGroups.Image) == DataGroups.Image;
             }
+            // TODO: restore this
             if (xferImage)
             {
                 //imgXferMech = CurrentSource.Capabilities.ICapXferMech.GetCurrent();
