@@ -7,40 +7,45 @@ namespace NTwain.Triplets
 	{
 		internal PendingXfers(TwainSession session) : base(session) { }
 
-		/// <summary>
-		/// This triplet is used to cancel or terminate a transfer. Issued in state 6, this triplet cancels the next
-		/// pending transfer, discards the transfer data, and decrements the pending transfers count. In
-		/// state 7, this triplet terminates the current transfer. If any data has not been transferred (this is
-		/// only possible during a memory transfer) that data is discarded.
-		/// </summary>
-		/// <param name="pendingXfers">The pending xfers.</param>
-		/// <returns></returns>
-		internal ReturnCode EndXfer(TW_PENDINGXFERS pendingXfers)
+        ReturnCode DoIt(Message msg, ref TW_PENDINGXFERS pendingXfers)
         {
             if (Is32Bit)
             {
                 if (IsWin)
                     return NativeMethods.DsmWin32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.EndXfer, ref pendingXfers);
+                        DataGroups.Control, DataArgumentType.PendingXfers, msg, ref pendingXfers);
                 if (IsLinux)
                     return NativeMethods.DsmLinux32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.EndXfer, ref pendingXfers);
+                        DataGroups.Control, DataArgumentType.PendingXfers, msg, ref pendingXfers);
                 if (IsMac)
                     return NativeMethods.DsmMac32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.EndXfer, ref pendingXfers);
+                        DataGroups.Control, DataArgumentType.PendingXfers, msg, ref pendingXfers);
             }
 
             if (IsWin)
                 return NativeMethods.DsmWin64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.EndXfer, ref pendingXfers);
+                    DataGroups.Control, DataArgumentType.PendingXfers, msg, ref pendingXfers);
             if (IsLinux)
                 return NativeMethods.DsmLinux64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.EndXfer, ref pendingXfers);
+                    DataGroups.Control, DataArgumentType.PendingXfers, msg, ref pendingXfers);
             if (IsMac)
                 return NativeMethods.DsmMac64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.EndXfer, ref pendingXfers);
+                    DataGroups.Control, DataArgumentType.PendingXfers, msg, ref pendingXfers);
 
             return ReturnCode.Failure;
+        }
+
+        /// <summary>
+        /// This triplet is used to cancel or terminate a transfer. Issued in state 6, this triplet cancels the next
+        /// pending transfer, discards the transfer data, and decrements the pending transfers count. In
+        /// state 7, this triplet terminates the current transfer. If any data has not been transferred (this is
+        /// only possible during a memory transfer) that data is discarded.
+        /// </summary>
+        /// <param name="pendingXfers">The pending xfers.</param>
+        /// <returns></returns>
+        internal ReturnCode EndXfer(ref TW_PENDINGXFERS pendingXfers)
+        {
+            return DoIt(Message.EndXfer, ref pendingXfers);
         }
 
 		/// <summary>
@@ -51,32 +56,9 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="pendingXfers">The pending xfers.</param>
 		/// <returns></returns>
-		public ReturnCode Get(TW_PENDINGXFERS pendingXfers)
+		public ReturnCode Get(ref TW_PENDINGXFERS pendingXfers)
         {
-            if (Is32Bit)
-            {
-                if (IsWin)
-                    return NativeMethods.DsmWin32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.Get, ref pendingXfers);
-                if (IsLinux)
-                    return NativeMethods.DsmLinux32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.Get, ref pendingXfers);
-                if (IsMac)
-                    return NativeMethods.DsmMac32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.Get, ref pendingXfers);
-            }
-
-            if (IsWin)
-                return NativeMethods.DsmWin64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.Get, ref pendingXfers);
-            if (IsLinux)
-                return NativeMethods.DsmLinux64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.Get, ref pendingXfers);
-            if (IsMac)
-                return NativeMethods.DsmMac64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.Get, ref pendingXfers);
-
-            return ReturnCode.Failure;
+            return DoIt(Message.Get, ref pendingXfers);
         }
 
 		/// <summary>
@@ -84,32 +66,9 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="pendingXfers">The pending xfers.</param>
 		/// <returns></returns>
-		internal ReturnCode Reset(TW_PENDINGXFERS pendingXfers)
+		internal ReturnCode Reset(ref TW_PENDINGXFERS pendingXfers)
         {
-            if (Is32Bit)
-            {
-                if (IsWin)
-                    return NativeMethods.DsmWin32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.Reset, ref pendingXfers);
-                if (IsLinux)
-                    return NativeMethods.DsmLinux32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.Reset, ref pendingXfers);
-                if (IsMac)
-                    return NativeMethods.DsmMac32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.Reset, ref pendingXfers);
-            }
-
-            if (IsWin)
-                return NativeMethods.DsmWin64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.Reset, ref pendingXfers);
-            if (IsLinux)
-                return NativeMethods.DsmLinux64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.Reset, ref pendingXfers);
-            if (IsMac)
-                return NativeMethods.DsmMac64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.Reset, ref pendingXfers);
-
-            return ReturnCode.Failure;
+            return DoIt(Message.Reset, ref pendingXfers);
         }
 
 		/// <summary>
@@ -118,32 +77,9 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="pendingXfers">The pending xfers.</param>
 		/// <returns></returns>
-		public ReturnCode StopFeeder(TW_PENDINGXFERS pendingXfers)
+		public ReturnCode StopFeeder(ref TW_PENDINGXFERS pendingXfers)
         {
-            if (Is32Bit)
-            {
-                if (IsWin)
-                    return NativeMethods.DsmWin32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.StopFeeder, ref pendingXfers);
-                if (IsLinux)
-                    return NativeMethods.DsmLinux32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.StopFeeder, ref pendingXfers);
-                if (IsMac)
-                    return NativeMethods.DsmMac32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.PendingXfers, Message.StopFeeder, ref pendingXfers);
-            }
-
-            if (IsWin)
-                return NativeMethods.DsmWin64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.StopFeeder, ref pendingXfers);
-            if (IsLinux)
-                return NativeMethods.DsmLinux64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.StopFeeder, ref pendingXfers);
-            if (IsMac)
-                return NativeMethods.DsmMac64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.PendingXfers, Message.StopFeeder, ref pendingXfers);
-
-            return ReturnCode.Failure;
+            return DoIt(Message.StopFeeder, ref pendingXfers);
         }
 	}
 }

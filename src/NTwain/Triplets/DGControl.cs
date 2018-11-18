@@ -63,6 +63,12 @@ namespace NTwain.Triplets
         /// </summary>
         public SetupMemXfer SetupMemXfer => _memXfer ?? (_memXfer = new SetupMemXfer(Session));
 
+        FileSystem _fs;
+        /// <summary>
+        /// Gets the operations defined for DAT_FILESYSTEM.
+        /// </summary>
+        public FileSystem FileSystem  => _fs ?? (_fs = new FileSystem(Session));
+
         XferGroup _xferGroup;
         /// <summary>
         /// Gets the operations defined for DAT_XFERGROUP.

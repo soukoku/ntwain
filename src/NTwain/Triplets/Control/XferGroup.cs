@@ -10,38 +10,43 @@ namespace NTwain.Triplets.Control
 	{
 		internal XferGroup(TwainSession session) : base(session) { }
 
-		/// <summary>
-		/// Returns the Data Group (the type of data) for the upcoming transfer. The Source is required to
-		/// only supply one of the DGs specified in the SupportedGroups field of origin.
-		/// </summary>
-		/// <param name="value">The value.</param>
-		/// <returns></returns>
-        public ReturnCode Get(ref DataGroups value)
+        ReturnCode DoIt(Message msg, ref DataGroups value)
         {
             if (Is32Bit)
             {
                 if (IsWin)
                     return NativeMethods.DsmWin32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.XferGroup, Message.Get, ref value);
+                        DataGroups.Control, DataArgumentType.XferGroup, msg, ref value);
                 if (IsLinux)
                     return NativeMethods.DsmLinux32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.XferGroup, Message.Get, ref value);
+                        DataGroups.Control, DataArgumentType.XferGroup, msg, ref value);
                 if (IsMac)
                     return NativeMethods.DsmMac32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.XferGroup, Message.Get, ref value);
+                        DataGroups.Control, DataArgumentType.XferGroup, msg, ref value);
             }
 
             if (IsWin)
                 return NativeMethods.DsmWin64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.XferGroup, Message.Get, ref value);
+                    DataGroups.Control, DataArgumentType.XferGroup, msg, ref value);
             if (IsLinux)
                 return NativeMethods.DsmLinux64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.XferGroup, Message.Get, ref value);
+                    DataGroups.Control, DataArgumentType.XferGroup, msg, ref value);
             if (IsMac)
                 return NativeMethods.DsmMac64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.XferGroup, Message.Get, ref value);
+                    DataGroups.Control, DataArgumentType.XferGroup, msg, ref value);
 
             return ReturnCode.Failure;
+        }
+
+        /// <summary>
+        /// Returns the Data Group (the type of data) for the upcoming transfer. The Source is required to
+        /// only supply one of the DGs specified in the SupportedGroups field of origin.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public ReturnCode Get(ref DataGroups value)
+        {
+            return DoIt(Message.Get, ref value);
 		}
 
         /// <summary>
@@ -53,30 +58,7 @@ namespace NTwain.Triplets.Control
         /// <returns></returns>
         public ReturnCode Set(DataGroups value)
         {
-            if (Is32Bit)
-            {
-                if (IsWin)
-                    return NativeMethods.DsmWin32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.XferGroup, Message.Set, ref value);
-                if (IsLinux)
-                    return NativeMethods.DsmLinux32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.XferGroup, Message.Set, ref value);
-                if (IsMac)
-                    return NativeMethods.DsmMac32(Session.Config.App32, Session.CurrentSource.Identity32,
-                        DataGroups.Control, DataArgumentType.XferGroup, Message.Set, ref value);
-            }
-
-            if (IsWin)
-                return NativeMethods.DsmWin64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.XferGroup, Message.Set, ref value);
-            if (IsLinux)
-                return NativeMethods.DsmLinux64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.XferGroup, Message.Set, ref value);
-            if (IsMac)
-                return NativeMethods.DsmMac64(Session.Config.App32, Session.CurrentSource.Identity32,
-                    DataGroups.Control, DataArgumentType.XferGroup, Message.Set, ref value);
-
-            return ReturnCode.Failure;
+            return DoIt(Message.Set, ref value);
         }
 	}
 }
