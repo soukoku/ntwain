@@ -15,6 +15,15 @@ namespace NTwain
     partial class TwainSession
     {
         internal TW_USERINTERFACE _lastEnableUI;
+        internal bool _disableDSNow;
+
+        ReturnCode Handle32BitCallback(TW_IDENTITY origin, TW_IDENTITY destination,
+            DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
+        {
+            Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: {nameof(Handle32BitCallback)}({dg}, {dat}, {msg}, {data})");
+            HandleSourceMsg(msg);
+            return ReturnCode.Success;
+        }
 
         /// <summary>
         /// If on Windows pass all messages from WndProc here to handle it
@@ -76,7 +85,15 @@ namespace NTwain
                     DoTransferRoutine();
                     break;
                 case Message.CloseDSReq:
-                    DGControl.UserInterface.DisableDS(ref _lastEnableUI, false);
+                    if (_state > TwainState.S5)
+                    {
+                        // do it after end of current xfer routine.
+                        _disableDSNow = true;
+                    }
+                    else
+                    {
+                        DGControl.UserInterface.DisableDS(ref _lastEnableUI, false);
+                    }
                     break;
                 case Message.CloseDSOK:
                     DGControl.UserInterface.DisableDS(ref _lastEnableUI, true);
@@ -86,7 +103,167 @@ namespace NTwain
 
         private void DoTransferRoutine()
         {
+            var xMech = GetTransferMechs();
+
+            TW_PENDINGXFERS pending = default;
+            var rc = DGControl.PendingXfers.Get(pending);
+            if (rc == ReturnCode.Success)
+            {
+                do
+                {
+                    var readyArgs = new TransferReadyEventArgs(CurrentSource, pending.Count, pending.EndOfJob)
+                    {
+                        CancelAll = _disableDSNow
+                    };
+                    OnTransferReady(readyArgs);
+
+
+                    #region actually handle xfer
+
+                    if (readyArgs.CancelAll || _disableDSNow)
+                    {
+                        rc = DGControl.PendingXfers.Reset(pending);
+                    }
+                    else
+                    {
+                        if (!readyArgs.CancelCurrent)
+                        {
+                            if (xMech.ImageMech.HasValue)
+                            {
+                                switch (xMech.ImageMech.Value)
+                                {
+                                    case XferMech.Memory:
+                                        rc = DoImageMemoryXfer();
+                                        break;
+                                    case XferMech.File:
+                                        rc = DoImageFileXfer();
+                                        break;
+                                    case XferMech.MemFile:
+                                        rc = DoImageMemoryFileXfer();
+                                        break;
+                                    case XferMech.Native:
+                                    default: // always assume native
+                                        rc = DoImageNativeXfer();
+                                        break;
+                                }
+                            }
+                            if (xMech.AudioMech.HasValue)
+                            {
+                                switch (xMech.AudioMech.Value)
+                                {
+                                    case XferMech.File:
+                                        rc = DoAudioFileXfer();
+                                        break;
+                                    case XferMech.Native:
+                                    default: // always assume native
+                                        rc = DoAudioNativeXfer();
+                                        break;
+                                }
+                            }
+                        }
+
+                        if (rc != ReturnCode.Success)// && StopOnTransferError)
+                        {
+                            // end xfer without setting rc to exit (good/bad?)
+                            DGControl.PendingXfers.Reset(pending);
+                        }
+                        else
+                        {
+                            rc = DGControl.PendingXfers.EndXfer(pending);
+                        }
+                    }
+                    #endregion
+
+                } while (rc == ReturnCode.Success && pending.Count != 0 && !_disableDSNow);
+            }
+            else
+            {
+                HandleXferReturnCode(rc);
+            }
+
+            if (_disableDSNow)
+            {
+                DGControl.UserInterface.DisableDS(ref _lastEnableUI, false);
+            }
+        }
+
+        private ReturnCode DoImageNativeXfer()
+        {
             throw new NotImplementedException();
+        }
+
+        private ReturnCode DoImageMemoryFileXfer()
+        {
+            throw new NotImplementedException();
+        }
+
+        private ReturnCode DoImageFileXfer()
+        {
+            throw new NotImplementedException();
+        }
+
+        private ReturnCode DoImageMemoryXfer()
+        {
+            throw new NotImplementedException();
+        }
+
+        private ReturnCode DoAudioNativeXfer()
+        {
+            throw new NotImplementedException();
+        }
+
+        private ReturnCode DoAudioFileXfer()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleXferReturnCode(ReturnCode rc)
+        {
+            switch (rc)
+            {
+                case ReturnCode.Success:
+                case ReturnCode.XferDone:
+                case ReturnCode.Cancel:
+                    // ok to keep going
+                    break;
+                default:
+                    var status = CurrentSource.GetStatus();
+                    OnTransferError(new TransferErrorEventArgs(rc, status));
+                    break;
+            }
+        }
+
+        TransferMechs GetTransferMechs()
+        {
+            TransferMechs retVal = default;
+            bool xferImage = true; // default to always xfer image
+            bool xferAudio = false;
+            DataGroups xferGroup = DataGroups.None;
+            XferMech imgXferMech = XferMech.Native;
+            XferMech audXferMech = XferMech.Native;
+            if (DGControl.XferGroup.Get(ref xferGroup) == ReturnCode.Success)
+            {
+                xferAudio = (xferGroup & DataGroups.Audio) == DataGroups.Audio;
+                // some DS returns none but we will assume it's image
+                xferImage = xferGroup == DataGroups.None || (xferGroup & DataGroups.Image) == DataGroups.Image;
+            }
+            if (xferImage)
+            {
+                //imgXferMech = CurrentSource.Capabilities.ICapXferMech.GetCurrent();
+                retVal.ImageMech = imgXferMech;
+            }
+            if (xferAudio)
+            {
+                //audXferMech = CurrentSource.Capabilities.ACapXferMech.GetCurrent();
+                retVal.AudioMech = audXferMech;
+            }
+            return retVal;
+        }
+
+        struct TransferMechs
+        {
+            public XferMech? ImageMech;
+            public XferMech? AudioMech;
         }
     }
 }

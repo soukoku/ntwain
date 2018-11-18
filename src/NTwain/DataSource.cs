@@ -48,6 +48,7 @@ namespace NTwain
                 ModalUI = (ushort)(modal ? 1 : 0),
                 hParent = windowHandle
             };
+            Session._disableDSNow = false;
             var rc = Session.DGControl.UserInterface.EnableDSUIOnly(ref ui);
             if (rc == ReturnCode.Success)
             {
@@ -71,6 +72,7 @@ namespace NTwain
                 ModalUI = (ushort)(modal ? 1 : 0),
                 hParent = windowHandle
             };
+            Session._disableDSNow = false;
             var rc = Session.DGControl.UserInterface.EnableDS(ref ui);
             if (rc == ReturnCode.Success)
             {

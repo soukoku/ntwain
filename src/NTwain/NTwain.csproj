@@ -37,9 +37,4 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Triplets\Image\" />
-    <Folder Include="Triplets\Audio\" />
-  </ItemGroup>
-
 </Project>

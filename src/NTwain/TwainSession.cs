@@ -223,14 +223,6 @@ namespace NTwain
             return source;
         }
 
-        ReturnCode Handle32BitCallback(TW_IDENTITY origin, TW_IDENTITY destination,
-            DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
-        {
-            Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: {nameof(Handle32BitCallback)}({dg}, {dat}, {msg}, {data})");
-            HandleSourceMsg(msg);
-            return ReturnCode.Success;
-        }
-
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>

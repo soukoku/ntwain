@@ -1,4 +1,5 @@
 ﻿using NTwain.Data;
+using NTwain.Triplets.Image;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,7 @@ namespace NTwain.Triplets
     {
         internal DGImage(TwainSession session) : base(session) { }
 
+        ImageInfo _info;
+        internal ImageInfo ImageInfo => _info ?? (_info = new ImageInfo(Session));
     }
 }

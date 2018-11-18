@@ -77,6 +77,40 @@ namespace NTwain
             handler?.Invoke(this, e);
         }
 
+        /// <summary>
+        /// Occurs when a data transfer is ready.
+        /// </summary>
+        public event EventHandler<TransferReadyEventArgs> TransferReady;
+
+        /// <summary>
+        /// Raises the <see cref="TransferReady"/> event.
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnTransferReady(TransferReadyEventArgs e)
+        {
+            var handler = TransferReady;
+            handler?.Invoke(this, e);
+        }
+
+
+        ///// <summary>
+        ///// Occurs when data has been transferred.
+        ///// </summary>
+        //public event EventHandler<DataTransferredEventArgs> DataTransferred;
+        /// <summary>
+        /// Occurs when an error has been encountered during transfer.
+        /// </summary>
+        public event EventHandler<TransferErrorEventArgs> TransferError;
+
+        /// <summary>
+        /// Raises the <see cref="TransferError"/> event.
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnTransferError(TransferErrorEventArgs e)
+        {
+            var handler = TransferError;
+            handler?.Invoke(this, e);
+        }
 
 
 

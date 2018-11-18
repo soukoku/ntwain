@@ -45,6 +45,9 @@ namespace NTwain.Triplets
         Event _event;
         internal Event Event => _event ?? (_event = new Event(Session));
 
+        PendingXfers _pending;
+        internal PendingXfers PendingXfers => _pending ?? (_pending = new PendingXfers(Session));
+
         XferGroup _xferGroup;
         /// <summary>
         /// Gets the operations defined for DAT_XFERGROUP.
