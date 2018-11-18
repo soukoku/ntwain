@@ -279,5 +279,14 @@ namespace NTwain.Triplets
             Message msg,
             ref TW_MEMORY data);
 
+        [DllImport(Mac64Dll, EntryPoint = EntryName)]
+        public static extern ReturnCode DsmMac64(
+            [In, Out]TW_IDENTITY origin,
+            [In, Out]TW_IDENTITY destination,
+            DataGroups dg,
+            DataArgumentType dat,
+            Message msg,
+            ref TW_METRICS data);
+
     }
 }

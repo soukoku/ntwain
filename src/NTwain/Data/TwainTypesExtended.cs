@@ -1938,10 +1938,6 @@ namespace NTwain.Data
     public partial struct TW_METRICS
     {
         /// <summary>
-        /// Set by the application. Specifies the number of bytes in the structure
-        /// </summary>
-        public uint SizeOf => _sizeOf;
-        /// <summary>
         /// The number of images made available for transfer by the driver. This is not
         /// necessarily the same as the number of images actually transferred, since the
         /// application may opt to skip transfers or to end without transferring all images.

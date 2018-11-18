@@ -423,7 +423,7 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TW_METRICS
     {
-        TW_UINT32 _sizeOf;
+        internal TW_UINT32 SizeOf;
         TW_UINT32 _imageCount;
         TW_UINT32 _sheetCount;
     }

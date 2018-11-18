@@ -86,5 +86,11 @@ namespace NTwain.Triplets
         /// Gets the operations defined for DAT_XFERGROUP.
         /// </summary>
         public XferGroup XferGroup => _xferGroup ?? (_xferGroup = new XferGroup(Session));
+
+        Metrics _metrics;
+        /// <summary>
+        /// Gets the operations defined for DAT_METRICS.
+        /// </summary>
+        public Metrics Metrics => _metrics ?? (_metrics = new Metrics(Session));
     }
 }
