@@ -51,6 +51,12 @@ namespace NTwain.Triplets
         CustomDSData _custDSData;
         internal CustomDSData CustomDSData => _custDSData ?? (_custDSData = new CustomDSData(Session));
 
+        PassThru _passThru;
+        /// <summary>
+        /// Gets the operations defined for DAT_PASSTHRU.
+        /// </summary>
+        public PassThru PassThru => _passThru ?? (_passThru = new PassThru(Session));
+
         XferGroup _xferGroup;
         /// <summary>
         /// Gets the operations defined for DAT_XFERGROUP.
