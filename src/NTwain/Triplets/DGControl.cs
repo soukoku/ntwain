@@ -51,6 +51,12 @@ namespace NTwain.Triplets
         CustomDSData _custDSData;
         internal CustomDSData CustomDSData => _custDSData ?? (_custDSData = new CustomDSData(Session));
 
+        Capability _caps;
+        /// <summary>
+        /// Gets the operations defined for DAT_CAPABILITY.
+        /// </summary>
+        public Capability Capability => _caps ?? (_caps = new Capability(Session));
+
         PassThru _passThru;
         /// <summary>
         /// Gets the operations defined for DAT_PASSTHRU.

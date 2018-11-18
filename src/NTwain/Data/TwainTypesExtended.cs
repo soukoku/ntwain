@@ -570,261 +570,261 @@ namespace NTwain.Data
         public string Name { get { return _name; } }
     }
 
-    //    /// <summary>
-    //    /// Used by an application either to get information about, or control the setting of a capability.
-    //    /// </summary>
-    //    public sealed partial class TW_CAPABILITY : IDisposable
-    //    {
-    //        #region ctors
+    /// <summary>
+    /// Used by an application either to get information about, or control the setting of a capability.
+    /// </summary>
+    public partial struct TW_CAPABILITY
+    {
+        //        #region ctors
 
-    //        /// <summary>
-    //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
-    //        /// </summary>
-    //        /// <param name="capability">The capability.</param>
-    //        public TW_CAPABILITY(CapabilityId capability)
-    //        {
-    //            Capability = capability;
-    //            ContainerType = ContainerType.DontCare;
-    //        }
-    //        /// <summary>
-    //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
-    //        /// </summary>
-    //        /// <param name="capability">The capability.</param>
-    //        /// <param name="value">The value.</param>
-    //        public TW_CAPABILITY(CapabilityId capability, TW_ONEVALUE value)
-    //        {
-    //            Capability = capability;
-    //            SetOneValue(value, PlatformInfo.Current.MemoryManager);
-    //        }
-    //        /// <summary>
-    //        /// Initializes a new instance of the <see cref="TW_CAPABILITY"/> class.
-    //        /// </summary>
-    //        /// <param name="capability">The capability.</param>
-    //        /// <param name="value">The value.</param>
-    //        /// <param name="type">The type.</param>
-    //        public TW_CAPABILITY(CapabilityId capability, string value, ItemType type)
-    //        {
-    //            Capability = capability;
-    //            SetOneValue(value, type, PlatformInfo.Current.MemoryManager);
-    //        }
-    //        /// <summary>
-    //        /// Initializes a new instance of the <see cref="TW_CAPABILITY"/> class.
-    //        /// </summary>
-    //        /// <param name="capability">The capability.</param>
-    //        /// <param name="value">The value.</param>
-    //        public TW_CAPABILITY(CapabilityId capability, TW_FRAME value)
-    //        {
-    //            Capability = capability;
-    //            SetOneValue(value, PlatformInfo.Current.MemoryManager);
-    //        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        public TW_CAPABILITY(CapabilityId capability)
+        //        {
+        //            Capability = capability;
+        //            ContainerType = ContainerType.DontCare;
+        //        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, TW_ONEVALUE value)
+        //        {
+        //            Capability = capability;
+        //            SetOneValue(value, PlatformInfo.Current.MemoryManager);
+        //        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY"/> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        /// <param name="type">The type.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, string value, ItemType type)
+        //        {
+        //            Capability = capability;
+        //            SetOneValue(value, type, PlatformInfo.Current.MemoryManager);
+        //        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY"/> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, TW_FRAME value)
+        //        {
+        //            Capability = capability;
+        //            SetOneValue(value, PlatformInfo.Current.MemoryManager);
+        //        }
 
-    //        /// <summary>
-    //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
-    //        /// </summary>
-    //        /// <param name="capability">The capability.</param>
-    //        /// <param name="value">The value.</param>
-    //        public TW_CAPABILITY(CapabilityId capability, TW_ENUMERATION value)
-    //        {
-    //            Capability = capability;
-    //            SetEnumValue(value, PlatformInfo.Current.MemoryManager);
-    //        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, TW_ENUMERATION value)
+        //        {
+        //            Capability = capability;
+        //            SetEnumValue(value, PlatformInfo.Current.MemoryManager);
+        //        }
 
-    //        /// <summary>
-    //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
-    //        /// </summary>
-    //        /// <param name="capability">The capability.</param>
-    //        /// <param name="value">The value.</param>
-    //        public TW_CAPABILITY(CapabilityId capability, TW_RANGE value)
-    //        {
-    //            Capability = capability;
-    //            SetRangeValue(value, PlatformInfo.Current.MemoryManager);
-    //        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, TW_RANGE value)
+        //        {
+        //            Capability = capability;
+        //            SetRangeValue(value, PlatformInfo.Current.MemoryManager);
+        //        }
 
-    //        /// <summary>
-    //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
-    //        /// </summary>
-    //        /// <param name="capability">The capability.</param>
-    //        /// <param name="value">The value.</param>
-    //        public TW_CAPABILITY(CapabilityId capability, TW_ARRAY value)
-    //        {
-    //            Capability = capability;
-    //            SetArrayValue(value, PlatformInfo.Current.MemoryManager);
-    //        }
-    //        #endregion
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, TW_ARRAY value)
+        //        {
+        //            Capability = capability;
+        //            SetArrayValue(value, PlatformInfo.Current.MemoryManager);
+        //        }
+        //        #endregion
 
-    //        #region properties
+        //        #region properties
 
-    //        /// <summary>
-    //        /// Id of capability to set or get.
-    //        /// </summary>
-    //        public CapabilityId Capability { get { return (CapabilityId)_cap; } set { _cap = (ushort)value; } }
-    //        /// <summary>
-    //        /// The type of the container structure referenced by the pointer internally. The container
-    //        /// will be one of four types: <see cref="TW_ARRAY"/>, <see cref="TW_ENUMERATION"/>,
-    //        /// <see cref="TW_ONEVALUE"/>, or <see cref="TW_RANGE"/>.
-    //        /// </summary>
-    //        public ContainerType ContainerType { get { return (ContainerType)_conType; } set { _conType = (ushort)value; } }
+        //        /// <summary>
+        //        /// Id of capability to set or get.
+        //        /// </summary>
+        //        public CapabilityId Capability { get { return (CapabilityId)_cap; } set { _cap = (ushort)value; } }
+        //        /// <summary>
+        //        /// The type of the container structure referenced by the pointer internally. The container
+        //        /// will be one of four types: <see cref="TW_ARRAY"/>, <see cref="TW_ENUMERATION"/>,
+        //        /// <see cref="TW_ONEVALUE"/>, or <see cref="TW_RANGE"/>.
+        //        /// </summary>
+        //        public ContainerType ContainerType { get { return (ContainerType)_conType; } set { _conType = (ushort)value; } }
 
-    //        internal IntPtr Container { get { return _hContainer; } }
+        //        internal IntPtr Container { get { return _hContainer; } }
 
-    //        #endregion
+        //        #endregion
 
-    //        #region value functions
+        //        #region value functions
 
-    //        void SetOneValue(string value, ItemType type, IMemoryManager memoryManager)
-    //        {
-    //            ContainerType = ContainerType.OneValue;
-    //            switch (type)
-    //            {
-    //                case ItemType.String128:
-    //                case ItemType.String255:
-    //                case ItemType.String32:
-    //                case ItemType.String64:
+        //        void SetOneValue(string value, ItemType type, IMemoryManager memoryManager)
+        //        {
+        //            ContainerType = ContainerType.OneValue;
+        //            switch (type)
+        //            {
+        //                case ItemType.String128:
+        //                case ItemType.String255:
+        //                case ItemType.String32:
+        //                case ItemType.String64:
 
-    //                    _hContainer = memoryManager.Allocate((uint)(Marshal.SizeOf(typeof(TW_FRAME)) + 2));
-    //                    if (_hContainer != IntPtr.Zero)
-    //                    {
-    //                        IntPtr baseAddr = memoryManager.Lock(_hContainer);
-    //                        int offset = 0;
-    //                        baseAddr.WriteValue(ref offset, ItemType.UInt16, type);
-    //                        baseAddr.WriteValue(ref offset, type, value);
-    //                        memoryManager.Unlock(_hContainer);
-    //                    }
-    //                    break;
-    //                default:
-    //                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Type {0} is not valid for string.", type));
-    //            }
-    //        }
-    //        void SetOneValue(TW_FRAME value, IMemoryManager memoryManager)
-    //        {
-    //            ContainerType = ContainerType.OneValue;
+        //                    _hContainer = memoryManager.Allocate((uint)(Marshal.SizeOf(typeof(TW_FRAME)) + 2));
+        //                    if (_hContainer != IntPtr.Zero)
+        //                    {
+        //                        IntPtr baseAddr = memoryManager.Lock(_hContainer);
+        //                        int offset = 0;
+        //                        baseAddr.WriteValue(ref offset, ItemType.UInt16, type);
+        //                        baseAddr.WriteValue(ref offset, type, value);
+        //                        memoryManager.Unlock(_hContainer);
+        //                    }
+        //                    break;
+        //                default:
+        //                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Type {0} is not valid for string.", type));
+        //            }
+        //        }
+        //        void SetOneValue(TW_FRAME value, IMemoryManager memoryManager)
+        //        {
+        //            ContainerType = ContainerType.OneValue;
 
-    //            _hContainer = memoryManager.Allocate((uint)(Marshal.SizeOf(typeof(TW_FRAME)) + 2));
-    //            if (_hContainer != IntPtr.Zero)
-    //            {
-    //                IntPtr baseAddr = memoryManager.Lock(_hContainer);
-    //                int offset = 0;
-    //                baseAddr.WriteValue(ref offset, ItemType.UInt16, ItemType.Frame);
-    //                baseAddr.WriteValue(ref offset, ItemType.Frame, value);
-    //                memoryManager.Unlock(_hContainer);
-    //            }
-    //        }
+        //            _hContainer = memoryManager.Allocate((uint)(Marshal.SizeOf(typeof(TW_FRAME)) + 2));
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                IntPtr baseAddr = memoryManager.Lock(_hContainer);
+        //                int offset = 0;
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt16, ItemType.Frame);
+        //                baseAddr.WriteValue(ref offset, ItemType.Frame, value);
+        //                memoryManager.Unlock(_hContainer);
+        //            }
+        //        }
 
-    //        void SetOneValue(TW_ONEVALUE value, IMemoryManager memoryManager)
-    //        {
-    //            if (value == null) { throw new ArgumentNullException("value"); }
-    //            ContainerType = ContainerType.OneValue;
+        //        void SetOneValue(TW_ONEVALUE value, IMemoryManager memoryManager)
+        //        {
+        //            if (value == null) { throw new ArgumentNullException("value"); }
+        //            ContainerType = ContainerType.OneValue;
 
-    //            // since one value can only house UInt32 we will not allow type size > 4
-    //            if (TypeExtensions.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TW_ONEVALUE")); }
+        //            // since one value can only house UInt32 we will not allow type size > 4
+        //            if (TypeExtensions.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TW_ONEVALUE")); }
 
-    //            _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
-    //            if (_hContainer != IntPtr.Zero)
-    //            {
-    //                Marshal.StructureToPtr(value, _hContainer, false);
-    //            }
-    //        }
+        //            _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                Marshal.StructureToPtr(value, _hContainer, false);
+        //            }
+        //        }
 
-    //        void SetEnumValue(TW_ENUMERATION value, IMemoryManager memoryManager)
-    //        {
-    //            if (value == null) { throw new ArgumentNullException("value"); }
-    //            ContainerType = ContainerType.Enum;
-
-
-    //            Int32 valueSize = TW_ENUMERATION.ItemOffset + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
-
-    //            int offset = 0;
-    //            _hContainer = memoryManager.Allocate((uint)valueSize);
-    //            if (_hContainer != IntPtr.Zero)
-    //            {
-    //                IntPtr baseAddr = memoryManager.Lock(_hContainer);
-
-    //                // can't safely use StructureToPtr here so write it our own
-    //                baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
-    //                baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
-    //                baseAddr.WriteValue(ref offset, ItemType.UInt32, value.CurrentIndex);
-    //                baseAddr.WriteValue(ref offset, ItemType.UInt32, value.DefaultIndex);
-    //                foreach (var item in value.ItemList)
-    //                {
-    //                    baseAddr.WriteValue(ref offset, value.ItemType, item);
-    //                }
-    //                memoryManager.Unlock(_hContainer);
-    //            }
-    //        }
-
-    //        void SetRangeValue(TW_RANGE value, IMemoryManager memoryManager)
-    //        {
-    //            if (value == null) { throw new ArgumentNullException("value"); }
-    //            ContainerType = ContainerType.Range;
-
-    //            // since range value can only house UInt32 we will not allow type size > 4
-    //            if (TypeExtensions.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TW_RANGE")); }
-
-    //            _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
-    //            if (_hContainer != IntPtr.Zero)
-    //            {
-    //                Marshal.StructureToPtr(value, _hContainer, false);
-    //            }
-    //        }
-
-    //        void SetArrayValue(TW_ARRAY value, IMemoryManager memoryManager)
-    //        {
-    //            if (value == null) { throw new ArgumentNullException("value"); }
-    //            ContainerType = ContainerType.Array;
-
-    //            Int32 valueSize = 6 + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
-
-    //            int offset = 0;
-    //            _hContainer = memoryManager.Allocate((uint)valueSize);
-    //            if (_hContainer != IntPtr.Zero)
-    //            {
-    //                IntPtr baseAddr = memoryManager.Lock(_hContainer);
-
-    //                // can't safely use StructureToPtr here so write it our own
-    //                baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
-    //                baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
-    //                foreach (var item in value.ItemList)
-    //                {
-    //                    baseAddr.WriteValue(ref offset, value.ItemType, item);
-    //                }
-    //                memoryManager.Unlock(_hContainer);
-    //            }
-    //        }
-
-    //        #endregion
+        //        void SetEnumValue(TW_ENUMERATION value, IMemoryManager memoryManager)
+        //        {
+        //            if (value == null) { throw new ArgumentNullException("value"); }
+        //            ContainerType = ContainerType.Enum;
 
 
-    //        #region IDisposable Members
+        //            Int32 valueSize = TW_ENUMERATION.ItemOffset + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
 
-    //        /// <summary>
-    //        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    //        /// </summary>
-    //        public void Dispose()
-    //        {
-    //            Dispose(true);
-    //            GC.SuppressFinalize(this);
-    //        }
+        //            int offset = 0;
+        //            _hContainer = memoryManager.Allocate((uint)valueSize);
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                IntPtr baseAddr = memoryManager.Lock(_hContainer);
 
-    //        void Dispose(bool disposing)
-    //        {
-    //            if (disposing) { }
-    //            if (_hContainer != IntPtr.Zero)
-    //            {
-    //                PlatformInfo.Current.MemoryManager.Free(_hContainer);
-    //                _hContainer = IntPtr.Zero;
-    //            }
-    //        }
+        //                // can't safely use StructureToPtr here so write it our own
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt32, value.CurrentIndex);
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt32, value.DefaultIndex);
+        //                foreach (var item in value.ItemList)
+        //                {
+        //                    baseAddr.WriteValue(ref offset, value.ItemType, item);
+        //                }
+        //                memoryManager.Unlock(_hContainer);
+        //            }
+        //        }
 
-    //        /// <summary>
-    //        /// Finalizes an instance of the <see cref="TW_CAPABILITY"/> class.
-    //        /// </summary>
-    //        ~TW_CAPABILITY()
-    //        {
-    //            Dispose(false);
-    //        }
-    //        #endregion
+        //        void SetRangeValue(TW_RANGE value, IMemoryManager memoryManager)
+        //        {
+        //            if (value == null) { throw new ArgumentNullException("value"); }
+        //            ContainerType = ContainerType.Range;
 
-    //    }
+        //            // since range value can only house UInt32 we will not allow type size > 4
+        //            if (TypeExtensions.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TW_RANGE")); }
+
+        //            _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                Marshal.StructureToPtr(value, _hContainer, false);
+        //            }
+        //        }
+
+        //        void SetArrayValue(TW_ARRAY value, IMemoryManager memoryManager)
+        //        {
+        //            if (value == null) { throw new ArgumentNullException("value"); }
+        //            ContainerType = ContainerType.Array;
+
+        //            Int32 valueSize = 6 + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
+
+        //            int offset = 0;
+        //            _hContainer = memoryManager.Allocate((uint)valueSize);
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                IntPtr baseAddr = memoryManager.Lock(_hContainer);
+
+        //                // can't safely use StructureToPtr here so write it our own
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
+        //                foreach (var item in value.ItemList)
+        //                {
+        //                    baseAddr.WriteValue(ref offset, value.ItemType, item);
+        //                }
+        //                memoryManager.Unlock(_hContainer);
+        //            }
+        //        }
+
+        //        #endregion
+
+
+        //        #region IDisposable Members
+
+        //        /// <summary>
+        //        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        //        /// </summary>
+        //        public void Dispose()
+        //        {
+        //            Dispose(true);
+        //            GC.SuppressFinalize(this);
+        //        }
+
+        //        void Dispose(bool disposing)
+        //        {
+        //            if (disposing) { }
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                PlatformInfo.Current.MemoryManager.Free(_hContainer);
+        //                _hContainer = IntPtr.Zero;
+        //            }
+        //        }
+
+        //        /// <summary>
+        //        /// Finalizes an instance of the <see cref="TW_CAPABILITY"/> class.
+        //        /// </summary>
+        //        ~TW_CAPABILITY()
+        //        {
+        //            Dispose(false);
+        //        }
+        //        #endregion
+
+    }
 
     /// <summary>
     /// Embedded in the <see cref="TW_CIECOLOR"/> structure;
@@ -976,7 +976,7 @@ namespace NTwain.Data
 
     //        public TW_FIX32[] Samples { get { return _samples; } }
     //    }
-    
+
     /// <summary>
     /// Provides information about the Event that was raised by the Source. The Source should only fill
     /// in those fields applicable to the Event. The Application must only read those fields applicable to
@@ -1164,7 +1164,7 @@ namespace NTwain.Data
     //        /// </summary>
     //        internal const int ItemOffset = 14;
     //    }
-    
+
 
     //    /// <summary>
     //    /// This structure is used to pass specific information between the data source and the application
@@ -2229,7 +2229,7 @@ namespace NTwain.Data
         /// </summary>
         public uint ReceiveSize { get => _ReceiveSize; }
     }
-    
+
     /// <summary>
     /// Provides entry points required by TWAIN 2.0 Applications and Sources.
     /// </summary>

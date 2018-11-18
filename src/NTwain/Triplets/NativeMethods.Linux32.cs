@@ -36,15 +36,15 @@ namespace NTwain.Triplets
             Message msg,
             ref TW_AUDIOINFO data);
 
-        //[DllImport(DSM.WinDsmDll, EntryPoint = DSM.EntryName)]
-        //public static extern ReturnCode DsmLinux32(
-        //    [In, Out]TW_IDENTITY origin,
-        //    [In, Out]TW_IDENTITY destination,
-        //    DataGroups dg,
-        //    DataArgumentType dat,
-        //    Message msg,
-        //    ref TWCapability data);
-
+        [DllImport(LinuxDll, EntryPoint = EntryName)]
+        public static extern ReturnCode DsmLinux32(
+            [In, Out]TW_IDENTITY origin,
+            [In, Out]TW_IDENTITY destination,
+            DataGroups dg,
+            DataArgumentType dat,
+            Message msg,
+            ref TW_CAPABILITY data);
+        
         [DllImport(LinuxDll, EntryPoint = EntryName)]
         public static extern ReturnCode DsmLinux32(
             [In, Out]TW_IDENTITY origin,

@@ -105,7 +105,7 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_CAPABILITY
+    partial struct TW_CAPABILITY
     {
         TW_UINT16 _cap;
         TW_UINT16 _conType;
