@@ -92,5 +92,11 @@ namespace NTwain.Triplets
         /// Gets the operations defined for DAT_METRICS.
         /// </summary>
         public Metrics Metrics => _metrics ?? (_metrics = new Metrics(Session));
+
+        TwainDirect _twDirect;
+        /// <summary>
+        /// Gets the operations defined for DAT_TWAINDIRECT.
+        /// </summary>
+        public TwainDirect TwainDirect => _twDirect ?? (_twDirect = new TwainDirect(Session));
     }
 }
