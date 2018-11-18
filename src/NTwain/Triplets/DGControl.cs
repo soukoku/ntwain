@@ -42,6 +42,9 @@ namespace NTwain.Triplets
         UserInterface _ui;
         internal UserInterface UserInterface => _ui ?? (_ui = new UserInterface(Session));
 
+        Event _event;
+        internal Event Event => _event ?? (_event = new Event(Session));
+
         XferGroup _xferGroup;
         /// <summary>
         /// Gets the operations defined for DAT_XFERGROUP.

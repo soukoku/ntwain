@@ -190,8 +190,8 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TW_EVENT
     {
-        TW_MEMREF _pEvent;
-        TW_UINT16 _tWMessage;
+        public TW_MEMREF pEvent;
+        public TW_UINT16 TWMessage;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]

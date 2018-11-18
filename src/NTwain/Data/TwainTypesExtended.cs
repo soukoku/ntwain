@@ -1179,29 +1179,7 @@ namespace NTwain.Data
     //        /// </summary>
     //        internal const int ItemOffset = 14;
     //    }
-
-
-    /// <summary>
-    /// Used on Windows and Macintosh pre OS X to pass application events/messages from the
-    /// application to the Source.
-    /// </summary>
-    public partial struct TW_EVENT
-    {
-        /// <summary>
-        /// A pointer to the event/message to be examined by the Source.
-        /// Under Microsoft Windows, pEvent is a pMSG (pointer to a Microsoft
-        /// Windows MSG struct). That is, the message the application received from
-        /// GetMessage(). On the Macintosh, pEvent is a pointer to an EventRecord.
-        /// </summary>
-        public IntPtr Event { get { return _pEvent; } set { _pEvent = value; } }
-        /// <summary>
-        /// Any message the Source needs to send to the application in
-        /// response to processing the event/message. The messages currently defined for
-        /// this purpose are <see cref="Message.Null"/>, <see cref="Message.XferReady"/> 
-        /// and <see cref="Message.CloseDSReq"/>.
-        /// </summary>
-        public Message TWMessage { get { return (Message)_tWMessage; } }
-    }
+    
 
     //    /// <summary>
     //    /// This structure is used to pass specific information between the data source and the application
