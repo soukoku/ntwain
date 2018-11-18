@@ -40,7 +40,7 @@ namespace NTwain
         /// <summary>
         /// Gets the triplet operations defined for audio data group.
         /// </summary>
-        DGAudio DGAudio => dgAudio ?? (dgAudio = new DGAudio(this));
+        internal DGAudio DGAudio => dgAudio ?? (dgAudio = new DGAudio(this));
 
         ///// <summary>
         ///// Gets/sets the direct triplet operation entry for custom values.

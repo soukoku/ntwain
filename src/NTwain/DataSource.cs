@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using NTwain.Data;
 
@@ -90,6 +91,65 @@ namespace NTwain
             TW_STATUS stat = default;
             var rc = Session.DGControl.Status.Get(ref stat, this);
             return stat;
+        }
+
+
+        /// <summary>
+        /// Gets or sets the opaque source settings (aka TW_CUSTOMDSDATA) of this source if supported.
+        /// </summary>
+        public byte[] CustomDSData
+        {
+            // TODO: check if memory mgmt is correct
+            get
+            {
+                byte[] value = null;
+
+                TW_CUSTOMDSDATA data = default;
+                if (Session.DGControl.CustomDSData.Get(ref data) == ReturnCode.Success && data.InfoLength > 0)
+                {
+                    try
+                    {
+                        value = new byte[data.InfoLength];
+                        var ptr = Session.Config.MemoryManager.Lock(data.hData);
+                        Marshal.Copy(ptr, value, 0, (int)data.InfoLength);
+                    }
+                    finally
+                    {
+                        Session.Config.MemoryManager.Unlock(data.hData);
+                        Session.Config.MemoryManager.Free(data.hData);
+                    }
+                }
+                return value;
+            }
+            set
+            {
+                if (value != null && value.Length > 0)
+                {
+                    var data = new TW_CUSTOMDSDATA
+                    {
+                        InfoLength = (uint)value.Length
+                    };
+                    try
+                    {
+                        data.hData = Session.Config.MemoryManager.Allocate(data.InfoLength);
+                        var ptr = Session.Config.MemoryManager.Lock(data.hData);
+                        Marshal.Copy(value, 0, ptr, value.Length);
+                        var rc = Session.DGControl.CustomDSData.Set(ref data);
+                        if (rc != ReturnCode.Success)
+                        {
+                            // do something
+                        }
+                    }
+                    finally
+                    {
+                        if (data.hData != IntPtr.Zero)
+                        {
+                            Session.Config.MemoryManager.Unlock(data.hData);
+                            Session.Config.MemoryManager.Free(data.hData);
+                        }
+                    }
+                }
+            }
         }
 
 

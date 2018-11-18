@@ -48,6 +48,9 @@ namespace NTwain.Triplets
         PendingXfers _pending;
         internal PendingXfers PendingXfers => _pending ?? (_pending = new PendingXfers(Session));
 
+        CustomDSData _custDSData;
+        internal CustomDSData CustomDSData => _custDSData ?? (_custDSData = new CustomDSData(Session));
+
         XferGroup _xferGroup;
         /// <summary>
         /// Gets the operations defined for DAT_XFERGROUP.

@@ -976,22 +976,7 @@ namespace NTwain.Data
 
     //        public TW_FIX32[] Samples { get { return _samples; } }
     //    }
-
-    /// <summary>
-    /// Allows for a data source and application to pass custom data to each other.
-    /// </summary>
-    public partial struct TW_CUSTOMDSDATA
-    {
-        /// <summary>
-        /// Length, in bytes, of data.
-        /// </summary>
-        public uint InfoLength { get { return _infoLength; } set { _infoLength = value; } }
-        /// <summary>
-        /// Handle to memory containing <see cref="InfoLength"/> bytes of data.
-        /// </summary>
-        public IntPtr Data { get { return _hData; } set { _hData = value; } }
-    }
-
+    
     /// <summary>
     /// Provides information about the Event that was raised by the Source. The Source should only fill
     /// in those fields applicable to the Event. The Application must only read those fields applicable to

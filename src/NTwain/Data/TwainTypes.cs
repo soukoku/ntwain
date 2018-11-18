@@ -87,7 +87,7 @@ namespace NTwain.Data
         TW_UINT32 _reserved;
     }
 
-    
+
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TW_CALLBACK
     {
@@ -142,8 +142,8 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TW_CUSTOMDSDATA
     {
-        TW_UINT32 _infoLength;
-        TW_HANDLE _hData;
+        public TW_UINT32 InfoLength;
+        public TW_HANDLE hData;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2),
@@ -154,7 +154,7 @@ namespace NTwain.Data
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String255)]
         string _deviceName;
-        
+
         TW_UINT32 _batteryMinutes;
         TW_INT16 _batteryPercentage;
         TW_INT32 _powerSupply;
@@ -203,7 +203,7 @@ namespace NTwain.Data
         TW_UINT16 _returnCode;
         // item should be TW_UINTPTR but it's easier to work with intptr
         //TW_UINTPTR _item;
-        TW_HANDLE _item; 
+        TW_HANDLE _item;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -316,10 +316,10 @@ namespace NTwain.Data
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
         string _manufacturer;
-        
+
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
         string _productFamily;
-        
+
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
         string _productName;
     }
@@ -355,7 +355,7 @@ namespace NTwain.Data
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         TW_INT16[] _bitsPerSample;
-        
+
         TW_INT16 _bitsPerPixel;
         TW_BOOL _planar;
         TW_INT16 _pixelType;
