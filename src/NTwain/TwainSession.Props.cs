@@ -42,11 +42,6 @@ namespace NTwain
         /// </summary>
         internal DGAudio DGAudio => dgAudio ?? (dgAudio = new DGAudio(this));
 
-        ///// <summary>
-        ///// Gets/sets the direct triplet operation entry for custom values.
-        ///// </summary>
-        //public DGCustom DGCustom { get; set; }
-
         /// <summary>
         /// Occurs when an enabled source has been disabled (back to state 4).
         /// </summary>
