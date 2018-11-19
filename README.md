@@ -1,10 +1,13 @@
 # TWAIN Application-Library
 
+NOTE: THIS IS V4 DEV AND DOESN'T WORK YET.
+USE V3 BRANCH FOR WORKING VERSION.
+
 ## Info
 
 This is a library created to make working with 
 [TWAIN](http://twain.org/) easier in dotnet. 
-V4 of this lib is a work in progress and has these goals:
+V4 of this lib has these goals:
 
 * Targets latest TWAIN version (2.4 as of this writing)
 * Supports all the TWAIN functions in the spec
