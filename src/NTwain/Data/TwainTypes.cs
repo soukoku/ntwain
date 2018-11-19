@@ -7,20 +7,22 @@ using System.Runtime.InteropServices;
 // to aid in mapping against the twain.h file using copy-paste.
 // Consumers will not see those names.
 
+// under Windows this mapping works for both 32 and 64 bit.
+
 using TW_BOOL = System.UInt16; // unsigned short
 
 // use HandleRef instead?
 using TW_HANDLE = System.IntPtr; // HANDLE, todo: should really be uintptr?
-using TW_MEMREF = System.IntPtr; // LPVOID
-using TW_UINTPTR = System.UIntPtr; // UINT_PTR
+using TW_MEMREF = System.IntPtr;
+using TW_UINTPTR = System.UIntPtr;
 
-using TW_INT16 = System.Int16; // short
-using TW_INT32 = System.Int32; // long
-using TW_INT8 = System.SByte;  // char
+using TW_INT16 = System.Int16;
+using TW_INT32 = System.Int32;
+using TW_INT8 = System.SByte;
 
-using TW_UINT16 = System.UInt16; // unsigned short
-using TW_UINT32 = System.UInt32; // unsigned long
-using TW_UINT8 = System.Byte;    // unsigned char
+using TW_UINT16 = System.UInt16;
+using TW_UINT32 = System.UInt32;
+using TW_UINT8 = System.Byte;
 
 
 // This mono doc is awesome. An interop must-read
@@ -307,7 +309,6 @@ namespace NTwain.Data
     BestFitMapping(false, ThrowOnUnmappableChar = true)]
     partial class TW_IDENTITY
     {
-        // TODO: id needs to be 64bit in 64bit?
         internal TW_UINT32 Id;
         TW_VERSION _version;
         TW_UINT16 _protocolMajor;
@@ -324,25 +325,25 @@ namespace NTwain.Data
         string _productName;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 2),
-    BestFitMapping(false, ThrowOnUnmappableChar = true)]
-    partial class TW_IDENTITY_64
-    {
-        ulong _id;
-        TW_VERSION _version;
-        TW_UINT16 _protocolMajor;
-        TW_UINT16 _protocolMinor;
-        TW_UINT32 _supportedGroups;
+    //[StructLayout(LayoutKind.Sequential, Pack = 2),
+    //BestFitMapping(false, ThrowOnUnmappableChar = true)]
+    //partial class TW_IDENTITY_64
+    //{
+    //    ulong _id;
+    //    TW_VERSION _version;
+    //    TW_UINT16 _protocolMajor;
+    //    TW_UINT16 _protocolMinor;
+    //    TW_UINT32 _supportedGroups;
 
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
-        string _manufacturer;
+    //    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
+    //    string _manufacturer;
 
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
-        string _productFamily;
+    //    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
+    //    string _productFamily;
 
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
-        string _productName;
-    }
+    //    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = TwainConst.String32)]
+    //    string _productName;
+    //}
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TW_IMAGEINFO
@@ -374,8 +375,6 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TW_MEMORY
     {
-        // this is not a class due to being embedded by other classes
-
         TW_UINT32 _flags;
         TW_UINT32 _length;
         TW_MEMREF _theMem;
