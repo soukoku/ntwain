@@ -1,7 +1,7 @@
-﻿using NTwain.Data;
-using NTwain.Interop;
-using System;
+﻿using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Security;
 
 namespace NTwain.Internals
 {
@@ -34,6 +34,24 @@ namespace NTwain.Internals
         public void Unlock(IntPtr handle)
         {
             UnsafeNativeMethods.WinGlobalUnlock(handle);
+        }
+
+
+        [SuppressUnmanagedCodeSecurity]
+        static class UnsafeNativeMethods
+        {
+            [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalAlloc")]
+            public static extern IntPtr WinGlobalAlloc(uint uFlags, UIntPtr dwBytes);
+
+            [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalFree")]
+            public static extern IntPtr WinGlobalFree(IntPtr hMem);
+
+            [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalLock")]
+            public static extern IntPtr WinGlobalLock(IntPtr handle);
+
+            [DllImport("kernel32", SetLastError = true, EntryPoint = "GlobalUnlock")]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool WinGlobalUnlock(IntPtr handle);
         }
     }
 }

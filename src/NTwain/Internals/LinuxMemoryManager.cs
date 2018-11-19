@@ -6,10 +6,10 @@ using System.Text;
 
 namespace NTwain.Internals
 {
+    // probably wrong
+
     class LinuxMemoryManager : IMemoryManager
     {
-        #region IMemoryManager Members
-
         public IntPtr Allocate(uint size)
         {
             return Marshal.AllocHGlobal((int)size);
@@ -30,6 +30,5 @@ namespace NTwain.Internals
             // no op
         }
 
-        #endregion
     }
 }

@@ -1,12 +1,75 @@
 ﻿using System;
 
+#pragma warning disable 1591
+
 namespace NTwain.Data
 {
     // these are from the corresponding twain.h sections
 
-    /****************************************************************************
-     * Generic Constants                                                        *
-     ****************************************************************************/
+    /// <summary>
+    /// Contains loose magic values for some TWAIN stuff.
+    /// </summary>
+    public static class TwainConst
+    {
+        // string lengths are specified here since the actual
+        // array length doesn't reflect the name :(
+
+        /// <summary>
+        /// Length of an array that holds TW_STR32.
+        /// </summary>
+        public const int String32 = 34;
+        /// <summary>
+        /// Length of an array that holds TW_STR64.
+        /// </summary>
+        public const int String64 = 66;
+        /// <summary>
+        /// Length of an array that holds TW_STR128.
+        /// </summary>
+        public const int String128 = 130;
+        /// <summary>
+        /// Length of an array that holds TW_STR255.
+        /// </summary>
+        public const int String255 = 256;
+
+        // deprecated 
+        //public const int String1024 = 1026;
+
+        /// <summary>
+        /// Don't care value for 8 bit types.
+        /// </summary>
+        public const byte DontCare8 = 0xff;
+        /// <summary>
+        /// Don't care value for 16 bit types.
+        /// </summary>
+        public const ushort DontCare16 = 0xffff;
+        /// <summary>
+        /// Don't care value for 32 bit types.
+        /// </summary>
+        public const uint DontCare32 = 0xffffffff;
+
+        /// <summary>
+        /// The major version number of TWAIN supported by this library.
+        /// </summary>
+        public const short ProtocolMajor = 2;
+        /// <summary>
+        /// The minor version number of TWAIN supported by this library.
+        /// </summary>
+        public const short ProtocolMinor = 4;
+
+        /// <summary>
+        /// Value for true where applicable.
+        /// </summary>
+        public const ushort True = 1;
+        /// <summary>
+        /// Value for false where applicable.
+        /// </summary>
+        public const ushort False = 0;
+
+
+        public const ushort IconId = 962;
+        public const ushort DsmId = 461;
+        public const ushort DsmCodeId = 63;
+    }
 
     #region gen constants
 
@@ -14,7 +77,6 @@ namespace NTwain.Data
     /// Indicates the type of container used in capability.
     /// Corresponds to TWON_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum ContainerType : ushort
     {
         /// <summary>
@@ -22,39 +84,38 @@ namespace NTwain.Data
         /// </summary>
         Invalid = 0,
         /// <summary>
-        /// The container is <see cref="TWArray"/>.
+        /// The container is <see cref="TW_ARRAY"/>.
         /// </summary>
         Array = 3,
         /// <summary>
-        /// The container is <see cref="TWEnumeration"/>.
+        /// The container is <see cref="TW_ENUMERATION"/>.
         /// </summary>
         Enum = 4,
         /// <summary>
-        /// The container is <see cref="TWOneValue"/>.
+        /// The container is <see cref="TW_ONEVALUE"/>.
         /// </summary>
         OneValue = 5,
         /// <summary>
-        /// The container is <see cref="TWRange"/>.
+        /// The container is <see cref="TW_RANGE"/>.
         /// </summary>
         Range = 6,
         /// <summary>
         /// The don't care value.
         /// </summary>
-        DoNotCare = TwainConst.DoNotCare16,
+        DontCare = TwainConst.DontCare16,
     }
 
     /// <summary>
-    /// Flags used in <see cref="TWMemory"/>.
+    /// Flags used in <see cref="TW_MEMORY"/>.
     /// Corresponds to TWMF_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     [Flags]
     public enum MemoryFlags : uint
     {
         None = 0,
         AppOwns = 0x1,
         DsmOwns = 0x2,
-        DSOwns = 0x4,
+        DsOwns = 0x4,
         Pointer = 0x8,
         Handle = 0x10
     }
@@ -64,7 +125,6 @@ namespace NTwain.Data
     /// capability containers.
     /// Corresponds to TWTY_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     public enum ItemType : ushort
     {
         /// <summary>
@@ -119,8 +179,6 @@ namespace NTwain.Data
         /// Means Item is a char string shorter than 255.
         /// </summary>
         String255 = 0xc,
-        //String1024 = 0xd,
-        //Unicode512 = 0xe,
         /// <summary>
         /// Means Item is a handle (pointer).
         /// </summary>
@@ -129,17 +187,12 @@ namespace NTwain.Data
 
     #endregion
 
-    /****************************************************************************
-     * Capability Constants                                                     *
-     ****************************************************************************/
-
     #region cap constants
 
     /// <summary>
     /// CapAlarms values.
     /// Corresponds to TWAL_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum AlarmType : ushort
     {
         Alarm = 0,
@@ -157,7 +210,6 @@ namespace NTwain.Data
     /// ICapAutoSize values.
     /// Corresponds to TWAS_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum AutoSize : ushort
     {
         None = 0,
@@ -170,7 +222,6 @@ namespace NTwain.Data
     /// reference to a Western-style interpretation of the image.
     /// Corresponds to TWBCOR_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum BarcodeRotation : uint
     {
         /// <summary>
@@ -200,7 +251,6 @@ namespace NTwain.Data
     /// ICapPatchCodeSearchMode values.
     /// Corresponds to TWBD_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum BarcodeDirection : ushort
     {
         Horz = 0,
@@ -213,7 +263,6 @@ namespace NTwain.Data
     /// ICapBitOrder/ICapBitOrderCodes values.
     /// Corresponds to TWBO_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum BitOrder : ushort
     {
         LsbFirst = 0,
@@ -224,7 +273,6 @@ namespace NTwain.Data
     /// ICapAutoDiscardBlankPages values.
     /// Corresponds to TWBP_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum BlankPage //: short
     {
         Invalid = 0,
@@ -236,7 +284,6 @@ namespace NTwain.Data
     /// Values for ICapBitDepthReduction.
     /// Corresponds to TWBR_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum BitDepthReduction : ushort
     {
         Threshold = 0,
@@ -251,8 +298,7 @@ namespace NTwain.Data
     /// ICapSupportedBarcodeTypes values.
     /// Corresponds to TWBT_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
-    public enum BarcodeType : ushort
+   public enum BarcodeType : ushort
     {
         ThreeOfNine = 0,
         TwoOfFiveInterleaved = 1,
@@ -283,7 +329,6 @@ namespace NTwain.Data
     /// setting the desired file format with ICAP_IMAGEFILEFORMAT.
     /// Corresponds to TWCP_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum CompressionType : ushort
     {
         /// <summary>
@@ -352,7 +397,6 @@ namespace NTwain.Data
     /// CapCameraSide/TWEI_PAGESIDE values.
     /// Corresponds to TWCS_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum CameraSide : ushort
     {
         Both = 0,
@@ -364,7 +408,6 @@ namespace NTwain.Data
     /// CapClearBuffers values.
     /// Corresponds to TWCB_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum ClearBuffer : ushort
     {
         Auto = 0,
@@ -378,22 +421,72 @@ namespace NTwain.Data
     /// a cap value it's ushort.
     /// Corresponds to TWDE_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     public enum DeviceEvent : uint // using uint to support custom event values
     {
+        /// <summary>
+        /// The automatic capture settings on the device have been changed.
+        /// </summary>
         CheckAutomaticCapture = 0,
+        /// <summary>
+        /// Status of the battery has changed. Sources will report BatteryMinutes or BatteryPercentage
+        /// depending on which capabilities say they support.
+        /// </summary>
         CheckBattery = 1,
+        /// <summary>
+        /// The device has been powered off. If an Application receives this device event, it should call
+        /// CAP_DEVICEONLINE to verify the state of the Source, and then proceed as seems appropriate.
+        /// </summary>
         CheckDeviceOnline = 2,
+        /// <summary>
+        /// The flash setting on the device has been changed.
+        /// </summary>
         CheckFlash = 3,
+        /// <summary>
+        /// The power supply has changed, for example this event would be generated if AC was
+        /// removed from a device, putting it on battery. Scanners may also provide this event to notify
+        /// that a power on reset has taken place, indicating that the device has been power cycled.
+        /// </summary>
         CheckPowerSupply = 4,
+        /// <summary>
+        /// The resolution on the device has changed.
+        /// </summary>
         CheckResolution = 5,
+        /// <summary>
+        /// A device has been added to the Source. See DG_CONTROL / DAT_FILESYSTEM / MSG_CHANGEDIRECTORY 
+        /// and DG_CONTROL / DAT_FILESYSTEM / MSG_GETINFO to get more information about the new device.
+        /// </summary>
         DeviceAdded = 6,
+        /// <summary>
+        /// A device has become unavailable. This is different from TWDC_DEVICEREMOVED, since the
+        /// device is assumed to be connected.
+        /// </summary>
         DeviceOffline = 7,
+        /// <summary>
+        /// A device is ready to capture another image. Applications should be careful when negotiating
+        /// this event, especially in situations where images are gathered quickly, as with automatic
+        /// capture.
+        /// </summary>
         DeviceReady = 8,
+        /// <summary>
+        /// A device has been removed from the Source. This is different from TWDE_DEVICEOFFLINE.
+        /// As soon as this event is received an Application should re-negotiate its current device, since
+        /// that may have been the one that was removed. Sources must default to the TWFY_CAMERA
+        /// device if the current device is removed.
+        /// </summary>
         DeviceRemoved = 9,
         ImageCaptured = 10,
         ImageDeleted = 11,
+        /// <summary>
+        /// Report double feeds to the Application. Because of the asynchronous nature of device events
+        /// there may still be images waiting to be transferred, applications need to decide if they want to
+        /// recover these images or discard them.
+        /// </summary>
         PaperDoubleFeed = 12,
+        /// <summary>
+        /// Report paper jams to the Application. Because of the asynchronous nature of device events
+        /// there may still be images waiting to be transferred, applications need to decide if they want to
+        /// recover these images or discard them.
+        /// </summary>
         PaperJam = 13,
         LampFailure = 14,
         PowerSave = 15,
@@ -403,7 +496,7 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// <see cref="TWPassThru.Direction"/> values.
+    /// <see cref="TW_PASSTHRU.Direction"/> values.
     /// Corresponds to TWDR_* values.
     /// </summary>
     public enum Direction // using int to match TWPassThru
@@ -417,7 +510,6 @@ namespace NTwain.Data
     /// TWEI_DESKEWSTATUS values.
     /// Corresponds to TWDSK_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum DeskewStatus : uint
     {
         Success = 0,
@@ -430,7 +522,6 @@ namespace NTwain.Data
     /// CapDuplex values.
     /// Corresponds to TWDX_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum Duplex : ushort
     {
         None = 0,
@@ -442,7 +533,6 @@ namespace NTwain.Data
     /// CapFeederAlignment values.
     /// Corresponds to TWFA_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum FeederAlignment : ushort
     {
         None = 0,
@@ -455,7 +545,6 @@ namespace NTwain.Data
     /// ICapFeederType values.
     /// Corresponds to TWFE_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum FeederType : ushort
     {
         General = 0,
@@ -466,7 +555,6 @@ namespace NTwain.Data
     /// ICapImageFileFormat values.
     /// Corresponds to TWFF_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     public enum FileFormat : ushort
     {
         /// <summary>
@@ -532,14 +620,14 @@ namespace NTwain.Data
         /// <summary>
         /// A file format from Adobe PDF/A, Version 2
         /// </summary>
-        PdfA2 = 16
+        PdfA2 = 16,
+        PdfRaster = 17,
     }
 
     /// <summary>
     /// ICapFlashUsed2 values.
     /// Corresponds to TWFL_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum FlashedUsed : ushort
     {
         None = 0,
@@ -553,7 +641,6 @@ namespace NTwain.Data
     /// CapFeederOrder values.
     /// Corresponds to TWFO_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum FeederOrder : ushort
     {
         FirstPageFirst = 0,
@@ -564,7 +651,6 @@ namespace NTwain.Data
     /// CapFeederPocket values.
     /// Corresponds to TWFP_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum FeederPocket : ushort
     {
         PocketError = 0,
@@ -590,7 +676,6 @@ namespace NTwain.Data
     /// ICapFlipRotation values.
     /// Corresponds to TWFR_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum FlipRotation : ushort
     {
         Book = 0,
@@ -601,7 +686,6 @@ namespace NTwain.Data
     /// ICapFilter values.
     /// Corresponds to TWFT_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum FilterType : ushort
     {
         Red = 0,
@@ -616,7 +700,7 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// <see cref="TWFileSystem.FileType"/> values.
+    /// <see cref="TW_FILESYSTEM.FileType"/> values.
     /// Corresponds to TWFY_* values.
     /// </summary>
     public enum FileType // using int to match value
@@ -636,7 +720,6 @@ namespace NTwain.Data
     /// ICapIccProfile values.
     /// Corresponds to TWIC* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum IccProfile : ushort
     {
         None = 0,
@@ -648,7 +731,6 @@ namespace NTwain.Data
     /// ICapImageFilter values.
     /// Corresponds to TWIF_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum ImageFilter : ushort
     {
         None = 0,
@@ -664,17 +746,12 @@ namespace NTwain.Data
     /// ICapImageMerge values.
     /// Corresponds to TWIM_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum ImageMerge : ushort
     {
         None = 0,
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FrontOn")]
         FrontOnTop = 1,
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FrontOn")]
         FrontOnBottom = 2,
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FrontOn")]
         FrontOnLeft = 3,
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FrontOn")]
         FrontOnRight = 4
     }
 
@@ -682,7 +759,6 @@ namespace NTwain.Data
     /// CapJobControl values.
     /// Corresponds to TWJC_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum JobControl : ushort
     {
         /// <summary>
@@ -711,7 +787,6 @@ namespace NTwain.Data
     /// ICapJpegQuality values.
     /// Corresponds to TWJQ_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum JpegQuality : short
     {
         Invalid = 0,
@@ -725,7 +800,6 @@ namespace NTwain.Data
     /// ICapLightPath values.
     /// Corresponds to TWLP_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum LightPath : ushort
     {
         Reflective = 0,
@@ -736,7 +810,6 @@ namespace NTwain.Data
     /// ICapLightSource values.
     /// Corresponds to TWLS_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum LightSource : ushort
     {
         Red = 0,
@@ -752,7 +825,6 @@ namespace NTwain.Data
     /// TWEI_MAGTYPE values.
     /// Corresponds to TWMD_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum MagType : ushort
     {
         Micr = 0,
@@ -764,7 +836,6 @@ namespace NTwain.Data
     /// ICapNoiseFilter values.
     /// Corresponds to TWNF_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum NoiseFilter : ushort
     {
         None = 0,
@@ -777,7 +848,6 @@ namespace NTwain.Data
     /// ICapOrientation values.
     /// Corresponds to TWOR_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum OrientationType : ushort
     {
         Rot0 = 0,
@@ -795,7 +865,6 @@ namespace NTwain.Data
     /// ICapOverscan values.
     /// Corresponds to TWOV_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum OverScan : ushort
     {
         None = 0,
@@ -806,10 +875,9 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// <see cref="TWPalette8.PaletteType"/> values.
+    /// <see cref="TW_PALETTE8.PaletteType"/> values.
     /// Corresponds to TWPA_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum PaletteType : ushort
     {
         Rgb = 0,
@@ -821,7 +889,6 @@ namespace NTwain.Data
     /// ICapPlanarChunky values.
     /// Corresponds to TWPC_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum PlanarChunky : ushort
     {
         Chunky = 0,
@@ -833,7 +900,6 @@ namespace NTwain.Data
     /// ICapSupportedPatchCodeTypes values.
     /// Corresponds to TWPCH_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum PatchCode : ushort
     {
         Patch1 = 0,
@@ -848,7 +914,6 @@ namespace NTwain.Data
     /// ICapPixelFlavor, ICapPixelFlavorCodes values.
     /// Corresponds to TWPF_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum PixelFlavor : ushort
     {
         Chocolate = 0,
@@ -859,11 +924,9 @@ namespace NTwain.Data
     /// CapPrinterMode values.
     /// Corresponds to TWPM_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum PrinterMode : ushort
     {
         SingleString = 0,
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "MultiString")]
         MultiString = 1,
         CompoundString = 2
     }
@@ -872,7 +935,6 @@ namespace NTwain.Data
     /// CapPrinter values.
     /// Corresponds to TWPR_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum Printer : ushort
     {
         ImprinterTopBefore = 0,
@@ -889,7 +951,6 @@ namespace NTwain.Data
     /// CapPrinterFontStyle values.
     /// Corresponds to TWPF_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum PrinterFontStyle : ushort
     {
         Normal = 0,
@@ -903,7 +964,6 @@ namespace NTwain.Data
     /// CapPrinterIndexTrigger values.
     /// Corresponds to TWCT_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum PrinterIndexTrigger : ushort
     {
         Page = 0,
@@ -919,7 +979,6 @@ namespace NTwain.Data
     /// CapPowerSupply values.
     /// Corresponds to TWPS_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum PowerSupply : ushort
     {
         External = 0,
@@ -931,7 +990,6 @@ namespace NTwain.Data
     /// ICapJpegPixelType, ICapPixelType values.
     /// Corresponds to TWPT_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     public enum PixelType : ushort
     {
         BlackWhite = 0,
@@ -953,7 +1011,6 @@ namespace NTwain.Data
     /// CapSegmented values.
     /// Corresponds to TWSG_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum Segmented : ushort
     {
         None = 0,
@@ -965,7 +1022,6 @@ namespace NTwain.Data
     /// ICapFilmType values.
     /// Corresponds to TWFM_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum FilmType : ushort
     {
         Positive = 0,
@@ -976,7 +1032,6 @@ namespace NTwain.Data
     /// CapDoubleFeedDetection values.
     /// Corresponds to TWDF_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum DoubleFeedDetection : ushort
     {
         Ultrasonic = 0,
@@ -988,7 +1043,6 @@ namespace NTwain.Data
     /// CapDoubleFeedDetectionSensitivity values.
     /// Corresponds to TWUS_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum DoubleFeedDetectionSensitivity : ushort
     {
         Low = 0,
@@ -1000,7 +1054,6 @@ namespace NTwain.Data
     /// CapDoubleFeedDetectionResponse values.
     /// Corresponds to TWDP_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum DoubleFeedDetectionResponse : ushort
     {
         Stop = 0,
@@ -1013,7 +1066,6 @@ namespace NTwain.Data
     /// ICapMirror values.
     /// Corresponds to TWMR* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum Mirror : ushort
     {
         None = 0,
@@ -1025,7 +1077,6 @@ namespace NTwain.Data
     /// ICapJpegSubsampling values.
     /// Corresponds to TWJS_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum JpegSubsampling : ushort
     {
         x444YCBCR = 0,
@@ -1042,7 +1093,6 @@ namespace NTwain.Data
     /// CapPaperHandling values.
     /// Corresponds to TWPH_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum PaperHandling : ushort
     {
         Normal = 0,
@@ -1056,7 +1106,6 @@ namespace NTwain.Data
     /// CapIndicatorsMode values.
     /// Corresponds to TWCI_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum IndicatorsMode : ushort
     {
         Info = 0,
@@ -1069,62 +1118,228 @@ namespace NTwain.Data
     /// ICapSupportedSizes values.
     /// Corresponds to TWSS_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum SupportedSize : ushort
     {
+        /// <summary>
+        /// Images will match the maximum scanning dimensions of
+        /// the device. This setting is only applicable to devices that
+        /// have fixed measurable dimensions, such as most
+        /// scanners.
+        /// </summary>
         None = 0,
-        A4 = 1,
-        JisB5 = 2,
+        /// <summary>
+        /// 8.5" x 11.0" (216mm x 280mm)
+        /// </summary>
         USLetter = 3,
+        /// <summary>
+        /// 8.5" x 14.0" (216mm x 356mm)
+        /// </summary>
         USLegal = 4,
-        A5 = 5,
-        IsoB4 = 6,
-        IsoB6 = 7,
+        /// <summary>
+        /// 11.0" x 17.0" (280mm x 432mm)
+        /// </summary>
         USLedger = 9,
+        /// <summary>
+        /// 7.25" x 10.5" (184mm x 267mm)
+        /// </summary>
         USExecutive = 10,
-        A3 = 11,
-        IsoB3 = 12,
-        A6 = 13,
-        C4 = 14,
-        C5 = 15,
-        C6 = 16,
-        FourA0 = 17,
-        TwoA0 = 18,
-        A0 = 19,
-        A1 = 20,
-        A2 = 21,
-        A7 = 22,
-        A8 = 23,
-        A9 = 24,
-        A10 = 25,
-        IsoB0 = 26,
-        IsoB1 = 27,
-        IsoB2 = 28,
-        IsoB5 = 29,
-        IsoB7 = 30,
-        IsoB8 = 31,
-        IsoB9 = 31,
-        IsoB10 = 33,
-        JisB0 = 34,
-        JisB1 = 35,
-        JisB2 = 36,
-        JisB3 = 37,
-        JisB4 = 38,
-        JisB6 = 39,
-        JisB7 = 40,
-        JisB8 = 41,
-        JisB9 = 42,
-        JisB10 = 43,
-        C0 = 44,
-        C1 = 45,
-        C2 = 46,
-        C3 = 47,
-        C7 = 48,
-        C8 = 49,
-        C9 = 50,
-        C10 = 51,
+        /// <summary>
+        /// 5.5" x 8.5" (140mm x 216mm)
+        /// </summary>
         USStatement = 52,
+        /// <summary>
+        /// 90mm x 55mm
+        /// </summary>
         BusinessCard = 53,
+        /// <summary>
+        /// 1682mm x 2378mm
+        /// </summary>
+        FourA0 = 17,
+        /// <summary>
+        /// 1189mm x 1682mm
+        /// </summary>
+        TwoA0 = 18,
+        /// <summary>
+        /// 841mm x 1189mm
+        /// </summary>
+        A0 = 19,
+        /// <summary>
+        /// 594mm x 841mm
+        /// </summary>
+        A1 = 20,
+        /// <summary>
+        /// 420mm x 594mm
+        /// </summary>
+        A2 = 21,
+        /// <summary>
+        /// 297mm x 420mm
+        /// </summary>
+        A3 = 11,
+        /// <summary>
+        /// 210mm x 297mm
+        /// </summary>
+        A4 = 1,
+        /// <summary>
+        /// 148mm x 210mm
+        /// </summary>
+        A5 = 5,
+        /// <summary>
+        /// 105mm x 148mm
+        /// </summary>
+        A6 = 13,
+        /// <summary>
+        /// 74mm x 105mm
+        /// </summary>
+        A7 = 22,
+        /// <summary>
+        /// 52mm x 74mm
+        /// </summary>
+        A8 = 23,
+        /// <summary>
+        /// 37mm x 52mm
+        /// </summary>
+        A9 = 24,
+        /// <summary>
+        /// 26mm x 37mm
+        /// </summary>
+        A10 = 25,
+        /// <summary>
+        /// 1000mm x1414mm
+        /// </summary>
+        IsoB0 = 26,
+        /// <summary>
+        /// 707mm x1000mm
+        /// </summary>
+        IsoB1 = 27,
+        /// <summary>
+        /// 500mm x 707mm
+        /// </summary>
+        IsoB2 = 28,
+        /// <summary>
+        /// 353mm x 500mm
+        /// </summary>
+        IsoB3 = 12,
+        /// <summary>
+        /// 250mm x 353mm
+        /// </summary>
+        IsoB4 = 6,
+        /// <summary>
+        /// 176mm x 250mm
+        /// </summary>
+        IsoB5 = 29,
+        /// <summary>
+        /// 125mm x 176mm
+        /// </summary>
+        IsoB6 = 7,
+        /// <summary>
+        /// 88mm x 125mm
+        /// </summary>
+        IsoB7 = 30,
+        /// <summary>
+        /// 62mm x 88mm
+        /// </summary>
+        IsoB8 = 31,
+        /// <summary>
+        /// 44mm x 62mm
+        /// </summary>
+        IsoB9 = 31,
+        /// <summary>
+        /// 31mm x 44mm
+        /// </summary>
+        IsoB10 = 33,
+        /// <summary>
+        /// 1030mm x1456mm
+        /// </summary>
+        JisB0 = 34,
+        /// <summary>
+        /// 728mm x1030mm
+        /// </summary>
+        JisB1 = 35,
+        /// <summary>
+        /// 515mm x 728mm
+        /// </summary>
+        JisB2 = 36,
+        /// <summary>
+        /// 364mm x 515mm
+        /// </summary>
+        JisB3 = 37,
+        /// <summary>
+        /// 257mm x 364mm
+        /// </summary>
+        JisB4 = 38,
+        /// <summary>
+        /// 182mm x 257mm
+        /// </summary>
+        JisB5 = 2,
+        /// <summary>
+        /// 128mm x 182mm
+        /// </summary>
+        JisB6 = 39,
+        /// <summary>
+        /// 91mm x 128mm
+        /// </summary>
+        JisB7 = 40,
+        /// <summary>
+        /// 64mm x 91mm
+        /// </summary>
+        JisB8 = 41,
+        /// <summary>
+        /// 45mm x 64mm
+        /// </summary>
+        JisB9 = 42,
+        /// <summary>
+        /// 32mm x 45mm
+        /// </summary>
+        JisB10 = 43,
+        /// <summary>
+        /// 917mm x1297mm
+        /// </summary>
+        C0 = 44,
+        /// <summary>
+        /// 648mm x 917mm
+        /// </summary>
+        C1 = 45,
+        /// <summary>
+        /// 458mm x 648mm
+        /// </summary>
+        C2 = 46,
+        /// <summary>
+        /// 324mm x 458mm
+        /// </summary>
+        C3 = 47,
+        /// <summary>
+        /// 229mm x 324mm
+        /// </summary>
+        C4 = 14,
+        /// <summary>
+        /// 162mm x 229mm
+        /// </summary>
+        C5 = 15,
+        /// <summary>
+        /// 114mm x 162mm
+        /// </summary>
+        C6 = 16,
+        /// <summary>
+        /// 81mm x 114mm
+        /// </summary>
+        C7 = 48,
+        /// <summary>
+        /// 57mm x 81mm
+        /// </summary>
+        C8 = 49,
+        /// <summary>
+        /// 40mm x 57mm
+        /// </summary>
+        C9 = 50,
+        /// <summary>
+        /// 28mm x 40mm
+        /// </summary>
+        C10 = 51,
+        /// <summary>
+        /// Added to simplify negotiating for the entire acquisition area of a
+        /// device, since TWSS_NONE was overloaded to mean both "a custom frame" and "the
+        /// maximum image size."
+        /// </summary>
         MaxSize = 54
     }
 
@@ -1132,7 +1347,6 @@ namespace NTwain.Data
     /// ICapXferMech, ACapXferMech values.
     /// Corresponds to TWSX_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     public enum XferMech : ushort
     {
         Native = 0,
@@ -1145,7 +1359,6 @@ namespace NTwain.Data
     /// ICapUnits values.
     /// Corresponds to TWUN_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum Unit : ushort
     {
         Inches = 0,
@@ -1159,14 +1372,9 @@ namespace NTwain.Data
 
     #endregion
 
-    /****************************************************************************
-     * others                                                                   *
-     ****************************************************************************/
-
     /// <summary>
     /// Corresponds to TWCY_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum Country : ushort
     {
         None = 0,
@@ -1226,7 +1434,6 @@ namespace NTwain.Data
         EasterIs = 1014,
         Ecuador = 593,
         Egypt = 20,
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "El")]
         ElSalvador = 503,
         Eqguinea = 1015,
         Ethiopia = 251,
@@ -1367,7 +1574,7 @@ namespace NTwain.Data
         Ussr = 7,
         UAEmirates = 971,
         UnitedKingdom = 44,
-        Usa = 1,
+        USA = 1,
         Uruguay = 598,
         Vanuatu = 1041,
         VaticanCity = 39,
@@ -1408,14 +1615,13 @@ namespace NTwain.Data
         Slovenia = 386,
         SouthKorea = 82,
         Ukraine = 380,
-        USVirginIs = 340,
+        USVirginIslands = 340,
         Vietnam = 84,
     }
 
     /// <summary>
     /// Corresponds to TWLG_* values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum Language : short
     {
         UserLocale = -1,
@@ -1432,7 +1638,6 @@ namespace NTwain.Data
         Portuguese = 10,
         Spanish = 11,
         Swedish = 12,
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "USA")]
         EnglishUSA = 13,
         Afrikaans = 14,
         Albania = 15,
@@ -1540,7 +1745,6 @@ namespace NTwain.Data
     /// <summary>
     /// Corresponds to DG_*.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2217:DoNotMarkEnumsWithFlags")]
     [Flags]
     public enum DataGroups : uint
     {
@@ -1554,20 +1758,18 @@ namespace NTwain.Data
     /// <summary>
     /// Corresponds to DF_*.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     [Flags]
-    public enum DataFunctionalities : uint
+    public enum DataFlags : uint
     {
         None = 0,
-        Dsm2 = 0x10000000,
+        DSM2 = 0x10000000,
         App2 = 0x20000000,
-        Ds2 = 0x40000000,
+        DS2 = 0x40000000,
     }
 
     /// <summary>
     /// Corresponds to DAT_*.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum DataArgumentType : ushort
     {
         Null = 0,
@@ -1591,6 +1793,8 @@ namespace NTwain.Data
         Callback = 0x10,
         StatusUtf8 = 0x11,
         Callback2 = 0x12,
+        Metrics = 0x13,
+        TwainDirect = 0x14,
 
         // image group
         ImageInfo = 0x101,
@@ -1620,7 +1824,6 @@ namespace NTwain.Data
     /// <summary>
     /// Corresponds to MSG_*.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum Message : ushort
     {
         Null = 0,
@@ -1688,12 +1891,14 @@ namespace NTwain.Data
 
         // used with DAT_CAPABILITY
         ResetAll = 0xa01,
+
+        // used with DAT_TWAINDIRECT 
+        SetTask = 0xb01,
     }
 
     /// <summary>
     /// Indicates the type of capability.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum CapabilityId : ushort
     {
         None = 0,
@@ -1737,7 +1942,6 @@ namespace NTwain.Data
         CapAutomaticCapture = 0x101a,   /* Added 1.8 */
         CapTimeBeforeFirstCapture = 0x101b,   /* Added 1.8 */
         CapTimeBetweenCaptures = 0x101c,   /* Added 1.8 */
-        CapClearBuffers = 0x101d,   /* Added 1.8 */
         CapMaxBatchBuffers = 0x101e,   /* Added 1.8 */
         CapDeviceTimeDate = 0x101f,   /* Added 1.8 */
         CapPowerSupply = 0x1020,   /* Added 1.8 */
@@ -1783,6 +1987,7 @@ namespace NTwain.Data
         CapPrinterIndexStep = 0x104C,
         CapPrinterIndexTrigger = 0x104D,
         CapPrinterStringPreview = 0x104E,
+        CapSheetCount = 0x104F,
 
 
         /* image data sources MAY support these caps */
@@ -1875,13 +2080,23 @@ namespace NTwain.Data
         /* image data sources MAY support these audio caps */
         ACapXferMech = 0x1202,  /* Added 1.8 */
 
+
+        // deprecated
+
+        //CapClearBuffers = 0x101d,
+        //CapSUPPORTEDCAPSEXT = 0x100c,
+        //// CAP_FILESYSTEM            //0x????
+        //CapPAGEMULTIPLEACQUIRE = 0x1023,
+        //CapPAPERBINDING = 0x102f,
+        //CapPASSTHRU = 0x1031,
+        //CapPOWERDOWNTIME = 0x1034,
+        //ACapAUDIOFILEFORMAT = 0x1201,
     }
 
     /// <summary>
     /// Extended Image Info Attributes.
     /// Corresponds to TWEI_*.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum ExtendedImageInfo : ushort
     {
         Invalid = 0,
@@ -1958,14 +2173,14 @@ namespace NTwain.Data
         ImageMerged = 0x1247,  /* added 2.1 */
         MagDataLength = 0x1248,  /* added 2.1 */
         PaperCount = 0x1249,
-        PrinterText = 0x124a
+        PrinterText = 0x124a,
+        TwainDirectMetadata = 0x124a
     }
 
     /// <summary>
     /// EndXfer job control values.
     /// Corresponds to TWEJ_*.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum EndXferJob : ushort
     {
         None = 0x0000,
@@ -1981,7 +2196,6 @@ namespace NTwain.Data
     /// <summary>
     /// Corresponds to TWRC_*.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     public enum ReturnCode : ushort
     {
         CustomBase = 0x8000,
@@ -2003,7 +2217,6 @@ namespace NTwain.Data
     /// <summary>
     /// Corresponds to TWCC_*.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum ConditionCode : ushort
     {
         CustomBase = 0x8000,
@@ -2076,7 +2289,6 @@ namespace NTwain.Data
     /// <summary>
     /// TWAIN's boolean values.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
     public enum BoolType : ushort
     {
         /// <summary>
@@ -2088,65 +2300,6 @@ namespace NTwain.Data
         /// </summary>
         True = 1
     }
-
-
-    /// <summary>
-    /// Contains direct magic values for some TWAIN stuff.
-    /// </summary>
-    public static class TwainConst
-    {
-        // these are specified here since the actual
-        // array length doesn't reflect the name :(
-
-        /// <summary>
-        /// Length of an array that holds TW_STR32.
-        /// </summary>
-        public const int String32 = 34;
-        /// <summary>
-        /// Length of an array that holds TW_STR64.
-        /// </summary>
-        public const int String64 = 66;
-        /// <summary>
-        /// Length of an array that holds TW_STR128.
-        /// </summary>
-        public const int String128 = 130;
-        /// <summary>
-        /// Length of an array that holds TW_STR255.
-        /// </summary>
-        public const int String255 = 256;
-
-        // deprecated 
-        //public const int String1024 = 1026;
-
-        /// <summary>
-        /// Don't care value for 8 bit types.
-        /// </summary>
-        public const byte DoNotCare8 = 0xff;
-        /// <summary>
-        /// Don't care value for 16 bit types.
-        /// </summary>
-        public const ushort DoNotCare16 = 0xffff;
-        /// <summary>
-        /// Don't care value for 32 bit types.
-        /// </summary>
-        public const uint DoNotCare32 = 0xffffffff;
-
-        /// <summary>
-        /// The major version number of TWAIN supported by this library.
-        /// </summary>
-        public const short ProtocolMajor = 2;
-        /// <summary>
-        /// The minor version number of TWAIN supported by this library.
-        /// </summary>
-        public const short ProtocolMinor = 3;
-
-        /// <summary>
-        /// Value for false where applicable.
-        /// </summary>
-        public const ushort True = 1;
-        /// <summary>
-        /// Value for true where applicable.
-        /// </summary>
-        public const ushort False = 0;
-    }
 }
+
+#pragma warning restore 1591

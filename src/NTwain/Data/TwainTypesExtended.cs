@@ -1,5 +1,4 @@
 ﻿using NTwain.Internals;
-using NTwain.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,23 +11,22 @@ using System.Text;
 namespace NTwain.Data
 {
 
-    //// This file contains custom logic added to the twain types.
-    //// Separating the raw field definitions out makes finding all the
-    //// custom code logic easier. Mostly this just makes the fields
-    //// into .net friendly properties.
+    // This file contains custom logic added to the twain types.
+    // Mostly this just makes the fields
+    // into .net friendly properties.
 
-    //// potentially unit tests for the twain types only need to target 
-    //// code in this file since everything else is just interop and 
-    //// field definitions.
+    // most unit tests for the twain types only need to target 
+    // code in this file since everything else is just interop and 
+    // field definitions.
 
-    //// most of the doc text are copied from the twain spec pdf. 
+    // most of the doc text are copied from the twain spec pdf. 
 
 
     /// <summary>
     /// Stores a fixed point number. This can be implicitly converted 
     /// to a float in dotnet.
     /// </summary>
-    public partial struct TWFix32 : IEquatable<TWFix32>, IConvertible
+    public partial struct TW_FIX32 : IEquatable<TW_FIX32>, IConvertible
     {
         // the conversion logic is found in the spec.
 
@@ -36,7 +34,7 @@ namespace NTwain.Data
         {
             return (float)_whole + _frac / 65536f;
         }
-        TWFix32(float value)
+        TW_FIX32(float value)
         {
             //int temp = (int)(value * 65536.0 + 0.5);
             //_whole = (short)(temp >> 16);
@@ -51,15 +49,6 @@ namespace NTwain.Data
         }
 
         /// <summary>
-        /// The Whole part of the floating point number. This number is signed.
-        /// </summary>
-        public short Whole { get { return _whole; } set { _whole = value; } }
-        /// <summary>
-        /// The Fractional part of the floating point number. This number is unsigned.
-        /// </summary>
-        public ushort Fraction { get { return _frac; } set { _frac = value; } }
-
-        /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
         /// <returns>
@@ -70,32 +59,32 @@ namespace NTwain.Data
             return ToFloat().ToString(CultureInfo.InvariantCulture);
         }
 
-        /// <summary>
-        /// Converts this to <see cref="TWOneValue"/> for capability set methods.
-        /// </summary>
-        /// <returns></returns>
-        public TWOneValue ToOneValue()
-        {
-            // copy struct parts as-is.
-            // probably has a faster way but can't think now
+        ///// <summary>
+        ///// Converts this to <see cref="TW_ONEVALUE"/> for capability set methods.
+        ///// </summary>
+        ///// <returns></returns>
+        //public TW_ONEVALUE ToOneValue()
+        //{
+        //    // copy struct parts as-is.
+        //    // probably has a faster way but can't think now
 
-            byte[] array = new byte[4];
-            var part = BitConverter.GetBytes(Whole);
-            Buffer.BlockCopy(part, 0, array, 0, 2);
+        //    byte[] array = new byte[4];
+        //    var part = BitConverter.GetBytes(Whole);
+        //    Buffer.BlockCopy(part, 0, array, 0, 2);
 
-            part = BitConverter.GetBytes(Fraction);
-            Buffer.BlockCopy(part, 0, array, 2, 2);
+        //    part = BitConverter.GetBytes(Fraction);
+        //    Buffer.BlockCopy(part, 0, array, 2, 2);
 
-            var converted = BitConverter.ToUInt32(array, 0);
+        //    var converted = BitConverter.ToUInt32(array, 0);
 
-            return new TWOneValue
-            {
-                ItemType = ItemType.Fix32,
-                Item = converted
-                // old wrong conversion
-                // (uint)this,// ((uint)dpi) << 16;
-            };
-        }
+        //    return new TW_ONEVALUE
+        //    {
+        //        ItemType = ItemType.Fix32,
+        //        Item = converted
+        //        // old wrong conversion
+        //        // (uint)this,// ((uint)dpi) << 16;
+        //    };
+        //}
 
         #region equals
 
@@ -108,17 +97,17 @@ namespace NTwain.Data
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (!(obj is TWFix32))
+            if (!(obj is TW_FIX32))
                 return false;
 
-            return Equals((TWFix32)obj);
+            return Equals((TW_FIX32)obj);
         }
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns></returns>
-        public bool Equals(TWFix32 other)
+        public bool Equals(TW_FIX32 other)
         {
             return _whole == other._whole && _frac == other._frac;
         }
@@ -138,40 +127,40 @@ namespace NTwain.Data
         #region static stuff
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="NTwain.Data.TWFix32"/> to <see cref="System.Single"/>.
+        /// Performs an implicit conversion from <see cref="NTwain.Data.TW_FIX32"/> to <see cref="System.Single"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
-        public static implicit operator float(TWFix32 value)
+        public static implicit operator float(TW_FIX32 value)
         {
             return value.ToFloat();
         }
         /// <summary>
-        /// Performs an implicit conversion from <see cref="System.Single"/> to <see cref="NTwain.Data.TWFix32"/>.
+        /// Performs an implicit conversion from <see cref="System.Single"/> to <see cref="NTwain.Data.TW_FIX32"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
-        public static implicit operator TWFix32(float value)
+        public static implicit operator TW_FIX32(float value)
         {
-            return new TWFix32(value);
+            return new TW_FIX32(value);
         }
         /// <summary>
-        /// Performs an implicit conversion from <see cref="NTwain.Data.TWFix32"/> to <see cref="System.Double"/>.
+        /// Performs an implicit conversion from <see cref="NTwain.Data.TW_FIX32"/> to <see cref="System.Double"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
-        public static implicit operator double(TWFix32 value)
+        public static implicit operator double(TW_FIX32 value)
         {
             return value.ToFloat();
         }
         /// <summary>
-        /// Performs an implicit conversion from <see cref="System.Double"/> to <see cref="NTwain.Data.TWFix32"/>.
+        /// Performs an implicit conversion from <see cref="System.Double"/> to <see cref="NTwain.Data.TW_FIX32"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
-        public static implicit operator TWFix32(double value)
+        public static implicit operator TW_FIX32(double value)
         {
-            return new TWFix32((float)value);
+            return new TW_FIX32((float)value);
         }
         /// <summary>
         /// Implements the operator ==.
@@ -179,7 +168,7 @@ namespace NTwain.Data
         /// <param name="value1">The value1.</param>
         /// <param name="value2">The value2.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator ==(TWFix32 value1, TWFix32 value2)
+        public static bool operator ==(TW_FIX32 value1, TW_FIX32 value2)
         {
             return value1.Equals(value2);
         }
@@ -189,7 +178,7 @@ namespace NTwain.Data
         /// <param name="value1">The value1.</param>
         /// <param name="value2">The value2.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator !=(TWFix32 value1, TWFix32 value2)
+        public static bool operator !=(TW_FIX32 value1, TW_FIX32 value2)
         {
             return !value1.Equals(value2);
         }
@@ -286,29 +275,29 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// Embedded in the <see cref="TWImageLayout"/> structure. 
+    /// Embedded in the <see cref="TW_IMAGELAYOUT"/> structure. 
     /// Defines a frame rectangle in ICapUnits coordinates.
     /// </summary>
-    public partial struct TWFrame : IEquatable<TWFrame>
+    public partial struct TW_FRAME : IEquatable<TW_FRAME>
     {
         #region properties
 
         /// <summary>
         /// Value of the left-most edge of the rectangle.
         /// </summary>
-        public float Left { get { return _left; } set { _left = value; } }
+        public float Left { get => _left; set => _left = value; }
         /// <summary>
         /// Value of the top-most edge of the rectangle.
         /// </summary>
-        public float Top { get { return _top; } set { _top = value; } }
+        public float Top { get => _top; set => _top = value; }
         /// <summary>
         /// Value of the right-most edge of the rectangle.
         /// </summary>
-        public float Right { get { return _right; } set { _right = value; } }
+        public float Right { get => _right; set => _right = value; }
         /// <summary>
         /// Value of the bottom-most edge of the rectangle.
         /// </summary>
-        public float Bottom { get { return _bottom; } set { _bottom = value; } }
+        public float Bottom { get => _bottom; set => _bottom = value; }
 
         #endregion
 
@@ -334,17 +323,17 @@ namespace NTwain.Data
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (!(obj is TWFrame))
+            if (!(obj is TW_FRAME))
                 return false;
 
-            return Equals((TWFrame)obj);
+            return Equals((TW_FRAME)obj);
         }
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns></returns>
-        public bool Equals(TWFrame other)
+        public bool Equals(TW_FRAME other)
         {
             return _left == other._left && _top == other._top &&
                 _right == other._right && _bottom == other._bottom;
@@ -371,7 +360,7 @@ namespace NTwain.Data
         /// <param name="value1">The value1.</param>
         /// <param name="value2">The value2.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator ==(TWFrame value1, TWFrame value2)
+        public static bool operator ==(TW_FRAME value1, TW_FRAME value2)
         {
             return value1.Equals(value2);
         }
@@ -381,7 +370,7 @@ namespace NTwain.Data
         /// <param name="value1">The value1.</param>
         /// <param name="value2">The value2.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator !=(TWFrame value1, TWFrame value2)
+        public static bool operator !=(TW_FRAME value1, TW_FRAME value2)
         {
             return !value1.Equals(value2);
         }
@@ -389,12 +378,12 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// Embedded in the <see cref="TWTransformStage"/> structure that is embedded in the <see cref="TWCieColor"/>
+    /// Embedded in the <see cref="TW_TRANSFORMSTAGE"/> structure that is embedded in the <see cref="TW_CIECOLOR"/>
     /// structure. Defines the parameters used for channel-specific transformation. The transform can be
     /// described either as an extended form of the gamma function or as a table look-up with linear
     /// interpolation.
     /// </summary>
-    public partial struct TWDecodeFunction : IEquatable<TWDecodeFunction>
+    public partial struct TW_DECODEFUNCTION : IEquatable<TW_DECODEFUNCTION>
     {
         #region properties
         /// <summary>
@@ -402,40 +391,40 @@ namespace NTwain.Data
         /// minimum input value of channel data.
         /// </summary>
         public float StartIn { get { return _startIn; } }//set { _startIn = value; } }
-        /// <summary>
-        /// Ending input value of the extended gamma function. Defines the maximum
-        /// input value of channel data.
-        /// </summary>
+                                                         /// <summary>
+                                                         /// Ending input value of the extended gamma function. Defines the maximum
+                                                         /// input value of channel data.
+                                                         /// </summary>
         public float BreakIn { get { return _breakIn; } }//set { _breakIn = value; } }
-        /// <summary>
-        /// The input value at which the transform switches from linear
-        /// transformation/interpolation to gamma transformation.
-        /// </summary>
+                                                         /// <summary>
+                                                         /// The input value at which the transform switches from linear
+                                                         /// transformation/interpolation to gamma transformation.
+                                                         /// </summary>
         public float EndIn { get { return _endIn; } }//set { _endIn = value; } }
-        /// <summary>
-        /// Starting output value of the extended gamma function. Defines the
-        /// minimum output value of channel data.
-        /// </summary>
+                                                     /// <summary>
+                                                     /// Starting output value of the extended gamma function. Defines the
+                                                     /// minimum output value of channel data.
+                                                     /// </summary>
         public float StartOut { get { return _startOut; } }//set { _startOut = value; } }
-        /// <summary>
-        /// Ending output value of the extended gamma function. Defines the
-        /// maximum output value of channel data.
-        /// </summary>
+                                                           /// <summary>
+                                                           /// Ending output value of the extended gamma function. Defines the
+                                                           /// maximum output value of channel data.
+                                                           /// </summary>
         public float BreakOut { get { return _breakOut; } }//set { _breakOut = value; } }
-        /// <summary>
-        /// The output value at which the transform switches from linear
-        /// transformation/interpolation to gamma transformation.
-        /// </summary>
+                                                           /// <summary>
+                                                           /// The output value at which the transform switches from linear
+                                                           /// transformation/interpolation to gamma transformation.
+                                                           /// </summary>
         public float EndOut { get { return _endOut; } }//set { _endOut = value; } }
-        /// <summary>
-        /// Constant value. The exponential used in the gamma function.
-        /// </summary>
+                                                       /// <summary>
+                                                       /// Constant value. The exponential used in the gamma function.
+                                                       /// </summary>
         public float Gamma { get { return _gamma; } }//set { _gamma = value; } }
-        /// <summary>
-        /// The number of samples in the look-up table. Includes the values of StartIn
-        /// and EndIn. Zero-based index (actually, number of samples - 1). If zero, use
-        /// extended gamma, otherwise use table look-up.
-        /// </summary>
+                                                     /// <summary>
+                                                     /// The number of samples in the look-up table. Includes the values of StartIn
+                                                     /// and EndIn. Zero-based index (actually, number of samples - 1). If zero, use
+                                                     /// extended gamma, otherwise use table look-up.
+                                                     /// </summary>
         public float SampleCount { get { return _sampleCount; } }//set { _sampleCount = value; } }
         #endregion
 
@@ -450,17 +439,17 @@ namespace NTwain.Data
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (!(obj is TWDecodeFunction))
+            if (!(obj is TW_DECODEFUNCTION))
                 return false;
 
-            return Equals((TWDecodeFunction)obj);
+            return Equals((TW_DECODEFUNCTION)obj);
         }
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns></returns>
-        public bool Equals(TWDecodeFunction other)
+        public bool Equals(TW_DECODEFUNCTION other)
         {
             return _startIn == other._startIn && _startOut == other._startOut &&
                 _breakIn == other._breakIn && _breakOut == other._breakOut &&
@@ -491,7 +480,7 @@ namespace NTwain.Data
         /// <param name="value1">The value1.</param>
         /// <param name="value2">The value2.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator ==(TWDecodeFunction value1, TWDecodeFunction value2)
+        public static bool operator ==(TW_DECODEFUNCTION value1, TW_DECODEFUNCTION value2)
         {
             return value1.Equals(value2);
         }
@@ -501,7 +490,7 @@ namespace NTwain.Data
         /// <param name="value1">The value1.</param>
         /// <param name="value2">The value2.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator !=(TWDecodeFunction value1, TWDecodeFunction value2)
+        public static bool operator !=(TW_DECODEFUNCTION value1, TW_DECODEFUNCTION value2)
         {
             return !value1.Equals(value2);
         }
@@ -511,74 +500,70 @@ namespace NTwain.Data
     /// <summary>
     /// Specifies the parametrics used for either the ABC or LMN transform stages.
     /// </summary>
-    public partial struct TWTransformStage
+    public partial struct TW_TRANSFORMSTAGE
     {
         /// <summary>
         /// Channel-specific transform parameters.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public TWDecodeFunction[] Decode { get { return _decode; } }//set { _decode = value; } }
-        /// <summary>
-        /// Flattened 3x3 matrix that specifies how channels are mixed in.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public TWFix32[] Mix { get { return _mix; } }//set { _mix = value; } }
+
+        public TW_DECODEFUNCTION[] Decode { get { return _decode; } }//set { _decode = value; } }
+                                                                     /// <summary>
+                                                                     /// Flattened 3x3 matrix that specifies how channels are mixed in.
+                                                                     /// </summary>
+
+        public TW_FIX32[] Mix { get { return _mix; } }//set { _mix = value; } }
 
         /// <summary>
         /// Gets the <see cref="Mix"/> value as matrix.
         /// </summary>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Body"),
-        System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "Return")]
-        public TWFix32[,] GetMixMatrix()
+        public TW_FIX32[,] GetMixMatrix()
         {
             // from http://stackoverflow.com/questions/3845235/convert-array-to-matrix, haven't tested it
-            TWFix32[,] mat = new TWFix32[3, 3];
+            TW_FIX32[,] mat = new TW_FIX32[3, 3];
             Buffer.BlockCopy(_mix, 0, mat, 0, _mix.Length * 4);
             return mat;
         }
     }
 
-    /// <summary>
-    /// Stores a group of associated individual values for a capability.
-    /// The values need have no relationship to one another aside from 
-    /// being used to describe the same "value" of the capability
-    /// </summary>
-    public partial class TWArray
-    {
-        /// <summary>
-        /// The type of items in the array. All items in the array have the same size.
-        /// </summary>
-        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
+    //    /// <summary>
+    //    /// Stores a group of associated individual values for a capability.
+    //    /// The values need have no relationship to one another aside from 
+    //    /// being used to describe the same "value" of the capability
+    //    /// </summary>
+    //    public partial class TW_ARRAY
+    //    {
+    //        /// <summary>
+    //        /// The type of items in the array. All items in the array have the same size.
+    //        /// </summary>
+    //        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
 
-        ///// <summary>
-        ///// How many items are in the array.
-        ///// </summary>
-        //public int Count { get { return (int)_numItems; } set { _numItems = (uint)value; } }
+    //        ///// <summary>
+    //        ///// How many items are in the array.
+    //        ///// </summary>
+    //        //public int Count { get { return (int)_numItems; } set { _numItems = (uint)value; } }
 
-        /// <summary>
-        /// Array of ItemType values starts here.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public object[] ItemList
-        {
-            get { return _itemList; }
-            set
-            {
-                _itemList = value;
-                if (value != null) { _numItems = (uint)value.Length; }
-                else { _numItems = 0; }
-            }
-        }
-    }
+    //        /// <summary>
+    //        /// Array of ItemType values starts here.
+    //        /// </summary>
+
+    //        public object[] ItemList
+    //        {
+    //            get { return _itemList; }
+    //            set
+    //            {
+    //                _itemList = value;
+    //                if (value != null) { _numItems = (uint)value.Length; }
+    //                else { _numItems = 0; }
+    //            }
+    //        }
+    //    }
 
     /// <summary>
     /// Used to get audio info.
     /// </summary>
-    public partial class TWAudioInfo
+    public partial struct TW_AUDIOINFO
     {
-        internal TWAudioInfo() { }
-
         /// <summary>
         /// Name of audio data.
         /// </summary>
@@ -586,339 +571,276 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// Used in Callback mechanism for sending messages from the Source to the Application.
-    /// Applications version 2.2 or higher must use <see cref="TWCallback2"/>.
-    /// </summary>
-    partial class TWCallback
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCallback"/> class.
-        /// </summary>
-        /// <param name="callback">The callback function’s entry point.</param>
-        public TWCallback(CallbackDelegate callback)
-        {
-            _callBackProc = callback;
-        }
-
-        ///// <summary>
-        ///// An application defined reference constant.
-        ///// </summary>
-        ///// <value>
-        ///// The reference constant.
-        ///// </value>
-        //public uint RefCon { get { return _refCon; } set { _refCon = value; } }
-
-        ///// <summary>
-        ///// Initialized to any valid DG_CONTROL / DAT_NULL message.
-        ///// </summary>
-        ///// <value>
-        ///// The message.
-        ///// </value>
-        //public short Message { get { return _message; } set { _message = value; } }
-    }
-    /// <summary>
-    /// Used in the Callback mechanism for sending messages from the Source to the Application.
-    /// </summary>
-    partial class TWCallback2
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCallback2"/> class.
-        /// </summary>
-        /// <param name="callback">The callback function’s entry point.</param>
-        public TWCallback2(CallbackDelegate callback)
-        {
-            _callBackProc = callback;
-        }
-
-        ///// <summary>
-        ///// An application defined reference constant. It has a different size on different
-        ///// platforms.
-        ///// </summary>
-        ///// <value>
-        ///// The reference constant.
-        ///// </value>
-        //public UIntPtr RefCon { get { return _refCon; } set { _refCon = value; } }
-
-        ///// <summary>
-        ///// Initialized to any valid DG_CONTROL / DAT_NULL message.
-        ///// </summary>
-        ///// <value>
-        ///// The message.
-        ///// </value>
-        //public short Message { get { return _message; } set { _message = value; } }
-    }
-
-    /// <summary>
     /// Used by an application either to get information about, or control the setting of a capability.
     /// </summary>
-    public sealed partial class TWCapability : IDisposable
+    public partial struct TW_CAPABILITY
     {
-        #region ctors
+        //        #region ctors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCapability" /> class.
-        /// </summary>
-        /// <param name="capability">The capability.</param>
-        public TWCapability(CapabilityId capability)
-        {
-            Capability = capability;
-            ContainerType = ContainerType.DoNotCare;
-        }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCapability" /> class.
-        /// </summary>
-        /// <param name="capability">The capability.</param>
-        /// <param name="value">The value.</param>
-        public TWCapability(CapabilityId capability, TWOneValue value)
-        {
-            Capability = capability;
-            SetOneValue(value, PlatformInfo.Current.MemoryManager);
-        }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCapability"/> class.
-        /// </summary>
-        /// <param name="capability">The capability.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="type">The type.</param>
-        public TWCapability(CapabilityId capability, string value, ItemType type)
-        {
-            Capability = capability;
-            SetOneValue(value, type, PlatformInfo.Current.MemoryManager);
-        }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCapability"/> class.
-        /// </summary>
-        /// <param name="capability">The capability.</param>
-        /// <param name="value">The value.</param>
-        public TWCapability(CapabilityId capability, TWFrame value)
-        {
-            Capability = capability;
-            SetOneValue(value, PlatformInfo.Current.MemoryManager);
-        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        public TW_CAPABILITY(CapabilityId capability)
+        //        {
+        //            Capability = capability;
+        //            ContainerType = ContainerType.DontCare;
+        //        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, TW_ONEVALUE value)
+        //        {
+        //            Capability = capability;
+        //            SetOneValue(value, PlatformInfo.Current.MemoryManager);
+        //        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY"/> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        /// <param name="type">The type.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, string value, ItemType type)
+        //        {
+        //            Capability = capability;
+        //            SetOneValue(value, type, PlatformInfo.Current.MemoryManager);
+        //        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY"/> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, TW_FRAME value)
+        //        {
+        //            Capability = capability;
+        //            SetOneValue(value, PlatformInfo.Current.MemoryManager);
+        //        }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCapability" /> class.
-        /// </summary>
-        /// <param name="capability">The capability.</param>
-        /// <param name="value">The value.</param>
-        public TWCapability(CapabilityId capability, TWEnumeration value)
-        {
-            Capability = capability;
-            SetEnumValue(value, PlatformInfo.Current.MemoryManager);
-        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, TW_ENUMERATION value)
+        //        {
+        //            Capability = capability;
+        //            SetEnumValue(value, PlatformInfo.Current.MemoryManager);
+        //        }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCapability" /> class.
-        /// </summary>
-        /// <param name="capability">The capability.</param>
-        /// <param name="value">The value.</param>
-        public TWCapability(CapabilityId capability, TWRange value)
-        {
-            Capability = capability;
-            SetRangeValue(value, PlatformInfo.Current.MemoryManager);
-        }
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, TW_RANGE value)
+        //        {
+        //            Capability = capability;
+        //            SetRangeValue(value, PlatformInfo.Current.MemoryManager);
+        //        }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWCapability" /> class.
-        /// </summary>
-        /// <param name="capability">The capability.</param>
-        /// <param name="value">The value.</param>
-        public TWCapability(CapabilityId capability, TWArray value)
-        {
-            Capability = capability;
-            SetArrayValue(value, PlatformInfo.Current.MemoryManager);
-        }
-        #endregion
+        //        /// <summary>
+        //        /// Initializes a new instance of the <see cref="TW_CAPABILITY" /> class.
+        //        /// </summary>
+        //        /// <param name="capability">The capability.</param>
+        //        /// <param name="value">The value.</param>
+        //        public TW_CAPABILITY(CapabilityId capability, TW_ARRAY value)
+        //        {
+        //            Capability = capability;
+        //            SetArrayValue(value, PlatformInfo.Current.MemoryManager);
+        //        }
+        //        #endregion
 
-        #region properties
+        //        #region properties
 
-        /// <summary>
-        /// Id of capability to set or get.
-        /// </summary>
-        public CapabilityId Capability { get { return (CapabilityId)_cap; } set { _cap = (ushort)value; } }
-        /// <summary>
-        /// The type of the container structure referenced by the pointer internally. The container
-        /// will be one of four types: <see cref="TWArray"/>, <see cref="TWEnumeration"/>,
-        /// <see cref="TWOneValue"/>, or <see cref="TWRange"/>.
-        /// </summary>
-        public ContainerType ContainerType { get { return (ContainerType)_conType; } set { _conType = (ushort)value; } }
+        //        /// <summary>
+        //        /// Id of capability to set or get.
+        //        /// </summary>
+        //        public CapabilityId Capability { get { return (CapabilityId)_cap; } set { _cap = (ushort)value; } }
+        //        /// <summary>
+        //        /// The type of the container structure referenced by the pointer internally. The container
+        //        /// will be one of four types: <see cref="TW_ARRAY"/>, <see cref="TW_ENUMERATION"/>,
+        //        /// <see cref="TW_ONEVALUE"/>, or <see cref="TW_RANGE"/>.
+        //        /// </summary>
+        //        public ContainerType ContainerType { get { return (ContainerType)_conType; } set { _conType = (ushort)value; } }
 
-        internal IntPtr Container { get { return _hContainer; } }
+        //        internal IntPtr Container { get { return _hContainer; } }
 
-        #endregion
+        //        #endregion
 
-        #region value functions
+        //        #region value functions
 
-        void SetOneValue(string value, ItemType type, IMemoryManager memoryManager)
-        {
-            ContainerType = ContainerType.OneValue;
-            switch (type)
-            {
-                case ItemType.String128:
-                case ItemType.String255:
-                case ItemType.String32:
-                case ItemType.String64:
+        //        void SetOneValue(string value, ItemType type, IMemoryManager memoryManager)
+        //        {
+        //            ContainerType = ContainerType.OneValue;
+        //            switch (type)
+        //            {
+        //                case ItemType.String128:
+        //                case ItemType.String255:
+        //                case ItemType.String32:
+        //                case ItemType.String64:
 
-                    _hContainer = memoryManager.Allocate((uint)(Marshal.SizeOf(typeof(TWFrame)) + 2));
-                    if (_hContainer != IntPtr.Zero)
-                    {
-                        IntPtr baseAddr = memoryManager.Lock(_hContainer);
-                        int offset = 0;
-                        baseAddr.WriteValue(ref offset, ItemType.UInt16, type);
-                        baseAddr.WriteValue(ref offset, type, value);
-                        memoryManager.Unlock(_hContainer);
-                    }
-                    break;
-                default:
-                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Type {0} is not valid for string.", type));
-            }
-        }
-        void SetOneValue(TWFrame value, IMemoryManager memoryManager)
-        {
-            ContainerType = ContainerType.OneValue;
+        //                    _hContainer = memoryManager.Allocate((uint)(Marshal.SizeOf(typeof(TW_FRAME)) + 2));
+        //                    if (_hContainer != IntPtr.Zero)
+        //                    {
+        //                        IntPtr baseAddr = memoryManager.Lock(_hContainer);
+        //                        int offset = 0;
+        //                        baseAddr.WriteValue(ref offset, ItemType.UInt16, type);
+        //                        baseAddr.WriteValue(ref offset, type, value);
+        //                        memoryManager.Unlock(_hContainer);
+        //                    }
+        //                    break;
+        //                default:
+        //                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Type {0} is not valid for string.", type));
+        //            }
+        //        }
+        //        void SetOneValue(TW_FRAME value, IMemoryManager memoryManager)
+        //        {
+        //            ContainerType = ContainerType.OneValue;
 
-            _hContainer = memoryManager.Allocate((uint)(Marshal.SizeOf(typeof(TWFrame)) + 2));
-            if (_hContainer != IntPtr.Zero)
-            {
-                IntPtr baseAddr = memoryManager.Lock(_hContainer);
-                int offset = 0;
-                baseAddr.WriteValue(ref offset, ItemType.UInt16, ItemType.Frame);
-                baseAddr.WriteValue(ref offset, ItemType.Frame, value);
-                memoryManager.Unlock(_hContainer);
-            }
-        }
+        //            _hContainer = memoryManager.Allocate((uint)(Marshal.SizeOf(typeof(TW_FRAME)) + 2));
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                IntPtr baseAddr = memoryManager.Lock(_hContainer);
+        //                int offset = 0;
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt16, ItemType.Frame);
+        //                baseAddr.WriteValue(ref offset, ItemType.Frame, value);
+        //                memoryManager.Unlock(_hContainer);
+        //            }
+        //        }
 
-        void SetOneValue(TWOneValue value, IMemoryManager memoryManager)
-        {
-            if (value == null) { throw new ArgumentNullException("value"); }
-            ContainerType = ContainerType.OneValue;
+        //        void SetOneValue(TW_ONEVALUE value, IMemoryManager memoryManager)
+        //        {
+        //            if (value == null) { throw new ArgumentNullException("value"); }
+        //            ContainerType = ContainerType.OneValue;
 
-            // since one value can only house UInt32 we will not allow type size > 4
-            if (TypeExtensions.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWOneValue")); }
+        //            // since one value can only house UInt32 we will not allow type size > 4
+        //            if (TypeExtensions.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TW_ONEVALUE")); }
 
-            _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
-            if (_hContainer != IntPtr.Zero)
-            {
-                Marshal.StructureToPtr(value, _hContainer, false);
-            }
-        }
+        //            _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                Marshal.StructureToPtr(value, _hContainer, false);
+        //            }
+        //        }
 
-        void SetEnumValue(TWEnumeration value, IMemoryManager memoryManager)
-        {
-            if (value == null) { throw new ArgumentNullException("value"); }
-            ContainerType = ContainerType.Enum;
-
-
-            Int32 valueSize = TWEnumeration.ItemOffset + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
-
-            int offset = 0;
-            _hContainer = memoryManager.Allocate((uint)valueSize);
-            if (_hContainer != IntPtr.Zero)
-            {
-                IntPtr baseAddr = memoryManager.Lock(_hContainer);
-
-                // can't safely use StructureToPtr here so write it our own
-                baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
-                baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
-                baseAddr.WriteValue(ref offset, ItemType.UInt32, value.CurrentIndex);
-                baseAddr.WriteValue(ref offset, ItemType.UInt32, value.DefaultIndex);
-                foreach (var item in value.ItemList)
-                {
-                    baseAddr.WriteValue(ref offset, value.ItemType, item);
-                }
-                memoryManager.Unlock(_hContainer);
-            }
-        }
-
-        void SetRangeValue(TWRange value, IMemoryManager memoryManager)
-        {
-            if (value == null) { throw new ArgumentNullException("value"); }
-            ContainerType = ContainerType.Range;
-
-            // since range value can only house UInt32 we will not allow type size > 4
-            if (TypeExtensions.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TWRange")); }
-
-            _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
-            if (_hContainer != IntPtr.Zero)
-            {
-                Marshal.StructureToPtr(value, _hContainer, false);
-            }
-        }
-
-        void SetArrayValue(TWArray value, IMemoryManager memoryManager)
-        {
-            if (value == null) { throw new ArgumentNullException("value"); }
-            ContainerType = ContainerType.Array;
-
-            Int32 valueSize = 6 + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
-
-            int offset = 0;
-            _hContainer = memoryManager.Allocate((uint)valueSize);
-            if (_hContainer != IntPtr.Zero)
-            {
-                IntPtr baseAddr = memoryManager.Lock(_hContainer);
-
-                // can't safely use StructureToPtr here so write it our own
-                baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
-                baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
-                foreach (var item in value.ItemList)
-                {
-                    baseAddr.WriteValue(ref offset, value.ItemType, item);
-                }
-                memoryManager.Unlock(_hContainer);
-            }
-        }
-
-        #endregion
+        //        void SetEnumValue(TW_ENUMERATION value, IMemoryManager memoryManager)
+        //        {
+        //            if (value == null) { throw new ArgumentNullException("value"); }
+        //            ContainerType = ContainerType.Enum;
 
 
-        #region IDisposable Members
+        //            Int32 valueSize = TW_ENUMERATION.ItemOffset + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        //            int offset = 0;
+        //            _hContainer = memoryManager.Allocate((uint)valueSize);
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                IntPtr baseAddr = memoryManager.Lock(_hContainer);
 
-        void Dispose(bool disposing)
-        {
-            if (disposing) { }
-            if (_hContainer != IntPtr.Zero)
-            {
-                PlatformInfo.Current.MemoryManager.Free(_hContainer);
-                _hContainer = IntPtr.Zero;
-            }
-        }
+        //                // can't safely use StructureToPtr here so write it our own
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt32, value.CurrentIndex);
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt32, value.DefaultIndex);
+        //                foreach (var item in value.ItemList)
+        //                {
+        //                    baseAddr.WriteValue(ref offset, value.ItemType, item);
+        //                }
+        //                memoryManager.Unlock(_hContainer);
+        //            }
+        //        }
 
-        /// <summary>
-        /// Finalizes an instance of the <see cref="TWCapability"/> class.
-        /// </summary>
-        ~TWCapability()
-        {
-            Dispose(false);
-        }
-        #endregion
+        //        void SetRangeValue(TW_RANGE value, IMemoryManager memoryManager)
+        //        {
+        //            if (value == null) { throw new ArgumentNullException("value"); }
+        //            ContainerType = ContainerType.Range;
+
+        //            // since range value can only house UInt32 we will not allow type size > 4
+        //            if (TypeExtensions.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TW_RANGE")); }
+
+        //            _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                Marshal.StructureToPtr(value, _hContainer, false);
+        //            }
+        //        }
+
+        //        void SetArrayValue(TW_ARRAY value, IMemoryManager memoryManager)
+        //        {
+        //            if (value == null) { throw new ArgumentNullException("value"); }
+        //            ContainerType = ContainerType.Array;
+
+        //            Int32 valueSize = 6 + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
+
+        //            int offset = 0;
+        //            _hContainer = memoryManager.Allocate((uint)valueSize);
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                IntPtr baseAddr = memoryManager.Lock(_hContainer);
+
+        //                // can't safely use StructureToPtr here so write it our own
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
+        //                baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
+        //                foreach (var item in value.ItemList)
+        //                {
+        //                    baseAddr.WriteValue(ref offset, value.ItemType, item);
+        //                }
+        //                memoryManager.Unlock(_hContainer);
+        //            }
+        //        }
+
+        //        #endregion
+
+
+        //        #region IDisposable Members
+
+        //        /// <summary>
+        //        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        //        /// </summary>
+        //        public void Dispose()
+        //        {
+        //            Dispose(true);
+        //            GC.SuppressFinalize(this);
+        //        }
+
+        //        void Dispose(bool disposing)
+        //        {
+        //            if (disposing) { }
+        //            if (_hContainer != IntPtr.Zero)
+        //            {
+        //                PlatformInfo.Current.MemoryManager.Free(_hContainer);
+        //                _hContainer = IntPtr.Zero;
+        //            }
+        //        }
+
+        //        /// <summary>
+        //        /// Finalizes an instance of the <see cref="TW_CAPABILITY"/> class.
+        //        /// </summary>
+        //        ~TW_CAPABILITY()
+        //        {
+        //            Dispose(false);
+        //        }
+        //        #endregion
 
     }
 
     /// <summary>
-    /// Embedded in the <see cref="TWCieColor"/> structure;
+    /// Embedded in the <see cref="TW_CIECOLOR"/> structure;
     /// defines a CIE XYZ space tri-stimulus value.
     /// </summary>
-    public partial struct TWCiePoint : IEquatable<TWCiePoint>
+    public partial struct TW_CIEPOINT : IEquatable<TW_CIEPOINT>
     {
         #region properties
         /// <summary>
         /// First tri-stimulus value of the CIE space representation.
         /// </summary>
-        public float X { get { return _z; } }
+        public float X { get { return _x; } }
         /// <summary>
         /// Second tri-stimulus value of the CIE space representation.
         /// </summary>
-        public float Y { get { return _z; } }
+        public float Y { get { return _y; } }
         /// <summary>
         /// Third tri-stimulus value of the CIE space representation.
         /// </summary>
@@ -936,17 +858,17 @@ namespace NTwain.Data
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (!(obj is TWCiePoint))
+            if (!(obj is TW_CIEPOINT))
                 return false;
 
-            return Equals((TWCiePoint)obj);
+            return Equals((TW_CIEPOINT)obj);
         }
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns></returns>
-        public bool Equals(TWCiePoint other)
+        public bool Equals(TW_CIEPOINT other)
         {
             return _x == other._x && _y == other._y &&
                 _z == other._z;
@@ -973,7 +895,7 @@ namespace NTwain.Data
         /// <param name="value1">The value1.</param>
         /// <param name="value2">The value2.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator ==(TWCiePoint value1, TWCiePoint value2)
+        public static bool operator ==(TW_CIEPOINT value1, TW_CIEPOINT value2)
         {
             return value1.Equals(value2);
         }
@@ -983,103 +905,85 @@ namespace NTwain.Data
         /// <param name="value1">The value1.</param>
         /// <param name="value2">The value2.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator !=(TWCiePoint value1, TWCiePoint value2)
+        public static bool operator !=(TW_CIEPOINT value1, TW_CIEPOINT value2)
         {
             return !value1.Equals(value2);
         }
         #endregion
     }
 
-    /// <summary>
-    /// Defines the mapping from an RGB color space device into CIE 1931 (XYZ) color space.
-    /// </summary>
-    public partial class TWCieColor
-    {
-        internal TWCieColor() { }
+    //    /// <summary>
+    //    /// Defines the mapping from an RGB color space device into CIE 1931 (XYZ) color space.
+    //    /// </summary>
+    //    public partial struct TW_CIECOLOR
+    //    {
+    //        internal TW_CIECOLOR() { }
 
-        /// <summary>
-        /// Defines the original color space that was transformed into CIE XYZ. 
-        /// This value is not set-able by the application. 
-        /// </summary>
-        public ushort ColorSpace { get { return _colorSpace; } }
-        /// <summary>
-        /// Used to indicate which data byte is taken first. If zero, then high byte is
-        /// first. If non-zero, then low byte is first.
-        /// </summary>
-        public short LowEndian { get { return _lowEndian; } }
-        /// <summary>
-        /// If non-zero then color data is device-dependent and only ColorSpace is
-        /// valid in this structure.
-        /// </summary>
-        public short DeviceDependent { get { return _deviceDependent; } }
-        /// <summary>
-        /// Version of the color space descriptor specification used to define the
-        /// transform data. The current version is zero.
-        /// </summary>
-        public int VersionNumber { get { return _versionNumber; } }
-        /// <summary>
-        /// Describes parametrics for the first stage transformation of the Postscript
-        /// Level 2 CIE color space transform process.
-        /// </summary>
-        public TWTransformStage StageABC { get { return _stageABC; } }
-        /// <summary>
-        /// Describes parametrics for the first stage transformation of the Postscript
-        /// Level 2 CIE color space transform process.
-        /// </summary>
-        public TWTransformStage StageLMN { get { return _stageLMN; } }
-        /// <summary>
-        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of the
-        /// diffused white point.
-        /// </summary>
-        public TWCiePoint WhitePoint { get { return _whitePoint; } }
-        /// <summary>
-        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of the
-        /// diffused black point.
-        /// </summary>
-        public TWCiePoint BlackPoint { get { return _blackPoint; } }
-        /// <summary>
-        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of inkless
-        /// "paper" from which the image was acquired.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "WhitePaper")]
-        public TWCiePoint WhitePaper { get { return _whitePaper; } }
-        /// <summary>
-        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of solid
-        /// black ink on the "paper" from which the image was acquired.
-        /// </summary>
-        public TWCiePoint BlackInk { get { return _blackInk; } }
-        /// <summary>
-        /// Optional table look-up values used by the decode function. Samples
-        /// are ordered sequentially and end-to-end as A, B, C, L, M, and N.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public TWFix32[] Samples { get { return _samples; } }
-    }
+    //        /// <summary>
+    //        /// Defines the original color space that was transformed into CIE XYZ. 
+    //        /// This value is not set-able by the application. 
+    //        /// </summary>
+    //        public ushort ColorSpace { get { return _colorSpace; } }
+    //        /// <summary>
+    //        /// Used to indicate which data byte is taken first. If zero, then high byte is
+    //        /// first. If non-zero, then low byte is first.
+    //        /// </summary>
+    //        public short LowEndian { get { return _lowEndian; } }
+    //        /// <summary>
+    //        /// If non-zero then color data is device-dependent and only ColorSpace is
+    //        /// valid in this structure.
+    //        /// </summary>
+    //        public short DeviceDependent { get { return _deviceDependent; } }
+    //        /// <summary>
+    //        /// Version of the color space descriptor specification used to define the
+    //        /// transform data. The current version is zero.
+    //        /// </summary>
+    //        public int VersionNumber { get { return _versionNumber; } }
+    //        /// <summary>
+    //        /// Describes parametrics for the first stage transformation of the Postscript
+    //        /// Level 2 CIE color space transform process.
+    //        /// </summary>
+    //        public TW_TRANSFORMSTAGE StageABC { get { return _stageABC; } }
+    //        /// <summary>
+    //        /// Describes parametrics for the first stage transformation of the Postscript
+    //        /// Level 2 CIE color space transform process.
+    //        /// </summary>
+    //        public TW_TRANSFORMSTAGE StageLMN { get { return _stageLMN; } }
+    //        /// <summary>
+    //        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of the
+    //        /// diffused white point.
+    //        /// </summary>
+    //        public TW_CIEPOINT WhitePoint { get { return _whitePoint; } }
+    //        /// <summary>
+    //        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of the
+    //        /// diffused black point.
+    //        /// </summary>
+    //        public TW_CIEPOINT BlackPoint { get { return _blackPoint; } }
+    //        /// <summary>
+    //        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of inkless
+    //        /// "paper" from which the image was acquired.
+    //        /// </summary>
+    //        public TW_CIEPOINT WhitePaper { get { return _whitePaper; } }
+    //        /// <summary>
+    //        /// Values that specify the CIE 1931 (XYZ space) tri-stimulus value of solid
+    //        /// black ink on the "paper" from which the image was acquired.
+    //        /// </summary>
+    //        public TW_CIEPOINT BlackInk { get { return _blackInk; } }
+    //        /// <summary>
+    //        /// Optional table look-up values used by the decode function. Samples
+    //        /// are ordered sequentially and end-to-end as A, B, C, L, M, and N.
+    //        /// </summary>
 
-    /// <summary>
-    /// Allows for a data source and application to pass custom data to each other.
-    /// </summary>
-    partial class TWCustomDSData
-    {
-        /// <summary>
-        /// Length, in bytes, of data.
-        /// </summary>
-        public uint InfoLength { get { return _infoLength; } set { _infoLength = value; } }
-        /// <summary>
-        /// Handle to memory containing InfoLength bytes of data.
-        /// </summary>
-        public IntPtr hData { get { return _hData; } set { _hData = value; } }
-    }
+    //        public TW_FIX32[] Samples { get { return _samples; } }
+    //    }
 
     /// <summary>
     /// Provides information about the Event that was raised by the Source. The Source should only fill
     /// in those fields applicable to the Event. The Application must only read those fields applicable to
     /// the Event.
     /// </summary>
-    public partial class TWDeviceEvent
+    public partial struct TW_DEVICEEVENT
     {
-        internal TWDeviceEvent() { }
-
         /// <summary>
         /// Defines event that has taken place.
         /// </summary>
@@ -1127,13 +1031,12 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// Embedded in the <see cref="TWGrayResponse"/>, <see cref="TWPalette8"/>, and <see cref="TWRgbResponse"/> structures.
-    /// This structure holds the tri-stimulus color palette information for <see cref="TWPalette8"/> structures.
+    /// This structure holds the tri-stimulus color palette information for <see cref="TW_PALETTE8"/> structures.
     /// The order of the channels shall match their alphabetic representation. That is, for RGB data, R
     /// shall be channel 1. For CMY data, C shall be channel 1. This allows the application and Source
     /// to maintain consistency. Grayscale data will have the same values entered in all three channels.
     /// </summary>
-    public partial struct TWElement8 : IEquatable<TWElement8>
+    public partial struct TW_ELEMENT8 : IEquatable<TW_ELEMENT8>
     {
         /// <summary>
         /// Value used to index into the color table.
@@ -1164,17 +1067,17 @@ namespace NTwain.Data
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (!(obj is TWElement8))
+            if (!(obj is TW_ELEMENT8))
                 return false;
 
-            return Equals((TWElement8)obj);
+            return Equals((TW_ELEMENT8)obj);
         }
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns></returns>
-        public bool Equals(TWElement8 other)
+        public bool Equals(TW_ELEMENT8 other)
         {
             return _channel1 == other._channel1 && _channel2 == other._channel2 &&
                 _channel3 == other._channel3 && _index == other._index;
@@ -1197,7 +1100,7 @@ namespace NTwain.Data
         /// <param name="v1">The v1.</param>
         /// <param name="v2">The v2.</param>
         /// <returns></returns>
-        public static bool operator ==(TWElement8 v1, TWElement8 v2)
+        public static bool operator ==(TW_ELEMENT8 v1, TW_ELEMENT8 v2)
         {
             return v1.Equals(v2);
         }
@@ -1208,7 +1111,7 @@ namespace NTwain.Data
         /// <param name="v1">The v1.</param>
         /// <param name="v2">The v2.</param>
         /// <returns></returns>
-        public static bool operator !=(TWElement8 v1, TWElement8 v2)
+        public static bool operator !=(TW_ELEMENT8 v1, TW_ELEMENT8 v2)
         {
             return !(v1 == v2);
         }
@@ -1217,208 +1120,186 @@ namespace NTwain.Data
         #endregion
     }
 
-    /// <summary>
-    /// An enumeration stores a list of individual values, with one of the items designated as the current
-    /// value. There is no required order to the values in the list.
-    /// </summary>
-    public partial class TWEnumeration
-    {
-        /// <summary>
-        /// The type of items in the enumerated list. All items in the array have the same size.
-        /// </summary>
-        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
-        ///// <summary>
-        ///// How many items are in the enumeration.
-        ///// </summary>
-        //public int Count { get { return (int)_numItems; } set { _numItems = (uint)value; } }
-        /// <summary>
-        /// The item number, or index (zero-based) into <see cref="ItemList"/>, of the "current"
-        /// value for the capability.
-        /// </summary>
-        public int CurrentIndex { get { return (int)_currentIndex; } set { _currentIndex = (uint)value; } }
-        /// <summary>
-        /// The item number, or index (zero-based) into <see cref="ItemList"/>, of the "power-on"
-        /// value for the capability.
-        /// </summary>
-        public int DefaultIndex { get { return (int)_defaultIndex; } set { _defaultIndex = (uint)value; } }
-        /// <summary>
-        /// The enumerated list: one value resides within each array element.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public object[] ItemList
-        {
-            get { return _itemList; }
-            set
-            {
-                _itemList = value;
-                if (value != null) { _numItems = (uint)value.Length; }
-                else { _numItems = 0; }
-            }
-        }
+    //    /// <summary>
+    //    /// An enumeration stores a list of individual values, with one of the items designated as the current
+    //    /// value. There is no required order to the values in the list.
+    //    /// </summary>
+    //    public partial class TW_ENUMERATION
+    //    {
+    //        /// <summary>
+    //        /// The type of items in the enumerated list. All items in the array have the same size.
+    //        /// </summary>
+    //        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
+    //        ///// <summary>
+    //        ///// How many items are in the enumeration.
+    //        ///// </summary>
+    //        //public int Count { get { return (int)_numItems; } set { _numItems = (uint)value; } }
+    //        /// <summary>
+    //        /// The item number, or index (zero-based) into <see cref="ItemList"/>, of the "current"
+    //        /// value for the capability.
+    //        /// </summary>
+    //        public int CurrentIndex { get { return (int)_currentIndex; } set { _currentIndex = (uint)value; } }
+    //        /// <summary>
+    //        /// The item number, or index (zero-based) into <see cref="ItemList"/>, of the "power-on"
+    //        /// value for the capability.
+    //        /// </summary>
+    //        public int DefaultIndex { get { return (int)_defaultIndex; } set { _defaultIndex = (uint)value; } }
+    //        /// <summary>
+    //        /// The enumerated list: one value resides within each array element.
+    //        /// </summary>
 
-        /// <summary>
-        /// Gets the byte offset of the item list from a Ptr to the first item.
-        /// </summary>
-        internal const int ItemOffset = 14;
-    }
+    //        public object[] ItemList
+    //        {
+    //            get { return _itemList; }
+    //            set
+    //            {
+    //                _itemList = value;
+    //                if (value != null) { _numItems = (uint)value.Length; }
+    //                else { _numItems = 0; }
+    //            }
+    //        }
 
-
-    /// <summary>
-    /// Used on Windows and Macintosh pre OS X to pass application events/messages from the
-    /// application to the Source.
-    /// </summary>
-    public partial class TWEvent
-    {
-        /// <summary>
-        /// A pointer to the event/message to be examined by the Source.
-        /// Under Microsoft Windows, pEvent is a pMSG (pointer to a Microsoft
-        /// Windows MSG struct). That is, the message the application received from
-        /// GetMessage(). On the Macintosh, pEvent is a pointer to an EventRecord.
-        /// </summary>
-        public IntPtr pEvent { get { return _pEvent; } set { _pEvent = value; } }
-        /// <summary>
-        /// Any message the Source needs to send to the application in
-        /// response to processing the event/message. The messages currently defined for
-        /// this purpose are <see cref="Message.Null"/>, <see cref="Message.XferReady"/> 
-        /// and <see cref="Message.CloseDSReq"/>.
-        /// </summary>
-        public Message TWMessage { get { return (Message)_tWMessage; } }
-    }
-
-    /// <summary>
-    /// This structure is used to pass specific information between the data source and the application
-    /// through <see cref="TWExtImageInfo"/>.
-    /// </summary>
-    [DebuggerDisplay("ID = {InfoID}, Type = {ItemType}")]
-    public partial struct TWInfo
-    {
-        /// <summary>
-        /// Tag identifying an information.
-        /// </summary>
-        public ExtendedImageInfo InfoID { get { return (ExtendedImageInfo)_infoID; } set { _infoID = (ushort)value; } }
-        /// <summary>
-        /// Item data type.
-        /// </summary>
-        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
-        /// <summary>
-        /// Number of items.
-        /// </summary>
-        public ushort NumItems { get { return _numItems; } }
-
-        /// <summary>
-        /// This is the return code of availability of data for extended image attribute requested.
-        /// </summary>
-        /// <value>
-        /// The return code.
-        /// </value>
-        public ReturnCode ReturnCode { get { return (ReturnCode)_returnCode; } }
-
-        /// <summary>
-        /// Contains either data or a handle to data. The field
-        /// contains data if the total amount of data is less than or equal to four bytes. The
-        /// field contains a handle if the total amount of data is more than four bytes.
-        /// The amount of data is determined by multiplying NumItems times
-        /// the byte size of the data type specified by ItemType.
-        /// If the Item field contains a handle to data, then the Application is
-        /// responsible for freeing that memory.
-        /// </summary>
-        public IntPtr Item { get { return _item; } internal set { _item = value; } }
-
-        bool ItemIsPointer
-        {
-            get
-            {
-                return ItemType == Data.ItemType.Handle ||
-                    (TypeExtensions.GetItemTypeSize(ItemType) * NumItems) > 4;// IntPtr.Size
-            }
-        }
-
-        /// <summary>
-        /// Try to reads the values from the <see cref="Item"/> property.
-        /// </summary>
-        /// <returns></returns>
-        public IList<object> ReadValues()
-        {
-            var values = new List<object>();
-            if (NumItems > 0)
-            {
-                if (ItemIsPointer)
-                {
-                    if (Item != IntPtr.Zero)
-                    {
-                        IntPtr lockPtr = IntPtr.Zero;
-                        try
-                        {
-                            int offset = 0;
-                            lockPtr = PlatformInfo.Current.MemoryManager.Lock(Item);
-
-                            for (int i = 0; i < NumItems; i++)
-                            {
-                                values.Add(TypeExtensions.ReadValue(lockPtr, ref offset, ItemType));
-                            }
-                        }
-                        finally
-                        {
-                            if (lockPtr != IntPtr.Zero)
-                            {
-                                PlatformInfo.Current.MemoryManager.Unlock(Item);
-                                //PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // do the lame and create a ptr to the value so we can reuse TypeReader
-                    IntPtr tempPtr = IntPtr.Zero;
-                    try
-                    {
-                        tempPtr = Marshal.AllocHGlobal(IntPtr.Size);
-                        Marshal.WriteIntPtr(tempPtr, Item);
-                        int offset = 0;
-                        values.Add(TypeExtensions.ReadValue(tempPtr, ref offset, ItemType));
-                    }
-                    finally
-                    {
-                        if (tempPtr != IntPtr.Zero)
-                        {
-                            Marshal.FreeHGlobal(tempPtr);
-                        }
-                    }
-                }
-            }
-            return values;
-        }
-
-        #region IDisposable Members
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            //GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing) { }
-
-            if (ItemIsPointer && Item != IntPtr.Zero)
-            {
-                PlatformInfo.Current.MemoryManager.Free(Item);
-            }
-            Item = IntPtr.Zero;
-        }
+    //        /// <summary>
+    //        /// Gets the byte offset of the item list from a Ptr to the first item.
+    //        /// </summary>
+    //        internal const int ItemOffset = 14;
+    //    }
 
 
-        //~TWInfo()
-        //{
-        //    Dispose(false);
-        //}
-        #endregion
-    }
+    //    /// <summary>
+    //    /// This structure is used to pass specific information between the data source and the application
+    //    /// through <see cref="TW_EXTIMAGEINFO"/>.
+    //    /// </summary>
+    //    [DebuggerDisplay("ID = {InfoID}, Type = {ItemType}")]
+    //    public partial struct TW_INFO
+    //    {
+    //        /// <summary>
+    //        /// Tag identifying an information.
+    //        /// </summary>
+    //        public ExtendedImageInfo InfoID { get { return (ExtendedImageInfo)_infoID; } set { _infoID = (ushort)value; } }
+    //        /// <summary>
+    //        /// Item data type.
+    //        /// </summary>
+    //        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
+    //        /// <summary>
+    //        /// Number of items.
+    //        /// </summary>
+    //        public ushort NumItems { get { return _numItems; } }
+
+    //        /// <summary>
+    //        /// This is the return code of availability of data for extended image attribute requested.
+    //        /// </summary>
+    //        /// <value>
+    //        /// The return code.
+    //        /// </value>
+    //        public ReturnCode ReturnCode { get { return (ReturnCode)_returnCode; } }
+
+    //        /// <summary>
+    //        /// Contains either data or a handle to data. The field
+    //        /// contains data if the total amount of data is less than or equal to four bytes. The
+    //        /// field contains a handle if the total amount of data is more than four bytes.
+    //        /// The amount of data is determined by multiplying NumItems times
+    //        /// the byte size of the data type specified by ItemType.
+    //        /// If the Item field contains a handle to data, then the Application is
+    //        /// responsible for freeing that memory.
+    //        /// </summary>
+    //        public IntPtr Item { get { return _item; } internal set { _item = value; } }
+
+    //        bool ItemIsPointer
+    //        {
+    //            get
+    //            {
+    //                return ItemType == Data.ItemType.Handle ||
+    //                    (TypeExtensions.GetItemTypeSize(ItemType) * NumItems) > 4;// IntPtr.Size
+    //            }
+    //        }
+
+    //        /// <summary>
+    //        /// Try to reads the values from the <see cref="Item"/> property.
+    //        /// </summary>
+    //        /// <returns></returns>
+    //        public IList<object> ReadValues()
+    //        {
+    //            var values = new List<object>();
+    //            if (NumItems > 0)
+    //            {
+    //                if (ItemIsPointer)
+    //                {
+    //                    if (Item != IntPtr.Zero)
+    //                    {
+    //                        IntPtr lockPtr = IntPtr.Zero;
+    //                        try
+    //                        {
+    //                            int offset = 0;
+    //                            lockPtr = PlatformInfo.Current.MemoryManager.Lock(Item);
+
+    //                            for (int i = 0; i < NumItems; i++)
+    //                            {
+    //                                values.Add(TypeExtensions.ReadValue(lockPtr, ref offset, ItemType));
+    //                            }
+    //                        }
+    //                        finally
+    //                        {
+    //                            if (lockPtr != IntPtr.Zero)
+    //                            {
+    //                                PlatformInfo.Current.MemoryManager.Unlock(Item);
+    //                                //PlatformInfo.Current.MemoryManager.Unlock(lockPtr);
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //                else
+    //                {
+    //                    // do the lame and create a ptr to the value so we can reuse TypeReader
+    //                    IntPtr tempPtr = IntPtr.Zero;
+    //                    try
+    //                    {
+    //                        tempPtr = Marshal.AllocHGlobal(IntPtr.Size);
+    //                        Marshal.WriteIntPtr(tempPtr, Item);
+    //                        int offset = 0;
+    //                        values.Add(TypeExtensions.ReadValue(tempPtr, ref offset, ItemType));
+    //                    }
+    //                    finally
+    //                    {
+    //                        if (tempPtr != IntPtr.Zero)
+    //                        {
+    //                            Marshal.FreeHGlobal(tempPtr);
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //            return values;
+    //        }
+
+    //        #region IDisposable Members
+
+    //        /// <summary>
+    //        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    //        /// </summary>
+    //        public void Dispose()
+    //        {
+    //            Dispose(true);
+    //            //GC.SuppressFinalize(this);
+    //        }
+
+    //        private void Dispose(bool disposing)
+    //        {
+    //            if (disposing) { }
+
+    //            if (ItemIsPointer && Item != IntPtr.Zero)
+    //            {
+    //                PlatformInfo.Current.MemoryManager.Free(Item);
+    //            }
+    //            Item = IntPtr.Zero;
+    //        }
+
+
+    //        //~TW_INFO()
+    //        //{
+    //        //    Dispose(false);
+    //        //}
+    //        #endregion
+    //    }
 
     /// <summary>
     /// This structure is used to pass extended image information from the data source to application at
@@ -1428,14 +1309,17 @@ namespace NTwain.Data
     /// using the above operation triplet. The data source then examines each Info, and fills the rest of
     /// data with information allocating memory when necessary.
     /// </summary>
-    sealed partial class TWExtImageInfo
+    partial struct TW_EXTIMAGEINFO
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TWExtImageInfo"/> class.
+        /// Initializes a new instance of the <see cref="TW_EXTIMAGEINFO"/> class.
         /// </summary>
-        public TWExtImageInfo()
+        public static TW_EXTIMAGEINFO Create()
         {
-            _info = new TWInfo[200];
+            return new TW_EXTIMAGEINFO
+            {
+                _info = new TW_INFO[200]
+            };
         }
 
         /// <summary>
@@ -1453,35 +1337,51 @@ namespace NTwain.Data
         /// <summary>
         /// Array of information.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public TWInfo[] Info { get { return _info; } }
+
+        public TW_INFO[] Info { get { return _info; } }
     }
 
     /// <summary>
     /// Provides information about the currently selected device.
     /// </summary>
-    public partial class TWFileSystem
+    public partial struct TW_FILESYSTEM
     {
         /// <summary>
         /// The name of the input or source file.
         /// </summary>
-        public string InputName { get { return _inputName; } set { _inputName = value; } }
+        public string InputName
+        {
+            get { return _inputName; }
+            set { _inputName = value; }
+        }
         /// <summary>
         /// The result of an operation or the name of a destination file.
         /// </summary>
-        public string OutputName { get { return _outputName; } set { _outputName = value; } }
+        public string OutputName
+        {
+            get { return _outputName; }
+            set { _outputName = value; }
+        }
         /// <summary>
         /// A pointer to Source specific data used to remember state
         /// information, such as the current directory.
         /// </summary>
-        public IntPtr Context { get { return _context; } set { _context = value; } }
+        public IntPtr Context
+        {
+            get { return _context; }
+            set { _context = value; }
+        }
 
         /// <summary>
         /// When set to TRUE recursively apply the operation. (ex: deletes
         /// all subdirectories in the directory being deleted; or copies all
         /// sub-directories in the directory being copied.
         /// </summary>
-        public bool Recursive { get { return _subdirectories == TwainConst.True; } set { _subdirectories = value ? TwainConst.True : TwainConst.False; } }
+        public bool Recursive
+        {
+            get { return _recursive == 1; }
+            set { _recursive = value ? 1 : 0; }
+        }
 
         /// <summary>
         /// Gets the type of the file.
@@ -1489,7 +1389,11 @@ namespace NTwain.Data
         /// <value>
         /// The type of the file.
         /// </value>
-        public FileType FileType { get { return (FileType)_fileType; } set { _fileType = (int)value; } }
+        public FileType FileType
+        {
+            get { return (FileType)_fileType; }
+            set { _fileType = (int)value; }
+        }
 
         /// <summary>
         /// If <see cref="NTwain.Data.FileType.Directory"/>, total size of media in bytes.
@@ -1505,84 +1409,132 @@ namespace NTwain.Data
         /// month, DD is the numerical day, HH is the hour, mm is the
         /// minute, SS is the second, and sss is the millisecond.
         /// </summary>
-        public string CreateTimeDate { get { return _createTimeDate; } set { _createTimeDate = value; } }
+        public string CreateTimeDate
+        {
+            get { return _createTimeDate; }
+            set { _createTimeDate = value; }
+        }
         /// <summary>
         /// Last date the file was modified. Same format as <see cref="CreateTimeDate"/>.
         /// </summary>
-        public string ModifiedTimeDate { get { return _modifiedTimeDate; } set { _modifiedTimeDate = value; } }
+        public string ModifiedTimeDate
+        {
+            get { return _modifiedTimeDate; }
+            set { _modifiedTimeDate = value; }
+        }
         /// <summary>
         /// The bytes of free space left on the current device.
         /// </summary>
-        public uint FreeSpace { get { return _freeSpace; } set { _freeSpace = value; } }
+        public uint FreeSpace
+        {
+            get { return _freeSpace; }
+            set { _freeSpace = value; }
+        }
         /// <summary>
         /// An estimate of the amount of space a new image would take
         /// up, based on image layout, resolution and compression.
         /// Dividing this value into the FreeSpace will yield the
         /// approximate number of images that the Device has room for.
         /// </summary>
-        public int NewImageSize { get { return _newImageSize; } set { _newImageSize = value; } }
+        public int NewImageSize
+        {
+            get { return _newImageSize; }
+            set { _newImageSize = value; }
+        }
         /// <summary>
         /// If applicable, return the number of <see cref="NTwain.Data.FileType.Image"/> files on the file system including those in all sub-directories.
         /// </summary>
         /// <value>
         /// The number of files.
         /// </value>
-        public uint NumberOfFiles { get { return _numberOfFiles; } set { _numberOfFiles = value; } }
+        public uint NumberOfFiles
+        {
+            get { return _numberOfFiles; }
+            set { _numberOfFiles = value; }
+        }
         /// <summary>
         /// The number of audio snippets associated with a file of type <see cref="NTwain.Data.FileType.Image"/>.
         /// </summary>
         /// <value>
         /// The number of snippets.
         /// </value>
-        public uint NumberOfSnippets { get { return _numberOfSnippets; } set { _numberOfSnippets = value; } }
+        public uint NumberOfSnippets
+        {
+            get { return _numberOfSnippets; }
+            set { _numberOfSnippets = value; }
+        }
         /// <summary>
         /// Used to group cameras (ex: front/rear bitonal, front/rear grayscale...).
         /// </summary>
-        public uint DeviceGroupMask { get { return _deviceGroupMask; } set { _deviceGroupMask = value; } }
+        public uint DeviceGroupMask
+        {
+            get { return _deviceGroupMask; }
+            set { _deviceGroupMask = value; }
+        }
     }
 
-    /// <summary>
-    /// This structure is used by the application to specify a set of mapping values to be applied to
-    /// grayscale data.
-    /// </summary>
-    public partial class TWGrayResponse
-    {
-        /// <summary>
-        /// Transfer curve descriptors. All three channels (Channel1, Channel2
-        /// and Channel3) must contain the same value for every entry.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public TWElement8[] Response { get { return _response; } set { _response = value; } }
-    }
+    //    ///// <summary>
+    //    ///// This structure is used by the application to specify a set of mapping values to be applied to
+    //    ///// grayscale data.
+    //    ///// </summary>
+    //    //public partial class TWGrayResponse
+    //    //{
+    //    //    /// <summary>
+    //    //    /// Transfer curve descriptors. All three channels (Channel1, Channel2
+    //    //    /// and Channel3) must contain the same value for every entry.
+    //    //    /// </summary>
+
+    //    //    public TW_ELEMENT8[] Response { get { return _response; } set { _response = value; } }
+    //    //}
 
     /// <summary>
-    /// A general way to describe the version of software that is running.
+    /// A general way to describe the version of app or data source.
     /// </summary>
-    public partial struct TWVersion : IEquatable<TWVersion>
+    public partial struct TW_VERSION : IEquatable<TW_VERSION>
     {
         /// <summary>
         /// This refers to your application or Source’s major revision number. e.g. The
         /// "2" in "version 2.1".
         /// </summary>
-        public short Major { get { return (short)_majorNum; } set { _majorNum = (ushort)value; } }
+        public short Major
+        {
+            get { return (short)_majorNum; }
+            internal set { _majorNum = (ushort)value; }
+        }
         /// <summary>
         /// The incremental revision number of your application or Source. e.g. The "1"
         /// in "version 2.1".
         /// </summary>
-        public short Minor { get { return (short)_minorNum; } set { _minorNum = (ushort)value; } }
+        public short Minor
+        {
+            get { return (short)_minorNum; }
+            internal set { _minorNum = (ushort)value; }
+        }
         /// <summary>
         /// The primary language for your Source or application.
         /// </summary>
-        public Language Language { get { return (Language)_language; } set { _language = (ushort)value; } }
+        public Language Language
+        {
+            get { return (Language)_language; }
+            internal set { _language = (ushort)value; }
+        }
         /// <summary>
         /// The primary country where your Source or application is intended to be
         /// distributed. e.g. Germany.
         /// </summary>
-        public Country Country { get { return (Country)_country; } set { _country = (ushort)value; } }
+        public Country Country
+        {
+            get { return (Country)_country; }
+            internal set { _country = (ushort)value; }
+        }
         /// <summary>
         /// General information string - fill in as needed. e.g. "1.0b3 Beta release".
         /// </summary>
-        public string Info { get { return _info; } set { _info.VerifyLengthUnder(TwainConst.String32 - 1); _info = value; } }
+        public string Info
+        {
+            get { return _info; }
+            internal set { _info.VerifyLengthUnder(TwainConst.String32 - 1); _info = value; }
+        }
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
@@ -1592,7 +1544,8 @@ namespace NTwain.Data
         /// </returns>
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}.{1} {2}", Major, Minor, Info);
+            if (Info == null) return $"v{Major}.{Minor}";
+            return $"v{Major}.{Minor} ({Info})";
         }
 
         #region equals
@@ -1606,17 +1559,17 @@ namespace NTwain.Data
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (!(obj is TWVersion))
+            if (!(obj is TW_VERSION))
                 return false;
 
-            return Equals((TWVersion)obj);
+            return Equals((TW_VERSION)obj);
         }
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns></returns>
-        public bool Equals(TWVersion other)
+        public bool Equals(TW_VERSION other)
         {
             return _majorNum == other._majorNum && _minorNum == other._minorNum &&
                 _language == other._language && _country == other._country &&
@@ -1641,7 +1594,7 @@ namespace NTwain.Data
         /// <param name="v1">The v1.</param>
         /// <param name="v2">The v2.</param>
         /// <returns></returns>
-        public static bool operator ==(TWVersion v1, TWVersion v2)
+        public static bool operator ==(TW_VERSION v1, TW_VERSION v2)
         {
             return v1.Equals(v2);
         }
@@ -1652,7 +1605,7 @@ namespace NTwain.Data
         /// <param name="v1">The v1.</param>
         /// <param name="v2">The v2.</param>
         /// <returns></returns>
-        public static bool operator !=(TWVersion v1, TWVersion v2)
+        public static bool operator !=(TW_VERSION v1, TW_VERSION v2)
         {
             return !(v1 == v2);
         }
@@ -1664,133 +1617,54 @@ namespace NTwain.Data
     /// Provides identification information about a TWAIN entity. Used to maintain consistent
     /// communication between entities.
     /// </summary>
-    public partial class TWIdentity
+    partial class TW_IDENTITY : ITW_IDENTITY
     {
-        /// <summary>
-        /// A unique, internal identifier for the TWAIN entity. This field is only
-        /// filled by the Source Manager. Neither an application nor a Source
-        /// should fill this field. The Source uses the contents of this field to
-        /// "identify" which application is invoking the operation sent to the
-        /// Source.
-        /// </summary>
-        public int Id { get { return (int)_id; } }
-
-        /// <summary>
-        /// Gets the supported data group. The application will normally set this field to specify which Data
-        /// Group(s) it wants the Source Manager to sort Sources by when
-        /// presenting the Select Source dialog, or returning a list of available
-        /// Sources.
-        /// </summary>
-        /// <value>The data group.</value>
         public DataGroups DataGroup
         {
             get { return (DataGroups)(_supportedGroups & 0xffff); }
-            set { _supportedGroups = ((uint)value & 0xffff) | (0xffff0000 & _supportedGroups); }
+            internal set { _supportedGroups = ((uint)value & 0xffff) | (0xffff0000 & _supportedGroups); }
         }
 
-        /// <summary>
-        /// Major number of latest TWAIN version that this element supports.
-        /// </summary>
-        public short ProtocolMajor { get { return (short)_protocolMajor; } set { _protocolMajor = (ushort)value; } }
-
-        /// <summary>
-        /// Minor number of latest TWAIN version that this element supports.
-        /// </summary>
-        public short ProtocolMinor { get { return (short)_protocolMinor; } set { _protocolMinor = (ushort)value; } }
-
-
-        /// <summary>
-        /// A <see cref="TWVersion"/> structure identifying the TWAIN entity.
-        /// </summary>
-        public TWVersion Version { get { return _version; } set { _version = value; } }
-        /// <summary>
-        /// Gets the data functionalities for TWAIN 2 detection.
-        /// </summary>
-        /// <value>The data functionalities.</value>
-        public DataFunctionalities DataFunctionalities
+        public short ProtocolMajor
         {
-            get { return (DataFunctionalities)(_supportedGroups & 0xffff0000); }
-            set { _supportedGroups = ((uint)value & 0xffff0000) | (0x0000ffff & _supportedGroups); }
+            get { return (short)_protocolMajor; }
+            internal set { _protocolMajor = (ushort)value; }
         }
 
-        /// <summary>
-        /// String identifying the manufacturer of the application or Source. e.g. "Aldus".
-        /// </summary>
-        public string Manufacturer { get { return _manufacturer; } set { value.VerifyLengthUnder(TwainConst.String32 - 1); _manufacturer = value; } }
-        /// <summary>
-        /// Tells an application that performs device-specific operations which
-        /// product family the Source supports. This is useful when a new Source
-        /// has been released and the application doesn't know about the
-        /// particular Source but still wants to perform Custom operations with it.
-        /// e.g. "ScanMan".
-        /// </summary>
-        public string ProductFamily { get { return _productFamily; } set { value.VerifyLengthUnder(TwainConst.String32 - 1); _productFamily = value; } }
-        /// <summary>
-        /// A string uniquely identifying the Source. This is the string that will be
-        /// displayed to the user at Source select-time. This string must uniquely
-        /// identify your Source for the user, and should identify the application
-        /// unambiguously for Sources that care. e.g. "ScanJet IIc".
-        /// </summary>
-        public string ProductName { get { return _productName; } set { value.VerifyLengthUnder(TwainConst.String32 - 1); _productName = value; } }
-
-        /// <summary>
-        /// Creates a <see cref="TWIdentity" /> from assembly values.
-        /// </summary>
-        /// <param name="supportedGroups">The supported groups.</param>
-        /// <param name="assembly">The assembly.</param>
-        /// <returns></returns>
-        /// <exception cref="System.ArgumentNullException">assembly</exception>
-        /// <exception cref="System.ArgumentException"></exception>
-        public static TWIdentity CreateFromAssembly(DataGroups supportedGroups, Assembly assembly)
+        public short ProtocolMinor
         {
-            if (assembly == null) { throw new ArgumentNullException("assembly"); }
-
-            var info = FileVersionInfo.GetVersionInfo(assembly.Location);
-
-            return Create(supportedGroups, assembly.GetName().Version, info.CompanyName, info.ProductName, info.ProductName, info.FileDescription);
+            get { return (short)_protocolMinor; }
+            internal set { _protocolMinor = (ushort)value; }
         }
 
-        /// <summary>
-        /// Creates a <see cref="TWIdentity" /> from specified values.
-        /// </summary>
-        /// <param name="supportedGroups">The supported groups.</param>
-        /// <param name="version">The version.</param>
-        /// <param name="manufacturer">The manufacturer.</param>
-        /// <param name="productFamily">The product family.</param>
-        /// <param name="productName">Name of the product.</param>
-        /// <param name="productDescription">The product description.</param>
-        /// <returns></returns>
-        /// <exception cref="System.ArgumentNullException">assembly</exception>
-        /// <exception cref="System.ArgumentException"></exception>
-        public static TWIdentity Create(DataGroups supportedGroups, Version version,
-            string manufacturer, string productFamily, string productName, string productDescription)
+        public TW_VERSION Version
         {
-            if ((supportedGroups & DataGroups.Image) == 0 &&
-                (supportedGroups & DataGroups.Audio) == 0)
-            {
-                throw new ArgumentException(Resources.BadDataGroupsForAppId);
-            }
-            if (version == null) { throw new ArgumentNullException("version"); }
+            get { return _version; }
+            internal set { _version = value; }
+        }
 
-            return new TWIdentity
-            {
-                Manufacturer = string.IsNullOrEmpty(manufacturer) ? "UNKNOWN" : manufacturer,
-                ProtocolMajor = TwainConst.ProtocolMajor,
-                ProtocolMinor = TwainConst.ProtocolMinor,
-                DataGroup = DataGroups.Control | supportedGroups,
-                DataFunctionalities = DataFunctionalities.App2,
+        public DataFlags DataFlags
+        {
+            get { return (DataFlags)(_supportedGroups & 0xffff0000); }
+            internal set { _supportedGroups = ((uint)value & 0xffff0000) | (0x0000ffff & _supportedGroups); }
+        }
 
-                ProductFamily = string.IsNullOrEmpty(productFamily) ? "UNKNOWN" : productFamily,
-                ProductName = string.IsNullOrEmpty(productName) ? "UNKNOWN" : productName,
-                Version = new TWVersion
-                {
-                    Major = (short)version.Major,
-                    Minor = (short)version.Minor,
-                    Country = Country.Usa,
-                    Language = Language.EnglishUSA,
-                    Info = productDescription ?? string.Empty,
-                }
-            };
+        public string Manufacturer
+        {
+            get { return _manufacturer; }
+            internal set { value.VerifyLengthUnder(TwainConst.String32 - 1); _manufacturer = value; }
+        }
+
+        public string ProductFamily
+        {
+            get { return _productFamily; }
+            internal set { value.VerifyLengthUnder(TwainConst.String32 - 1); _productFamily = value; }
+        }
+
+        public string ProductName
+        {
+            get { return _productName; }
+            internal set { value.VerifyLengthUnder(TwainConst.String32 - 1); _productName = value; }
         }
     }
 
@@ -1799,10 +1673,8 @@ namespace NTwain.Data
     /// Source and application. The Source may transfer the data in a different format--the information
     /// may be transferred in "strips" or "tiles" in either compressed or uncompressed form.
     /// </summary>
-    public partial class TWImageInfo
+    public partial struct TW_IMAGEINFO
     {
-        internal TWImageInfo() { }
-
         /// <summary>
         /// The number of pixels per ICapUnits in the horizontal direction. The
         /// current unit is assumed to be "inches" unless it has been otherwise
@@ -1838,7 +1710,7 @@ namespace NTwain.Data
         /// bits. However, both the application and Source must simultaneously
         /// support sample sizes greater than 8 bits per color.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+
         public short[] BitsPerSample { get { return _bitsPerSample; } }
         /// <summary>
         /// The number of bits in each image pixel (or bit depth). This value is
@@ -1892,12 +1764,12 @@ namespace NTwain.Data
     /// useful for forms-processing applications and other applications with similar document tracking
     /// requirements.
     /// </summary>
-    public partial class TWImageLayout
+    public partial struct TW_IMAGELAYOUT
     {
         /// <summary>
         /// Frame coords within larger document.
         /// </summary>
-        public TWFrame Frame { get { return _frame; } set { _frame = value; } }
+        public TW_FRAME Frame { get { return _frame; } set { _frame = value; } }
         /// <summary>
         /// The document number, assigned by the Source, that the acquired data
         /// originated on. Useful for grouping pages together.
@@ -1927,14 +1799,13 @@ namespace NTwain.Data
     /// by the application--the Source is asked to fill these buffers. This structure keeps straight which
     /// entity is responsible for deallocation.
     /// </summary>
-    public partial struct TWMemory
+    public partial struct TW_MEMORY
     {
         // not a class due to embedded
 
         /// <summary>
         /// Encodes which entity releases the buffer and how the buffer is referenced.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
         public MemoryFlags Flags { get { return (MemoryFlags)_flags; } set { _flags = (uint)value; } }
         /// <summary>
         /// The size of the buffer in bytes. Should always be an even number and wordaligned.
@@ -1950,7 +1821,7 @@ namespace NTwain.Data
     /// <summary>
     /// Describes the form of the acquired data being passed from the Source to the application in memory transfer mode.
     /// </summary>
-    public partial class TWImageMemXfer
+    public partial struct TW_IMAGEMEMXFER
     {
         /// <summary>
         /// The compression method used to process the data being transferred.
@@ -1988,11 +1859,11 @@ namespace NTwain.Data
         /// </summary>
         public uint BytesWritten { get { return _bytesWritten; } }
         /// <summary>
-        /// A structure of type <see cref="TWMemory"/> describing who must dispose of the
+        /// A structure of type <see cref="TW_MEMORY"/> describing who must dispose of the
         /// buffer, the actual size of the buffer, in bytes, and where the buffer is
         /// located in memory.
         /// </summary>
-        internal TWMemory Memory { get { return _memory; } set { _memory = value; } }
+        internal TW_MEMORY Memory { get { return _memory; } set { _memory = value; } }
     }
 
     /// <summary>
@@ -2000,7 +1871,7 @@ namespace NTwain.Data
     /// transfer. Images compressed in this fashion will be compatible with the JPEG File Interchange
     /// Format, version 1.1.
     /// </summary>
-    public partial class TWJpegCompression
+    public partial struct TW_JPEGCOMPRESSION
     {
         /// <summary>
         /// Defines the color space in which the
@@ -2036,52 +1907,74 @@ namespace NTwain.Data
         /// <summary>
         /// Mapping of components to Quantization tables.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+
         public ushort[] QuantMap { get { return _quantMap; } set { _quantMap = value; } }
         /// <summary>
         /// Quantization tables.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public TWMemory[] QuantTable { get { return _quantTable; } set { _quantTable = value; } }
+
+        public TW_MEMORY[] QuantTable { get { return _quantTable; } set { _quantTable = value; } }
         /// <summary>
         /// Mapping of components to Huffman tables. Null entries signify
         /// selection of the default tables.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+
         public ushort[] HuffmanMap { get { return _huffmanMap; } set { _huffmanMap = value; } }
         /// <summary>
         /// DC Huffman tables. Null entries signify selection of the default tables.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public TWMemory[] HuffmanDC { get { return _huffmanDC; } set { _huffmanDC = value; } }
+
+        public TW_MEMORY[] HuffmanDC { get { return _huffmanDC; } set { _huffmanDC = value; } }
         /// <summary>
         /// AC Huffman tables. Null entries signify selection of the default tables.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public TWMemory[] HuffmanAC { get { return _huffmanAC; } set { _huffmanAC = value; } }
+
+        public TW_MEMORY[] HuffmanAC { get { return _huffmanAC; } set { _huffmanAC = value; } }
     }
 
     /// <summary>
-    /// Container for one value.
+    /// Provides metrics since the last call to DG_CONTROL / DAT_USERINTERFACE / MSG_ENABLEDS
     /// </summary>
-    public partial class TWOneValue
+    public partial struct TW_METRICS
     {
         /// <summary>
-        /// The type of the item.
+        /// The number of images made available for transfer by the driver. This is not
+        /// necessarily the same as the number of images actually transferred, since the
+        /// application may opt to skip transfers or to end without transferring all images.
+        /// This value starts as 0 when the driver is opened with 
+        /// DG_CONTROL / DAT_IDENTITY / MSG_OPENDS, and resets to zero any time 
+        /// DG_CONTROL / DAT_USERINTERFACE / MSG_ENABLEDS is received.
         /// </summary>
-        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
+        public uint ImageCount => _imageCount;
         /// <summary>
-        /// The value.
+        /// The number of sheets of paper processed by the scanner. This value starts as 0
+        /// when the driver is opened with DG_CONTROL / DAT_IDENTITY / MSG_OPENDS, 
+        /// and resets to zero any time DG_CONTROL / DAT_USERINTERFACE / MSG_ENABLEDS is received.
         /// </summary>
-        public uint Item { get { return _item; } set { _item = value; } }
+        public uint SheetCount => _sheetCount;
     }
+
+    //    /// <summary>
+    //    /// Container for one value.
+    //    /// </summary>
+    //    public partial class TW_ONEVALUE
+    //    {
+    //        /// <summary>
+    //        /// The type of the item.
+    //        /// </summary>
+    //        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
+    //        /// <summary>
+    //        /// The value.
+    //        /// </summary>
+    //        public uint Item { get { return _item; } set { _item = value; } }
+    //    }
 
 
     /// <summary>
     /// This structure holds the color palette information for buffered memory transfers of type
     /// ICapPixelType = Palette.
     /// </summary>
-    public partial class TWPalette8
+    public partial struct TW_PALETTE8
     {
         /// <summary>
         /// Number of colors in the color table; maximum index into the color table
@@ -2095,20 +1988,20 @@ namespace NTwain.Data
         /// <summary>
         /// Array of palette values.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public TWElement8[] Colors { get { return _colors; } set { _colors = value; } }
+
+        public TW_ELEMENT8[] Colors { get { return _colors; } set { _colors = value; } }
     }
 
     /// <summary>
     /// Used to bypass the TWAIN protocol when communicating with a device. All memory must be
     /// allocated and freed by the Application.
     /// </summary>
-    public partial class TWPassThru
+    public partial struct TW_PASSTHRU
     {
         /// <summary>
         /// Pointer to Command buffer.
         /// </summary>
-        public IntPtr pCommand { get { return _pCommand; } set { _pCommand = value; } }
+        public IntPtr Command { get { return _pCommand; } set { _pCommand = value; } }
         /// <summary>
         /// Number of bytes in Command buffer.
         /// </summary>
@@ -2120,7 +2013,7 @@ namespace NTwain.Data
         /// <summary>
         /// Pointer to Data buffer.
         /// </summary>
-        public IntPtr pData { get { return _pData; } set { _pData = value; } }
+        public IntPtr Data { get { return _pData; } set { _pData = value; } }
         /// <summary>
         /// Number of bytes in Data buffer.
         /// </summary>
@@ -2135,22 +2028,22 @@ namespace NTwain.Data
     /// This structure tells the application how many more complete transfers the Source currently has
     /// available.
     /// </summary>
-    partial class TWPendingXfers
+    partial struct TW_PENDINGXFERS
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWPendingXfers"/> class.
-        /// </summary>
-        public TWPendingXfers()
-        {
-            _count = TwainConst.DoNotCare16;
-        }
+        ///// <summary>
+        ///// Initializes a new instance of the <see cref="TW_PENDINGXFERS"/> class.
+        ///// </summary>
+        //public TW_PENDINGXFERS()
+        //{
+        //    _count = TwainConst.DontCare16;
+        //}
 
         /// <summary>
         /// The number of complete transfers a Source has available for the application it is
         /// connected to. If no more transfers are available, set to zero. If an unknown and
         /// non-zero number of transfers are available, set to -1.
         /// </summary>
-        public int Count { get { return _count == TwainConst.DoNotCare16 ? -1 : (int)_count; } }
+        public int Count { get { return _count == TwainConst.DontCare16 ? -1 : (int)_count; } }
         /// <summary>
         /// The application should check this field if the CapJobControl is set to other
         /// than None. If this is not 0, the application should expect more data
@@ -2160,61 +2053,61 @@ namespace NTwain.Data
     }
 
 
-    /// <summary>
-    /// Container for a range of values.
-    /// </summary>
-    public partial class TWRange
-    {
-        /// <summary>
-        /// The type of items in the list.
-        /// </summary>
-        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
-        /// <summary>
-        /// The least positive/most negative value of the range.
-        /// </summary>
-        public uint MinValue { get { return _minValue; } set { _minValue = value; } }
-        /// <summary>
-        /// The most positive/least negative value of the range.
-        /// </summary>
-        public uint MaxValue { get { return _maxValue; } set { _maxValue = value; } }
-        /// <summary>
-        /// The delta between two adjacent values of the range.
-        /// e.g. Item2 - Item1 = StepSize;
-        /// </summary>
-        public uint StepSize { get { return _stepSize; } set { _stepSize = value; } }
-        /// <summary>
-        /// The device’s "power-on" value for the capability. If the application is
-        /// performing a MSG_SET operation and isn’t sure what the default
-        /// value is, set this field to <see cref="TwainConst.DoNotCare32"/>.
-        /// </summary>
-        public uint DefaultValue { get { return _defaultValue; } set { _defaultValue = value; } }
-        /// <summary>
-        /// The value to which the device (or its user interface) is currently set to
-        /// for the capability.
-        /// </summary>
-        public uint CurrentValue { get { return _currentValue; } set { _currentValue = value; } }
-    }
+    //    /// <summary>
+    //    /// Container for a range of values.
+    //    /// </summary>
+    //    public partial class TW_RANGE
+    //    {
+    //        /// <summary>
+    //        /// The type of items in the list.
+    //        /// </summary>
+    //        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
+    //        /// <summary>
+    //        /// The least positive/most negative value of the range.
+    //        /// </summary>
+    //        public uint MinValue { get { return _minValue; } set { _minValue = value; } }
+    //        /// <summary>
+    //        /// The most positive/least negative value of the range.
+    //        /// </summary>
+    //        public uint MaxValue { get { return _maxValue; } set { _maxValue = value; } }
+    //        /// <summary>
+    //        /// The delta between two adjacent values of the range.
+    //        /// e.g. Item2 - Item1 = StepSize;
+    //        /// </summary>
+    //        public uint StepSize { get { return _stepSize; } set { _stepSize = value; } }
+    //        /// <summary>
+    //        /// The device’s "power-on" value for the capability. If the application is
+    //        /// performing a MSG_SET operation and isn’t sure what the default
+    //        /// value is, set this field to <see cref="TwainConst.DontCare32"/>.
+    //        /// </summary>
+    //        public uint DefaultValue { get { return _defaultValue; } set { _defaultValue = value; } }
+    //        /// <summary>
+    //        /// The value to which the device (or its user interface) is currently set to
+    //        /// for the capability.
+    //        /// </summary>
+    //        public uint CurrentValue { get { return _currentValue; } set { _currentValue = value; } }
+    //    }
 
-    /// <summary>
-    /// This structure is used by the application to specify a set of mapping values to be applied to RGB
-    /// color data. Use this structure for RGB data whose bit depth is up to, and including, 8-bits.
-    /// The number of elements in the array is determined by <see cref="TWImageInfo.BitsPerPixel"/>—the number of
-    /// elements is 2 raised to the power of <see cref="TWImageInfo.BitsPerPixel"/>.
-    /// </summary>
-    public partial class TWRgbResponse
-    {
-        /// <summary>
-        /// Transfer curve descriptors. To minimize color shift problems, writing the
-        /// same values into each channel is desirable.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public TWElement8[] Response { get { return _response; } set { _response = value; } }
-    }
+    //    ///// <summary>
+    //    ///// This structure is used by the application to specify a set of mapping values to be applied to RGB
+    //    ///// color data. Use this structure for RGB data whose bit depth is up to, and including, 8-bits.
+    //    ///// The number of elements in the array is determined by <see cref="TW_IMAGEINFO.BitsPerPixel"/>—the number of
+    //    ///// elements is 2 raised to the power of <see cref="TW_IMAGEINFO.BitsPerPixel"/>.
+    //    ///// </summary>
+    //    //public partial class TWRgbResponse
+    //    //{
+    //    //    /// <summary>
+    //    //    /// Transfer curve descriptors. To minimize color shift problems, writing the
+    //    //    /// same values into each channel is desirable.
+    //    //    /// </summary>
+
+    //    //    public TW_ELEMENT8[] Response { get { return _response; } set { _response = value; } }
+    //    //}
 
     /// <summary>
     /// Describes the file format and file specification information for a transfer through a disk file.
     /// </summary>
-    public partial class TWSetupFileXfer
+    public partial struct TW_SETUPFILEXFER
     {
         /// <summary>
         /// A complete file specifier to the target file. On Windows, be sure to include the
@@ -2238,10 +2131,8 @@ namespace NTwain.Data
     /// Provides the application information about the Source’s requirements and preferences
     /// regarding allocation of transfer buffer(s).
     /// </summary>
-    public partial class TWSetupMemXfer
+    public partial struct TW_SETUPMEMXFER
     {
-        internal TWSetupMemXfer() { }
-
         /// <summary>
         /// The size of the smallest transfer buffer, in bytes, that a Source can be
         /// successful with. This will typically be the number of bytes in an
@@ -2270,14 +2161,8 @@ namespace NTwain.Data
     /// <summary>
     /// Describes the status of a source.
     /// </summary>
-    public partial class TWStatus
+    public partial struct TW_STATUS
     {
-        internal TWStatus() { }
-        internal TWStatus(ushort code, ushort data)
-        {
-            _conditionCode = code;
-            _data = data;
-        }
         /// <summary>
         /// Condition Code describing the status.
         /// </summary>
@@ -2290,136 +2175,66 @@ namespace NTwain.Data
     }
 
     /// <summary>
-    /// Translates the contents of Status into a localized UTF8string, with the total number of bytes
-    /// in the string.
+    /// Provides identification information about a TWAIN entity. Used to maintain consistent
+    /// communication between entities.
     /// </summary>
-    public sealed partial class TWStatusUtf8 : IDisposable
+    public partial struct TW_TWAINDIRECT
     {
         /// <summary>
-        /// <see cref="TWStatus"/> data received from a previous call.
+        /// Constructs this struct.
         /// </summary>
-        public TWStatus Status
+        /// <param name="manager"></param>
+        /// <param name="send"></param>
+        /// <param name="sendSize"></param>
+        public TW_TWAINDIRECT(ushort manager, IntPtr send, uint sendSize)
         {
-            get { return new TWStatus(_conditionCode, _data); }
+            _SizeOf = (uint)Marshal.SizeOf(typeof(TW_TWAINDIRECT));
+            _CommunicationManager = manager;
+            _Send = send;
+            _SendSize = sendSize;
+            _Receive = IntPtr.Zero;
+            _ReceiveSize = 0;
         }
 
         /// <summary>
-        /// Total number of bytes in the UTF8string, plus the terminating NULL byte. 
-        /// This is not the same as the total number of characters in the string.
+        /// The interpretation of the Send data may be influenced by the communication
+        /// manager that is helping the application connect to the scanner.
+        /// For instance, a task action to “scan” may need to be ignored under some
+        /// circumstances.
         /// </summary>
-        public int Size { get { return (int)_size; } }
-
+        public ushort CommunicationManager { get => _CommunicationManager; }
         /// <summary>
-        /// TW_HANDLE to a UTF-8 encoded localized string (based on 
-        /// TwIdentity.Language or CapLanguage). The Source allocates
-        /// it, the Application frees it.
+        /// A handle to data to be sent from the application to the driver. The application
+        /// owns this handle.If there is no data, this field is set to NULL.
         /// </summary>
-        public IntPtr UTF8StringPtr { get { return _uTF8string; } }
-
+        public IntPtr Send { get => _Send; set => _Send = value; }
         /// <summary>
-        /// Gets the actual string from the pointer. This may be incorrect.
+        /// The number of bytes in the Send buffer.
+        /// If there is no data this field is set to 0.
         /// </summary>
-        /// <returns></returns>
-        public string TryGetString()
-        {
-            if (_uTF8string != IntPtr.Zero)
-            {
-                var sb = new StringBuilder(Size - 1);
-                byte bt;
-                while (sb.Length < _size &&
-                    (bt = Marshal.ReadByte(_uTF8string, sb.Length)) != 0)
-                {
-                    sb.Append((char)bt);
-                }
-                return sb.ToString();
-            }
-            return null;
-        }
-
-
-        #region IDisposable Members
-
+        public uint SendSize { get => _SendSize; set => _SendSize = value; }
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// A handle to data sent from the driver to the application.
+        /// The driver creates this handle, the application must free it.
+        /// If there is no data this field is set to NULL.
         /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-
-            }
-            if (_uTF8string != IntPtr.Zero)
-            {
-                PlatformInfo.Current.MemoryManager.Free(_uTF8string);
-                _uTF8string = IntPtr.Zero;
-            }
-        }
-
+        public IntPtr Receive { get => _Receive; }
         /// <summary>
-        /// Finalizes an instance of the <see cref="TWStatusUtf8"/> class.
+        /// The number of bytes in the Receive buffer, set by the driver.
+        /// If there is no data this field is set to 0.
         /// </summary>
-        ~TWStatusUtf8()
-        {
-            Dispose(false);
-        }
-
-        #endregion
+        public uint ReceiveSize { get => _ReceiveSize; }
     }
-
-
-    /// <summary>
-    /// This structure is used to handle the user interface coordination between an application and a
-    /// Source.
-    /// </summary>
-    partial class TWUserInterface
-    {
-        /// <summary>
-        /// Set to TRUE by the application if the Source should activate its built-in user
-        /// interface. Otherwise, set to FALSE. Note that not all sources support ShowUI =
-        /// FALSE.
-        /// </summary>
-        public bool ShowUI
-        {
-            get { return _showUI > 0; }
-            set { _showUI = value ? TwainConst.True : TwainConst.False; }
-        }
-        /// <summary>
-        /// If ShowUI is TRUE, then an application setting this to TRUE requests the Source to
-        /// run Modal.
-        /// </summary>
-        public bool ModalUI
-        {
-            //get { return _modalUI > 0; } 
-            set { _modalUI = value ? TwainConst.True : TwainConst.False; }
-        }
-        /// <summary>
-        /// Microsoft Windows only: Application’s window handle. The Source designates
-        /// the hWnd as its parent when creating the Source dialog.
-        /// </summary>
-        public IntPtr hParent
-        {
-            //get { return _hParent; } 
-            set { _hParent = value; }
-        }
-    }
-
-
 
     /// <summary>
     /// Provides entry points required by TWAIN 2.0 Applications and Sources.
     /// </summary>
-    partial class TWEntryPoint : IMemoryManager
+    partial class TW_ENTRYPOINT : IMemoryManager
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TWEntryPoint"/> class.
+        /// Initializes a new instance of the <see cref="TW_ENTRYPOINT"/> class.
         /// </summary>
-        public TWEntryPoint()
+        public TW_ENTRYPOINT()
         {
             _size = (uint)Marshal.SizeOf(this);
         }
@@ -2428,22 +2243,22 @@ namespace NTwain.Data
 
         public IntPtr Allocate(uint size)
         {
-            return _dSM_MemAllocate(size);
+            return DSM_MemAllocate(size);
         }
 
         public void Free(IntPtr handle)
         {
-            _dSM_MemFree(handle);
+            DSM_MemFree(handle);
         }
 
         public IntPtr Lock(IntPtr handle)
         {
-            return _dSM_MemLock(handle);
+            return DSM_MemLock(handle);
         }
 
         public void Unlock(IntPtr handle)
         {
-            _dSM_MemUnlock(handle);
+            DSM_MemUnlock(handle);
         }
 
         #endregion
@@ -2454,15 +2269,15 @@ namespace NTwain.Data
     /// The range of colors specified by this structure is replaced with Replacement grayscale value in the
     /// binary image. The color is specified in HSV color space.
     /// </summary>
-    public partial class TWFilterDescriptor
+    public partial struct TW_FILTER_DESCRIPTOR
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWFilterDescriptor"/> struct.
-        /// </summary>
-        public TWFilterDescriptor()
-        {
-            _size = (uint)Marshal.SizeOf(this);
-        }
+        ///// <summary>
+        ///// Initializes a new instance of the <see cref="TW_FILTER_DESCRIPTOR"/> struct.
+        ///// </summary>
+        //public TW_FILTER_DESCRIPTOR()
+        //{
+        //    _size = (uint)Marshal.SizeOf(this);
+        //}
 
         /// <summary>
         /// Size of this structure in bytes.
@@ -2506,15 +2321,15 @@ namespace NTwain.Data
     /// Specifies the filter to be applied during image acquisition. More than one descriptor can be
     /// specified. All descriptors are applied with an OR statement.
     /// </summary>
-    public partial class TWFilter
+    public partial struct TW_FILTER
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TWFilter"/> class.
-        /// </summary>
-        public TWFilter()
-        {
-            _size = (uint)Marshal.SizeOf(this);
-        }
+        ///// <summary>
+        ///// Initializes a new instance of the <see cref="TW_FILTER"/> class.
+        ///// </summary>
+        //public TW_FILTER()
+        //{
+        //    _size = (uint)Marshal.SizeOf(this);
+        //}
 
         /// <summary>
         /// Number of descriptors in hDescriptors array.
@@ -2540,12 +2355,12 @@ namespace NTwain.Data
         /// </value>
         public uint Condition { get { return _condition; } set { _condition = value; } }
         /// <summary>
-        /// Handle to array of <see cref="TWFilterDescriptor"/>.
+        /// Handle to array of <see cref="TW_FILTER_DESCRIPTOR"/>.
         /// </summary>
         /// <value>
         /// The descriptors.
         /// </value>
-        public IntPtr hDescriptors { get { return _hDescriptors; } set { _hDescriptors = value; } }
+        public IntPtr Descriptors { get { return _hDescriptors; } set { _hDescriptors = value; } }
     }
 
 
