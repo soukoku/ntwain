@@ -43,18 +43,22 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode ShowUI(IntPtr windowHandle, bool modal = false)
         {
-            var ui = new TW_USERINTERFACE
+            var rc = ReturnCode.Failure;
+            Session.Invoke(() =>
             {
-                ShowUI = 1,
-                ModalUI = (ushort)(modal ? 1 : 0),
-                hParent = windowHandle
-            };
-            Session._disableDSNow = false;
-            var rc = Session.DGControl.UserInterface.EnableDSUIOnly(ref ui);
-            if (rc == ReturnCode.Success)
-            {
-                Session._lastEnableUI = ui;
-            }
+                var ui = new TW_USERINTERFACE
+                {
+                    ShowUI = 1,
+                    ModalUI = (ushort)(modal ? 1 : 0),
+                    hParent = windowHandle
+                };
+                Session._disableDSNow = false;
+                rc = Session.DGControl.UserInterface.EnableDSUIOnly(ref ui);
+                if (rc == ReturnCode.Success)
+                {
+                    Session._lastEnableUI = ui;
+                }
+            });
             return rc;
         }
 
@@ -67,18 +71,22 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode Enable(bool showUI, IntPtr windowHandle, bool modal = false)
         {
-            var ui = new TW_USERINTERFACE
+            var rc = ReturnCode.Failure;
+            Session.Invoke(() =>
             {
-                ShowUI = (ushort)(showUI ? 1 : 0),
-                ModalUI = (ushort)(modal ? 1 : 0),
-                hParent = windowHandle
-            };
-            Session._disableDSNow = false;
-            var rc = Session.DGControl.UserInterface.EnableDS(ref ui);
-            if (rc == ReturnCode.Success)
-            {
-                Session._lastEnableUI = ui;
-            }
+                var ui = new TW_USERINTERFACE
+                {
+                    ShowUI = (ushort)(showUI ? 1 : 0),
+                    ModalUI = (ushort)(modal ? 1 : 0),
+                    hParent = windowHandle
+                };
+                Session._disableDSNow = false;
+                rc = Session.DGControl.UserInterface.EnableDS(ref ui);
+                if (rc == ReturnCode.Success)
+                {
+                    Session._lastEnableUI = ui;
+                }
+            });
             return rc;
         }
 

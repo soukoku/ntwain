@@ -1,5 +1,7 @@
 ﻿using NTwain.Data;
+using NTwain.Data.Win32;
 using NTwain.Internals;
+using NTwain.Threading;
 using NTwain.Triplets;
 using System;
 using System.Collections.Generic;
@@ -21,39 +23,32 @@ namespace NTwain
             DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
         {
             Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: {nameof(Handle32BitCallback)}({dg}, {dat}, {msg}, {data})");
-            HandleSourceMsg(msg);
+            BeginInvoke(() =>
+            {
+                Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: in BeginInvoke {nameof(Handle32BitCallback)}({dg}, {dat}, {msg}, {data})");
+                HandleSourceMsg(msg);
+            });
+            Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: after BeginInvoke {nameof(Handle32BitCallback)}({dg}, {dat}, {msg}, {data})");
             return ReturnCode.Success;
         }
 
-        /// <summary>
-        /// If on Windows pass all messages from WndProc here to handle it
-        /// for TWAIN-specific things.
-        /// </summary>
-        /// <param name="hwnd">The window handle.</param>
-        /// <param name="msg">The message.</param>
-        /// <param name="wParam">The w parameter.</param>
-        /// <param name="lParam">The l parameter.</param>
-        /// <returns>
-        /// true if handled by TWAIN.
-        /// </returns>
-        public bool HandleWndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam)
+        internal bool HandleWindowsMessage(ref MSG msg)
         {
             var handled = false;
             if (State > TwainState.S4)
             {
-                var winMsg = new MSG(hwnd, msg, wParam, lParam);
-
                 // transform it into a pointer for twain
                 IntPtr msgPtr = IntPtr.Zero;
                 try
                 {
-                    msgPtr = Config.MemoryManager.Allocate((uint)Marshal.SizeOf(winMsg));
+                    msgPtr = Config.MemoryManager.Allocate((uint)Marshal.SizeOf(msg));
                     IntPtr locked = Config.MemoryManager.Lock(msgPtr);
-                    Marshal.StructureToPtr(winMsg, locked, false);
+                    Marshal.StructureToPtr(msg, locked, false);
 
                     TW_EVENT evt = new TW_EVENT { pEvent = locked };
                     if (handled = DGControl.Event.ProcessEvent(ref evt) == ReturnCode.DSEvent)
                     {
+                        Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: {nameof(HandleWindowsMessage)} with {evt.TWMessage}");
                         HandleSourceMsg((Message)evt.TWMessage);
                     }
                 }
@@ -67,6 +62,7 @@ namespace NTwain
 
         private void HandleSourceMsg(Message msg)
         {
+            Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: {nameof(HandleSourceMsg)}({msg})");
             switch (msg)
             {
                 case Message.DeviceEvent:

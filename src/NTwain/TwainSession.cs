@@ -1,4 +1,5 @@
 ﻿using NTwain.Data;
+using NTwain.Threading;
 using NTwain.Triplets;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ namespace NTwain
         // need to keep delegate around to prevent GC?
         readonly Callback32 _callback32Delegate;
 
+        readonly WinMsgLoop _winMsgLoop;
+
 
         /// <summary>
         /// Constructs a new <see cref="TwainSession"/>.
@@ -37,9 +40,23 @@ namespace NTwain
                 case PlatformID.MacOSX:
                 case PlatformID.Unix:
                 default:
+                    _winMsgLoop = new WinMsgLoop(this);
                     _callback32Delegate = new Callback32(Handle32BitCallback);
                     break;
             }
+        }
+
+
+        public void Invoke(Action action)
+        {
+            if (_winMsgLoop != null) _winMsgLoop.Invoke(action);
+            else action();
+        }
+
+        public void BeginInvoke(Action action)
+        {
+            if (_winMsgLoop != null) _winMsgLoop.BeginInvoke(action);
+            else action();
         }
 
         /// <summary>
@@ -50,7 +67,26 @@ namespace NTwain
         public ReturnCode Open(IntPtr hWnd)
         {
             _hWnd = hWnd;
-            return DGControl.Parent.OpenDSM(hWnd);
+            var rc = DGControl.Parent.OpenDSM(hWnd);
+            if (rc == ReturnCode.Success)
+            {
+                _winMsgLoop?.Start();
+            }
+            return rc;
+        }
+
+        /// <summary>
+        /// Closes the TWAIN session.
+        /// </summary>
+        /// <returns></returns>
+        public ReturnCode Close()
+        {
+            var rc = DGControl.Parent.CloseDSM(_hWnd);
+            if (rc == ReturnCode.Success)
+            {
+                _winMsgLoop?.Stop();
+            }
+            return rc;
         }
 
         /// <summary>
@@ -60,13 +96,20 @@ namespace NTwain
         /// <returns></returns>
         public ReturnCode StepDown(TwainState targetState)
         {
+            if (targetState == this.State) return ReturnCode.Success;
+
             var rc = ReturnCode.Failure;
             while (State > targetState)
             {
                 switch (State)
                 {
+                    case TwainState.DsmLoaded:
+                    case TwainState.DsmUnloaded:
+                    case TwainState.Invalid:
+                        // can do nothing in these states
+                        return ReturnCode.Success;
                     case TwainState.DsmOpened:
-                        rc = DGControl.Parent.CloseDSM(_hWnd);
+                        rc = Close();
                         if (rc != ReturnCode.Success) return rc;
                         break;
                     case TwainState.SourceOpened:

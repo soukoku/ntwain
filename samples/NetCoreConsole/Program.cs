@@ -8,6 +8,7 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
+            TwainSession session = null;
             try
             {
                 var config = new TwainConfigBuilder()
@@ -18,42 +19,41 @@ namespace ConsoleApp
                 Console.WriteLine($"Platform = {config.Platform}");
                 Console.WriteLine();
 
-                using (var session = new TwainSession(config))
+                session = new TwainSession(config);
+
+                session.PropertyChanged += Session_PropertyChanged;
+                session.SourceDisabled += Session_SourceDisabled;
+
+                if (session.Open(IntPtr.Zero) == NTwain.Data.ReturnCode.Success)
                 {
-                    session.PropertyChanged += Session_PropertyChanged;
-                    session.SourceDisabled += Session_SourceDisabled;
+                    Console.WriteLine("Available data sources:");
 
-                    if (session.Open(IntPtr.Zero) == NTwain.Data.ReturnCode.Success)
+                    DataSource firstSrc = null;
+                    foreach (var src in session.GetSources())
                     {
-                        Console.WriteLine("Available data sources:");
+                        if (firstSrc == null) firstSrc = src;
+                        Console.WriteLine($"\t{src}");
+                    }
+                    Console.WriteLine();
 
-                        DataSource firstSrc = null;
-                        foreach (var src in session.GetSources())
-                        {
-                            if (firstSrc == null) firstSrc = src;
-                            Console.WriteLine($"\t{src}");
-                        }
+                    var defaultSrc = session.DefaultSource;
+                    Console.WriteLine($"Default data source = {defaultSrc}");
+                    Console.WriteLine();
+
+                    var selectSrc = session.ShowSourceSelector();
+                    Console.WriteLine($"Selected data source = {selectSrc}");
+                    Console.WriteLine();
+
+                    var targetSrc = selectSrc ?? defaultSrc ?? firstSrc;
+
+                    if (targetSrc != null)
+                    {
+                        TestThisSource(session, targetSrc);
+                    }
+                    else
+                    {
+                        Console.WriteLine("No data source to test.");
                         Console.WriteLine();
-
-                        var defaultSrc = session.DefaultSource;
-                        Console.WriteLine($"Default data source = {defaultSrc}");
-                        Console.WriteLine();
-
-                        var selectSrc = session.ShowSourceSelector();
-                        Console.WriteLine($"Selected data source = {selectSrc}");
-                        Console.WriteLine();
-
-                        var targetSrc = selectSrc ?? defaultSrc ?? firstSrc;
-
-                        if (targetSrc != null)
-                        {
-                            TestThisSource(session, targetSrc);
-                        }
-                        else
-                        {
-                            Console.WriteLine("No data source to test.");
-                            Console.WriteLine();
-                        }
                     }
 
                 }
@@ -63,9 +63,16 @@ namespace ConsoleApp
                 Console.WriteLine("ERROR: " + ex.ToString());
             }
 
-            Console.WriteLine("----------------------------------");
-            Console.WriteLine("Test ended, press Enter to exit...");
+            Console.WriteLine("------------------------------------------------");
+            Console.WriteLine("Test in progress, press Enter to stop testing...");
+            Console.WriteLine("------------------------------------------------");
             Console.ReadLine();
+            var rc = session.StepDown(NTwain.Data.TwainState.S1);
+            Console.WriteLine("StepDown RC=" + rc);
+            Console.ReadLine();
+            Console.WriteLine("----------------------");
+            Console.WriteLine("Press Enter to exit...");
+            Console.WriteLine("----------------------");
         }
 
         private static void Session_SourceDisabled(object sender, EventArgs e)
