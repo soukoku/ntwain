@@ -74,9 +74,9 @@ namespace NTwain.Data
     partial class TW_ARRAY
     {
         // TODO: _itemType in mac is TW_UINT32?
-        TW_UINT16 _itemType;
-        TW_UINT32 _numItems;
-        object[] _itemList;
+        public TW_UINT16 ItemType;
+        public TW_UINT32 NumItems;
+        public IntPtr ItemList;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2),
@@ -181,12 +181,12 @@ namespace NTwain.Data
     partial class TW_ENUMERATION
     {
         // TODO: _itemType in mac is TW_UINT32?
-        TW_UINT16 _itemType;
+        public TW_UINT16 ItemType;
         // TODO: these are UInt64 in linux 64 bit?
-        TW_UINT32 _numItems;
-        TW_UINT32 _currentIndex;
-        TW_UINT32 _defaultIndex;
-        object[] _itemList;
+        public TW_UINT32 NumItems;
+        public TW_UINT32 CurrentIndex;
+        public TW_UINT32 DefaultIndex;
+        public IntPtr ItemList;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -431,8 +431,8 @@ namespace NTwain.Data
     partial class TW_ONEVALUE
     {
         // TODO: mac is different?
-        TW_UINT16 _itemType;
-        TW_UINT32 _item;
+        public TW_UINT16 ItemType;
+        public TW_UINT32 Item;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -468,12 +468,12 @@ namespace NTwain.Data
     partial class TW_RANGE
     {
         // TODO: mac & linux are different?
-        TW_UINT16 _itemType;
-        TW_UINT32 _minValue;
-        TW_UINT32 _maxValue;
-        TW_UINT32 _stepSize;
-        TW_UINT32 _defaultValue;
-        TW_UINT32 _currentValue;
+        public TW_UINT16 ItemType;
+        public TW_UINT32 MinValue;
+        public TW_UINT32 MaxValue;
+        public TW_UINT32 StepSize;
+        public TW_UINT32 DefaultValue;
+        public TW_UINT32 CurrentValue;
     }
 
     //[StructLayout(LayoutKind.Sequential, Pack = 2)]

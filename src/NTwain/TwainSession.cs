@@ -297,7 +297,7 @@ namespace NTwain
         /// </returns>
         public override string ToString()
         {
-            return State.ToString()
+            return State.ToString();
         }
     }
 }
