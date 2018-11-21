@@ -1,4 +1,5 @@
 ﻿using NTwain.Data;
+using NTwain.Resources;
 using NTwain.Threading;
 using NTwain.Triplets;
 using System;
@@ -24,7 +25,7 @@ namespace NTwain
         readonly Dictionary<string, DataSource> _ownedSources = new Dictionary<string, DataSource>();
         // need to keep delegate around to prevent GC?
         readonly Callback32 _callback32Delegate;
-
+        // for windows only
         readonly WinMsgLoop _winMsgLoop;
 
 
@@ -32,9 +33,10 @@ namespace NTwain
         /// Constructs a new <see cref="TwainSession"/>.
         /// </summary>
         /// <param name="config"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public TwainSession(TwainConfig config)
         {
-            Config = config;
+            Config = config ?? throw new ArgumentNullException(nameof(config));
             switch (config.Platform)
             {
                 case PlatformID.MacOSX:
@@ -46,15 +48,28 @@ namespace NTwain
             }
         }
 
-
+        /// <summary>
+        /// Synchronously invokes an action on the internal thread if possible.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void Invoke(Action action)
         {
+            if (action == null) throw new ArgumentNullException(nameof(action));
+
             if (_winMsgLoop != null) _winMsgLoop.Invoke(action);
             else action();
         }
 
+        /// <summary>
+        /// Asynchronously invokes an action on the internal thread if possible.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void BeginInvoke(Action action)
         {
+            if (action == null) throw new ArgumentNullException(nameof(action));
+
             if (_winMsgLoop != null) _winMsgLoop.BeginInvoke(action);
             else action();
         }
@@ -115,6 +130,14 @@ namespace NTwain
                     case TwainState.SourceOpened:
                         rc = DGControl.Identity.CloseDS(CurrentSource.Identity32);
                         if (rc != ReturnCode.Success) return rc;
+                        break;
+                    case TwainState.SourceEnabled:
+                        rc = DGControl.UserInterface.DisableDS(ref _lastEnableUI, false);
+                        if (rc != ReturnCode.Success) return rc;
+                        break;
+                    case TwainState.TransferReady:
+                    case TwainState.Transferring:
+                        _disableDSNow = true;
                         break;
                 }
             }
@@ -210,7 +233,7 @@ namespace NTwain
                 {
                     if (value.Session != this)
                     {
-                        throw new InvalidOperationException("Source is not from this session.");
+                        throw new InvalidOperationException(MsgText.SourceNotThisSession);
                     }
                     var rc = DGControl.Identity.Set(value);
                     RaisePropertyChanged(nameof(DefaultSource));
@@ -274,7 +297,7 @@ namespace NTwain
         /// </returns>
         public override string ToString()
         {
-            return $"Session: {State}";
+            return State.ToString()
         }
     }
 }
