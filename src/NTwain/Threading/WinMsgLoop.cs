@@ -20,10 +20,8 @@ namespace NTwain.Threading
         static ushort classAtom;
         static IntPtr hInstance;
         static readonly uint dequeMsg = UnsafeNativeMethods.RegisterWindowMessageW("WinMsgLoopQueue");
-
-        const int CW_USEDEFAULT = -1;
-
-        static IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+        // keep delegate around to prevent GC
+        static readonly WndProcDelegate WndProc = new WndProcDelegate((hWnd, msg, wParam, lParam) =>
         {
             Debug.WriteLine($"Dummy window got msg {(WindowMessage)msg}.");
             switch ((WindowMessage)msg)
@@ -33,7 +31,9 @@ namespace NTwain.Threading
                     return IntPtr.Zero;
             }
             return UnsafeNativeMethods.DefWindowProcW(hWnd, msg, wParam, lParam);
-        }
+        });
+
+        const int CW_USEDEFAULT = -1;
 
         static void InitGlobal()
         {
@@ -45,7 +45,7 @@ namespace NTwain.Threading
                 wc.cbSize = Marshal.SizeOf(wc);
                 wc.style = ClassStyles.CS_VREDRAW | ClassStyles.CS_HREDRAW;
 
-                var procPtr = Marshal.GetFunctionPointerForDelegate(new WndProcDelegate(WndProc));
+                var procPtr = Marshal.GetFunctionPointerForDelegate(WndProc);
                 wc.lpfnWndProc = procPtr;
 
                 wc.cbClsExtra = 0;

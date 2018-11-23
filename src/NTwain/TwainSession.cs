@@ -23,7 +23,7 @@ namespace NTwain
         private IntPtr _hWnd;
         // cache generated twain sources so if you get same source from same session it'll return the same object
         readonly Dictionary<string, DataSource> _ownedSources = new Dictionary<string, DataSource>();
-        // need to keep delegate around to prevent GC?
+        // need to keep delegate around to prevent GC
         readonly Callback32 _callback32Delegate;
         // for windows only
         readonly WinMsgLoop _winMsgLoop;
