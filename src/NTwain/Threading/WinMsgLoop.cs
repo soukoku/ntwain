@@ -19,7 +19,7 @@ namespace NTwain.Threading
     {
         static ushort classAtom;
         static IntPtr hInstance;
-        static readonly int dequeMsg = UnsafeNativeMethods.RegisterWindowMessage("WinMsgLoopQueue");
+        static readonly uint dequeMsg = UnsafeNativeMethods.RegisterWindowMessageW("WinMsgLoopQueue");
 
         const int CW_USEDEFAULT = -1;
 
@@ -32,14 +32,14 @@ namespace NTwain.Threading
                     UnsafeNativeMethods.PostQuitMessage(0);
                     return IntPtr.Zero;
             }
-            return UnsafeNativeMethods.DefWindowProc(hWnd, msg, wParam, lParam);
+            return UnsafeNativeMethods.DefWindowProcW(hWnd, msg, wParam, lParam);
         }
 
         static void InitGlobal()
         {
             if (classAtom == 0)
             {
-                hInstance = UnsafeNativeMethods.GetModuleHandle(null);
+                hInstance = UnsafeNativeMethods.GetModuleHandleW(null);
 
                 var wc = new WNDCLASSEX();
                 wc.cbSize = Marshal.SizeOf(wc);
@@ -58,7 +58,7 @@ namespace NTwain.Threading
                 wc.lpszClassName = Guid.NewGuid().ToString("n");
                 wc.hIconSm = IntPtr.Zero;
 
-                classAtom = UnsafeNativeMethods.RegisterClassEx(ref wc);
+                classAtom = UnsafeNativeMethods.RegisterClassExW(ref wc);
                 if (classAtom == 0)
                 {
                     throw new Win32Exception();
@@ -99,7 +99,7 @@ namespace NTwain.Threading
                 {
                     Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: starting msg pump...");
 
-                    hWnd = UnsafeNativeMethods.CreateWindowEx(WindowStylesEx.WS_EX_LEFT, classAtom, Guid.NewGuid().ToString(),
+                    hWnd = UnsafeNativeMethods.CreateWindowExW(WindowStylesEx.WS_EX_LEFT, classAtom, Guid.NewGuid().ToString(),
                         WindowStyles.WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
                         IntPtr.Zero, IntPtr.Zero, hInstance, IntPtr.Zero);
                     if (hWnd == IntPtr.Zero)
@@ -119,31 +119,43 @@ namespace NTwain.Threading
                         startWaiter.Set();
 
                         MSG msg = default;
-                        while (!stop && UnsafeNativeMethods.GetMessage(ref msg, IntPtr.Zero, 0, 0))
+                        var msgRes = 0;
+                        try
                         {
-                            UnsafeNativeMethods.TranslateMessage(ref msg);
-                            if (!session.HandleWindowsMessage(ref msg))
+                            while (!stop &&
+                            (msgRes = UnsafeNativeMethods.GetMessageW(ref msg, IntPtr.Zero, 0, 0)) > 0)
                             {
-                                if (msg.message == dequeMsg)
+                                UnsafeNativeMethods.TranslateMessage(ref msg);
+                                if (!session.HandleWindowsMessage(ref msg))
                                 {
-                                    if (actionQueue.TryDequeue(out ActionItem work))
+                                    if (msg.message == dequeMsg)
                                     {
-                                        work.DoAction();
-                                        if (stop) break;
+                                        if (actionQueue.TryDequeue(out ActionItem work))
+                                        {
+                                            work.DoAction();
+                                            if (stop) break;
+                                        }
                                     }
-                                }
-                                else
-                                {
-                                    UnsafeNativeMethods.DispatchMessage(ref msg);
+                                    else
+                                    {
+                                        UnsafeNativeMethods.DispatchMessageW(ref msg);
+                                    }
                                 }
                             }
                         }
-                        // clear queue
-                        while (actionQueue.TryDequeue(out ActionItem dummy)) { }
+                        catch
+                        {
+                            UnsafeNativeMethods.PostQuitMessage(0);
+                        }
+                        finally
+                        {
+                            // clear queue
+                            while (actionQueue.TryDequeue(out ActionItem dummy)) { }
 
-                        loopThread = null;
-                        hWnd = IntPtr.Zero;
-                        stop = false;
+                            loopThread = null;
+                            hWnd = IntPtr.Zero;
+                            stop = false;
+                        }
                     }
                 }));
                 loopThread.IsBackground = true;
@@ -198,7 +210,7 @@ namespace NTwain.Threading
                 using (var waiter = new ManualResetEventSlim())
                 {
                     actionQueue.Enqueue(new ActionItem(waiter, action));
-                    UnsafeNativeMethods.PostMessage(hWnd, dequeMsg, IntPtr.Zero, IntPtr.Zero);
+                    UnsafeNativeMethods.PostMessageW(hWnd, dequeMsg, IntPtr.Zero, IntPtr.Zero);
                     waiter.Wait();
                 }
             }
@@ -214,7 +226,7 @@ namespace NTwain.Threading
             else
             {
                 actionQueue.Enqueue(new ActionItem(action));
-                UnsafeNativeMethods.PostMessage(hWnd, dequeMsg, IntPtr.Zero, IntPtr.Zero);
+                UnsafeNativeMethods.PostMessageW(hWnd, dequeMsg, IntPtr.Zero, IntPtr.Zero);
             }
         }
 
@@ -222,43 +234,48 @@ namespace NTwain.Threading
         [SuppressUnmanagedCodeSecurity]
         internal static class UnsafeNativeMethods
         {
-            [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true, ThrowOnUnmappableChar = true, BestFitMapping = false)]
-            public static extern IntPtr GetModuleHandle(string modName);
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode,
+                SetLastError = true, ExactSpelling = true)]
+            public static extern IntPtr GetModuleHandleW([MarshalAs(UnmanagedType.LPWStr)] string modName);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool GetMessage([In, Out] ref MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+            [DllImport("user32.dll", CharSet = CharSet.Unicode,
+                SetLastError = true, ExactSpelling = true)]
+            public static extern int GetMessageW([In, Out] ref MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
-            public static extern bool TranslateMessage([In, Out] ref MSG lpMsg);
+            [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+            public static extern int TranslateMessage([In, Out] ref MSG lpMsg);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
-            public static extern IntPtr DispatchMessage([In] ref MSG lpmsg);
+            [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+            public static extern IntPtr DispatchMessageW([In] ref MSG lpmsg);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
-            public static extern int PostMessage(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam);
+            [DllImport("user32.dll", CharSet = CharSet.Unicode,
+                SetLastError = true, ExactSpelling = true)]
+            public static extern int PostMessageW(IntPtr hWnd, uint msg, IntPtr wparam, IntPtr lparam);
 
-            [DllImport("user32.dll")]
+            [DllImport("user32.dll", ExactSpelling = true)]
             public static extern void PostQuitMessage(int nExitCode);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
-            public static extern IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+            [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+            public static extern IntPtr DefWindowProcW(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto, BestFitMapping = false)]
-            public static extern int RegisterWindowMessage(string msg);
+            [DllImport("user32.dll", CharSet = CharSet.Unicode,
+                SetLastError = true, ExactSpelling = true)]
+            public static extern uint RegisterWindowMessageW([MarshalAs(UnmanagedType.LPWStr)] string msg);
 
-            [DllImport("user32.dll", SetLastError = true)]
-            public static extern ushort RegisterClassEx([In] ref WNDCLASSEX lpwcx);
+            [DllImport("user32.dll", CharSet = CharSet.Unicode,
+                SetLastError = true, ExactSpelling = true)]
+            public static extern ushort RegisterClassExW([In] ref WNDCLASSEX lpwcx);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false)]
-            public static extern IntPtr CreateWindowEx(WindowStylesEx dwExStyle,
+            [DllImport("user32.dll", CharSet = CharSet.Unicode,
+                SetLastError = true, ExactSpelling = true)]
+            public static extern IntPtr CreateWindowExW(WindowStylesEx dwExStyle,
                 ushort lpszClassName,
-                [MarshalAs(UnmanagedType.LPStr)] string lpszWindowName,
+                [MarshalAs(UnmanagedType.LPTStr)] string lpszWindowName,
                 WindowStyles style,
                 int x, int y, int width, int height,
                 IntPtr hWndParent, IntPtr hMenu, IntPtr hInst, IntPtr lpParam);
 
-            [DllImport("user32.dll", SetLastError = true)]
+            [DllImport("user32.dll", SetLastError = true, ExactSpelling = true)]
             public static extern bool DestroyWindow(IntPtr hWnd);
         }
     }

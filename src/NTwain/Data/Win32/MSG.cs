@@ -13,7 +13,7 @@ namespace NTwain.Data.Win32
     struct MSG
     {
         public IntPtr hwnd;
-        public int message;
+        public uint message;
         public IntPtr wParam;
         public IntPtr lParam;
         int time;
