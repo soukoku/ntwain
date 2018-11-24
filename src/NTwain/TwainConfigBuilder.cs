@@ -1,5 +1,6 @@
 ﻿using NTwain.Data;
 using NTwain.Internals;
+using NTwain.Resources;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -57,7 +58,7 @@ namespace NTwain
             if (image) dg |= DataGroups.Image;
             if (audio) dg |= DataGroups.Audio;
 
-            if (dg == DataGroups.None) throw new InvalidOperationException("No data type specified.");
+            if (dg == DataGroups.None) throw new InvalidOperationException(MsgText.NoDataTypesSpecified);
             _dg = dg;
             return this;
         }
@@ -138,7 +139,7 @@ namespace NTwain
                 case PlatformID.Unix:
                 case PlatformID.MacOSX:
                 default:
-                    throw new PlatformNotSupportedException($"This platform {_platform} is not supported.");
+                    throw new PlatformNotSupportedException(string.Format(MsgText.PlatformNotSupported, _platform));
             }
             return config;
         }

@@ -1,4 +1,5 @@
 ﻿using NTwain.Data;
+using NTwain.Resources;
 using NTwain.Threading;
 using NTwain.Triplets;
 using System;
@@ -19,43 +20,89 @@ namespace NTwain
     {
         internal readonly TwainConfig Config;
 
-        private IntPtr _hWnd;
         // cache generated twain sources so if you get same source from same session it'll return the same object
         readonly Dictionary<string, DataSource> _ownedSources = new Dictionary<string, DataSource>();
-        // need to keep delegate around to prevent GC?
+        // need to keep delegate around to prevent GC
         readonly Callback32 _callback32Delegate;
+        // for windows only
+        readonly IThreadContext _internalContext;
 
-        readonly WinMsgLoop _winMsgLoop;
+        private IntPtr _hWnd;
+        private IThreadContext _externalContext;
 
 
         /// <summary>
         /// Constructs a new <see cref="TwainSession"/>.
         /// </summary>
         /// <param name="config"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public TwainSession(TwainConfig config)
         {
-            Config = config;
+            Config = config ?? throw new ArgumentNullException(nameof(config));
+            SetSynchronizationContext(SynchronizationContext.Current);
             switch (config.Platform)
             {
                 case PlatformID.MacOSX:
                 case PlatformID.Unix:
+                    _internalContext = new DispatcherLoop(this);
+                    break;
                 default:
-                    _winMsgLoop = new WinMsgLoop(this);
+                    _internalContext = new WinMsgLoop(this);
                     _callback32Delegate = new Callback32(Handle32BitCallback);
                     break;
             }
         }
 
-
-        public void Invoke(Action action)
+        /// <summary>
+        /// Sets the optional synchronization context.
+        /// Because most TWAIN-related things are happening on a different thread,
+        /// this allows events to be raised on the thread associated with this context and
+        /// may be useful if you want to handle them in the UI thread.
+        /// </summary>
+        /// <param name="context">Usually you want to use <see cref="SynchronizationContext.Current"/> while on the UI thread.</param>
+        public void SetSynchronizationContext(SynchronizationContext context)
         {
-            if (_winMsgLoop != null) _winMsgLoop.Invoke(action);
+            if (context == null) _externalContext = null;
+            else _externalContext = new UIThreadContext(context);
+        }
+
+        /// <summary>
+        /// Synchronously invokes an action on the external user thread if possible.
+        /// </summary>
+        /// <param name="action"></param>
+        void ExternalInvoke(Action action)
+        {
+            if (_externalContext != null) _externalContext.Invoke(action);
+            action();
+        }
+
+        /// <summary>
+        /// Asynchronously invokes an action on the external user thread if possible.
+        /// </summary>
+        /// <param name="action"></param>
+        void ExternalBeginInvoke(Action action)
+        {
+            if (_externalContext != null) _externalContext.BeginInvoke(action);
+            action();
+        }
+
+        /// <summary>
+        /// Synchronously invokes an action on the internal TWAIN thread if possible.
+        /// </summary>
+        /// <param name="action"></param>
+        internal void InternalInvoke(Action action)
+        {
+            if (_internalContext != null) _internalContext.Invoke(action);
             else action();
         }
 
-        public void BeginInvoke(Action action)
+        /// <summary>
+        /// Asynchronously invokes an action on the internal TWAIN thread if possible.
+        /// </summary>
+        /// <param name="action"></param>
+        void InternalBeginInvoke(Action action)
         {
-            if (_winMsgLoop != null) _winMsgLoop.BeginInvoke(action);
+            if (_internalContext != null) _internalContext.BeginInvoke(action);
             else action();
         }
 
@@ -70,7 +117,7 @@ namespace NTwain
             var rc = DGControl.Parent.OpenDSM(hWnd);
             if (rc == ReturnCode.Success)
             {
-                _winMsgLoop?.Start();
+                _internalContext?.Start();
             }
             return rc;
         }
@@ -84,7 +131,7 @@ namespace NTwain
             var rc = DGControl.Parent.CloseDSM(_hWnd);
             if (rc == ReturnCode.Success)
             {
-                _winMsgLoop?.Stop();
+                _internalContext?.Stop();
             }
             return rc;
         }
@@ -115,6 +162,14 @@ namespace NTwain
                     case TwainState.SourceOpened:
                         rc = DGControl.Identity.CloseDS(CurrentSource.Identity32);
                         if (rc != ReturnCode.Success) return rc;
+                        break;
+                    case TwainState.SourceEnabled:
+                        rc = DGControl.UserInterface.DisableDS(ref _lastEnableUI, false);
+                        if (rc != ReturnCode.Success) return rc;
+                        break;
+                    case TwainState.TransferReady:
+                    case TwainState.Transferring:
+                        _disableDSNow = true;
                         break;
                 }
             }
@@ -210,7 +265,7 @@ namespace NTwain
                 {
                     if (value.Session != this)
                     {
-                        throw new InvalidOperationException("Source is not from this session.");
+                        throw new InvalidOperationException(MsgText.SourceNotThisSession);
                     }
                     var rc = DGControl.Identity.Set(value);
                     RaisePropertyChanged(nameof(DefaultSource));
@@ -274,7 +329,7 @@ namespace NTwain
         /// </returns>
         public override string ToString()
         {
-            return $"Session: {State}";
+            return State.ToString();
         }
     }
 }

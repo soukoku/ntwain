@@ -526,39 +526,6 @@ namespace NTwain.Data
         }
     }
 
-    //    /// <summary>
-    //    /// Stores a group of associated individual values for a capability.
-    //    /// The values need have no relationship to one another aside from 
-    //    /// being used to describe the same "value" of the capability
-    //    /// </summary>
-    //    public partial class TW_ARRAY
-    //    {
-    //        /// <summary>
-    //        /// The type of items in the array. All items in the array have the same size.
-    //        /// </summary>
-    //        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
-
-    //        ///// <summary>
-    //        ///// How many items are in the array.
-    //        ///// </summary>
-    //        //public int Count { get { return (int)_numItems; } set { _numItems = (uint)value; } }
-
-    //        /// <summary>
-    //        /// Array of ItemType values starts here.
-    //        /// </summary>
-
-    //        public object[] ItemList
-    //        {
-    //            get { return _itemList; }
-    //            set
-    //            {
-    //                _itemList = value;
-    //                if (value != null) { _numItems = (uint)value.Length; }
-    //                else { _numItems = 0; }
-    //            }
-    //        }
-    //    }
-
     /// <summary>
     /// Used to get audio info.
     /// </summary>
@@ -1119,52 +1086,6 @@ namespace NTwain.Data
 
         #endregion
     }
-
-    //    /// <summary>
-    //    /// An enumeration stores a list of individual values, with one of the items designated as the current
-    //    /// value. There is no required order to the values in the list.
-    //    /// </summary>
-    //    public partial class TW_ENUMERATION
-    //    {
-    //        /// <summary>
-    //        /// The type of items in the enumerated list. All items in the array have the same size.
-    //        /// </summary>
-    //        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
-    //        ///// <summary>
-    //        ///// How many items are in the enumeration.
-    //        ///// </summary>
-    //        //public int Count { get { return (int)_numItems; } set { _numItems = (uint)value; } }
-    //        /// <summary>
-    //        /// The item number, or index (zero-based) into <see cref="ItemList"/>, of the "current"
-    //        /// value for the capability.
-    //        /// </summary>
-    //        public int CurrentIndex { get { return (int)_currentIndex; } set { _currentIndex = (uint)value; } }
-    //        /// <summary>
-    //        /// The item number, or index (zero-based) into <see cref="ItemList"/>, of the "power-on"
-    //        /// value for the capability.
-    //        /// </summary>
-    //        public int DefaultIndex { get { return (int)_defaultIndex; } set { _defaultIndex = (uint)value; } }
-    //        /// <summary>
-    //        /// The enumerated list: one value resides within each array element.
-    //        /// </summary>
-
-    //        public object[] ItemList
-    //        {
-    //            get { return _itemList; }
-    //            set
-    //            {
-    //                _itemList = value;
-    //                if (value != null) { _numItems = (uint)value.Length; }
-    //                else { _numItems = 0; }
-    //            }
-    //        }
-
-    //        /// <summary>
-    //        /// Gets the byte offset of the item list from a Ptr to the first item.
-    //        /// </summary>
-    //        internal const int ItemOffset = 14;
-    //    }
-
 
     //    /// <summary>
     //    /// This structure is used to pass specific information between the data source and the application
@@ -1954,21 +1875,6 @@ namespace NTwain.Data
         public uint SheetCount => _sheetCount;
     }
 
-    //    /// <summary>
-    //    /// Container for one value.
-    //    /// </summary>
-    //    public partial class TW_ONEVALUE
-    //    {
-    //        /// <summary>
-    //        /// The type of the item.
-    //        /// </summary>
-    //        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
-    //        /// <summary>
-    //        /// The value.
-    //        /// </summary>
-    //        public uint Item { get { return _item; } set { _item = value; } }
-    //    }
-
 
     /// <summary>
     /// This structure holds the color palette information for buffered memory transfers of type
@@ -2051,42 +1957,7 @@ namespace NTwain.Data
         /// </summary>
         public EndXferJob EndOfJob { get { return (EndXferJob)_eOJ; } }
     }
-
-
-    //    /// <summary>
-    //    /// Container for a range of values.
-    //    /// </summary>
-    //    public partial class TW_RANGE
-    //    {
-    //        /// <summary>
-    //        /// The type of items in the list.
-    //        /// </summary>
-    //        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
-    //        /// <summary>
-    //        /// The least positive/most negative value of the range.
-    //        /// </summary>
-    //        public uint MinValue { get { return _minValue; } set { _minValue = value; } }
-    //        /// <summary>
-    //        /// The most positive/least negative value of the range.
-    //        /// </summary>
-    //        public uint MaxValue { get { return _maxValue; } set { _maxValue = value; } }
-    //        /// <summary>
-    //        /// The delta between two adjacent values of the range.
-    //        /// e.g. Item2 - Item1 = StepSize;
-    //        /// </summary>
-    //        public uint StepSize { get { return _stepSize; } set { _stepSize = value; } }
-    //        /// <summary>
-    //        /// The device’s "power-on" value for the capability. If the application is
-    //        /// performing a MSG_SET operation and isn’t sure what the default
-    //        /// value is, set this field to <see cref="TwainConst.DontCare32"/>.
-    //        /// </summary>
-    //        public uint DefaultValue { get { return _defaultValue; } set { _defaultValue = value; } }
-    //        /// <summary>
-    //        /// The value to which the device (or its user interface) is currently set to
-    //        /// for the capability.
-    //        /// </summary>
-    //        public uint CurrentValue { get { return _currentValue; } set { _currentValue = value; } }
-    //    }
+    
 
     //    ///// <summary>
     //    ///// This structure is used by the application to specify a set of mapping values to be applied to RGB

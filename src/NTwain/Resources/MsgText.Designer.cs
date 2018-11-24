@@ -68,5 +68,32 @@ namespace NTwain.Resources {
                 return ResourceManager.GetString("MaxStringLengthExceeded", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No data type specified..
+        /// </summary>
+        internal static string NoDataTypesSpecified {
+            get {
+                return ResourceManager.GetString("NoDataTypesSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This platform ({0}) is not supported..
+        /// </summary>
+        internal static string PlatformNotSupported {
+            get {
+                return ResourceManager.GetString("PlatformNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source is not from this session..
+        /// </summary>
+        internal static string SourceNotThisSession {
+            get {
+                return ResourceManager.GetString("SourceNotThisSession", resourceCulture);
+            }
+        }
     }
 }

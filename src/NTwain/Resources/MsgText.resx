@@ -120,4 +120,13 @@
   <data name="MaxStringLengthExceeded" xml:space="preserve">
     <value>The string value has exceeded the maximum length of {0}.</value>
   </data>
+  <data name="NoDataTypesSpecified" xml:space="preserve">
+    <value>No data type specified.</value>
+  </data>
+  <data name="PlatformNotSupported" xml:space="preserve">
+    <value>This platform ({0}) is not supported.</value>
+  </data>
+  <data name="SourceNotThisSession" xml:space="preserve">
+    <value>Source is not from this session.</value>
+  </data>
 </root>

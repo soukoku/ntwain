@@ -10,7 +10,7 @@ namespace NTwain.Data.Win32
     /// <summary>
     /// Enumerated values of window messages.
     /// </summary>
-    enum WindowMessage
+    enum WindowMessage : uint
     {
         /// <summary>
         /// Performs no operation. An application sends the WM_NULL message if it wants to post a message that the recipient window will ignore.

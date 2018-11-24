@@ -63,16 +63,16 @@ namespace ConsoleApp
                 Console.WriteLine("ERROR: " + ex.ToString());
             }
 
-            Console.WriteLine("------------------------------------------------");
-            Console.WriteLine("Test in progress, press Enter to stop testing...");
-            Console.WriteLine("------------------------------------------------");
+            Console.WriteLine("---------------------------------------------");
+            Console.WriteLine("Test in progress, press Enter to stop testing");
+            Console.WriteLine("---------------------------------------------");
             Console.ReadLine();
             var rc = session.StepDown(NTwain.Data.TwainState.S1);
-            Console.WriteLine("StepDown RC=" + rc);
+            Console.WriteLine("Session StepDown RC=" + rc);
+            Console.WriteLine("-------------------");
+            Console.WriteLine("Press Enter to exit");
+            Console.WriteLine("-------------------");
             Console.ReadLine();
-            Console.WriteLine("----------------------");
-            Console.WriteLine("Press Enter to exit...");
-            Console.WriteLine("----------------------");
         }
 
         private static void Session_SourceDisabled(object sender, EventArgs e)
