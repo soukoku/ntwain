@@ -8,6 +8,8 @@ namespace NTwain.Threading
         private ManualResetEventSlim waiter;
         private Action action;
 
+        public Exception Error { get; private set; }
+
         public ActionItem(Action action)
         {
             this.action = action;
@@ -27,7 +29,7 @@ namespace NTwain.Threading
             }
             catch (Exception ex)
             {
-                // TODO: do something
+                Error = ex;
             }
             finally
             {

@@ -1,4 +1,5 @@
 ﻿using NTwain.Data.Win32;
+using NTwain.Internals;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -160,7 +161,7 @@ namespace NTwain.Threading
                 loopThread.Start();
                 startWaiter.Wait();
 
-                if (startErr != null) Rethrow(startErr);
+                startErr.TryRethrow();
             }
         }
 
@@ -203,9 +204,11 @@ namespace NTwain.Threading
                 // queue up work
                 using (var waiter = new ManualResetEventSlim())
                 {
-                    actionQueue.Enqueue(new ActionItem(waiter, action));
+                    var work = new ActionItem(waiter, action);
+                    actionQueue.Enqueue(work);
                     UnsafeNativeMethods.PostMessageW(hWnd, dequeMsg, IntPtr.Zero, IntPtr.Zero);
                     waiter.Wait();
+                    work.Error.TryRethrow();
                 }
             }
         }
@@ -221,17 +224,6 @@ namespace NTwain.Threading
             }
         }
 
-
-        /// <summary>
-        /// Rethrows the specified excetion while keeping stack trace.
-        /// </summary>
-        /// <param name="ex">The ex.</param>
-        static void Rethrow(Exception ex)
-        {
-            typeof(Exception).GetMethod("PrepForRemoting",
-                BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(ex, new object[0]);
-            throw ex;
-        }
 
         [SuppressUnmanagedCodeSecurity]
         internal static class UnsafeNativeMethods

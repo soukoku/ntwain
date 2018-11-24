@@ -44,6 +44,8 @@ namespace NTwain
             {
                 case PlatformID.MacOSX:
                 case PlatformID.Unix:
+                    _internalContext = new DispatcherLoop(this);
+                    break;
                 default:
                     _internalContext = new WinMsgLoop(this);
                     _callback32Delegate = new Callback32(Handle32BitCallback);

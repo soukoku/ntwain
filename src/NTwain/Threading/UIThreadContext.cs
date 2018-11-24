@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Internals;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -68,18 +69,7 @@ namespace NTwain.Threading
                 }
             }, null);
 
-            if (error != null) { Rethrow(error); }
-        }
-
-        /// <summary>
-        /// Rethrows the specified excetion while keeping stack trace.
-        /// </summary>
-        /// <param name="ex">The ex.</param>
-        static void Rethrow(Exception ex)
-        {
-            typeof(Exception).GetMethod("PrepForRemoting",
-                BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(ex, new object[0]);
-            throw ex;
+            error.TryRethrow();
         }
 
         void IThreadContext.Start()
