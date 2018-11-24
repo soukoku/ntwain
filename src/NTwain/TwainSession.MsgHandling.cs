@@ -22,6 +22,8 @@ namespace NTwain
         ReturnCode Handle32BitCallback(TW_IDENTITY origin, TW_IDENTITY destination,
             DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
         {
+            // from the docs this needs to return Success 
+            // before handling the msg thus BeginInvoke is used.
             Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: {nameof(Handle32BitCallback)}({dg}, {dat}, {msg}, {data})");
             InternalBeginInvoke(() =>
             {

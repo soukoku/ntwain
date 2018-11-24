@@ -18,22 +18,12 @@ namespace NTwain.Threading
 
         /// <summary>
         /// Creates a new <see cref="UIThreadContext"/> using
-        /// the <see cref="SynchronizationContext.Current"/>.
-        /// </summary>
-        public UIThreadContext() : this(SynchronizationContext.Current)
-        {
-
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="UIThreadContext"/> using
         /// the specified <see cref="SynchronizationContext"/>.
         /// </summary>
         /// <param name="context"></param>
         public UIThreadContext(SynchronizationContext context)
         {
-            this.context = context ?? throw new ArgumentNullException(nameof(context));
-            ;
+            this.context = context;
         }
 
         /// <summary>
@@ -90,6 +80,14 @@ namespace NTwain.Threading
             typeof(Exception).GetMethod("PrepForRemoting",
                 BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(ex, new object[0]);
             throw ex;
+        }
+
+        void IThreadContext.Start()
+        {
+        }
+
+        void IThreadContext.Stop()
+        {
         }
     }
 }

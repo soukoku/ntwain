@@ -54,8 +54,11 @@ namespace NTwain
         /// <param name="e"></param>
         internal protected virtual void OnSourceDisabled(SourceDisabledEventArgs e)
         {
-            var handler = SourceDisabled;
-            handler?.Invoke(this, e);
+            ExternalInvoke(() =>
+            {
+                var handler = SourceDisabled;
+                handler?.Invoke(this, e);
+            });
         }
 
         /// <summary>
@@ -69,8 +72,11 @@ namespace NTwain
         /// <param name="e"></param>
         protected virtual void OnDeviceEventReceived(DeviceEventArgs e)
         {
-            var handler = DeviceEventReceived;
-            handler?.Invoke(this, e);
+            ExternalInvoke(() =>
+            {
+                var handler = DeviceEventReceived;
+                handler?.Invoke(this, e);
+            });
         }
 
         /// <summary>
@@ -84,8 +90,11 @@ namespace NTwain
         /// <param name="e"></param>
         protected virtual void OnTransferReady(TransferReadyEventArgs e)
         {
-            var handler = TransferReady;
-            handler?.Invoke(this, e);
+            ExternalInvoke(() =>
+            {
+                var handler = TransferReady;
+                handler?.Invoke(this, e);
+            });
         }
 
 
@@ -93,6 +102,21 @@ namespace NTwain
         ///// Occurs when data has been transferred.
         ///// </summary>
         //public event EventHandler<DataTransferredEventArgs> DataTransferred;
+
+        ///// <summary>
+        ///// Raises the <see cref="DataTransferred"/> event.
+        ///// </summary>
+        ///// <param name="e"></param>
+        //protected virtual void OnDataTransferred(DataTransferredEventArgs e)
+        //{
+        //    ExternalInvoke(() =>
+        //    {
+        //        var handler = DataTransferred;
+        //        handler?.Invoke(this, e);
+        //    });
+        //}
+
+
         /// <summary>
         /// Occurs when an error has been encountered during transfer.
         /// </summary>
@@ -104,8 +128,11 @@ namespace NTwain
         /// <param name="e"></param>
         protected virtual void OnTransferError(TransferErrorEventArgs e)
         {
-            var handler = TransferError;
-            handler?.Invoke(this, e);
+            ExternalInvoke(() =>
+            {
+                var handler = TransferError;
+                handler?.Invoke(this, e);
+            });
         }
 
 
@@ -121,8 +148,11 @@ namespace NTwain
         /// <param name="propertyName">Name of the property.</param>
         protected void RaisePropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
-            handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            ExternalInvoke(() =>
+            {
+                var handler = PropertyChanged;
+                handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            });
         }
     }
 }

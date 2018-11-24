@@ -8,6 +8,16 @@ namespace NTwain.Threading
     interface IThreadContext
     {
         /// <summary>
+        /// Starts the context if supported.
+        /// </summary>
+        void Start();
+        /// <summary>
+        /// Stops the context if supported.
+        /// </summary>
+        void Stop();
+
+
+        /// <summary>
         /// Runs the action synchronously on the associated thread.
         /// </summary>
         /// <param name="action"></param>

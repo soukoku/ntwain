@@ -25,10 +25,10 @@ namespace NTwain
         // need to keep delegate around to prevent GC
         readonly Callback32 _callback32Delegate;
         // for windows only
-        readonly WinMsgLoop _winMsgLoop;
+        readonly IThreadContext _internalContext;
 
         private IntPtr _hWnd;
-        private IThreadContext _extSyncContext;
+        private IThreadContext _externalContext;
 
 
         /// <summary>
@@ -39,12 +39,13 @@ namespace NTwain
         public TwainSession(TwainConfig config)
         {
             Config = config ?? throw new ArgumentNullException(nameof(config));
+            SetSynchronizationContext(SynchronizationContext.Current);
             switch (config.Platform)
             {
                 case PlatformID.MacOSX:
                 case PlatformID.Unix:
                 default:
-                    _winMsgLoop = new WinMsgLoop(this);
+                    _internalContext = new WinMsgLoop(this);
                     _callback32Delegate = new Callback32(Handle32BitCallback);
                     break;
             }
@@ -59,7 +60,8 @@ namespace NTwain
         /// <param name="context">Usually you want to use <see cref="SynchronizationContext.Current"/> while on the UI thread.</param>
         public void SetSynchronizationContext(SynchronizationContext context)
         {
-            _extSyncContext = new UIThreadContext(context);
+            if (context == null) _externalContext = null;
+            else _externalContext = new UIThreadContext(context);
         }
 
         /// <summary>
@@ -68,7 +70,7 @@ namespace NTwain
         /// <param name="action"></param>
         void ExternalInvoke(Action action)
         {
-            if (_extSyncContext != null) _extSyncContext.Invoke(action);
+            if (_externalContext != null) _externalContext.Invoke(action);
             action();
         }
 
@@ -78,7 +80,7 @@ namespace NTwain
         /// <param name="action"></param>
         void ExternalBeginInvoke(Action action)
         {
-            if (_extSyncContext != null) _extSyncContext.BeginInvoke(action);
+            if (_externalContext != null) _externalContext.BeginInvoke(action);
             action();
         }
 
@@ -88,7 +90,7 @@ namespace NTwain
         /// <param name="action"></param>
         internal void InternalInvoke(Action action)
         {
-            if (_winMsgLoop != null) _winMsgLoop.Invoke(action);
+            if (_internalContext != null) _internalContext.Invoke(action);
             else action();
         }
 
@@ -98,7 +100,7 @@ namespace NTwain
         /// <param name="action"></param>
         void InternalBeginInvoke(Action action)
         {
-            if (_winMsgLoop != null) _winMsgLoop.BeginInvoke(action);
+            if (_internalContext != null) _internalContext.BeginInvoke(action);
             else action();
         }
 
@@ -113,7 +115,7 @@ namespace NTwain
             var rc = DGControl.Parent.OpenDSM(hWnd);
             if (rc == ReturnCode.Success)
             {
-                _winMsgLoop?.Start();
+                _internalContext?.Start();
             }
             return rc;
         }
@@ -127,7 +129,7 @@ namespace NTwain
             var rc = DGControl.Parent.CloseDSM(_hWnd);
             if (rc == ReturnCode.Success)
             {
-                _winMsgLoop?.Stop();
+                _internalContext?.Stop();
             }
             return rc;
         }
