@@ -23,7 +23,7 @@ namespace NTwain
             DataGroups dg, DataArgumentType dat, Message msg, IntPtr data)
         {
             Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: {nameof(Handle32BitCallback)}({dg}, {dat}, {msg}, {data})");
-            BeginInvoke(() =>
+            InternalBeginInvoke(() =>
             {
                 Debug.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId}: in BeginInvoke {nameof(Handle32BitCallback)}({dg}, {dat}, {msg}, {data})");
                 HandleSourceMsg(msg);

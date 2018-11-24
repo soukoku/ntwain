@@ -25,6 +25,10 @@ namespace NTwain.Threading
             {
                 action();
             }
+            catch (Exception ex)
+            {
+                // TODO: do something
+            }
             finally
             {
                 waiter?.Set();

@@ -20,13 +20,15 @@ namespace NTwain
     {
         internal readonly TwainConfig Config;
 
-        private IntPtr _hWnd;
         // cache generated twain sources so if you get same source from same session it'll return the same object
         readonly Dictionary<string, DataSource> _ownedSources = new Dictionary<string, DataSource>();
         // need to keep delegate around to prevent GC
         readonly Callback32 _callback32Delegate;
         // for windows only
         readonly WinMsgLoop _winMsgLoop;
+
+        private IntPtr _hWnd;
+        private IThreadContext _extSyncContext;
 
 
         /// <summary>
@@ -49,27 +51,53 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Synchronously invokes an action on the internal thread if possible.
+        /// Sets the optional synchronization context.
+        /// Because most TWAIN-related things are happening on a different thread,
+        /// this allows events to be raised on the thread associated with this context and
+        /// may be useful if you want to handle them in the UI thread.
+        /// </summary>
+        /// <param name="context">Usually you want to use <see cref="SynchronizationContext.Current"/> while on the UI thread.</param>
+        public void SetSynchronizationContext(SynchronizationContext context)
+        {
+            _extSyncContext = new UIThreadContext(context);
+        }
+
+        /// <summary>
+        /// Synchronously invokes an action on the external user thread if possible.
         /// </summary>
         /// <param name="action"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public void Invoke(Action action)
+        void ExternalInvoke(Action action)
         {
-            if (action == null) throw new ArgumentNullException(nameof(action));
+            if (_extSyncContext != null) _extSyncContext.Invoke(action);
+            action();
+        }
 
+        /// <summary>
+        /// Asynchronously invokes an action on the external user thread if possible.
+        /// </summary>
+        /// <param name="action"></param>
+        void ExternalBeginInvoke(Action action)
+        {
+            if (_extSyncContext != null) _extSyncContext.BeginInvoke(action);
+            action();
+        }
+
+        /// <summary>
+        /// Synchronously invokes an action on the internal TWAIN thread if possible.
+        /// </summary>
+        /// <param name="action"></param>
+        internal void InternalInvoke(Action action)
+        {
             if (_winMsgLoop != null) _winMsgLoop.Invoke(action);
             else action();
         }
 
         /// <summary>
-        /// Asynchronously invokes an action on the internal thread if possible.
+        /// Asynchronously invokes an action on the internal TWAIN thread if possible.
         /// </summary>
         /// <param name="action"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public void BeginInvoke(Action action)
+        void InternalBeginInvoke(Action action)
         {
-            if (action == null) throw new ArgumentNullException(nameof(action));
-
             if (_winMsgLoop != null) _winMsgLoop.BeginInvoke(action);
             else action();
         }

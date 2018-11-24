@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -15,7 +16,7 @@ namespace NTwain.Threading
     /// <summary>
     /// Provides an internal message pump on Windows using a background thread.
     /// </summary>
-    class WinMsgLoop
+    class WinMsgLoop : IThreadContext
     {
         static ushort classAtom;
         static IntPtr hInstance;
@@ -143,10 +144,6 @@ namespace NTwain.Threading
                                 }
                             }
                         }
-                        catch
-                        {
-                            UnsafeNativeMethods.PostQuitMessage(0);
-                        }
                         finally
                         {
                             // clear queue
@@ -163,7 +160,7 @@ namespace NTwain.Threading
                 loopThread.Start();
                 startWaiter.Wait();
 
-                if (startErr != null) throw startErr;
+                if (startErr != null) Rethrow(startErr);
             }
         }
 
@@ -193,10 +190,7 @@ namespace NTwain.Threading
             return loopThread == Thread.CurrentThread || loopThread == null;
         }
 
-        /// <summary>
-        /// Runs the action synchronously on the internal message pump thread.
-        /// </summary>
-        /// <param name="action"></param>
+
         public void Invoke(Action action)
         {
             if (IsSameThread())
@@ -216,10 +210,7 @@ namespace NTwain.Threading
             }
         }
 
-        /// <summary>
-        /// Runs the action asynchronously on the internal message pump thread.
-        /// </summary>
-        /// <param name="action"></param>
+
         public void BeginInvoke(Action action)
         {
             if (hWnd == IntPtr.Zero) action();
@@ -230,6 +221,17 @@ namespace NTwain.Threading
             }
         }
 
+
+        /// <summary>
+        /// Rethrows the specified excetion while keeping stack trace.
+        /// </summary>
+        /// <param name="ex">The ex.</param>
+        static void Rethrow(Exception ex)
+        {
+            typeof(Exception).GetMethod("PrepForRemoting",
+                BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(ex, new object[0]);
+            throw ex;
+        }
 
         [SuppressUnmanagedCodeSecurity]
         internal static class UnsafeNativeMethods

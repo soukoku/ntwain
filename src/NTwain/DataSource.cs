@@ -44,7 +44,7 @@ namespace NTwain
         public ReturnCode ShowUI(IntPtr windowHandle, bool modal = false)
         {
             var rc = ReturnCode.Failure;
-            Session.Invoke(() =>
+            Session.InternalInvoke(() =>
             {
                 var ui = new TW_USERINTERFACE
                 {
@@ -72,7 +72,7 @@ namespace NTwain
         public ReturnCode Enable(bool showUI, IntPtr windowHandle, bool modal = false)
         {
             var rc = ReturnCode.Failure;
-            Session.Invoke(() =>
+            Session.InternalInvoke(() =>
             {
                 var ui = new TW_USERINTERFACE
                 {
