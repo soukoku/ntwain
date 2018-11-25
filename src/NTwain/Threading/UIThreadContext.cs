@@ -41,7 +41,7 @@ namespace NTwain.Threading
                 {
                     action();
                 }
-                catch (Exception ex)
+                catch
                 {
                     // TODO: do something
                 }

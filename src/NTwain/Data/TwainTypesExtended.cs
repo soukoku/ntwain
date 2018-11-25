@@ -32,22 +32,39 @@ namespace NTwain.Data
 
         float ToFloat()
         {
-            return (float)_whole + _frac / 65536f;
+            return (float)Whole + Fraction / 65536f;
         }
         TW_FIX32(float value)
         {
             //int temp = (int)(value * 65536.0 + 0.5);
-            //_whole = (short)(temp >> 16);
-            //_frac = (ushort)(temp & 0x0000ffff);
+            //Whole = (short)(temp >> 16);
+            //Fraction = (ushort)(temp & 0x0000ffff);
 
             // different version from twain faq
             bool sign = value < 0;
             int temp = (int)(value * 65536.0 + (sign ? (-0.5) : 0.5));
-            _whole = (short)(temp >> 16);
-            _frac = (ushort)(temp & 0x0000ffff);
+            Whole = (short)(temp >> 16);
+            Fraction = (ushort)(temp & 0x0000ffff);
 
         }
 
+        /// <summary>
+        /// Converts this value to a value for communicating with twain data source.
+        /// </summary>
+        /// <returns></returns>
+        public uint ToTransferValue()
+        {
+            // probably has a faster way but can't think now
+            byte[] array = new byte[4];
+            var part = BitConverter.GetBytes(Whole);
+            Buffer.BlockCopy(part, 0, array, 0, 2);
+
+            part = BitConverter.GetBytes(Fraction);
+            Buffer.BlockCopy(part, 0, array, 2, 2);
+
+            return BitConverter.ToUInt32(array, 0);
+
+        }
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
@@ -58,33 +75,6 @@ namespace NTwain.Data
         {
             return ToFloat().ToString(CultureInfo.InvariantCulture);
         }
-
-        ///// <summary>
-        ///// Converts this to <see cref="TW_ONEVALUE"/> for capability set methods.
-        ///// </summary>
-        ///// <returns></returns>
-        //public TW_ONEVALUE ToOneValue()
-        //{
-        //    // copy struct parts as-is.
-        //    // probably has a faster way but can't think now
-
-        //    byte[] array = new byte[4];
-        //    var part = BitConverter.GetBytes(Whole);
-        //    Buffer.BlockCopy(part, 0, array, 0, 2);
-
-        //    part = BitConverter.GetBytes(Fraction);
-        //    Buffer.BlockCopy(part, 0, array, 2, 2);
-
-        //    var converted = BitConverter.ToUInt32(array, 0);
-
-        //    return new TW_ONEVALUE
-        //    {
-        //        ItemType = ItemType.Fix32,
-        //        Item = converted
-        //        // old wrong conversion
-        //        // (uint)this,// ((uint)dpi) << 16;
-        //    };
-        //}
 
         #region equals
 
@@ -109,7 +99,7 @@ namespace NTwain.Data
         /// <returns></returns>
         public bool Equals(TW_FIX32 other)
         {
-            return _whole == other._whole && _frac == other._frac;
+            return Whole == other.Whole && Fraction == other.Fraction;
         }
         /// <summary>
         /// Returns a hash code for this instance.
@@ -119,7 +109,7 @@ namespace NTwain.Data
         /// </returns>
         public override int GetHashCode()
         {
-            return _whole ^ _frac;
+            return Whole ^ Fraction;
         }
 
         #endregion
@@ -621,16 +611,14 @@ namespace NTwain.Data
 
         //        #region properties
 
-        //        /// <summary>
-        //        /// Id of capability to set or get.
-        //        /// </summary>
-        //        public CapabilityId Capability { get { return (CapabilityId)_cap; } set { _cap = (ushort)value; } }
-        //        /// <summary>
-        //        /// The type of the container structure referenced by the pointer internally. The container
-        //        /// will be one of four types: <see cref="TW_ARRAY"/>, <see cref="TW_ENUMERATION"/>,
-        //        /// <see cref="TW_ONEVALUE"/>, or <see cref="TW_RANGE"/>.
-        //        /// </summary>
-        //        public ContainerType ContainerType { get { return (ContainerType)_conType; } set { _conType = (ushort)value; } }
+        /// <summary>
+        /// Id of capability to set or get.
+        /// </summary>
+        public CapabilityId Capability { get { return (CapabilityId)_cap; } internal set { _cap = (ushort)value; } }
+        /// <summary>
+        /// The type of the container structure referenced by the pointer internally.
+        /// </summary>
+        public ContainerType ContainerType { get { return (ContainerType)_conType; } internal set { _conType = (ushort)value; } }
 
         //        internal IntPtr Container { get { return _hContainer; } }
 
@@ -1957,7 +1945,42 @@ namespace NTwain.Data
         /// </summary>
         public EndXferJob EndOfJob { get { return (EndXferJob)_eOJ; } }
     }
-    
+
+
+    /// <summary>
+    /// Container for a range of values.
+    /// </summary>
+    public partial struct TW_RANGE
+    {
+        /// <summary>
+        /// The type of items in the list.
+        /// </summary>
+        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
+        /// <summary>
+        /// The least positive/most negative value of the range.
+        /// </summary>
+        public uint MinValue { get { return _minValue; } set { _minValue = value; } }
+        /// <summary>
+        /// The most positive/least negative value of the range.
+        /// </summary>
+        public uint MaxValue { get { return _maxValue; } set { _maxValue = value; } }
+        /// <summary>
+        /// The delta between two adjacent values of the range.
+        /// e.g. Item2 - Item1 = StepSize;
+        /// </summary>
+        public uint StepSize { get { return _stepSize; } set { _stepSize = value; } }
+        /// <summary>
+        /// The device’s "power-on" value for the capability. If the application is
+        /// performing a MSG_SET operation and isn’t sure what the default
+        /// value is, set this field to <see cref="TwainConst.DontCare32"/>.
+        /// </summary>
+        public uint DefaultValue { get { return _defaultValue; } set { _defaultValue = value; } }
+        /// <summary>
+        /// The value to which the device (or its user interface) is currently set to
+        /// for the capability.
+        /// </summary>
+        public uint CurrentValue { get { return _currentValue; } set { _currentValue = value; } }
+    }
 
     //    ///// <summary>
     //    ///// This structure is used by the application to specify a set of mapping values to be applied to RGB

@@ -8,7 +8,7 @@ namespace NTwain.Internals
 {
     // probably wrong
 
-    class LinuxMemoryManager : IMemoryManager
+    class MarshalMemoryManager : IMemoryManager
     {
         public IntPtr Allocate(uint size)
         {
@@ -22,6 +22,7 @@ namespace NTwain.Internals
 
         public IntPtr Lock(IntPtr handle)
         {
+            // no op
             return handle;
         }
 

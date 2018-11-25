@@ -43,6 +43,15 @@ namespace NTwain
         /// </summary>
         internal DGAudio DGAudio => dgAudio ?? (dgAudio = new DGAudio(this));
 
+
+        //public CapReader CapReader { get; }
+
+        /// <summary>
+        /// Gets the <see cref="TW_CAPABILITY"/> generator.
+        /// </summary>
+        public CapWriter CapWriter { get; }
+
+
         /// <summary>
         /// Occurs when an enabled source has been disabled (back to state 4).
         /// </summary>

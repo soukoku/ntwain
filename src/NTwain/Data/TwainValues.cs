@@ -84,19 +84,19 @@ namespace NTwain.Data
         /// </summary>
         Invalid = 0,
         /// <summary>
-        /// The container is <see cref="TW_ARRAY"/>.
+        /// The container is TW_ARRAY.
         /// </summary>
         Array = 3,
         /// <summary>
-        /// The container is <see cref="TW_ENUMERATION"/>.
+        /// The container is TW_ENUMERATION.
         /// </summary>
         Enum = 4,
         /// <summary>
-        /// The container is <see cref="TW_ONEVALUE"/>.
+        /// The container is TW_ONEVALUE.
         /// </summary>
         OneValue = 5,
         /// <summary>
-        /// The container is <see cref="TW_RANGE"/>.
+        /// The container is TW_RANGE.
         /// </summary>
         Range = 6,
         /// <summary>
