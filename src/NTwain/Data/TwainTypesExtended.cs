@@ -49,6 +49,23 @@ namespace NTwain.Data
         }
 
         /// <summary>
+        /// Converts this value to a value for communicating with twain data source.
+        /// </summary>
+        /// <returns></returns>
+        public uint ToTransferValue()
+        {
+            // probably has a faster way but can't think now
+            byte[] array = new byte[4];
+            var part = BitConverter.GetBytes(Whole);
+            Buffer.BlockCopy(part, 0, array, 0, 2);
+
+            part = BitConverter.GetBytes(Fraction);
+            Buffer.BlockCopy(part, 0, array, 2, 2);
+
+            return BitConverter.ToUInt32(array, 0);
+
+        }
+        /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
         /// <returns>
@@ -1928,7 +1945,42 @@ namespace NTwain.Data
         /// </summary>
         public EndXferJob EndOfJob { get { return (EndXferJob)_eOJ; } }
     }
-    
+
+
+    /// <summary>
+    /// Container for a range of values.
+    /// </summary>
+    public partial struct TW_RANGE
+    {
+        /// <summary>
+        /// The type of items in the list.
+        /// </summary>
+        public ItemType ItemType { get { return (ItemType)_itemType; } set { _itemType = (ushort)value; } }
+        /// <summary>
+        /// The least positive/most negative value of the range.
+        /// </summary>
+        public uint MinValue { get { return _minValue; } set { _minValue = value; } }
+        /// <summary>
+        /// The most positive/least negative value of the range.
+        /// </summary>
+        public uint MaxValue { get { return _maxValue; } set { _maxValue = value; } }
+        /// <summary>
+        /// The delta between two adjacent values of the range.
+        /// e.g. Item2 - Item1 = StepSize;
+        /// </summary>
+        public uint StepSize { get { return _stepSize; } set { _stepSize = value; } }
+        /// <summary>
+        /// The device’s "power-on" value for the capability. If the application is
+        /// performing a MSG_SET operation and isn’t sure what the default
+        /// value is, set this field to <see cref="TwainConst.DontCare32"/>.
+        /// </summary>
+        public uint DefaultValue { get { return _defaultValue; } set { _defaultValue = value; } }
+        /// <summary>
+        /// The value to which the device (or its user interface) is currently set to
+        /// for the capability.
+        /// </summary>
+        public uint CurrentValue { get { return _currentValue; } set { _currentValue = value; } }
+    }
 
     //    ///// <summary>
     //    ///// This structure is used by the application to specify a set of mapping values to be applied to RGB

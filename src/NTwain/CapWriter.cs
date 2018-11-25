@@ -112,16 +112,20 @@ namespace NTwain
                     {
                         config.MemoryManager.Unlock(container.ItemList);
                     }
-                }
 
-                try
-                {
-                    IntPtr baseAddr = config.MemoryManager.Lock(twCap.hContainer);
-                    Marshal.StructureToPtr(container, baseAddr, false);
+                    try
+                    {
+                        baseAddr = config.MemoryManager.Lock(twCap.hContainer);
+                        Marshal.StructureToPtr(container, baseAddr, false);
+                    }
+                    finally
+                    {
+                        config.MemoryManager.Unlock(twCap.hContainer);
+                    }
                 }
-                finally
+                else
                 {
-                    config.MemoryManager.Unlock(twCap.hContainer);
+                    config.MemoryManager.Free(twCap.hContainer);
                 }
             }
             return twCap;
@@ -169,12 +173,46 @@ namespace NTwain
                     {
                         config.MemoryManager.Unlock(container.ItemList);
                     }
-                }
 
+                    try
+                    {
+                        baseAddr = config.MemoryManager.Lock(twCap.hContainer);
+                        Marshal.StructureToPtr(container, baseAddr, false);
+                    }
+                    finally
+                    {
+                        config.MemoryManager.Unlock(twCap.hContainer);
+                    }
+                }
+                else
+                {
+                    config.MemoryManager.Free(twCap.hContainer);
+                }
+            }
+            return twCap;
+        }
+
+        /// <summary>
+        /// Generates a <see cref="TW_CAPABILITY"/> for use in capability negotiation
+        /// using TWAIN's range value.
+        /// </summary>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public TW_CAPABILITY Generate(CapabilityId cap, TW_RANGE value)
+        {
+            var twCap = new TW_CAPABILITY
+            {
+                Capability = cap,
+                ContainerType = ContainerType.Range,
+                hContainer = config.MemoryManager.Allocate((uint)Marshal.SizeOf(typeof(TW_RANGE)))
+            };
+            if (twCap.hContainer != IntPtr.Zero)
+            {
                 try
                 {
                     IntPtr baseAddr = config.MemoryManager.Lock(twCap.hContainer);
-                    Marshal.StructureToPtr(container, baseAddr, false);
+                    Marshal.StructureToPtr(value, baseAddr, false);
                 }
                 finally
                 {
@@ -183,39 +221,5 @@ namespace NTwain
             }
             return twCap;
         }
-
-        ///// <summary>
-        ///// Generates a <see cref="TW_CAPABILITY"/> for use in capability negotiation
-        ///// using TWAIN's range value.
-        ///// </summary>
-        ///// <param name="cap"></param>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public TW_CAPABILITY Generate(CapabilityId cap, RangeValue value)
-        //{
-        //    var twCap = new TW_CAPABILITY
-        //    {
-        //        Capability = cap,
-        //        ContainerType = ContainerType.Range
-        //    };
-
-        //    return twCap;
-        //}
-
-        
-        //void SetRangeValue(TW_RANGE value, IMemoryManager memoryManager)
-        //{
-        //    if (value == null) { throw new ArgumentNullException("value"); }
-        //    ContainerType = ContainerType.Range;
-
-        //    // since range value can only house UInt32 we will not allow type size > 4
-        //    if (TypeExtensions.GetItemTypeSize(value.ItemType) > 4) { throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.BadValueType, "TW_RANGE")); }
-
-        //    _hContainer = memoryManager.Allocate((uint)Marshal.SizeOf(value));
-        //    if (_hContainer != IntPtr.Zero)
-        //    {
-        //        Marshal.StructureToPtr(value, _hContainer, false);
-        //    }
-        //}
     }
 }

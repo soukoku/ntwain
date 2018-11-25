@@ -465,15 +465,15 @@ namespace NTwain.Data
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_RANGE
+    partial struct TW_RANGE
     {
         // TODO: mac & linux are different?
-        public TW_UINT16 ItemType;
-        public TW_UINT32 MinValue;
-        public TW_UINT32 MaxValue;
-        public TW_UINT32 StepSize;
-        public TW_UINT32 DefaultValue;
-        public TW_UINT32 CurrentValue;
+        TW_UINT16 _itemType;
+        TW_UINT32 _minValue;
+        TW_UINT32 _maxValue;
+        TW_UINT32 _stepSize;
+        TW_UINT32 _defaultValue;
+        TW_UINT32 _currentValue;
     }
 
     //[StructLayout(LayoutKind.Sequential, Pack = 2)]
