@@ -91,15 +91,15 @@ namespace NTwain
             if (twCap.hContainer != IntPtr.Zero)
             {
                 var listSz = value.Type.GetSize() * value.ItemList.Length;
-                TW_ARRAY arr = new TW_ARRAY
+                TW_ARRAY container = new TW_ARRAY
                 {
                     ItemType = (ushort)value.Type,
                     NumItems = (uint)value.ItemList.Length,
                     ItemList = config.MemoryManager.Allocate((uint)listSz)
                 };
-                if (arr.ItemList != IntPtr.Zero)
+                if (container.ItemList != IntPtr.Zero)
                 {
-                    IntPtr baseAddr = config.MemoryManager.Lock(arr.ItemList);
+                    IntPtr baseAddr = config.MemoryManager.Lock(container.ItemList);
                     try
                     {
                         int offset = 0;
@@ -110,14 +110,14 @@ namespace NTwain
                     }
                     finally
                     {
-                        config.MemoryManager.Unlock(arr.ItemList);
+                        config.MemoryManager.Unlock(container.ItemList);
                     }
                 }
 
                 try
                 {
                     IntPtr baseAddr = config.MemoryManager.Lock(twCap.hContainer);
-                    Marshal.StructureToPtr(arr, baseAddr, false);
+                    Marshal.StructureToPtr(container, baseAddr, false);
                 }
                 finally
                 {
@@ -127,24 +127,62 @@ namespace NTwain
             return twCap;
         }
 
-        ///// <summary>
-        ///// Generates a <see cref="TW_CAPABILITY"/> for use in capability negotiation
-        ///// using TWAIN's enum value.
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="cap"></param>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public TW_CAPABILITY Generate<T>(CapabilityId cap, EnumValue<T> value)
-        //{
-        //    var twCap = new TW_CAPABILITY
-        //    {
-        //        Capability = cap,
-        //        ContainerType = ContainerType.Enum
-        //    };
+        /// <summary>
+        /// Generates a <see cref="TW_CAPABILITY"/> for use in capability negotiation
+        /// using TWAIN's enum value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public TW_CAPABILITY Generate<T>(CapabilityId cap, EnumValue<T> value)
+        {
+            var twCap = new TW_CAPABILITY
+            {
+                Capability = cap,
+                ContainerType = ContainerType.Enum,
+                hContainer = config.MemoryManager.Allocate((uint)Marshal.SizeOf(typeof(TW_ENUMERATION)))
+            };
+            if (twCap.hContainer != IntPtr.Zero)
+            {
+                var listSz = value.Type.GetSize() * value.ItemList.Length;
+                TW_ENUMERATION container = new TW_ENUMERATION
+                {
+                    ItemType = (ushort)value.Type,
+                    NumItems = (uint)value.ItemList.Length,
+                    CurrentIndex = (uint)value.CurrentIndex,
+                    DefaultIndex = (uint)value.DefaultIndex,
+                    ItemList = config.MemoryManager.Allocate((uint)listSz)
+                };
+                if (container.ItemList != IntPtr.Zero)
+                {
+                    IntPtr baseAddr = config.MemoryManager.Lock(container.ItemList);
+                    try
+                    {
+                        int offset = 0;
+                        foreach (var it in value.ItemList)
+                        {
+                            baseAddr.WriteValue(ref offset, value.Type, it);
+                        }
+                    }
+                    finally
+                    {
+                        config.MemoryManager.Unlock(container.ItemList);
+                    }
+                }
 
-        //    return twCap;
-        //}
+                try
+                {
+                    IntPtr baseAddr = config.MemoryManager.Lock(twCap.hContainer);
+                    Marshal.StructureToPtr(container, baseAddr, false);
+                }
+                finally
+                {
+                    config.MemoryManager.Unlock(twCap.hContainer);
+                }
+            }
+            return twCap;
+        }
 
         ///// <summary>
         ///// Generates a <see cref="TW_CAPABILITY"/> for use in capability negotiation
@@ -164,34 +202,7 @@ namespace NTwain
         //    return twCap;
         //}
 
-
-        //void SetEnumValue(TW_ENUMERATION value, IMemoryManager memoryManager)
-        //{
-        //    if (value == null) { throw new ArgumentNullException("value"); }
-        //    ContainerType = ContainerType.Enum;
-
-
-        //    Int32 valueSize = TW_ENUMERATION.ItemOffset + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
-
-        //    int offset = 0;
-        //    _hContainer = memoryManager.Allocate((uint)valueSize);
-        //    if (_hContainer != IntPtr.Zero)
-        //    {
-        //        IntPtr baseAddr = memoryManager.Lock(_hContainer);
-
-        //        // can't safely use StructureToPtr here so write it our own
-        //        baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
-        //        baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
-        //        baseAddr.WriteValue(ref offset, ItemType.UInt32, value.CurrentIndex);
-        //        baseAddr.WriteValue(ref offset, ItemType.UInt32, value.DefaultIndex);
-        //        foreach (var item in value.ItemList)
-        //        {
-        //            baseAddr.WriteValue(ref offset, value.ItemType, item);
-        //        }
-        //        memoryManager.Unlock(_hContainer);
-        //    }
-        //}
-
+        
         //void SetRangeValue(TW_RANGE value, IMemoryManager memoryManager)
         //{
         //    if (value == null) { throw new ArgumentNullException("value"); }
