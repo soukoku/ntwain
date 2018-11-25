@@ -35,17 +35,17 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TW_FIX32
     {
-        TW_INT16 _whole;
-        TW_UINT16 _frac;
+        internal TW_INT16 Whole;
+        internal TW_UINT16 Fraction;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TW_FRAME
     {
-        TW_FIX32 _left;
-        TW_FIX32 _top;
-        TW_FIX32 _right;
-        TW_FIX32 _bottom;
+        internal TW_FIX32 _left;
+        internal TW_FIX32 _top;
+        internal TW_FIX32 _right;
+        internal TW_FIX32 _bottom;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -111,7 +111,7 @@ namespace NTwain.Data
     {
         TW_UINT16 _cap;
         TW_UINT16 _conType;
-        TW_HANDLE _hContainer;
+        internal TW_HANDLE hContainer;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -427,13 +427,13 @@ namespace NTwain.Data
         TW_UINT32 _sheetCount;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    partial class TW_ONEVALUE
-    {
-        // TODO: mac is different?
-        public TW_UINT16 ItemType;
-        public TW_UINT32 Item;
-    }
+    //[StructLayout(LayoutKind.Sequential, Pack = 2)]
+    //partial class TW_ONEVALUE
+    //{
+    //    // TODO: mac is different?
+    //    public TW_UINT16 ItemType;
+    //    public TW_UINT32 Item;
+    //}
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial struct TW_PALETTE8

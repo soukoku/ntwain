@@ -99,7 +99,7 @@ namespace NTwain.Triplets.Control
         }
 
 		/// <summary>
-		/// Return all of the labels for a capability of type <see cref="TW_ARRAY"/> or <see cref="TW_ENUMERATION"/>, for example
+		/// Return all of the labels for a capability of type TW_ARRAY or TW_ENUMERATION, for example
 		/// "US Letter" for ICapSupportedSizes’ TWSS_USLETTER.
 		/// </summary>
 		/// <param name="capability">The capability.</param>
@@ -145,8 +145,8 @@ namespace NTwain.Triplets.Control
 		/// Changes the Current Value(s) and Available Values of the specified capability to those specified
 		/// by the application. As of TWAIN 2.2 this only modifies the Current Value of the specified capability, constraints cannot be
         /// changed with this.
-		/// Current Values are set when the container is a <see cref="TW_ONEVALUE"/> or <see cref="TW_ARRAY"/>. Available and
-		/// Current Values are set when the container is a <see cref="TW_ENUMERATION"/> or <see cref="TW_RANGE"/>.
+		/// Current Values are set when the container is a TW_ONEVALUE or TW_ARRAY. Available and
+		/// Current Values are set when the container is a TW_ENUMERATION or TW_RANGE.
 		/// </summary>
 		/// <param name="capability">The capability.</param>
 		/// <returns></returns>
@@ -159,8 +159,8 @@ namespace NTwain.Triplets.Control
         /// Changes the Current Value(s) and Available Value(s) of the specified capability to those specified
         /// by the application.
         /// </summary>
-        /// Current Values are set when the container is a <see cref="TW_ONEVALUE"/> or <see cref="TW_ARRAY"/>. Available and
-        /// Current Values are set when the container is a <see cref="TW_ENUMERATION"/> or <see cref="TW_RANGE"/>.
+        /// Current Values are set when the container is a TW_ONEVALUE or TW_ARRAY. Available and
+        /// Current Values are set when the container is a TW_ENUMERATION or TW_RANGE.
         /// <param name="capability">The capability.</param>
         /// <returns></returns>
         public ReturnCode SetConstraint(ref TW_CAPABILITY capability)

@@ -32,19 +32,19 @@ namespace NTwain.Data
 
         float ToFloat()
         {
-            return (float)_whole + _frac / 65536f;
+            return (float)Whole + Fraction / 65536f;
         }
         TW_FIX32(float value)
         {
             //int temp = (int)(value * 65536.0 + 0.5);
-            //_whole = (short)(temp >> 16);
-            //_frac = (ushort)(temp & 0x0000ffff);
+            //Whole = (short)(temp >> 16);
+            //Fraction = (ushort)(temp & 0x0000ffff);
 
             // different version from twain faq
             bool sign = value < 0;
             int temp = (int)(value * 65536.0 + (sign ? (-0.5) : 0.5));
-            _whole = (short)(temp >> 16);
-            _frac = (ushort)(temp & 0x0000ffff);
+            Whole = (short)(temp >> 16);
+            Fraction = (ushort)(temp & 0x0000ffff);
 
         }
 
@@ -58,33 +58,6 @@ namespace NTwain.Data
         {
             return ToFloat().ToString(CultureInfo.InvariantCulture);
         }
-
-        ///// <summary>
-        ///// Converts this to <see cref="TW_ONEVALUE"/> for capability set methods.
-        ///// </summary>
-        ///// <returns></returns>
-        //public TW_ONEVALUE ToOneValue()
-        //{
-        //    // copy struct parts as-is.
-        //    // probably has a faster way but can't think now
-
-        //    byte[] array = new byte[4];
-        //    var part = BitConverter.GetBytes(Whole);
-        //    Buffer.BlockCopy(part, 0, array, 0, 2);
-
-        //    part = BitConverter.GetBytes(Fraction);
-        //    Buffer.BlockCopy(part, 0, array, 2, 2);
-
-        //    var converted = BitConverter.ToUInt32(array, 0);
-
-        //    return new TW_ONEVALUE
-        //    {
-        //        ItemType = ItemType.Fix32,
-        //        Item = converted
-        //        // old wrong conversion
-        //        // (uint)this,// ((uint)dpi) << 16;
-        //    };
-        //}
 
         #region equals
 
@@ -109,7 +82,7 @@ namespace NTwain.Data
         /// <returns></returns>
         public bool Equals(TW_FIX32 other)
         {
-            return _whole == other._whole && _frac == other._frac;
+            return Whole == other.Whole && Fraction == other.Fraction;
         }
         /// <summary>
         /// Returns a hash code for this instance.
@@ -119,7 +92,7 @@ namespace NTwain.Data
         /// </returns>
         public override int GetHashCode()
         {
-            return _whole ^ _frac;
+            return Whole ^ Fraction;
         }
 
         #endregion
@@ -621,16 +594,14 @@ namespace NTwain.Data
 
         //        #region properties
 
-        //        /// <summary>
-        //        /// Id of capability to set or get.
-        //        /// </summary>
-        //        public CapabilityId Capability { get { return (CapabilityId)_cap; } set { _cap = (ushort)value; } }
-        //        /// <summary>
-        //        /// The type of the container structure referenced by the pointer internally. The container
-        //        /// will be one of four types: <see cref="TW_ARRAY"/>, <see cref="TW_ENUMERATION"/>,
-        //        /// <see cref="TW_ONEVALUE"/>, or <see cref="TW_RANGE"/>.
-        //        /// </summary>
-        //        public ContainerType ContainerType { get { return (ContainerType)_conType; } set { _conType = (ushort)value; } }
+        /// <summary>
+        /// Id of capability to set or get.
+        /// </summary>
+        public CapabilityId Capability { get { return (CapabilityId)_cap; } internal set { _cap = (ushort)value; } }
+        /// <summary>
+        /// The type of the container structure referenced by the pointer internally.
+        /// </summary>
+        public ContainerType ContainerType { get { return (ContainerType)_conType; } internal set { _conType = (ushort)value; } }
 
         //        internal IntPtr Container { get { return _hContainer; } }
 

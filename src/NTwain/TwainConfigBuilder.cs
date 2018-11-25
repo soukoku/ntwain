@@ -18,8 +18,8 @@ namespace NTwain
         private string _companyName;
         private Language _lang;
         private DataGroups _dg = DataGroups.Image;
-        private bool _32bit;
-        private PlatformID _platform;
+        readonly bool _32bit;
+        readonly PlatformID _platform;
         private Country _country;
 
         /// <summary>
@@ -106,17 +106,12 @@ namespace NTwain
         /// <returns></returns>
         public TwainConfig Build()
         {
-            var config = new TwainConfig
-            {
-                Platform = _platform,
-                Is32Bit = _32bit
-            };
+            var config = new TwainConfig(_platform, _32bit);
 
             // todo: change id based on platform
             switch (_platform)
             {
                 case PlatformID.Win32NT:
-                    config.DefaultMemoryManager = new WinMemoryManager(); // initial default
                     config.App32 = new TW_IDENTITY
                     {
                         DataFlags = DataFlags.App2,

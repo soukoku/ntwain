@@ -51,6 +51,8 @@ namespace NTwain
                     _callback32Delegate = new Callback32(Handle32BitCallback);
                     break;
             }
+            //CapReader = new CapReader(this);
+            CapWriter = new CapWriter(config);
         }
 
         /// <summary>

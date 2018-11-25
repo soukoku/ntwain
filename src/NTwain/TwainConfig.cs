@@ -14,17 +14,34 @@ namespace NTwain
     /// </summary>
     public class TwainConfig
     {
-        internal TwainConfig() { }
+        internal TwainConfig(PlatformID platform, bool is32Bit)
+        {
+            Platform = platform;
+            Is32Bit = is32Bit;
+
+            // initial default until twain entry is available
+            switch (platform)
+            {
+                case PlatformID.Win32NT:
+                    _defaultMemoryManager = new WinMemoryManager(); 
+                    break;
+                default:
+                    _defaultMemoryManager = new MarshalMemoryManager();
+                    break;
+            }
+        }
+
+        readonly IMemoryManager _defaultMemoryManager;
 
         /// <summary>
         /// Gets whether the app is running in 32bit.
         /// </summary>
-        public bool Is32Bit { get; internal set; }
+        public bool Is32Bit { get; private set; }
 
         /// <summary>
         /// Gets the platform the app is running on.
         /// </summary>
-        public PlatformID Platform { get; internal set; }
+        public PlatformID Platform { get; private set; }
 
         //public bool PreferLegacyDsm { get; internal set; }
 
@@ -43,11 +60,9 @@ namespace NTwain
         {
             get
             {
-                return _memMgr ?? DefaultMemoryManager;
+                return _memMgr ?? _defaultMemoryManager;
             }
             internal set { _memMgr = value; }
         }
-
-        internal IMemoryManager DefaultMemoryManager { get; set; }
     }
 }
