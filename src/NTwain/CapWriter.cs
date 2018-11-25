@@ -72,24 +72,60 @@ namespace NTwain
             return twCap;
         }
 
-        ///// <summary>
-        ///// Generates a <see cref="TW_CAPABILITY"/> for use in capability negotiation
-        ///// using TWAIN's array value.
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="cap"></param>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public TW_CAPABILITY Generate<T>(CapabilityId cap, ArrayValue<T> value)
-        //{
-        //    var twCap = new TW_CAPABILITY
-        //    {
-        //        Capability = cap,
-        //        ContainerType = ContainerType.Array
-        //    };
-        //    SetOneValue()
-        //    return twCap;
-        //}
+        /// <summary>
+        /// Generates a <see cref="TW_CAPABILITY"/> for use in capability negotiation
+        /// using TWAIN's array value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public TW_CAPABILITY Generate<T>(CapabilityId cap, ArrayValue<T> value)
+        {
+            var twCap = new TW_CAPABILITY
+            {
+                Capability = cap,
+                ContainerType = ContainerType.Array,
+                hContainer = config.MemoryManager.Allocate((uint)Marshal.SizeOf(typeof(TW_ARRAY)))
+            };
+            if (twCap.hContainer != IntPtr.Zero)
+            {
+                var listSz = value.Type.GetSize() * value.ItemList.Length;
+                TW_ARRAY arr = new TW_ARRAY
+                {
+                    ItemType = (ushort)value.Type,
+                    NumItems = (uint)value.ItemList.Length,
+                    ItemList = config.MemoryManager.Allocate((uint)listSz)
+                };
+                if (arr.ItemList != IntPtr.Zero)
+                {
+                    IntPtr baseAddr = config.MemoryManager.Lock(arr.ItemList);
+                    try
+                    {
+                        int offset = 0;
+                        foreach (var it in value.ItemList)
+                        {
+                            baseAddr.WriteValue(ref offset, value.Type, it);
+                        }
+                    }
+                    finally
+                    {
+                        config.MemoryManager.Unlock(arr.ItemList);
+                    }
+                }
+
+                try
+                {
+                    IntPtr baseAddr = config.MemoryManager.Lock(twCap.hContainer);
+                    Marshal.StructureToPtr(arr, baseAddr, false);
+                }
+                finally
+                {
+                    config.MemoryManager.Unlock(twCap.hContainer);
+                }
+            }
+            return twCap;
+        }
 
         ///// <summary>
         ///// Generates a <see cref="TW_CAPABILITY"/> for use in capability negotiation
@@ -170,30 +206,5 @@ namespace NTwain
         //        Marshal.StructureToPtr(value, _hContainer, false);
         //    }
         //}
-
-        //void SetArrayValue(TW_ARRAY value, IMemoryManager memoryManager)
-        //{
-        //    if (value == null) { throw new ArgumentNullException("value"); }
-        //    ContainerType = ContainerType.Array;
-
-        //    Int32 valueSize = 6 + value.ItemList.Length * TypeExtensions.GetItemTypeSize(value.ItemType);
-
-        //    int offset = 0;
-        //    _hContainer = memoryManager.Allocate((uint)valueSize);
-        //    if (_hContainer != IntPtr.Zero)
-        //    {
-        //        IntPtr baseAddr = memoryManager.Lock(_hContainer);
-
-        //        // can't safely use StructureToPtr here so write it our own
-        //        baseAddr.WriteValue(ref offset, ItemType.UInt16, value.ItemType);
-        //        baseAddr.WriteValue(ref offset, ItemType.UInt32, (uint)value.ItemList.Length);
-        //        foreach (var item in value.ItemList)
-        //        {
-        //            baseAddr.WriteValue(ref offset, value.ItemType, item);
-        //        }
-        //        memoryManager.Unlock(_hContainer);
-        //    }
-        //}
-
     }
 }
