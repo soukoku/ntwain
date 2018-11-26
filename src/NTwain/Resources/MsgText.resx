@@ -129,4 +129,7 @@
   <data name="SourceNotThisSession" xml:space="preserve">
     <value>Source is not from this session.</value>
   </data>
+  <data name="TypeNotSupported" xml:space="preserve">
+    <value>Type {0} is not supported.</value>
+  </data>
 </root>

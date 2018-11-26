@@ -34,7 +34,7 @@ namespace NTwain
         public TW_CAPABILITY Generate<T>(CapabilityId cap, ItemType type, T value)
         {
             // size of data + uint16 item type
-            var valueSz = type.GetSize();
+            var valueSz = type.GetByteSize();
             if (valueSz < 4) valueSz = 4; // onevalue container value minimum is 32bit
             var memSz = valueSz + 2; // + item type field
 
@@ -52,7 +52,7 @@ namespace NTwain
                 {
                     int offset = 0;
                     // TODO: type size may be different on mac
-                    baseAddr.WriteValue(ref offset, ItemType.UInt16, value);
+                    baseAddr.WriteValue(ref offset, type, ItemType.UInt16);
                     // ONEVALUE is special in value can be uint32 or string 
                     // if less than uint32 put it in lower word
                     // (string value seems undocumented but internet says put it as-is and not a pointer)
@@ -61,7 +61,7 @@ namespace NTwain
                         Marshal.WriteInt16(baseAddr, offset, 0);
                         offset += 2;
                     }
-                    baseAddr.WriteValue(ref offset, type, value);
+                    baseAddr.WriteValue(ref offset, value, type);
                 }
                 finally
                 {
@@ -90,7 +90,7 @@ namespace NTwain
             };
             if (twCap.hContainer != IntPtr.Zero)
             {
-                var listSz = value.Type.GetSize() * value.ItemList.Length;
+                var listSz = value.Type.GetByteSize() * value.ItemList.Length;
                 TW_ARRAY container = new TW_ARRAY
                 {
                     ItemType = (ushort)value.Type,
@@ -105,7 +105,7 @@ namespace NTwain
                         int offset = 0;
                         foreach (var it in value.ItemList)
                         {
-                            baseAddr.WriteValue(ref offset, value.Type, it);
+                            baseAddr.WriteValue(ref offset, it, value.Type);
                         }
                     }
                     finally
@@ -149,7 +149,7 @@ namespace NTwain
             };
             if (twCap.hContainer != IntPtr.Zero)
             {
-                var listSz = value.Type.GetSize() * value.ItemList.Length;
+                var listSz = value.Type.GetByteSize() * value.ItemList.Length;
                 TW_ENUMERATION container = new TW_ENUMERATION
                 {
                     ItemType = (ushort)value.Type,
@@ -166,7 +166,7 @@ namespace NTwain
                         int offset = 0;
                         foreach (var it in value.ItemList)
                         {
-                            baseAddr.WriteValue(ref offset, value.Type, it);
+                            baseAddr.WriteValue(ref offset, it, value.Type);
                         }
                     }
                     finally

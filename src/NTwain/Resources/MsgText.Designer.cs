@@ -95,5 +95,14 @@ namespace NTwain.Resources {
                 return ResourceManager.GetString("SourceNotThisSession", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type {0} is not supported..
+        /// </summary>
+        internal static string TypeNotSupported {
+            get {
+                return ResourceManager.GetString("TypeNotSupported", resourceCulture);
+            }
+        }
     }
 }

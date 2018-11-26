@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Resources;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace NTwain.Data
     /// </summary>
     static class TypeExtensions
     {
-        static readonly Dictionary<ItemType, int> _sizes = new Dictionary<ItemType, int>
+        static readonly Dictionary<ItemType, int> _twainBytes = new Dictionary<ItemType, int>
         {
             { ItemType.Int8, 1 },
             { ItemType.UInt8, 1 },
@@ -28,44 +29,108 @@ namespace NTwain.Data
             { ItemType.String255, TwainConst.String255 },
             { ItemType.String32, TwainConst.String32 },
             { ItemType.String64, TwainConst.String64 },
-            // TODO: find out if it should be fixed 4 bytes or intptr size
             { ItemType.Handle, IntPtr.Size },
         };
-
-        public static int GetSize(this ItemType type)
+        static readonly Dictionary<Type, ItemType> _netToTwainTypes = new Dictionary<Type, ItemType>
         {
-            if(_sizes.TryGetValue(type, out int size)) return size;
+            { typeof(sbyte), ItemType.Int8 },
+            { typeof(byte), ItemType.UInt8 },
+            { typeof(short), ItemType.Int16 },
+            { typeof(ushort), ItemType.UInt16 },
+            { typeof(int), ItemType.Int32 },
+            { typeof(uint), ItemType.UInt32 },
+            { typeof(TW_FIX32), ItemType.Fix32 },
+            { typeof(TW_FRAME), ItemType.Frame },
+            { typeof(IntPtr), ItemType.Handle },
+            { typeof(UIntPtr), ItemType.Handle },
+        };
 
-            throw new NotSupportedException($"Unsupported item type {type}.");
+
+        internal static int GetByteSize(this ItemType type)
+        {
+            if (_twainBytes.TryGetValue(type, out int size)) return size;
+
+            throw new NotSupportedException(string.Format(MsgText.TypeNotSupported, type));
         }
 
 
         #region writes
 
         /// <summary>
-        /// Writes a TWAIN value.
+        /// Writes a TWAIN value with type detection.
         /// </summary>
         /// <param name="baseAddr">The base addr.</param>
         /// <param name="offset">The offset.</param>
-        /// <param name="type">The TWAIN type.</param>
         /// <param name="value">The value.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "1#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
-        public static void WriteValue(this IntPtr baseAddr, ref int offset, ItemType type, object value)
+        public static void WriteValue(this IntPtr baseAddr, ref int offset, object value)
+        {
+            var rawType = value.GetType();
+            if (rawType.IsEnum)
+            {
+                // convert enum to numerical value
+                rawType = Enum.GetUnderlyingType(rawType);
+                value = Convert.ChangeType(value, rawType);
+            }
+
+
+            if (_netToTwainTypes.ContainsKey(rawType))
+            {
+                WriteValue(baseAddr, ref offset, value, _netToTwainTypes[rawType]);
+            }
+            else if (rawType == typeof(string))
+            {
+                var strVal = value.ToString();
+                if (strVal.Length <= 32)
+                {
+                    WriteValue(baseAddr, ref offset, strVal, ItemType.String32);
+                }
+                else if (strVal.Length <= 64)
+                {
+                    WriteValue(baseAddr, ref offset, strVal, ItemType.String64);
+                }
+                else if (strVal.Length <= 128)
+                {
+                    WriteValue(baseAddr, ref offset, strVal, ItemType.String128);
+                }
+                else if (strVal.Length <= 255)
+                {
+                    WriteValue(baseAddr, ref offset, strVal, ItemType.String255);
+                }
+                else
+                {
+                    throw new NotSupportedException(string.Format(MsgText.MaxStringLengthExceeded, 255));
+                }
+            }
+            else
+            {
+                throw new NotSupportedException(string.Format(MsgText.TypeNotSupported, rawType));
+            }
+        }
+
+
+        /// <summary>
+        /// Writes a TWAIN value as specified type.
+        /// </summary>
+        /// <param name="baseAddr">The base addr.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="type">The TWAIN type.</param>
+        public static void WriteValue(this IntPtr baseAddr, ref int offset, object value, ItemType type)
         {
             switch (type)
             {
                 case ItemType.Int8:
                 case ItemType.UInt8:
-                    Marshal.WriteByte(baseAddr, offset, Convert.ToByte(value, CultureInfo.InvariantCulture));// (byte)value);
+                    Marshal.WriteByte(baseAddr, offset, Convert.ToByte(value, CultureInfo.InvariantCulture));
                     break;
                 case ItemType.Bool:
                 case ItemType.Int16:
                 case ItemType.UInt16:
-                    Marshal.WriteInt16(baseAddr, offset, Convert.ToInt16(value, CultureInfo.InvariantCulture));//(short)value);
+                    Marshal.WriteInt16(baseAddr, offset, Convert.ToInt16(value, CultureInfo.InvariantCulture));
                     break;
                 case ItemType.UInt32:
                 case ItemType.Int32:
-                    Marshal.WriteInt32(baseAddr, offset, Convert.ToInt32(value, CultureInfo.InvariantCulture));//(int)value);
+                    Marshal.WriteInt32(baseAddr, offset, Convert.ToInt32(value, CultureInfo.InvariantCulture));
                     break;
                 case ItemType.Fix32:
                     TW_FIX32 f32 = (TW_FIX32)value;
@@ -81,6 +146,9 @@ namespace NTwain.Data
                 //case ItemType.String1024:
                 //    WriteString(baseAddr, offset, value as string, 1024);
                 //    break;
+                case ItemType.Handle:
+                    Marshal.WriteIntPtr(baseAddr, offset, (IntPtr)value);
+                    break;
                 case ItemType.String128:
                     WriteString(baseAddr, offset, (string)value, 128);
                     break;
@@ -93,25 +161,33 @@ namespace NTwain.Data
                 case ItemType.String64:
                     WriteString(baseAddr, offset, (string)value, 64);
                     break;
-                //case ItemType.Unicode512:
-                //    WriteUString(baseAddr, offset, value as string, 512);
-                //    break;
+                    //case ItemType.Unicode512:
+                    //    WriteUString(baseAddr, offset, value as string, 512);
+                    //    break;
             }
-            offset +=  type.GetSize();
+            offset += type.GetByteSize();
         }
 
-        private static void WriteFix32(IntPtr baseAddr, ref int offset, TW_FIX32 f32)
+        static void WriteFix32(IntPtr baseAddr, ref int offset, TW_FIX32 value)
         {
-            Marshal.WriteInt16(baseAddr, offset, f32.Whole);
-            if (f32.Fraction > Int16.MaxValue)
+            Marshal.WriteInt16(baseAddr, offset, value.Whole);
+            offset += _twainBytes[ItemType.Int16];
+            if (value.Fraction > Int16.MaxValue)
             {
-                Marshal.WriteInt16(baseAddr, offset + 2, (Int16)(f32.Fraction - 32768));
+                Marshal.WriteInt16(baseAddr, offset, (Int16)(value.Fraction - 32768));
             }
             else
             {
-                Marshal.WriteInt16(baseAddr, offset + 2, (Int16)f32.Fraction);
+                Marshal.WriteInt16(baseAddr, offset, (Int16)value.Fraction);
             }
-            offset += _sizes[ItemType.Fix32];
+            offset += _twainBytes[ItemType.Fix32];
+        }
+        static void WriteFrame(IntPtr baseAddr, ref int offset, TW_FRAME value)
+        {
+            WriteFix32(baseAddr, ref offset, value._left);
+            WriteFix32(baseAddr, ref offset, value._top);
+            WriteFix32(baseAddr, ref offset, value._right);
+            WriteFix32(baseAddr, ref offset, value._bottom);
         }
 
         /// <summary>
@@ -123,6 +199,8 @@ namespace NTwain.Data
         /// <param name="maxLength"></param>
         static void WriteString(IntPtr baseAddr, int offset, string value, int maxLength)
         {
+            // TODO: mac string is not null-terminated like this?
+
             if (string.IsNullOrEmpty(value))
             {
                 // write zero
