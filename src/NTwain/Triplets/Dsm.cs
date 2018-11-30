@@ -43,6 +43,26 @@ namespace NTwain.Triplets
             DataGroups dg,
             DataArgumentType dat,
             Message msg,
+            IntPtr data)
+        {
+            if (PlatformInfo.Current.IsWindows)
+            {
+                if (PlatformInfo.Current.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, dg, dat, msg, data); }
+                else { return NativeMethods.DsmWinOld(origin, destination, dg, dat, msg, data); }
+            }
+            else if (PlatformInfo.Current.IsLinux)
+            {
+                return NativeMethods.DsmLinux(origin, destination, dg, dat, msg, data);
+            }
+            throw new PlatformNotSupportedException();
+        }
+
+        public static ReturnCode DsmEntry(
+            TWIdentity origin,
+            TWIdentity destination,
+            DataGroups dg,
+            DataArgumentType dat,
+            Message msg,
             ref DataGroups data)
         {
             if (PlatformInfo.Current.IsWindows)
@@ -161,12 +181,12 @@ namespace NTwain.Triplets
         {
             if (PlatformInfo.Current.IsWindows)
             {
-                if (PlatformInfo.Current.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
-                else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data); }
+                if (PlatformInfo.Current.UseNewWinDSM) { return NativeMethods.DsmWinNew(origin, destination, DataGroups.Control, DataArgumentType.Callback2, msg, data); }
+                else { return NativeMethods.DsmWinOld(origin, destination, DataGroups.Control, DataArgumentType.Callback2, msg, data); }
             }
             else if (PlatformInfo.Current.IsLinux)
             {
-                return NativeMethods.DsmLinux(origin, destination, DataGroups.Control, DataArgumentType.Callback, msg, data);
+                return NativeMethods.DsmLinux(origin, destination, DataGroups.Control, DataArgumentType.Callback2, msg, data);
             }
             throw new PlatformNotSupportedException();
         }

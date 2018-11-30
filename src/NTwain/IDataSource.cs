@@ -116,9 +116,10 @@ namespace NTwain
         TWStatus GetStatus();
 
         /// <summary>
-        /// Gets the source status. Only call this at state 4 or higher.
+        /// Gets the source status string. Only call this at state 4 or higher.
         /// </summary>
+        /// <param name="status">Status from previous calls.</param>
         /// <returns></returns>
-        TWStatusUtf8 GetStatusUtf8();
+        TWStatusUtf8 GetStatusUtf8(TWStatus status);
     }
 }

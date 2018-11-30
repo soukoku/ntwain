@@ -168,10 +168,11 @@ namespace NTwain
         TWStatus GetStatus();
 
         /// <summary>
-        /// Gets the manager status. Only call this at state 3 or higher.
+        /// Gets the manager status string. Only call this at state 3 or higher.
         /// </summary>
+        /// <param name="status">Status from previous calls.</param>
         /// <returns></returns>
-        TWStatusUtf8 GetStatusUtf8();
+        TWStatusUtf8 GetStatusUtf8(TWStatus status);
 
 
         /// <summary>

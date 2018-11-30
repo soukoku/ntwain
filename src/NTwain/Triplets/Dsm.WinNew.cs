@@ -24,6 +24,15 @@ namespace NTwain.Triplets
                 DataGroups dg,
                 DataArgumentType dat,
                 Message msg,
+                IntPtr data);
+
+            [DllImport(WIN_NEW_DSM_NAME, EntryPoint = DSM_ENTRY)]
+            public static extern ReturnCode DsmWinNew(
+                [In, Out]TWIdentity origin,
+                [In, Out]TWIdentity destination,
+                DataGroups dg,
+                DataArgumentType dat,
+                Message msg,
                 ref DataGroups data);
 
 			[DllImport(WIN_NEW_DSM_NAME, EntryPoint = DSM_ENTRY)]

@@ -16,9 +16,9 @@ namespace NTwain.Triplets
         /// </summary>
         /// <param name="status">The status.</param>
         /// <returns></returns>
-        public ReturnCode GetManager(out TWStatusUtf8 status)
+        public ReturnCode GetManager(TWStatus status, out TWStatusUtf8 utf8status)
         {
-            status = new TWStatusUtf8();
+            utf8status = new TWStatusUtf8 { Status = status };
             Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get);
             return Dsm.DsmEntry(Session.AppId, null, Message.Get, status);
         }
@@ -29,9 +29,9 @@ namespace NTwain.Triplets
 		/// </summary>
 		/// <param name="status">The status.</param>
 		/// <returns></returns>
-		public ReturnCode GetSource(out TWStatusUtf8 status)
+		public ReturnCode GetSource(TWStatus status, out TWStatusUtf8 utf8status)
 		{
-            status = new TWStatusUtf8();
+            utf8status = new TWStatusUtf8 { Status = status };
 			Session.VerifyState(3, 7, DataGroups.Control, DataArgumentType.StatusUtf8, Message.Get);
 			return Dsm.DsmEntry(Session.AppId, Session.CurrentSource.Identity, Message.Get, status);
 		}

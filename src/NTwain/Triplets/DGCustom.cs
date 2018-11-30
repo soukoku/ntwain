@@ -39,6 +39,24 @@ namespace NTwain.Triplets
             return Dsm.DsmEntry(_session.AppId, _session.CurrentSource.Identity, group, dat, message, ref data);
         }
 
+
+        /// <summary>
+        /// Direct DSM_Entry call with full arguments for custom values.
+        /// </summary>
+        /// <param name="group">The group.</param>
+        /// <param name="dat">The dat.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="data">The data.</param>
+        /// <returns></returns>
+        public ReturnCode DsmEntry(
+            DataGroups group,
+            DataArgumentType dat,
+            Message message,
+            IntPtr data)
+        {
+            _session.VerifyState(3, 7, group, dat, message);
+            return Dsm.DsmEntry(_session.AppId, _session.CurrentSource.Identity, group, dat, message, data);
+        }
         // todo: add other data value types?
     }
 }

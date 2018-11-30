@@ -443,8 +443,8 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     partial class TWStatus
     {
-        TW_UINT16 _conditionCode;
-        TW_UINT16 _data;
+        internal TW_UINT16 _conditionCode;
+        internal TW_UINT16 _data;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]

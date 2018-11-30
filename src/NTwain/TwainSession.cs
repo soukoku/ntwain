@@ -78,6 +78,17 @@ namespace NTwain
         #region ITwainSession Members
 
 
+        DGCustom _dgCustom;
+        DGCustom ITripletControl.DGCustom { get { return DGCustom; } }
+        public DGCustom DGCustom
+        {
+            get
+            {
+                if (_dgCustom == null) { _dgCustom = new DGCustom(this); }
+                return _dgCustom;
+            }
+        }
+
         /// <summary>
         /// Gets or sets a value indicating whether calls to triplets will verify the current twain session state.
         /// </summary>
@@ -362,13 +373,14 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Gets the manager status. Only call this at state 3 or higher.
+        /// Gets the manager status string. Only call this at state 3 or higher.
         /// </summary>
+        /// <param name="status">Status from previous calls.</param>
         /// <returns></returns>
-        public TWStatusUtf8 GetStatusUtf8()
+        public TWStatusUtf8 GetStatusUtf8(TWStatus status)
         {
             TWStatusUtf8 stat;
-            ((ITwainSessionInternal)this).DGControl.StatusUtf8.GetManager(out stat);
+            ((ITwainSessionInternal)this).DGControl.StatusUtf8.GetManager(status, out stat);
             return stat;
         }
 

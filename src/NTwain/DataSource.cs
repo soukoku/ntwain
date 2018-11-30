@@ -88,13 +88,14 @@ namespace NTwain
             return stat;
         }
         /// <summary>
-        /// Gets the source status. Only call this at state 4 or higher.
+        /// Gets the source status string. Only call this at state 4 or higher.
         /// </summary>
+        /// <param name="status">Status from previous calls.</param>
         /// <returns></returns>
-        public TWStatusUtf8 GetStatusUtf8()
+        public TWStatusUtf8 GetStatusUtf8(TWStatus status)
         {
             TWStatusUtf8 stat;
-            _session.DGControl.StatusUtf8.GetSource(out stat);
+            _session.DGControl.StatusUtf8.GetSource(status, out stat);
             return stat;
         }
 
@@ -178,30 +179,27 @@ namespace NTwain
             get
             {
                 byte[] value = null;
-                if (Capabilities.CapCustomDSData.GetCurrent() == BoolType.True)
+
+                TWCustomDSData data;
+                if (DGControl.CustomDSData.Get(out data) == ReturnCode.Success && data.InfoLength > 0)
                 {
-                    TWCustomDSData data;
-                    if (DGControl.CustomDSData.Get(out data) == ReturnCode.Success && data.InfoLength > 0)
+                    try
                     {
-                        try
-                        {
-                            value = new byte[data.InfoLength];
-                            var ptr = PlatformInfo.Current.MemoryManager.Lock(data.hData);
-                            Marshal.Copy(ptr, value, 0, (int)data.InfoLength);
-                        }
-                        finally
-                        {
-                            PlatformInfo.Current.MemoryManager.Unlock(data.hData);
-                            PlatformInfo.Current.MemoryManager.Free(data.hData);
-                        }
+                        value = new byte[data.InfoLength];
+                        var ptr = PlatformInfo.Current.MemoryManager.Lock(data.hData);
+                        Marshal.Copy(ptr, value, 0, (int)data.InfoLength);
+                    }
+                    finally
+                    {
+                        PlatformInfo.Current.MemoryManager.Unlock(data.hData);
+                        PlatformInfo.Current.MemoryManager.Free(data.hData);
                     }
                 }
                 return value;
             }
             set
             {
-                if (value != null && value.Length > 0 &&
-                    Capabilities.CapCustomDSData.GetCurrent() == BoolType.True)
+                if (value != null && value.Length > 0)
                 {
                     TWCustomDSData data = new TWCustomDSData
                     {

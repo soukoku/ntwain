@@ -138,17 +138,6 @@ namespace NTwain
             }
         }
 
-        DGCustom _dgCustom;
-        DGCustom ITripletControl.DGCustom { get { return DGCustom; } }
-        protected DGCustom DGCustom
-        {
-            get
-            {
-                if (_dgCustom == null) { _dgCustom = new DGCustom(this); }
-                return _dgCustom;
-            }
-        }
-
 
         /// <summary>
         /// Enables the source to start transferring.

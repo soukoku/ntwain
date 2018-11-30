@@ -1,5 +1,7 @@
 # TWAIN Application-Side Library
 
+Note: This was migrated from [https://bitbucket.org/soukoku/ntwain/](https://bitbucket.org/soukoku/ntwain/) for v4 dev.
+
 ## Info
 This is a library created to make working with [TWAIN](http://twain.org/) interface possible in dotnet. 
 This project has these features/goals:

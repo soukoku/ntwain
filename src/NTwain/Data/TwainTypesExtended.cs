@@ -2301,6 +2301,11 @@ namespace NTwain.Data
         public TWStatus Status
         {
             get { return new TWStatus(_conditionCode, _data); }
+            internal set
+            {
+                _conditionCode = value._conditionCode;
+                _data = value._data;
+            }
         }
 
         /// <summary>
