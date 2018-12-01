@@ -40,7 +40,9 @@ namespace NTwain.Triplets
         /// Whether platform is Linux.
         /// </summary>
         protected readonly bool IsLinux;
+        /// <summary>
         /// Whether platform is MacOS.
+        /// </summary>
         protected readonly bool IsMac;
     }
 }

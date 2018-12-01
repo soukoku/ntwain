@@ -25,6 +25,15 @@ namespace NTwain.Triplets
             DataGroups dg,
             DataArgumentType dat,
             Message msg,
+            IntPtr data);
+
+        [DllImport(LinuxDll, EntryPoint = EntryName)]
+        public static extern ReturnCode DsmLinux32(
+            [In, Out]TW_IDENTITY origin,
+            [In, Out]TW_IDENTITY destination,
+            DataGroups dg,
+            DataArgumentType dat,
+            Message msg,
             ref DataGroups data);
 
         [DllImport(LinuxDll, EntryPoint = EntryName)]

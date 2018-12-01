@@ -25,6 +25,15 @@ namespace NTwain.Triplets
             DataGroups dg,
             DataArgumentType dat,
             Message msg,
+            IntPtr data);
+
+        [DllImport(Mac64Dll, EntryPoint = EntryName)]
+        public static extern ReturnCode DsmMac64(
+            [In, Out]TW_IDENTITY origin,
+            [In, Out]TW_IDENTITY destination,
+            DataGroups dg,
+            DataArgumentType dat,
+            Message msg,
             ref DataGroups data);
 
         [DllImport(Mac64Dll, EntryPoint = EntryName)]
