@@ -2,7 +2,7 @@
   <PropertyGroup>
     <PackageId>NTwain</PackageId>
     <Description>Library containing the TWAIN API for dotnet.</Description>
-    <TargetFrameworks>net35;net40</TargetFrameworks>
+    <TargetFrameworks>net5.0-windows;net40;net35</TargetFrameworks>
     <PackageProjectUrl>https://github.com/soukoku/ntwain</PackageProjectUrl>
     <PackageTags>twain scan</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -29,15 +29,16 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-  </ItemGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net5.0-windows'">
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net35'">
