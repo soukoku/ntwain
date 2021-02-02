@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTwain", "src\NTwain\NTwain.csproj", "{0C5A6FB1-0282-4D61-8354-68DEB1515001}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain", "src\NTwain\NTwain.csproj", "{0C5A6FB1-0282-4D61-8354-68DEB1515001}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTwain.Tests", "Tests\NTwain.Tests\NTwain.Tests.csproj", "{6B034C50-A397-435F-8DDF-677B403FEBAA}"
 EndProject
@@ -21,8 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{4CE0B9
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Console", "samples\Sample.Console\Sample.Console.csproj", "{12D761EF-68DF-41CE-92EF-0C7AE81857A3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTwain.Net35", "src\NTwain.Net35\NTwain.Net35.csproj", "{2E965494-94B0-4EC7-960C-24E5D7D04278}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B77C17FE-FD84-4FF4-9A1C-D49DB1749C9C}"
 EndProject
@@ -85,16 +83,6 @@ Global
 		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{12D761EF-68DF-41CE-92EF-0C7AE81857A3}.Release|x86.ActiveCfg = Release|Any CPU
-		{2E965494-94B0-4EC7-960C-24E5D7D04278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E965494-94B0-4EC7-960C-24E5D7D04278}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E965494-94B0-4EC7-960C-24E5D7D04278}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{2E965494-94B0-4EC7-960C-24E5D7D04278}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{2E965494-94B0-4EC7-960C-24E5D7D04278}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2E965494-94B0-4EC7-960C-24E5D7D04278}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E965494-94B0-4EC7-960C-24E5D7D04278}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E965494-94B0-4EC7-960C-24E5D7D04278}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{2E965494-94B0-4EC7-960C-24E5D7D04278}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{2E965494-94B0-4EC7-960C-24E5D7D04278}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +92,9 @@ Global
 		{4FC243F1-318E-4FA9-9EBD-2CA3A8F35425} = {2F906640-1664-4960-93D2-A054AC6E66A3}
 		{1715C2B7-5C35-4F8B-9D9B-8D68A3D5284D} = {2F906640-1664-4960-93D2-A054AC6E66A3}
 		{12D761EF-68DF-41CE-92EF-0C7AE81857A3} = {2F906640-1664-4960-93D2-A054AC6E66A3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A823206C-F8D5-491B-8B01-B9A5884FAEA1}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = NTwain.vsmdi

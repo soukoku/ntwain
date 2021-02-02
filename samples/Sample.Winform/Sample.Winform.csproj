@@ -12,7 +12,8 @@
     <AssemblyName>Sample.Winform</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -77,13 +78,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NTwain.Net35\NTwain.Net35.csproj">
-      <Project>{2e965494-94b0-4ec7-960c-24e5d7d04278}</Project>
-      <Name>NTwain.Net35</Name>
-    </ProjectReference>
+    <None Include="scanner.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="scanner.ico" />
+    <ProjectReference Include="..\..\src\NTwain\NTwain.csproj">
+      <Project>{0c5a6fb1-0282-4d61-8354-68deb1515001}</Project>
+      <Name>NTwain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

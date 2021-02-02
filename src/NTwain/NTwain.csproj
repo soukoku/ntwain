@@ -1,52 +1,37 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0C5A6FB1-0282-4D61-8354-68DEB1515001}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NTwain</RootNamespace>
-    <AssemblyName>NTwain</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET4</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <DocumentationFile>
-    </DocumentationFile>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NET4</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\NTwain.xml</DocumentationFile>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
+    <PackageId>NTwain</PackageId>
+    <Description>Library containing the TWAIN API for dotnet.</Description>
+    <TargetFrameworks>net35;net40</TargetFrameworks>
+    <PackageProjectUrl>https://github.com/soukoku/ntwain</PackageProjectUrl>
+    <PackageTags>twain scan</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>https://github.com/soukoku/ntwain/blob/master/Scanner-Icon.png?raw=true</PackageIconUrl>
+    <RepositoryUrl>https://github.com/soukoku/ntwain</RepositoryUrl>
+    <RepositoryType>GIT</RepositoryType>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <!--<Copyright>Eugene Wang 2012</Copyright>-->
+    <Authors>Eugene Wang</Authors>
     <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
     <AssemblyOriginatorKeyFile>Sign.snk</AssemblyOriginatorKeyFile>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <FileVersion>3.0.0.0</FileVersion>
+    <Version>3.7.0</Version>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -55,130 +40,25 @@
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net35'">
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
   <ItemGroup>
-    <Compile Include="CapWrapper.cs" />
-    <Compile Include="CapabilityReader.cs" />
-    <Compile Include="Data\TypeExtensions.cs" />
-    <Compile Include="Data\TwainTypesExtended.cs" />
-    <Compile Include="DeviceEventArgs.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="ICapabilities.cs" />
-    <Compile Include="IDataSource.cs" />
-    <Compile Include="ILog.cs" />
-    <Compile Include="Internals\TraceLog.cs" />
-    <Compile Include="Internals\Extensions.cs" />
-    <Compile Include="DataTransferredEventArgs.cs" />
-    <Compile Include="IMemoryManager.cs" />
-    <Compile Include="Internals\ICommittable.cs" />
-    <Compile Include="Internals\ImageTools.cs" />
-    <Compile Include="Internals\InternalMessageLoopHook.cs" />
-    <Compile Include="Internals\ITwainSessionInternal.cs" />
-    <Compile Include="Internals\LinuxMemoryManager.cs" />
-    <Compile Include="Interop\BITMAP.cs" />
-    <Compile Include="Interop\MESSAGE.cs" />
-    <Compile Include="Internals\TransferLogic.cs" />
-    <Compile Include="Internals\WindowsHook.cs" />
-    <Compile Include="Internals\WrappedManualResetEvent.cs" />
-    <Compile Include="Interop\NativeMethods.cs" />
-    <Compile Include="Interop\TIFF.cs" />
-    <Compile Include="IPlatformInfo.cs" />
-    <Compile Include="ITripletControl.cs" />
-    <Compile Include="ITwainSession.cs" />
-    <Compile Include="Internals\WinMemoryManager.cs" />
-    <Compile Include="Interop\UnsafeNativeMethods.cs" />
-    <Compile Include="Internals\IWinMessageFilter.cs" />
-    <Compile Include="ICapWrapper.cs" />
-    <Compile Include="MessageLoopHooks.cs" />
-    <Compile Include="PlatformInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\VersionInfo.cs" />
-    <Compile Include="Internals\TentativeStateCommitable.cs" />
-    <Compile Include="ProtocolVersions.cs" />
-    <Compile Include="State.cs" />
-    <Compile Include="TransferErrorEventArgs.cs" />
-    <Compile Include="TransferReadyEventArgs.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.Callback2.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.CapabilityCustom.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.Filter.cs" />
-    <Compile Include="Triplets\DGCustom.cs" />
-    <Compile Include="Triplets\TripletBase.cs" />
-    <Compile Include="Triplets\Dsm.Linux.cs" />
-    <Compile Include="Triplets\Dsm.WinOld.cs" />
-    <Compile Include="Triplets\Dsm.WinNew.cs" />
-    <Compile Include="TwainSessionInternal.cs" />
-    <Compile Include="Capabilities.cs" />
-    <Compile Include="TwainSession.cs" />
-    <Compile Include="DataSource.cs" />
-    <Compile Include="TwainStateException.cs" />
-    <Compile Include="Data\TwainTypes.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Triplets\DGAudio\DGAudio.AudioFileXfer.cs" />
-    <Compile Include="Triplets\DGAudio\DGAudio.AudioInfo.cs" />
-    <Compile Include="Triplets\DGAudio\DGAudio.AudioNativeXfer.cs" />
-    <Compile Include="Triplets\DGAudio\DGAudio.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.Callback.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.Capability.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.CustomDSData.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.DeviceEvent.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.EntryPoint.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.Event.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.FileSystem.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.Identity.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.Parent.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.PassThru.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.PendingXfers.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.SetupFileXfer.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.SetupMemXfer.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.Status.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.StatusUtf8.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.UserInterface.cs" />
-    <Compile Include="Triplets\DGControl\DGControl.XferGroup.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.CieColor.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.ExtImageInfo.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.GrayResponse.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.IccProfile.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.ImageFileXfer.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.ImageInfo.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.ImageLayout.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.ImageMemFileXfer.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.ImageMemXfer.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.ImageNativeXfer.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.JpegCompression.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.Palette8.cs" />
-    <Compile Include="Triplets\DGImage\DGImage.RgbResponse.cs" />
-    <Compile Include="Triplets\Dsm.cs" />
-    <Compile Include="TwainException.cs" />
-    <Compile Include="Data\TwainValues.cs" />
-    <Compile Include="SourceEnableMode.cs" />
-    <Compile Include="Data\ValueExtensions.cs" />
-    <Compile Include="WpfImageTools.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NTwain.nuspec" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Sign.snk" />
-    <None Include="Triplets\WhatsThis.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
