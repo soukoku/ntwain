@@ -55,6 +55,11 @@ namespace NTwain
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Gets the low-level twain object.
+        /// </summary>
+        public TWAIN TWAIN { get { return _twain; } }
+
         #region event callbacks
 
         private void HandleUIThreadAction(Action action)
@@ -85,7 +90,7 @@ namespace NTwain
             while (true)
             {
                 // Try to get an event...
-                twdeviceevent = default(TW_DEVICEEVENT);
+                twdeviceevent = default;
                 sts = _twain.DatDeviceevent(DG.CONTROL, MSG.GET, ref twdeviceevent);
                 if (sts != STS.SUCCESS)
                 {
@@ -125,6 +130,17 @@ namespace NTwain
         }
 
         /// <summary>
+        /// Gets the manager status. Useful after getting a non-success return code.
+        /// </summary>
+        /// <returns></returns>
+        public TW_STATUS GetStatus()
+        {
+            TW_STATUS stat = default;
+            var sts = _twain.DatStatus(DG.CONTROL, MSG.GET, ref stat);
+            return stat;
+        }
+
+        /// <summary>
         /// Opens the TWAIN data source manager.
         /// This needs to be done before anything else.
         /// </summary>
@@ -152,7 +168,7 @@ namespace NTwain
             var list = new List<TW_IDENTITY>();
             if (State > STATE.S2)
             {
-                var twidentity = default(TW_IDENTITY);
+                TW_IDENTITY twidentity = default;
                 STS sts;
 
                 for (sts = _twain.DatIdentity(DG.CONTROL, MSG.GETFIRST, ref twidentity);
@@ -172,7 +188,7 @@ namespace NTwain
         {
             get
             {
-                var twidentity = default(TW_IDENTITY);
+                TW_IDENTITY twidentity = default;
                 var sts = _twain.DatIdentity(DG.CONTROL, MSG.GETDEFAULT, ref twidentity);
                 if (sts == STS.SUCCESS) return twidentity;
                 return null;
@@ -189,7 +205,8 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Gets the currently open device.
+        /// Gets or sets the currently open device.
+        /// Setting it will try to open it.
         /// </summary>
         public TW_IDENTITY? CurrentDevice
         {
@@ -197,13 +214,22 @@ namespace NTwain
             {
                 if (State > STATE.S3)
                 {
-                    var twidentity = default(TW_IDENTITY);
+                    TW_IDENTITY twidentity = default;
                     if (TWAIN.CsvToIdentity(ref twidentity, _twain.GetDsIdentity()))
                     {
                         return twidentity;
                     }
                 }
                 return null;
+            }
+            set
+            {
+                StepDown(STATE.S3);
+                if (value.HasValue)
+                {
+                    var twidentity = value.Value;
+                    _twain.DatIdentity(DG.CONTROL, MSG.OPENDS, ref twidentity);
+                }
             }
         }
 
@@ -213,7 +239,7 @@ namespace NTwain
         /// <param name="state"></param>
         public void StepDown(STATE state)
         {
-            var twpendingxfers = default(TW_PENDINGXFERS);
+            TW_PENDINGXFERS twpendingxfers = default;
 
             // Make sure we have something to work with...
             if (_twain == null)
@@ -239,14 +265,14 @@ namespace NTwain
             // 5 --> 4
             if ((_twain.GetState() == STATE.S5) && (state < STATE.S5))
             {
-                var twuserinterface = default(TW_USERINTERFACE);
+                TW_USERINTERFACE twuserinterface = default;
                 _twain.DatUserinterface(DG.CONTROL, MSG.DISABLEDS, ref twuserinterface);
             }
 
             // 4 --> 3
             if ((_twain.GetState() == STATE.S4) && (state < STATE.S4))
             {
-                var twidentity = default(TW_IDENTITY);
+                TW_IDENTITY twidentity = default;
                 TWAIN.CsvToIdentity(ref twidentity, _twain.GetDsIdentity());
                 _twain.DatIdentity(DG.CONTROL, MSG.CLOSEDS, ref twidentity);
             }
