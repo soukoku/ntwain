@@ -115,7 +115,7 @@ namespace TWAINWorkingGroup
     /// Used for strings that go up to 32-bytes...
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct TW_STR32
+    public partial struct TW_STR32
     {
         /// <summary>
         /// We're stuck with this, because marshalling with packed alignment
@@ -280,7 +280,7 @@ namespace TWAINWorkingGroup
     /// Used for strings that go up to 64-bytes...
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct TW_STR64
+    public partial struct TW_STR64
     {
         /// <summary>
         /// We're stuck with this, because marshalling with packed alignment
@@ -462,7 +462,7 @@ namespace TWAINWorkingGroup
     /// Used for strings that go up to 128-bytes...
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct TW_STR128
+    public partial struct TW_STR128
     {
         /// <summary>
         /// We're stuck with this, because marshalling with packed alignment
@@ -694,7 +694,7 @@ namespace TWAINWorkingGroup
     /// Used for strings that go up to 256-bytes...
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct TW_STR255
+    public partial struct TW_STR255
     {
         /// <summary>
         /// We're stuck with this, because marshalling with packed alignment
@@ -1030,7 +1030,7 @@ namespace TWAINWorkingGroup
     /// Fixed point structure type.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_FIX32
+    public partial struct TW_FIX32
     {
         public short Whole;
         public ushort Frac;
@@ -1040,7 +1040,7 @@ namespace TWAINWorkingGroup
     /// Defines a frame rectangle in ICAP_UNITS coordinates.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_FRAME
+    public partial struct TW_FRAME
     {
         public TW_FIX32 Left;
         public TW_FIX32 Top;
@@ -2112,7 +2112,7 @@ namespace TWAINWorkingGroup
     /// A general way to describe the version of software that is running.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2, CharSet = CharSet.Ansi)]
-    public struct TW_VERSION
+    public partial struct TW_VERSION
     {
         public ushort MajorNum;
         public ushort MinorNum;
@@ -2131,7 +2131,7 @@ namespace TWAINWorkingGroup
     /// situations...
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2, CharSet = CharSet.Ansi)]
-    public struct TW_IDENTITY
+    public partial struct TW_IDENTITY
     {
         public ulong Id;
         public TW_VERSION Version;
@@ -2143,7 +2143,7 @@ namespace TWAINWorkingGroup
         public TW_STR32 ProductName;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2, CharSet = CharSet.Ansi)]
-    public struct TW_IDENTITY_LEGACY
+    public partial struct TW_IDENTITY_LEGACY
     {
         public uint Id;
         public TW_VERSION Version;
@@ -2156,7 +2156,7 @@ namespace TWAINWorkingGroup
         private UInt64 Padding; // accounts for Id and SupportedGroups
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2, CharSet = CharSet.Ansi)]
-    public struct TW_IDENTITY_LINUX64
+    public partial struct TW_IDENTITY_LINUX64
     {
         public ulong Id;
         public TW_VERSION Version;
@@ -2168,7 +2168,7 @@ namespace TWAINWorkingGroup
         public TW_STR32 ProductName;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2, CharSet = CharSet.Ansi)]
-    public struct TW_IDENTITY_MACOSX
+    public partial struct TW_IDENTITY_MACOSX
     {
         public uint Id;
         public TW_VERSION Version;
