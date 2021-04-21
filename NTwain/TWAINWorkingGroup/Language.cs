@@ -40,6 +40,7 @@
 //  DEALINGS IN THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////////
 
+using System;
 using System.Text;
 
 namespace TWAINWorkingGroup
@@ -241,6 +242,14 @@ namespace TWAINWorkingGroup
             }
         }
 
-        private static Encoding m_encoding = Encoding.GetEncoding(1252);
+        private static Encoding m_encoding = MakeDefault();
+
+        private static Encoding MakeDefault()
+        {
+#if !NETFRAMEWORK
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
+            return Encoding.GetEncoding(1252);
+        }
     }
 }
