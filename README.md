@@ -13,7 +13,7 @@ V4 of this lib has these goals:
 * Targets latest TWAIN version (2.4 as of this writing).
 * Supports all the TWAIN functions in the spec (directly or through dotnet wrapper).
 * Works with both 32 or 64 bit data sources as appropriate for the 32 or 64 bit apps.
-* Supports full framework (4.5+) and netcore (2+) apps.
+* Supports full framework (4.5+) and netcore (3.1+) apps.
 
 ## Using the lib
 
