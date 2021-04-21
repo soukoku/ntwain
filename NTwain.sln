@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2048
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{4CE0B9ED-2CD1-440F-B4EC-35ECA6D61EFE}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,15 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{4CE0B9
 		twain-doc\twain2.4.h = twain-doc\twain2.4.h
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain", "src\NTwain\NTwain.csproj", "{99A8D582-2CC1-479C-859D-C5A528A7B5C3}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{FC732BDB-39BD-4064-B6D8-B79E25CFDA4A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreConsole", "samples\NetCoreConsole\NetCoreConsole.csproj", "{51EFA206-A46B-48B6-8110-67B07D85C5A2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetFXConsole", "samples\NetFXConsole\NetFXConsole.csproj", "{30C684E3-7C3E-4579-9E81-6E66236C253D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTwain.UnitTests", "tests\NTwain.UnitTests\NTwain.UnitTests.csproj", "{EEAA7EA9-AEBE-42AB-BA68-4556DD33B432}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTwain", "NTwain\NTwain.csproj", "{B391C1B7-5647-4B7A-9079-81E835E633DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,29 +20,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{99A8D582-2CC1-479C-859D-C5A528A7B5C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99A8D582-2CC1-479C-859D-C5A528A7B5C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99A8D582-2CC1-479C-859D-C5A528A7B5C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99A8D582-2CC1-479C-859D-C5A528A7B5C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{51EFA206-A46B-48B6-8110-67B07D85C5A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51EFA206-A46B-48B6-8110-67B07D85C5A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51EFA206-A46B-48B6-8110-67B07D85C5A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51EFA206-A46B-48B6-8110-67B07D85C5A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{30C684E3-7C3E-4579-9E81-6E66236C253D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30C684E3-7C3E-4579-9E81-6E66236C253D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30C684E3-7C3E-4579-9E81-6E66236C253D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30C684E3-7C3E-4579-9E81-6E66236C253D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EEAA7EA9-AEBE-42AB-BA68-4556DD33B432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EEAA7EA9-AEBE-42AB-BA68-4556DD33B432}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EEAA7EA9-AEBE-42AB-BA68-4556DD33B432}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EEAA7EA9-AEBE-42AB-BA68-4556DD33B432}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B391C1B7-5647-4B7A-9079-81E835E633DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B391C1B7-5647-4B7A-9079-81E835E633DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B391C1B7-5647-4B7A-9079-81E835E633DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B391C1B7-5647-4B7A-9079-81E835E633DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{51EFA206-A46B-48B6-8110-67B07D85C5A2} = {FC732BDB-39BD-4064-B6D8-B79E25CFDA4A}
-		{30C684E3-7C3E-4579-9E81-6E66236C253D} = {FC732BDB-39BD-4064-B6D8-B79E25CFDA4A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7459323B-44F6-4E07-8574-E1B4B525086B}
