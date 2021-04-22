@@ -152,7 +152,7 @@ namespace TWAINWorkingGroup
             }
 
             // TWRC...
-            if ((int)a_sts < OtherConsts.STSCC)
+            if ((int)a_sts < Consts.STSCC)
             {
                 Log.Info("twn> " + a_sts);
             }

@@ -1052,7 +1052,7 @@ namespace TWAINWorkingGroup
     /// Defines the parameters used for channel-specific transformation.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_DECODEFUNCTION
+    public partial struct TW_DECODEFUNCTION
     {
         public TW_FIX32 StartIn;
         public TW_FIX32 BreakIn;
@@ -1068,7 +1068,7 @@ namespace TWAINWorkingGroup
     /// Stores a Fixed point number in two parts, a whole and a fractional part.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_TRANSFORMSTAGE
+    public partial struct TW_TRANSFORMSTAGE
     {
         public TW_DECODEFUNCTION Decode_0;
         public TW_DECODEFUNCTION Decode_1;
@@ -1090,14 +1090,14 @@ namespace TWAINWorkingGroup
     /// marshalling call...
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_ARRAY
+    public partial struct TW_ARRAY
     {
         public TWTY ItemType;
         public uint NumItems;
         //public byte[] ItemList;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_ARRAY_MACOSX
+    public partial struct TW_ARRAY_MACOSX
     {
         public uint ItemType;
         public uint NumItems;
@@ -1108,7 +1108,7 @@ namespace TWAINWorkingGroup
     /// Information about audio data.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_AUDIOINFO
+    public partial struct TW_AUDIOINFO
     {
         public TW_STR255 Name;
         public uint Reserved;
@@ -1119,7 +1119,7 @@ namespace TWAINWorkingGroup
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable")]
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_CALLBACK
+    public partial struct TW_CALLBACK
     {
         [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
         public IntPtr CallBackProc;
@@ -1131,7 +1131,7 @@ namespace TWAINWorkingGroup
     /// Used to register callbacks.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_CALLBACK2
+    public partial struct TW_CALLBACK2
     {
         [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
         public IntPtr CallBackProc;
@@ -1144,7 +1144,7 @@ namespace TWAINWorkingGroup
     /// Used by application to get/set capability from/in a data source.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2, CharSet = CharSet.Ansi)]
-    public struct TW_CAPABILITY
+    public partial struct TW_CAPABILITY
     {
         public CAP Cap;
         public TWON ConType;
@@ -1156,7 +1156,7 @@ namespace TWAINWorkingGroup
     /// Defines a CIE XYZ space tri-stimulus value.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_CIEPOINT
+    public partial struct TW_CIEPOINT
     {
         public TW_FIX32 X;
         public TW_FIX32 Y;
@@ -1167,7 +1167,7 @@ namespace TWAINWorkingGroup
     /// Defines the mapping from an RGB color space device into CIE 1931 (XYZ) color space.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_CIECOLOR
+    public partial struct TW_CIECOLOR
     {
         public ushort ColorSpace;
         public short LowEndian;
@@ -1186,7 +1186,7 @@ namespace TWAINWorkingGroup
     /// Allows for a data source and application to pass custom data to each other.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_CUSTOMDSDATA
+    public partial struct TW_CUSTOMDSDATA
     {
         public uint InfoLength;
         [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
@@ -1197,16 +1197,16 @@ namespace TWAINWorkingGroup
     /// Provides information about the Event that was raised by the Source.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_DEVICEEVENT
+    public partial struct TW_DEVICEEVENT
     {
-        public uint Event;
+        uint _event;
         public TW_STR255 DeviceName;
         public uint BatteryMinutes;
         public short BatteryPercentage;
         public int PowerSupply;
         public TW_FIX32 XResolution;
         public TW_FIX32 YResolution;
-        public uint FlashUsed2;
+        uint _flashUsed2;
         public uint AutomaticCapture;
         public uint TimeBeforeFirstCapture;
         public uint TimeBetweenCaptures;
@@ -1216,7 +1216,7 @@ namespace TWAINWorkingGroup
     /// This structure holds the tri-stimulus color palette information for TW_PALETTE8 structures.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_ELEMENT8
+    public partial struct TW_ELEMENT8
     {
         public byte Index;
         public byte Channel1;
@@ -1228,7 +1228,7 @@ namespace TWAINWorkingGroup
     /// DAT_ENTRYPOINT. returns essential entry points.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_ENTRYPOINT
+    public partial struct TW_ENTRYPOINT
     {
         public UInt32 Size;
         [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
@@ -1243,7 +1243,7 @@ namespace TWAINWorkingGroup
         public IntPtr DSM_MemUnlock;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_ENTRYPOINT_LINUX64
+    public partial struct TW_ENTRYPOINT_LINUX64
     {
         public long Size;
         [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
@@ -1257,7 +1257,7 @@ namespace TWAINWorkingGroup
         [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
         public IntPtr DSM_MemUnlock;
     }
-    public struct TW_ENTRYPOINT_DELEGATES
+    public partial struct TW_ENTRYPOINT_DELEGATES
     {
         public UInt32 Size;
         [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
@@ -1278,7 +1278,7 @@ namespace TWAINWorkingGroup
     /// a marshalling call...
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_ENUMERATION
+    public partial struct TW_ENUMERATION
     {
         public TWTY ItemType;
         public uint NumItems;
@@ -1287,7 +1287,7 @@ namespace TWAINWorkingGroup
         //public byte[] ItemList;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_ENUMERATION_LINUX64
+    public partial struct TW_ENUMERATION_LINUX64
     {
         public TWTY ItemType;
         public ulong NumItems;
@@ -1296,7 +1296,7 @@ namespace TWAINWorkingGroup
         //public byte[] ItemList;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct TW_ENUMERATION_MACOSX
+    public partial struct TW_ENUMERATION_MACOSX
     {
         public uint ItemType;
         public uint NumItems;
@@ -1310,7 +1310,7 @@ namespace TWAINWorkingGroup
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable")]
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_EVENT
+    public partial struct TW_EVENT
     {
         [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
         public IntPtr pEvent;
@@ -1321,7 +1321,7 @@ namespace TWAINWorkingGroup
     /// DAT_FILTER...
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_FILTER_DESCRIPTOR
+    public partial struct TW_FILTER_DESCRIPTOR
     {
         public UInt32 Size;
         public UInt32 HueStart;
@@ -1337,7 +1337,7 @@ namespace TWAINWorkingGroup
     /// DAT_FILTER...
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_FILTER
+    public partial struct TW_FILTER
     {
         public UInt32 Size;
         public UInt32 DescriptorCount;
@@ -1351,7 +1351,7 @@ namespace TWAINWorkingGroup
     /// This structure is used to pass specific information between the data source and the application.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_INFO
+    public partial struct TW_INFO
     {
         public ushort InfoId;
         public ushort ItemType;
@@ -1365,7 +1365,7 @@ namespace TWAINWorkingGroup
     /// This structure is used to pass specific information between the data source and the application.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_EXTIMAGEINFO
+    public partial struct TW_EXTIMAGEINFO
     {
         public uint NumInfos;
         public TW_INFO Info_000;
@@ -1993,7 +1993,7 @@ namespace TWAINWorkingGroup
     [SuppressMessage("Microsoft.Portability", "CA1900:ValueTypeFieldsShouldBePortable", MessageId = "ModifiedTimeDate")]
     [SuppressMessage("Microsoft.Portability", "CA1900:ValueTypeFieldsShouldBePortable", MessageId = "CreateTimeDate")]
     [StructLayout(LayoutKind.Explicit, Pack = 2)]
-    public struct TW_FILESYSTEM
+    public partial struct TW_FILESYSTEM
     {
         [FieldOffset(0)]
         public TW_STR255 InputName;
@@ -2047,7 +2047,7 @@ namespace TWAINWorkingGroup
     }
     [SuppressMessage("Microsoft.Portability", "CA1900:ValueTypeFieldsShouldBePortable", MessageId = "ModifiedTimeDate")]
     [StructLayout(LayoutKind.Explicit, Pack = 2)]
-    public struct TW_FILESYSTEM_LEGACY
+    public partial struct TW_FILESYSTEM_LEGACY
     {
         [FieldOffset(0)]
         public TW_STR255 InputName;
@@ -2103,7 +2103,7 @@ namespace TWAINWorkingGroup
     /// This structure is used by the application to specify a set of mapping values to be applied to grayscale data.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_GRAYRESPONSE
+    public partial struct TW_GRAYRESPONSE
     {
         public TW_ELEMENT8 Response_00;
     }
@@ -2185,7 +2185,7 @@ namespace TWAINWorkingGroup
     /// Describes the “real” image data, that is, the complete image being transferred between the Source and application.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_IMAGEINFO
+    public partial struct TW_IMAGEINFO
     {
         public TW_FIX32 XResolution;
         public TW_FIX32 YResolution;
@@ -2202,11 +2202,11 @@ namespace TWAINWorkingGroup
         public short BitsPerSample_7;
         public short BitsPerPixel;
         public ushort Planar;
-        public short PixelType;
-        public ushort Compression;
+        public TWPT PixelType;
+        public TWCP Compression;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_IMAGEINFO_LINUX64
+    public partial struct TW_IMAGEINFO_LINUX64
     {
         public TW_FIX32 XResolution;
         public TW_FIX32 YResolution;
@@ -2223,15 +2223,15 @@ namespace TWAINWorkingGroup
         public short BitsPerSample_7;
         public short BitsPerPixel;
         public ushort Planar;
-        public short PixelType;
-        public ushort Compression;
+        public TWPT PixelType;
+        public TWCP Compression;
     }
 
     /// <summary>
     /// Involves information about the original size of the acquired image.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_IMAGELAYOUT
+    public partial struct TW_IMAGELAYOUT
     {
         public TW_FRAME Frame;
         public uint DocumentNumber;
@@ -2243,7 +2243,7 @@ namespace TWAINWorkingGroup
     /// Provides information for managing memory buffers.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_MEMORY
+    public partial struct TW_MEMORY
     {
         public uint Flags;
         public uint Length;
@@ -2255,7 +2255,7 @@ namespace TWAINWorkingGroup
     /// Describes the form of the acquired data being passed from the Source to the application.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_IMAGEMEMXFER
+    public partial struct TW_IMAGEMEMXFER
     {
         public ushort Compression;
         public uint BytesPerRow;
@@ -2267,7 +2267,7 @@ namespace TWAINWorkingGroup
         public TW_MEMORY Memory;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_IMAGEMEMXFER_LINUX64
+    public partial struct TW_IMAGEMEMXFER_LINUX64
     {
         public ushort Compression;
         public UInt64 BytesPerRow;
@@ -2282,7 +2282,7 @@ namespace TWAINWorkingGroup
         public IntPtr MemoryTheMem;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_IMAGEMEMXFER_MACOSX
+    public partial struct TW_IMAGEMEMXFER_MACOSX
     {
         public uint Compression;
         public uint BytesPerRow;
@@ -2298,7 +2298,7 @@ namespace TWAINWorkingGroup
     /// Describes the information necessary to transfer a JPEG-compressed image.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_JPEGCOMPRESSION
+    public partial struct TW_JPEGCOMPRESSION
     {
         public ushort ColorSpace;
         public uint SubSampling;
@@ -2325,7 +2325,7 @@ namespace TWAINWorkingGroup
     /// Collects scanning metrics after returning to state 4
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_METRICS
+    public partial struct TW_METRICS
     {
         public uint SizeOf;
         public uint ImageCount;
@@ -2336,13 +2336,13 @@ namespace TWAINWorkingGroup
     /// Stores a single value (item) which describes a capability.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_ONEVALUE
+    public partial struct TW_ONEVALUE
     {
         public TWTY ItemType;
         // public uint Item;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct TW_ONEVALUE_MACOSX
+    public partial struct TW_ONEVALUE_MACOSX
     {
         public uint ItemType;
         // public uint Item;
@@ -2352,7 +2352,7 @@ namespace TWAINWorkingGroup
     /// This structure holds the color palette information.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_PALETTE8
+    public partial struct TW_PALETTE8
     {
         public ushort Flags;
         public ushort Length;
@@ -2363,7 +2363,7 @@ namespace TWAINWorkingGroup
     /// Used to bypass the TWAIN protocol when communicating with a device.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_PASSTHRU
+    public partial struct TW_PASSTHRU
     {
         [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
         public IntPtr pCommand;
@@ -2379,7 +2379,7 @@ namespace TWAINWorkingGroup
     /// This structure tells the application how many more complete transfers the Source currently has available.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_PENDINGXFERS
+    public partial struct TW_PENDINGXFERS
     {
         public ushort Count;
         public uint EOJ;
@@ -2389,7 +2389,7 @@ namespace TWAINWorkingGroup
     /// Stores a range of individual values describing a capability.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_RANGE
+    public partial struct TW_RANGE
     {
         public TWTY ItemType;
         public uint MinValue;
@@ -2399,7 +2399,7 @@ namespace TWAINWorkingGroup
         public uint CurrentValue;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_RANGE_LINUX64
+    public partial struct TW_RANGE_LINUX64
     {
         public TWTY ItemType;
         public ulong MinValue;
@@ -2409,7 +2409,7 @@ namespace TWAINWorkingGroup
         public ulong CurrentValue;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct TW_RANGE_MACOSX
+    public partial struct TW_RANGE_MACOSX
     {
         public uint ItemType;
         public uint MinValue;
@@ -2443,7 +2443,7 @@ namespace TWAINWorkingGroup
     /// This structure is used by the application to specify a set of mapping values to be applied to RGB color data.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_RGBRESPONSE
+    public partial struct TW_RGBRESPONSE
     {
         public TW_ELEMENT8 Response_00;
     }
@@ -2452,7 +2452,7 @@ namespace TWAINWorkingGroup
     /// Describes the file format and file specification information for a transfer through a disk file.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_SETUPFILEXFER
+    public partial struct TW_SETUPFILEXFER
     {
         public TW_STR255 FileName;
         public TWFF Format;
@@ -2463,7 +2463,7 @@ namespace TWAINWorkingGroup
     /// Provides the application information about the Source’s requirements and preferences regarding allocation of transfer buffer(s).
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_SETUPMEMXFER
+    public partial struct TW_SETUPMEMXFER
     {
         public uint MinBufSize;
         public uint MaxBufSize;
@@ -2474,7 +2474,7 @@ namespace TWAINWorkingGroup
     /// Describes the status of a source.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_STATUS
+    public partial struct TW_STATUS
     {
         public ushort ConditionCode;
         public ushort Data;
@@ -2484,7 +2484,7 @@ namespace TWAINWorkingGroup
     /// Translates the contents of Status into a localized UTF8string.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct TW_STATUSUTF8
+    public partial struct TW_STATUSUTF8
     {
         public TW_STATUS Status;
         public uint Size;
@@ -2496,7 +2496,7 @@ namespace TWAINWorkingGroup
     /// Passthru for TWAIN Direct tasks.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2, CharSet = CharSet.Ansi)]
-    public struct TW_TWAINDIRECT
+    public partial struct TW_TWAINDIRECT
     {
         public uint SizeOf;
         public ushort CommunicationManager;
@@ -2512,7 +2512,7 @@ namespace TWAINWorkingGroup
     /// This structure is used to handle the user interface coordination between an application and a Source.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2, CharSet = CharSet.Ansi)]
-    public struct TW_USERINTERFACE
+    public partial struct TW_USERINTERFACE
     {
         public ushort ShowUI;
         public ushort ModalUI;
@@ -4240,33 +4240,33 @@ namespace TWAINWorkingGroup
         SCANNERLOCKED = 11,
 
         // Condition codes (always associated with TWRC_FAILURE)...
-        BUMMER = OtherConsts.STSCC + 1,
-        LOWMEMORY = OtherConsts.STSCC + 2,
-        NODS = OtherConsts.STSCC + 3,
-        MAXCONNECTIONS = OtherConsts.STSCC + 4,
-        OPERATIONERROR = OtherConsts.STSCC + 5,
-        BADCAP = OtherConsts.STSCC + 6,
-        BADPROTOCOL = OtherConsts.STSCC + 9,
-        BADVALUE = OtherConsts.STSCC + 10,
-        SEQERROR = OtherConsts.STSCC + 11,
-        BADDEST = OtherConsts.STSCC + 12,
-        CAPUNSUPPORTED = OtherConsts.STSCC + 13,
-        CAPBADOPERATION = OtherConsts.STSCC + 14,
-        CAPSEQERROR = OtherConsts.STSCC + 15,
-        DENIED = OtherConsts.STSCC + 16,
-        FILEEXISTS = OtherConsts.STSCC + 17,
-        FILENOTFOUND = OtherConsts.STSCC + 18,
-        NOTEMPTY = OtherConsts.STSCC + 19,
-        PAPERJAM = OtherConsts.STSCC + 20,
-        PAPERDOUBLEFEED = OtherConsts.STSCC + 21,
-        FILEWRITEERROR = OtherConsts.STSCC + 22,
-        CHECKDEVICEONLINE = OtherConsts.STSCC + 23,
-        INTERLOCK = OtherConsts.STSCC + 24,
-        DAMAGEDCORNER = OtherConsts.STSCC + 25,
-        FOCUSERROR = OtherConsts.STSCC + 26,
-        DOCTOOLIGHT = OtherConsts.STSCC + 27,
-        DOCTOODARK = OtherConsts.STSCC + 28,
-        NOMEDIA = OtherConsts.STSCC + 29
+        BUMMER = Consts.STSCC + 1,
+        LOWMEMORY = Consts.STSCC + 2,
+        NODS = Consts.STSCC + 3,
+        MAXCONNECTIONS = Consts.STSCC + 4,
+        OPERATIONERROR = Consts.STSCC + 5,
+        BADCAP = Consts.STSCC + 6,
+        BADPROTOCOL = Consts.STSCC + 9,
+        BADVALUE = Consts.STSCC + 10,
+        SEQERROR = Consts.STSCC + 11,
+        BADDEST = Consts.STSCC + 12,
+        CAPUNSUPPORTED = Consts.STSCC + 13,
+        CAPBADOPERATION = Consts.STSCC + 14,
+        CAPSEQERROR = Consts.STSCC + 15,
+        DENIED = Consts.STSCC + 16,
+        FILEEXISTS = Consts.STSCC + 17,
+        FILENOTFOUND = Consts.STSCC + 18,
+        NOTEMPTY = Consts.STSCC + 19,
+        PAPERJAM = Consts.STSCC + 20,
+        PAPERDOUBLEFEED = Consts.STSCC + 21,
+        FILEWRITEERROR = Consts.STSCC + 22,
+        CHECKDEVICEONLINE = Consts.STSCC + 23,
+        INTERLOCK = Consts.STSCC + 24,
+        DAMAGEDCORNER = Consts.STSCC + 25,
+        FOCUSERROR = Consts.STSCC + 26,
+        DOCTOOLIGHT = Consts.STSCC + 27,
+        DOCTOODARK = Consts.STSCC + 28,
+        NOMEDIA = Consts.STSCC + 29
     }
 
     /// <summary>

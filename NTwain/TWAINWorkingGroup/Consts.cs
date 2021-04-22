@@ -42,7 +42,7 @@
 
 namespace TWAINWorkingGroup
 {
-    public static class OtherConsts
+    public static class Consts
     {
         /// <summary>
         /// Don't care values...

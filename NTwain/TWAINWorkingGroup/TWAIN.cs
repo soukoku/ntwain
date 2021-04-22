@@ -2923,8 +2923,8 @@ namespace TWAINWorkingGroup
                 a_twimageinfo.BitsPerSample_6 = short.Parse(asz[11]);
                 a_twimageinfo.BitsPerSample_7 = short.Parse(asz[12]);
                 a_twimageinfo.Planar = ushort.Parse(CvtCapValueFromEnum(CAP.ICAP_PLANARCHUNKY, asz[13]));
-                a_twimageinfo.PixelType = short.Parse(CvtCapValueFromEnum(CAP.ICAP_PIXELTYPE, asz[14]));
-                a_twimageinfo.Compression = ushort.Parse(CvtCapValueFromEnum(CAP.ICAP_COMPRESSION, asz[15]));
+                a_twimageinfo.PixelType = (TWPT)ushort.Parse(CvtCapValueFromEnum(CAP.ICAP_PIXELTYPE, asz[14]));
+                a_twimageinfo.Compression = (TWCP)ushort.Parse(CvtCapValueFromEnum(CAP.ICAP_COMPRESSION, asz[15]));
             }
             catch (Exception exception)
             {
@@ -12976,7 +12976,7 @@ namespace TWAINWorkingGroup
             }
 
             // All done...
-            return ((STS)(OtherConsts.STSCC + twstatus.ConditionCode));
+            return ((STS)(Consts.STSCC + twstatus.ConditionCode));
         }
 
         /// <summary>
