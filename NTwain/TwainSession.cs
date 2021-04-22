@@ -153,6 +153,7 @@ namespace NTwain
 
         /// <summary>
         /// Closes the TWAIN data source manager.
+        /// This is called when <see cref="Dispose"/> is invoked.
         /// </summary>
         public void Close()
         {
@@ -282,6 +283,31 @@ namespace NTwain
             {
                 _twain.DatParent(DG.CONTROL, MSG.CLOSEDSM, ref _hWnd);
             }
+        }
+
+        /// <summary>
+        /// Attempts to show the current device's settings dialog if supported.
+        /// </summary>
+        /// <returns></returns>
+        public STS ShowSettings()
+        {
+            TW_USERINTERFACE ui = default;
+            ui.hParent = _hWnd;
+            ui.ShowUI = 1;
+            return _twain.DatUserinterface(DG.CONTROL, MSG.ENABLEDSUIONLY, ref ui);
+        }
+
+        /// <summary>
+        /// Begins the capture process on the current device.
+        /// </summary>
+        /// <param name="showUI">Whether to display settings UI. Not all devices support this.</param>
+        /// <returns></returns>
+        public STS StartCapture(bool showUI)
+        {
+            TW_USERINTERFACE ui = default;
+            ui.hParent = _hWnd;
+            ui.ShowUI = (ushort)(showUI ? 1 : 0);
+            return _twain.DatUserinterface(DG.CONTROL, MSG.ENABLEDS, ref ui);
         }
 
         #endregion
