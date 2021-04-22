@@ -216,7 +216,7 @@ namespace NTwain
                 if (State > STATE.S3)
                 {
                     TW_IDENTITY twidentity = default;
-                    if (TWAIN.CsvToIdentity(ref twidentity, _twain.GetDsIdentity()))
+                    if (CsvSerializer.CsvToIdentity(ref twidentity, _twain.GetDsIdentity()))
                     {
                         return twidentity;
                     }
@@ -274,7 +274,7 @@ namespace NTwain
             if ((_twain.GetState() == STATE.S4) && (state < STATE.S4))
             {
                 TW_IDENTITY twidentity = default;
-                TWAIN.CsvToIdentity(ref twidentity, _twain.GetDsIdentity());
+                CsvSerializer.CsvToIdentity(ref twidentity, _twain.GetDsIdentity());
                 _twain.DatIdentity(DG.CONTROL, MSG.CLOSEDS, ref twidentity);
             }
 
