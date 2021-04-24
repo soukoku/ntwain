@@ -8,6 +8,7 @@ namespace Net5Console
 {
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             Console.WriteLine("Starting twain test in console...");
