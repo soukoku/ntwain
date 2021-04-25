@@ -287,13 +287,12 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Queries current device for supported capabilities.
-        /// Not all devices supports this.
+        /// Get current device's capabilities.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<CAP> SupportedCaps()
+        public Dictionary<CAP, CapWrapper> Capabilities()
         {
-            List<CAP> caps = null;
+            Dictionary<CAP, CapWrapper> caps = null;
             if (State >= STATE.S4)
             {
                 TW_CAPABILITY cap = default;
@@ -309,37 +308,30 @@ namespace NTwain
                     {
                         if (Enum.TryParse(val, out CAP c))
                         {
-                            return c;
+                            return new CapWrapper(_twain, c);
                         }
                         else if (val.StartsWith("0x"))
                         {
-                            return (CAP)Convert.ToUInt16(val, 16);
+                            return new CapWrapper(_twain, (CAP)Convert.ToUInt16(val, 16));
                         }
                         else if (ushort.TryParse(val, out ushort num))
                         {
-                            return (CAP)num;
+                            return new CapWrapper(_twain, (CAP)num);
                         }
-                        return (CAP)0;
+                        return null;
 
-                    }).ToList();
+                    })
+                        .Where(cs => cs != null)
+                    .ToDictionary(cs => cs.Cap, cs => cs);
                 }
-
-                //foreach (CAP capId in Enum.GetValues(typeof(CAP)))
-                //{
-                //    cap.ConType = TWON.ONEVALUE;
-                //    cap.Cap = capId;
-
-                //    var sts = _twain.DatCapability(DG.CONTROL, MSG.QUERYSUPPORT, ref cap);
-                //    if (sts == STS.SUCCESS)
-                //    {
-                //        if (Enum.TryParse(_twain.CapabilityOneValueToString(cap), out TWQC qc))
-                //        {
-
-                //        }
-                //    }
-                //}
+                else
+                {
+                    // don't support list, just give everything
+                    caps = Enum.GetValues(typeof(CAP)).Cast<CAP>()
+                        .ToDictionary(c => c, c => new CapWrapper(_twain, c));
+                }
             }
-            return caps ?? Enumerable.Empty<CAP>();
+            return caps ?? new Dictionary<CAP, CapWrapper>();
         }
 
         /// <summary>

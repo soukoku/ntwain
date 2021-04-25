@@ -21,6 +21,8 @@ namespace NTwain
         /// <returns></returns>
         public static string CapabilityOneValueToString(this TWAIN twain, TW_CAPABILITY cap)
         {
+            if (cap.ConType != TWON.ONEVALUE) throw new InvalidOperationException($"Cannot read container {cap.ConType} as one value.");
+
             if (cap.hContainer == IntPtr.Zero) return null;
 
             var lockedPtr = twain.DsmMemLock(cap.hContainer);

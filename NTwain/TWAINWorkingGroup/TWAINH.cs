@@ -4278,6 +4278,7 @@ namespace TWAINWorkingGroup
     [Flags]
     public enum TWQC : ushort
     {
+        Uknown = 0,
         GET = 0x0001,
         SET = 0x0002,
         GETDEFAULT = 0x0004,
