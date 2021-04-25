@@ -12503,7 +12503,7 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// The platform we're running on...
         /// </summary>
-        private static Platform ms_platform;
+        static Platform ms_platform;
 
         /// <summary>
         /// Delegates for DAT_CALLBACK...

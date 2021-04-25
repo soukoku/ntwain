@@ -14,6 +14,8 @@ namespace NTwain
     /// </summary>
     public static class ValueReader
     {
+        // most of these are modified from the original TWAIN.CapabilityToCsv()
+
         public static TValue ReadOneValue<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
         {
             if (cap.hContainer == IntPtr.Zero) return default(TValue);
@@ -157,10 +159,98 @@ namespace NTwain
                 if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
             }
         }
-        public static (TValue defaultVal, TValue currentVal, IEnumerable<TValue> values)
-            ReadRange<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
+        public static Range<TValue> ReadRange<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
         {
-            throw new NotImplementedException();
+            var retVal = new Range<TValue>();
+
+            if (cap.hContainer == IntPtr.Zero) return retVal;
+
+            var lockedPtr = twain.DsmMemLock(cap.hContainer);
+
+            try
+            {
+                TW_RANGE twrange = default;
+                TW_RANGE_FIX32 twrangefix32 = default;
+                var platform = PlatformTools.GetPlatform();
+
+                // Mac has a level of indirection and a different structure (ick)...
+                if (platform == Platform.MACOSX)
+                {
+                    var twrangemacosx = MarshalTo<TW_RANGE_MACOSX>(lockedPtr);
+                    var twrangefix32macosx = MarshalTo<TW_RANGE_FIX32_MACOSX>(lockedPtr);
+                    twrange.ItemType = (TWTY)twrangemacosx.ItemType;
+                    twrange.MinValue = twrangemacosx.MinValue;
+                    twrange.MaxValue = twrangemacosx.MaxValue;
+                    twrange.StepSize = twrangemacosx.StepSize;
+                    twrange.DefaultValue = twrangemacosx.DefaultValue;
+                    twrange.CurrentValue = twrangemacosx.CurrentValue;
+                    twrangefix32.ItemType = (TWTY)twrangefix32macosx.ItemType;
+                    twrangefix32.MinValue = twrangefix32macosx.MinValue;
+                    twrangefix32.MaxValue = twrangefix32macosx.MaxValue;
+                    twrangefix32.StepSize = twrangefix32macosx.StepSize;
+                    twrangefix32.DefaultValue = twrangefix32macosx.DefaultValue;
+                    twrangefix32.CurrentValue = twrangefix32macosx.CurrentValue;
+                }
+                // Windows or the 2.4+ Linux DSM...
+                else if ((platform == Platform.WINDOWS) || (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm) ||
+                    ((twain.m_blFoundLatestDsm || twain.m_blFoundLatestDsm64) && (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm)))
+                {
+                    twrange = MarshalTo<TW_RANGE>(lockedPtr);
+                    twrangefix32 = MarshalTo<TW_RANGE_FIX32>(lockedPtr);
+                }
+                // The -2.3 Linux DSM...
+                else
+                {
+                    var twrangelinux64 = MarshalTo<TW_RANGE_LINUX64>(lockedPtr);
+                    var twrangefix32macosx = MarshalTo<TW_RANGE_FIX32_MACOSX>(lockedPtr);
+                    twrange.ItemType = twrangelinux64.ItemType;
+                    twrange.MinValue = (uint)twrangelinux64.MinValue;
+                    twrange.MaxValue = (uint)twrangelinux64.MaxValue;
+                    twrange.StepSize = (uint)twrangelinux64.StepSize;
+                    twrange.DefaultValue = (uint)twrangelinux64.DefaultValue;
+                    twrange.CurrentValue = (uint)twrangelinux64.CurrentValue;
+                    twrangefix32.ItemType = (TWTY)twrangefix32macosx.ItemType;
+                    twrangefix32.MinValue = twrangefix32macosx.MinValue;
+                    twrangefix32.MaxValue = twrangefix32macosx.MaxValue;
+                    twrangefix32.StepSize = twrangefix32macosx.StepSize;
+                    twrangefix32.DefaultValue = twrangefix32macosx.DefaultValue;
+                    twrangefix32.CurrentValue = twrangefix32macosx.CurrentValue;
+                }
+
+                switch (twrange.ItemType)
+                {
+                    // use dynamic since I know they fit the type.
+                    case TWTY.FIX32:
+                        retVal.MinValue = (dynamic)twrangefix32.MinValue;
+                        retVal.MaxValue = (dynamic)twrangefix32.MaxValue;
+                        retVal.StepSize = (dynamic)twrangefix32.StepSize;
+                        retVal.CurrentValue = (dynamic)twrangefix32.CurrentValue;
+                        retVal.DefaultValue = (dynamic)twrangefix32.DefaultValue;
+                        break;
+                    case TWTY.INT8:
+                    case TWTY.UINT8:
+                    case TWTY.INT16:
+                    case TWTY.BOOL:
+                    case TWTY.UINT16:
+                    case TWTY.INT32:
+                    case TWTY.UINT32:
+                        retVal.MinValue = (dynamic)twrange.MinValue;
+                        retVal.MaxValue = (dynamic)twrange.MaxValue;
+                        retVal.StepSize = (dynamic)twrange.StepSize;
+                        retVal.CurrentValue = (dynamic)twrange.CurrentValue;
+                        retVal.DefaultValue = (dynamic)twrange.DefaultValue;
+                        break;
+                    default:
+                        throw new NotSupportedException($"The value type {twrange.ItemType} is not supported as range.");
+
+                }
+                return retVal;
+            }
+            finally
+            {
+                twain.DsmMemUnlock(cap.hContainer);
+                if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
+            }
         }
 
         /// <summary>

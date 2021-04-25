@@ -66,7 +66,7 @@ namespace NTwain
                     case TWON.ARRAY:
                         return ValueReader.ReadArray<TValue>(_twain, twCap);
                     case TWON.RANGE:
-                        return ValueReader.ReadRange<TValue>(_twain, twCap).values.ToList();
+                        return ValueReader.ReadRange<TValue>(_twain, twCap).ToList();
                 }
             }
             return new TValue[0];
@@ -96,7 +96,7 @@ namespace NTwain
                             return enumeration.Items[enumeration.CurrentIndex];
                         break;
                     case TWON.RANGE:
-                        return ValueReader.ReadRange<TValue>(_twain, twCap).currentVal;
+                        return ValueReader.ReadRange<TValue>(_twain, twCap).CurrentValue;
                 }
             }
             return default(TValue);
@@ -126,7 +126,7 @@ namespace NTwain
                             return enumeration.Items[enumeration.DefaultIndex];
                         break;
                     case TWON.RANGE:
-                        return ValueReader.ReadRange<TValue>(_twain, twCap).defaultVal;
+                        return ValueReader.ReadRange<TValue>(_twain, twCap).DefaultValue;
                 }
             }
             return default(TValue);

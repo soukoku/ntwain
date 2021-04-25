@@ -1,5 +1,6 @@
 ﻿using NTwain;
 using System;
+using System.Collections;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -75,21 +76,10 @@ namespace Net5Console
                         Console.WriteLine();
 
                         var caps = session.Capabilities;
-                        Console.WriteLine("Device supports these caps:");
+                        Console.WriteLine("All device caps:");
                         foreach (var cap in caps.CAP_SUPPORTEDCAPS.GetValues())
                         {
                             WriteCapInfo(caps, cap);
-                        }
-                        Console.WriteLine();
-
-                        var pxWrapper = caps.ICAP_PIXELTYPE;
-                        Console.WriteLine($"Details on {pxWrapper.Cap}:");
-                        Console.WriteLine($"\tDefault: {pxWrapper.GetDefault()}");
-                        Console.WriteLine($"\tCurrent: {pxWrapper.GetCurrent()}");
-                        Console.WriteLine($"\tValues:");
-                        foreach (var val in pxWrapper.GetValues())
-                        {
-                            Console.WriteLine($"\t\t{val}");
                         }
                         Console.WriteLine();
 
@@ -124,15 +114,31 @@ namespace Net5Console
 
         private static void WriteCapInfo(Capabilities caps, CAP cap)
         {
-            // use reflection due to generics
+            // use reflection due to unknown generics
             var propInfo = typeof(Capabilities).GetProperty(cap.ToString());
             if (propInfo == null) return;
 
             var capWrapper = propInfo.GetValue(caps);
-            var label = (string)capWrapper.GetType().GetMethod(nameof(CapWrapper<int>.GetLabel)).Invoke(capWrapper, null);
-            var supports = (TWQC)capWrapper.GetType().GetMethod(nameof(CapWrapper<int>.QuerySupport)).Invoke(capWrapper, null);
+            var wrapType = capWrapper.GetType();
+            var label = (string)wrapType.GetMethod(nameof(CapWrapper<int>.GetLabel)).Invoke(capWrapper, null);
+            var supports = (TWQC)wrapType.GetMethod(nameof(CapWrapper<int>.QuerySupport)).Invoke(capWrapper, null);
 
             Console.WriteLine($"\t{label ?? cap.ToString()}: {supports}");
+            Console.WriteLine($"\t\tDefault: {wrapType.GetMethod(nameof(CapWrapper<int>.GetDefault)).Invoke(capWrapper, null)}");
+            Console.WriteLine($"\t\tCurrent: {wrapType.GetMethod(nameof(CapWrapper<int>.GetCurrent)).Invoke(capWrapper, null)}");
+            bool first = true;
+            foreach (var val in (IEnumerable)wrapType.GetMethod(nameof(CapWrapper<int>.GetValues)).Invoke(capWrapper, null))
+            {
+                if (first)
+                {
+                    Console.WriteLine($"\t\tValues:\t{val}");
+                    first = false;
+                }
+                else
+                {
+                    Console.WriteLine($"\t\t\t{val}");
+                }
+            }
         }
     }
 }

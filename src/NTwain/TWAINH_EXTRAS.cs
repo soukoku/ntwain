@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NTwain;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -30,14 +32,85 @@ namespace TWAINWorkingGroup
     /// <typeparam name="TValue"></typeparam>
     public class Enumeration<TValue> where TValue : struct
     {
-        public int CurrentIndex { get; set; }
+        public int CurrentIndex;
 
-        public int DefaultIndex { get; set; }
+        public int DefaultIndex;
 
-        public TValue[] Items { get; set; }
+        public TValue[] Items;
     }
 
-    partial struct TW_FIX32 : IEquatable<TW_FIX32>
+    /// <summary>
+    /// A more dotnet-friendly representation of <see cref="TW_RANGE"/>.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    public partial class Range<TValue> : IEnumerable<TValue> where TValue : struct
+    {
+        public TValue MinValue;
+        public TValue MaxValue;
+        public TValue StepSize;
+        public TValue DefaultValue;
+        public TValue CurrentValue;
+
+        IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
+        {
+            if (!(MinValue is IConvertible))
+                throw new NotSupportedException($"The value type {typeof(TValue).Name} is not supported as range.");
+
+            return new DynamicEnumerator(MinValue, MaxValue, StepSize);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<TValue>)this).GetEnumerator();
+        }
+
+        // dynamic is a cheap hack to sidestep the compiler restrictions if I know TValue is numeric
+        class DynamicEnumerator : IEnumerator<TValue>
+        {
+            private TValue _min;
+            private TValue _max;
+            private TValue _step;
+            private TValue _cur;
+            bool started = false;
+
+            public DynamicEnumerator(TValue min, TValue max, TValue step)
+            {
+                _min = min;
+                _max = max;
+                _step = step;
+                _cur = min;
+            }
+
+            public TValue Current => _cur;
+
+            object IEnumerator.Current => this.Current;
+
+            public void Dispose() { }
+
+            public bool MoveNext()
+            {
+                if (!started)
+                {
+                    started = true;
+                    return true;
+                }
+
+                var next = _cur + (dynamic)_step;
+                if (next == _cur || next < _min || next > _max) return false;
+
+                _cur = next;
+                return true;
+            }
+
+            public void Reset()
+            {
+                _cur = _min;
+                started = false;
+            }
+        }
+    }
+
+    partial struct TW_FIX32 : IEquatable<TW_FIX32>, IConvertible
     {
         // the conversion logic is found in the spec.
 
@@ -83,6 +156,96 @@ namespace TWAINWorkingGroup
         {
             return Whole ^ Frac;
         }
+
+
+        #region IConvertable
+
+        TypeCode IConvertible.GetTypeCode()
+        {
+            return TypeCode.Single;
+        }
+
+        bool IConvertible.ToBoolean(IFormatProvider provider)
+        {
+            return this != 0;
+        }
+
+        byte IConvertible.ToByte(IFormatProvider provider)
+        {
+            return Convert.ToByte((float)this);
+        }
+
+        char IConvertible.ToChar(IFormatProvider provider)
+        {
+            return Convert.ToChar((float)this);
+        }
+
+        DateTime IConvertible.ToDateTime(IFormatProvider provider)
+        {
+            return Convert.ToDateTime((float)this);
+        }
+
+        decimal IConvertible.ToDecimal(IFormatProvider provider)
+        {
+            return Convert.ToDecimal((float)this);
+        }
+
+        double IConvertible.ToDouble(IFormatProvider provider)
+        {
+            return Convert.ToDouble((float)this);
+        }
+
+        short IConvertible.ToInt16(IFormatProvider provider)
+        {
+            return Convert.ToInt16((float)this);
+        }
+
+        int IConvertible.ToInt32(IFormatProvider provider)
+        {
+            return Convert.ToInt32((float)this);
+        }
+
+        long IConvertible.ToInt64(IFormatProvider provider)
+        {
+            return Convert.ToInt64((float)this);
+        }
+
+        sbyte IConvertible.ToSByte(IFormatProvider provider)
+        {
+            return Convert.ToSByte((float)this);
+        }
+
+        float IConvertible.ToSingle(IFormatProvider provider)
+        {
+            return Convert.ToSingle((float)this);
+        }
+
+        string IConvertible.ToString(IFormatProvider provider)
+        {
+            return this.ToString();
+        }
+
+        object IConvertible.ToType(Type conversionType, IFormatProvider provider)
+        {
+            return Convert.ChangeType((float)this, conversionType, CultureInfo.InvariantCulture);
+        }
+
+        ushort IConvertible.ToUInt16(IFormatProvider provider)
+        {
+            return Convert.ToUInt16((float)this);
+        }
+
+        uint IConvertible.ToUInt32(IFormatProvider provider)
+        {
+            return Convert.ToUInt32((float)this);
+        }
+
+        ulong IConvertible.ToUInt64(IFormatProvider provider)
+        {
+            return Convert.ToUInt64((float)this);
+        }
+
+        #endregion
 
         public static implicit operator float(TW_FIX32 value) => value.ToFloat();
         public static implicit operator TW_FIX32(float value) => new TW_FIX32(value);
