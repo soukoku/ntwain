@@ -24,6 +24,19 @@ namespace TWAINWorkingGroup
         True = 1
     }
 
+    /// <summary>
+    /// A more dotnet-friendly representation of <see cref="TW_ENUMERATION"/>.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    public class Enumeration<TValue> where TValue : struct
+    {
+        public int CurrentIndex { get; set; }
+
+        public int DefaultIndex { get; set; }
+
+        public TValue[] Items { get; set; }
+    }
+
     partial struct TW_FIX32 : IEquatable<TW_FIX32>
     {
         // the conversion logic is found in the spec.

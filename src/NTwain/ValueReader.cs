@@ -47,15 +47,77 @@ namespace NTwain
                 if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
             }
         }
-        public static IList<TValue> ReadEnumeration<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
+        public static Enumeration<TValue> ReadEnumeration<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
         {
-            throw new NotImplementedException();
+            Enumeration<TValue> retVal = new Enumeration<TValue>();
+
+            if (cap.hContainer == IntPtr.Zero) return retVal;
+
+            var lockedPtr = twain.DsmMemLock(cap.hContainer);
+
+            try
+            {
+                var platform = PlatformTools.GetPlatform();
+                TWTY itemType;
+                int count = 0;
+
+                // Mac has a level of indirection and a different structure (ick)...
+                if (platform == Platform.MACOSX)
+                {
+                    // Crack the container...
+                    var twenumerationmacosx = MarshalTo<TW_ENUMERATION_MACOSX>(lockedPtr);
+                    itemType = (TWTY)twenumerationmacosx.ItemType;
+                    count = (int)twenumerationmacosx.NumItems;
+                    retVal.DefaultIndex = (int)twenumerationmacosx.DefaultIndex;
+                    retVal.CurrentIndex = (int)twenumerationmacosx.CurrentIndex;
+                    lockedPtr += Marshal.SizeOf(twenumerationmacosx);
+                }
+                // Windows or the 2.4+ Linux DSM...
+                else if ((platform == Platform.WINDOWS) || ((twain.m_blFoundLatestDsm || twain.m_blFoundLatestDsm64) && (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm)))
+                {
+                    // Crack the container...
+                    var twenumeration = MarshalTo<TW_ENUMERATION>(lockedPtr);
+                    itemType = twenumeration.ItemType;
+                    count = (int)twenumeration.NumItems;
+                    retVal.DefaultIndex = (int)twenumeration.DefaultIndex;
+                    retVal.CurrentIndex = (int)twenumeration.CurrentIndex;
+                    lockedPtr += Marshal.SizeOf(twenumeration);
+                }
+                // The -2.3 Linux DSM...
+                else if (twain.m_blFound020302Dsm64bit && (twain.m_linuxdsm == TWAIN.LinuxDsm.Is020302Dsm64bit))
+                {
+                    // Crack the container...
+                    var twenumerationlinux64 = MarshalTo<TW_ENUMERATION_LINUX64>(lockedPtr);
+                    itemType = twenumerationlinux64.ItemType;
+                    count = (int)twenumerationlinux64.NumItems;
+                    retVal.DefaultIndex = (int)twenumerationlinux64.DefaultIndex;
+                    retVal.CurrentIndex = (int)twenumerationlinux64.CurrentIndex;
+                    lockedPtr += Marshal.SizeOf(twenumerationlinux64);
+                }
+                // This shouldn't be possible, but what the hey...
+                else
+                {
+                    Log.Error("This is serious, you win a cookie for getting here...");
+                    return retVal;
+                }
+
+                retVal.Items = new TValue[count];
+
+                for (var i = 0; i < count; i++)
+                {
+                    retVal.Items[i] = ReadContainerData<TValue>(lockedPtr, itemType, i);
+                }
+            }
+            finally
+            {
+                twain.DsmMemUnlock(cap.hContainer);
+                if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
+            }
+            return retVal;
         }
         public static IList<TValue> ReadArray<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
         {
-            var list = new List<TValue>();
-
-            if (cap.hContainer == IntPtr.Zero) return list;
+            if (cap.hContainer == IntPtr.Zero) return new TValue[0];
 
             var lockedPtr = twain.DsmMemLock(cap.hContainer);
 
@@ -68,8 +130,7 @@ namespace NTwain
                 if (PlatformTools.GetPlatform() == Platform.MACOSX)
                 {
                     // Crack the container...
-                    TW_ARRAY_MACOSX twarraymacosx = default(TW_ARRAY_MACOSX);
-                    twarraymacosx = MarshalTo<TW_ARRAY_MACOSX>(lockedPtr);
+                    var twarraymacosx = MarshalTo<TW_ARRAY_MACOSX>(lockedPtr);
                     itemType = (TWTY)twarraymacosx.ItemType;
                     count = twarraymacosx.NumItems;
                     lockedPtr += Marshal.SizeOf(twarraymacosx);
@@ -77,24 +138,24 @@ namespace NTwain
                 else
                 {
                     // Crack the container...
-                    TW_ARRAY twarray = default(TW_ARRAY);
-                    twarray = MarshalTo<TW_ARRAY>(lockedPtr);
+                    var twarray = MarshalTo<TW_ARRAY>(lockedPtr);
                     itemType = twarray.ItemType;
                     count = twarray.NumItems;
                     lockedPtr += Marshal.SizeOf(twarray);
                 }
 
+                var arr = new TValue[count];
                 for (var i = 0; i < count; i++)
                 {
-                    list.Add(ReadContainerData<TValue>(lockedPtr, itemType, i));
+                    arr[i] = ReadContainerData<TValue>(lockedPtr, itemType, i);
                 }
+                return arr;
             }
             finally
             {
                 twain.DsmMemUnlock(cap.hContainer);
                 if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
             }
-            return list;
         }
         public static (TValue defaultVal, TValue currentVal, IEnumerable<TValue> values)
             ReadRange<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct

@@ -82,18 +82,16 @@ namespace Net5Console
                         }
                         Console.WriteLine();
 
-                        //if (caps.TryGetValue(CAP.ICAP_PIXELTYPE, out CapWrapper wrapper))
-                        //{
-                        //    Console.WriteLine($"Details on {wrapper.Cap}:");
-                        //    Console.WriteLine($"\tDefault: {wrapper.GetDefault()}");
-                        //    Console.WriteLine($"\tCurrent: {wrapper.GetCurrent()}");
-                        //    Console.WriteLine($"\tValues:");
-                        //    foreach (var val in wrapper.GetValues())
-                        //    {
-                        //        Console.WriteLine($"\t\t{val}");
-                        //    }
-                        //}
-                        //Console.WriteLine();
+                        var pxWrapper = caps.ICAP_PIXELTYPE;
+                        Console.WriteLine($"Details on {pxWrapper.Cap}:");
+                        Console.WriteLine($"\tDefault: {pxWrapper.GetDefault()}");
+                        Console.WriteLine($"\tCurrent: {pxWrapper.GetCurrent()}");
+                        Console.WriteLine($"\tValues:");
+                        foreach (var val in pxWrapper.GetValues())
+                        {
+                            Console.WriteLine($"\t\t{val}");
+                        }
+                        Console.WriteLine();
 
                         var sts = session.StartCapture(false);
                         if (sts == STS.SUCCESS)

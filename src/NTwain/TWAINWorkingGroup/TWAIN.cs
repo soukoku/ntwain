@@ -12489,11 +12489,11 @@ namespace TWAINWorkingGroup
         /// using either one or both DSMs, depending on what is
         /// available...
         /// </summary>
-        private LinuxDsm m_linuxdsm;
+        internal LinuxDsm m_linuxdsm;
         private LinuxDsm m_linux64bitdsmDatIdentity;
-        private bool m_blFoundLatestDsm;
-        private bool m_blFoundLatestDsm64;
-        private bool m_blFound020302Dsm64bit;
+        internal bool m_blFoundLatestDsm;
+        internal bool m_blFoundLatestDsm64;
+        internal bool m_blFound020302Dsm64bit;
 
         /// <summary>
         /// Use the callback system (TWAINDSM.DLL only)...
