@@ -403,7 +403,7 @@ namespace NTwain
         private CapWrapper<TWBO> _bitorderCodes;
 
         /// <summary>
-        /// Gets the property to work with image CCITT compression <see cref="BitOrder"/> for the current source.
+        /// Gets the property to work with image CCITT compression <see cref="TWBO"/> for the current source.
         /// </summary>
         /// <value>
         /// The image bit order for CCITT compression.
@@ -419,7 +419,7 @@ namespace NTwain
         private CapWrapper<TWPF> _pixelFlavorCodes;
 
         /// <summary>
-        /// Gets the property to work with image CCITT compression <see cref="PixelFlavor"/> for the current source.
+        /// Gets the property to work with image CCITT compression <see cref="TWPF"/> for the current source.
         /// </summary>
         /// <value>
         /// The image pixel flavor for CCITT compression.
@@ -435,7 +435,7 @@ namespace NTwain
         private CapWrapper<TWPT> _jpegPixelType;
 
         /// <summary>
-        /// Gets the property to work with image jpeg compression <see cref="PixelType"/> for the current source.
+        /// Gets the property to work with image jpeg compression <see cref="TWPT"/> for the current source.
         /// </summary>
         /// <value>
         /// The image pixel type for jpeg compression.
@@ -1621,7 +1621,7 @@ namespace NTwain
 
         /// <summary>
         /// Set the character to be used for filling the leading digits before the counter value if the
-        /// counter digits are fewer than <see cref="CapPrinterIndexNumDigits"/>.
+        /// counter digits are fewer than <see cref="CAP_PRINTERINDEXNUMDIGITS"/>.
         /// </summary>
         /// <value>
         /// The printer leading string.

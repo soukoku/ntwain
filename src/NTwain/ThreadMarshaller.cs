@@ -17,6 +17,7 @@ namespace NTwain
         /// Starts work asynchronously and returns immediately.
         /// </summary>
         /// <param name="work"></param>
+        /// <param name="args"></param>
         void BeginInvoke(Delegate work, params object[] args);
 
         /// <summary>

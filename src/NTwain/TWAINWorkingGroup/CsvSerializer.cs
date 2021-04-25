@@ -221,11 +221,11 @@ namespace TWAINWorkingGroup
             {
                 CSV csv = new CSV();
                 csv.Add(a_twentrypoint.Size.ToString());
-                csv.Add("0x" + ((a_twentrypoint.DSM_Entry == null) ? "0" : a_twentrypoint.DSM_Entry.ToString("X")));
-                csv.Add("0x" + ((a_twentrypoint.DSM_MemAllocate == null) ? "0" : a_twentrypoint.DSM_MemAllocate.ToString("X")));
-                csv.Add("0x" + ((a_twentrypoint.DSM_MemFree == null) ? "0" : a_twentrypoint.DSM_MemFree.ToString("X")));
-                csv.Add("0x" + ((a_twentrypoint.DSM_MemLock == null) ? "0" : a_twentrypoint.DSM_MemLock.ToString("X")));
-                csv.Add("0x" + ((a_twentrypoint.DSM_MemUnlock == null) ? "0" : a_twentrypoint.DSM_MemUnlock.ToString("X")));
+                csv.Add("0x" + ((a_twentrypoint.DSM_Entry == IntPtr.Zero) ? "0" : a_twentrypoint.DSM_Entry.ToString("X")));
+                csv.Add("0x" + ((a_twentrypoint.DSM_MemAllocate == IntPtr.Zero) ? "0" : a_twentrypoint.DSM_MemAllocate.ToString("X")));
+                csv.Add("0x" + ((a_twentrypoint.DSM_MemFree == IntPtr.Zero) ? "0" : a_twentrypoint.DSM_MemFree.ToString("X")));
+                csv.Add("0x" + ((a_twentrypoint.DSM_MemLock == IntPtr.Zero) ? "0" : a_twentrypoint.DSM_MemLock.ToString("X")));
+                csv.Add("0x" + ((a_twentrypoint.DSM_MemUnlock == IntPtr.Zero) ? "0" : a_twentrypoint.DSM_MemUnlock.ToString("X")));
                 return (csv.Get());
             }
             catch (Exception exception)
@@ -867,7 +867,7 @@ namespace TWAINWorkingGroup
         /// Convert the contents of a pending xfers structure to a string that
         /// we can show in our simple GUI...
         /// </summary>
-        /// <param name="a_twsetupfilexfer">A TWAIN structure</param>
+        /// <param name="a_twpendingxfers">A TWAIN structure</param>
         /// <returns>A CSV string of the TWAIN structure</returns>
         public static string PendingxfersToCsv(TW_PENDINGXFERS a_twpendingxfers)
         {
@@ -888,8 +888,8 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Convert the contents of a string to a pendingxfers structure...
         /// </summary>
-        /// <param name="a_twpassthru">A TWAIN structure</param>
-        /// <param name="a_szPassthru">A CSV string of the TWAIN structure</param>
+        /// <param name="a_twpendingxfers">A TWAIN structure</param>
+        /// <param name="a_szPendingxfers">A CSV string of the TWAIN structure</param>
         /// <returns>True if the conversion is successful</returns>
         public static bool CsvToPendingXfers(ref TW_PENDINGXFERS a_twpendingxfers, string a_szPendingxfers)
         {
@@ -995,8 +995,8 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Convert a string to a setupmemxfer...
         /// </summary>
-        /// <param name="a_twsetupfilexfer">A TWAIN structure</param>
-        /// <param name="a_szSetupfilexfer">A CSV string of the TWAIN structure</param>
+        /// <param name="a_twsetupmemxfer">A TWAIN structure</param>
+        /// <param name="a_szSetupmemxfer">A CSV string of the TWAIN structure</param>
         /// <returns>True if the conversion is successful</returns>
         public static bool CsvToSetupmemxfer(ref TW_SETUPMEMXFER a_twsetupmemxfer, string a_szSetupmemxfer)
         {
@@ -1173,8 +1173,8 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Convert the contents of a string to a transfer group...
         /// </summary>
-        /// <param name="a_twcustomdsdata">A TWAIN structure</param>
-        /// <param name="a_szCustomdsdata">A CSV string of the TWAIN structure</param>
+        /// <param name="a_u32Xfergroup">A TWAIN structure</param>
+        /// <param name="a_szXfergroup">A CSV string of the TWAIN structure</param>
         /// <returns>True if the conversion is successful</returns>
         public static bool CsvToXfergroup(ref UInt32 a_u32Xfergroup, string a_szXfergroup)
         {
@@ -1327,7 +1327,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// This mess is what tries to turn readable stuff into numeric constants...
         /// </summary>
-        /// <typeparam name="T">type for the conversion</typeparam>
         /// <param name="a_szValue">value to convert</param>
         /// <returns></returns>
         private static string CvtCapValueFromTwlg(string a_szValue)
@@ -1479,7 +1478,7 @@ namespace TWAINWorkingGroup
         /// Convert a value to the 'friendly' name, based on the capability...
         /// </summary>
         /// <param name="a_cap">capability driving the conversion</param>
-        /// <param name="szValue">value to convert</param>
+        /// <param name="a_szValue">value to convert</param>
         /// <returns></returns>
         public static string CvtCapValueToEnum(CAP a_cap, string a_szValue)
         {
@@ -1657,7 +1656,7 @@ namespace TWAINWorkingGroup
         /// Convert a 'friendly' name to a numeric value...
         /// </summary>
         /// <param name="a_cap">capability driving the conversion</param>
-        /// <param name="szValue">value to convert</param>
+        /// <param name="a_szValue">value to convert</param>
         /// <returns></returns>
         public static string CvtCapValueFromEnum(CAP a_cap, string a_szValue)
         {

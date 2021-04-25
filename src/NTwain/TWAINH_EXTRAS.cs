@@ -67,9 +67,9 @@ namespace TWAINWorkingGroup
         // dynamic is a cheap hack to sidestep the compiler restrictions if I know TValue is numeric
         class DynamicEnumerator : IEnumerator<TValue>
         {
-            private TValue _min;
-            private TValue _max;
-            private TValue _step;
+            private readonly TValue _min;
+            private readonly TValue _max;
+            private readonly TValue _step;
             private TValue _cur;
             bool started = false;
 

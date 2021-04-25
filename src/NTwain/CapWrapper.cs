@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TWAINWorkingGroup;
 
@@ -69,7 +70,7 @@ namespace NTwain
                         return ValueReader.ReadRange<TValue>(_twain, twCap).ToList();
                 }
             }
-            return new TValue[0];
+            return EmptyArray<TValue>.Value;
         }
 
         /// <summary>
@@ -99,7 +100,7 @@ namespace NTwain
                         return ValueReader.ReadRange<TValue>(_twain, twCap).CurrentValue;
                 }
             }
-            return default(TValue);
+            return default;
         }
 
         /// <summary>
@@ -129,7 +130,7 @@ namespace NTwain
                         return ValueReader.ReadRange<TValue>(_twain, twCap).DefaultValue;
                 }
             }
-            return default(TValue);
+            return default;
         }
 
         /// <summary>

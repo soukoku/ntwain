@@ -371,8 +371,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Cleanup...
         /// </summary>
-        [SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase")]
-        [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public void Dispose()
         {
             Dispose(true);
@@ -797,7 +795,6 @@ namespace TWAINWorkingGroup
         /// </summary>
         /// <param name="a_stateTarget">The TWAIN state that we want to end up at</param>
         static int s_iCloseDsmDelay = 0;
-        [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public STATE Rollback(STATE a_stateTarget)
         {
             int iRetry;
@@ -4474,19 +4471,19 @@ namespace TWAINWorkingGroup
                 m_twentrypointdelegates = default(TW_ENTRYPOINT_DELEGATES);
                 m_twentrypointdelegates.Size = a_twentrypoint.Size;
                 m_twentrypointdelegates.DSM_Entry = a_twentrypoint.DSM_Entry;
-                if (a_twentrypoint.DSM_MemAllocate != null)
+                if (a_twentrypoint.DSM_MemAllocate != IntPtr.Zero)
                 {
                     m_twentrypointdelegates.DSM_MemAllocate = (DSM_MEMALLOC)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemAllocate, typeof(DSM_MEMALLOC));
                 }
-                if (a_twentrypoint.DSM_MemFree != null)
+                if (a_twentrypoint.DSM_MemFree != IntPtr.Zero)
                 {
                     m_twentrypointdelegates.DSM_MemFree = (DSM_MEMFREE)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemFree, typeof(DSM_MEMFREE));
                 }
-                if (a_twentrypoint.DSM_MemLock != null)
+                if (a_twentrypoint.DSM_MemLock != IntPtr.Zero)
                 {
                     m_twentrypointdelegates.DSM_MemLock = (DSM_MEMLOCK)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemLock, typeof(DSM_MEMLOCK));
                 }
-                if (a_twentrypoint.DSM_MemUnlock != null)
+                if (a_twentrypoint.DSM_MemUnlock != IntPtr.Zero)
                 {
                     m_twentrypointdelegates.DSM_MemUnlock = (DSM_MEMUNLOCK)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemUnlock, typeof(DSM_MEMUNLOCK));
                 }
@@ -10440,7 +10437,6 @@ namespace TWAINWorkingGroup
         /// Cleanup...
         /// </summary>
         /// <param name="a_blDisposing">true if we need to clean up managed resources</param>
-        [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         internal void Dispose(bool a_blDisposing)
         {
             // Free managed resources...
@@ -11018,7 +11014,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Automatically collect the condition code for TWRC_FAILURE's...
         /// </summary>
-        /// <param name="a_sts">The return code from the last operation</param>
         /// <param name="a_sts">The return code from the last operation</param>
         /// <returns>The final statue return</returns>
         private STS AutoDatStatus(STS a_sts)
@@ -12540,10 +12535,10 @@ namespace TWAINWorkingGroup
         /// </summary>
         private AutoResetEvent m_autoreseteventThreadStarted;
 
-        /// <summary>
-        /// The data we share with the thread...
-        /// </summary>
-        //private ThreadData m_threaddata;
+        ///// <summary>
+        ///// The data we share with the thread...
+        ///// </summary>
+        ////private ThreadData m_threaddata;
 
         /// <summary>
         /// Our callback for device events...

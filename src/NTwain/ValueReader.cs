@@ -18,7 +18,7 @@ namespace NTwain
 
         public static TValue ReadOneValue<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
         {
-            if (cap.hContainer == IntPtr.Zero) return default(TValue);
+            if (cap.hContainer == IntPtr.Zero) return default;
 
             var lockedPtr = twain.DsmMemLock(cap.hContainer);
 
@@ -119,7 +119,7 @@ namespace NTwain
         }
         public static IList<TValue> ReadArray<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
         {
-            if (cap.hContainer == IntPtr.Zero) return new TValue[0];
+            if (cap.hContainer == IntPtr.Zero) return EmptyArray<TValue>.Value;
 
             var lockedPtr = twain.DsmMemLock(cap.hContainer);
 
@@ -412,7 +412,7 @@ namespace NTwain
             {
                 return parsed;
             }
-            return default(TEnum);
+            return default;
         }
 
         static T MarshalTo<T>(IntPtr ptr) => (T)Marshal.PtrToStructure(ptr, typeof(T));

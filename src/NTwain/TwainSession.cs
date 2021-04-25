@@ -137,7 +137,7 @@ namespace NTwain
         public TW_STATUS GetStatus()
         {
             TW_STATUS stat = default;
-            var sts = _twain.DatStatus(DG.CONTROL, MSG.GET, ref stat);
+            _ = _twain.DatStatus(DG.CONTROL, MSG.GET, ref stat);
             return stat;
         }
 
@@ -154,7 +154,7 @@ namespace NTwain
 
         /// <summary>
         /// Closes the TWAIN data source manager.
-        /// This is called when <see cref="Dispose"/> is invoked.
+        /// This is called when <see cref="Dispose()"/> is invoked.
         /// </summary>
         public void Close()
         {
