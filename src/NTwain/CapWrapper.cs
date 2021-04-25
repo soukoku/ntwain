@@ -17,30 +17,31 @@ namespace NTwain
         {
             _twain = twain;
             Cap = cap;
-
-            var twCap = new TW_CAPABILITY
-            {
-                Cap = cap
-            };
-
-            var sts = _twain.DatCapability(DG.CONTROL, MSG.QUERYSUPPORT, ref twCap);
-            if (sts == STS.SUCCESS && twCap.ConType == TWON.ONEVALUE)
-            {
-                Supports = ValueReader.ReadOneValue<TWQC>(_twain, twCap);
-            }
         }
-
-        /// <summary>
-        /// The operations supported by the cap.
-        /// Not all sources supports this so it may be unknown.
-        /// </summary>
-        public TWQC Supports { get; }
-
 
         /// <summary>
         /// The cap being targeted.
         /// </summary>
         public CAP Cap { get; }
+
+        /// <summary>
+        /// Gets the operations supported by the cap.
+        /// Not all sources supports this so it may be unknown.
+        /// </summary>
+        public TWQC QuerySupport()
+        {
+            var twCap = new TW_CAPABILITY
+            {
+                Cap = Cap
+            };
+
+            var sts = _twain.DatCapability(DG.CONTROL, MSG.QUERYSUPPORT, ref twCap);
+            if (sts == STS.SUCCESS && twCap.ConType == TWON.ONEVALUE)
+            {
+                return ValueReader.ReadOneValue<TWQC>(_twain, twCap);
+            }
+            return TWQC.Uknown;
+        }
 
         /// <summary>
         /// Try to get list of the cap's supported values.
@@ -123,6 +124,44 @@ namespace NTwain
                 }
             }
             return default(TValue);
+        }
+
+        /// <summary>
+        /// Try to get the cap's label text.
+        /// </summary>
+        /// <returns></returns>
+        public string GetLabel()
+        {
+            var twCap = new TW_CAPABILITY
+            {
+                Cap = Cap
+            };
+
+            var sts = _twain.DatCapability(DG.CONTROL, MSG.GETLABEL, ref twCap);
+            if (sts == STS.SUCCESS)
+            {
+                return ValueReader.ReadOneString(_twain, twCap);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Try to get the cap's description text.
+        /// </summary>
+        /// <returns></returns>
+        public string GetHelp()
+        {
+            var twCap = new TW_CAPABILITY
+            {
+                Cap = Cap
+            };
+
+            var sts = _twain.DatCapability(DG.CONTROL, MSG.GETHELP, ref twCap);
+            if (sts == STS.SUCCESS)
+            {
+                return ValueReader.ReadOneString(_twain, twCap);
+            }
+            return null;
         }
 
         /// <summary>

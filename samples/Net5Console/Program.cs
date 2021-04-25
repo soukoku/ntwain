@@ -76,10 +76,10 @@ namespace Net5Console
 
                         var caps = session.Capabilities;
                         Console.WriteLine("Device supports these caps:");
-                        //foreach (var cap in caps.Keys.OrderBy(c => c))
-                        //{
-                        //    Console.WriteLine($"\t{cap}: {caps[cap].Supports}");
-                        //}
+                        foreach (var cap in caps.CAP_SUPPORTEDCAPS.GetValues())
+                        {
+                            WriteCapInfo(caps, cap);
+                        }
                         Console.WriteLine();
 
                         //if (caps.TryGetValue(CAP.ICAP_PIXELTYPE, out CapWrapper wrapper))
@@ -122,6 +122,19 @@ namespace Net5Console
                 Console.WriteLine("Test Ended");
             }
 
+        }
+
+        private static void WriteCapInfo(Capabilities caps, CAP cap)
+        {
+            // use reflection due to generics
+            var propInfo = typeof(Capabilities).GetProperty(cap.ToString());
+            if (propInfo == null) return;
+
+            var capWrapper = propInfo.GetValue(caps);
+            var label = (string)capWrapper.GetType().GetMethod(nameof(CapWrapper<int>.GetLabel)).Invoke(capWrapper, null);
+            var supports = (TWQC)capWrapper.GetType().GetMethod(nameof(CapWrapper<int>.QuerySupport)).Invoke(capWrapper, null);
+
+            Console.WriteLine($"\t{label ?? cap.ToString()}: {supports}");
         }
     }
 }
