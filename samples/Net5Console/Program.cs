@@ -74,26 +74,26 @@ namespace Net5Console
                         Console.WriteLine($"\t{session.CurrentDevice}");
                         Console.WriteLine();
 
-                        var caps = session.Capabilities();
+                        var caps = session.Capabilities;
                         Console.WriteLine("Device supports these caps:");
-                        foreach (var cap in caps.Keys.OrderBy(c => c))
-                        {
-                            Console.WriteLine($"\t{cap}: {caps[cap].Supports}");
-                        }
+                        //foreach (var cap in caps.Keys.OrderBy(c => c))
+                        //{
+                        //    Console.WriteLine($"\t{cap}: {caps[cap].Supports}");
+                        //}
                         Console.WriteLine();
 
-                        if (caps.TryGetValue(CAP.ICAP_BITDEPTH, out CapWrapper wrapper))
-                        {
-                            Console.WriteLine($"Details on {wrapper.Cap}:");
-                            Console.WriteLine($"\tDefault: {wrapper.GetDefault()}");
-                            Console.WriteLine($"\tCurrent: {wrapper.GetCurrent()}");
-                            Console.WriteLine($"\tValues:");
-                            foreach (var val in wrapper.GetValues())
-                            {
-                                Console.WriteLine($"\t\t{val}");
-                            }
-                        }
-                        Console.WriteLine();
+                        //if (caps.TryGetValue(CAP.ICAP_PIXELTYPE, out CapWrapper wrapper))
+                        //{
+                        //    Console.WriteLine($"Details on {wrapper.Cap}:");
+                        //    Console.WriteLine($"\tDefault: {wrapper.GetDefault()}");
+                        //    Console.WriteLine($"\tCurrent: {wrapper.GetCurrent()}");
+                        //    Console.WriteLine($"\tValues:");
+                        //    foreach (var val in wrapper.GetValues())
+                        //    {
+                        //        Console.WriteLine($"\t\t{val}");
+                        //    }
+                        //}
+                        //Console.WriteLine();
 
                         var sts = session.StartCapture(false);
                         if (sts == STS.SUCCESS)

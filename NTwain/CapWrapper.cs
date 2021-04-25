@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TWAINWorkingGroup;
 
@@ -8,9 +7,11 @@ namespace NTwain
     /// <summary>
     /// Contains operations for a <see cref="CAP"/>.
     /// </summary>
-    public class CapWrapper
+    /// <typeparam name="TValue">Individual value type of the cap. Must be one of TWAIN's supported cap value types.
+    /// You are responsible for using the correct type for a cap.</typeparam>
+    public class CapWrapper<TValue> where TValue : struct
     {
-        private readonly TWAIN _twain;
+        protected readonly TWAIN _twain;
 
         public CapWrapper(TWAIN twain, CAP cap)
         {
@@ -23,19 +24,11 @@ namespace NTwain
             };
 
             var sts = _twain.DatCapability(DG.CONTROL, MSG.QUERYSUPPORT, ref twCap);
-            if (sts == STS.SUCCESS)
+            if (sts == STS.SUCCESS && twCap.ConType == TWON.ONEVALUE)
             {
-                if (Enum.TryParse(_twain.CapabilityOneValueToString(twCap), out TWQC qc))
-                {
-                    Supports = qc;
-                }
+                Supports = ValueReader.ReadOneValue<TWQC>(_twain, twCap);
             }
         }
-
-        /// <summary>
-        /// The cap in question.
-        /// </summary>
-        public CAP Cap { get; }
 
         /// <summary>
         /// The operations supported by the cap.
@@ -43,11 +36,17 @@ namespace NTwain
         /// </summary>
         public TWQC Supports { get; }
 
+
         /// <summary>
-        /// Try to get string representation of the cap's supported values.
+        /// The cap being targeted.
+        /// </summary>
+        public CAP Cap { get; }
+
+        /// <summary>
+        /// Try to get list of the cap's supported values.
         /// </summary>
         /// <returns></returns>
-        public IList<string> GetValues()
+        public IList<TValue> GetValues()
         {
             var twCap = new TW_CAPABILITY
             {
@@ -60,23 +59,23 @@ namespace NTwain
                 switch (twCap.ConType)
                 {
                     case TWON.ONEVALUE:
-                        return new[] { _twain.CapabilityOneValueToString(twCap) };
+                        return new[] { ValueReader.ReadOneValue<TValue>(_twain, twCap) };
                     case TWON.ENUMERATION:
-                        var csv = _twain.CapabilityToCsv(twCap, true);
-                        return csv.Split(',').Skip(6).ToList();
-                    default:
-                        csv = _twain.CapabilityToCsv(twCap, true);
-                        return csv.Split(',').Skip(4).ToList();
+                        return ValueReader.ReadEnumeration<TValue>(_twain, twCap);
+                    case TWON.ARRAY:
+                        return ValueReader.ReadArray<TValue>(_twain, twCap);
+                    case TWON.RANGE:
+                        return ValueReader.ReadRange<TValue>(_twain, twCap).values.ToList();
                 }
             }
-            return new string[0];
+            return new TValue[0];
         }
 
         /// <summary>
-        /// Try to get string representation of the cap's current value.
+        /// Try to get the cap's current value.
         /// </summary>
         /// <returns></returns>
-        public string GetCurrent()
+        public TValue GetCurrent()
         {
             var twCap = new TW_CAPABILITY
             {
@@ -89,23 +88,21 @@ namespace NTwain
                 switch (twCap.ConType)
                 {
                     case TWON.ONEVALUE:
-                        return _twain.CapabilityOneValueToString(twCap);
+                        return ValueReader.ReadOneValue<TValue>(_twain, twCap);
                     case TWON.ENUMERATION:
-                        var csv = _twain.CapabilityToCsv(twCap, true);
-                        return csv.Split(new[] { ',' }, 7)[6];
-                    default:
-                        csv = _twain.CapabilityToCsv(twCap, true);
-                        return csv.Split(new[] { ',' }, 5)[4];
+                        return ValueReader.ReadEnumeration<TValue>(_twain, twCap)[0];
+                    case TWON.RANGE:
+                        return ValueReader.ReadRange<TValue>(_twain, twCap).currentVal;
                 }
             }
-            return null;
+            return default(TValue);
         }
 
         /// <summary>
-        /// Try to get string representation of the cap's default value.
+        /// Try to get the cap's default value.
         /// </summary>
         /// <returns></returns>
-        public string GetDefault()
+        public TValue GetDefault()
         {
             var twCap = new TW_CAPABILITY
             {
@@ -118,16 +115,30 @@ namespace NTwain
                 switch (twCap.ConType)
                 {
                     case TWON.ONEVALUE:
-                        return _twain.CapabilityOneValueToString(twCap);
+                        return ValueReader.ReadOneValue<TValue>(_twain, twCap);
                     case TWON.ENUMERATION:
-                        var csv = _twain.CapabilityToCsv(twCap, true);
-                        return csv.Split(new[] { ',' }, 7)[6];
-                    default:
-                        csv = _twain.CapabilityToCsv(twCap, true);
-                        return csv.Split(new[] { ',' }, 5)[4];
+                        return ValueReader.ReadEnumeration<TValue>(_twain, twCap)[0];
+                    case TWON.RANGE:
+                        return ValueReader.ReadRange<TValue>(_twain, twCap).defaultVal;
                 }
             }
-            return null;
+            return default(TValue);
+        }
+
+        /// <summary>
+        /// Resets the cap's current value to power-on default.
+        /// </summary>
+        /// <returns></returns>
+        public STS Reset()
+        {
+            var twCap = new TW_CAPABILITY
+            {
+                Cap = Cap
+            };
+
+            var sts = _twain.DatCapability(DG.CONTROL, MSG.RESET, ref twCap);
+            return sts;
         }
     }
+
 }

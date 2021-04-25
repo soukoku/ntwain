@@ -274,6 +274,7 @@ namespace NTwain
             // 4 --> 3
             if ((_twain.GetState() == STATE.S4) && (state < STATE.S4))
             {
+                _caps = null;
                 TW_IDENTITY twidentity = default;
                 CsvSerializer.CsvToIdentity(ref twidentity, _twain.GetDsIdentity());
                 _twain.DatIdentity(DG.CONTROL, MSG.CLOSEDS, ref twidentity);
@@ -286,52 +287,22 @@ namespace NTwain
             }
         }
 
+        private Capabilities _caps;
+
         /// <summary>
-        /// Get current device's capabilities.
+        /// Get current device's capabilities. Will be null if no device is open.
         /// </summary>
         /// <returns></returns>
-        public Dictionary<CAP, CapWrapper> Capabilities()
+        public Capabilities Capabilities
         {
-            Dictionary<CAP, CapWrapper> caps = null;
-            if (State >= STATE.S4)
+            get
             {
-                TW_CAPABILITY cap = default;
-
-                // get list of supported caps
-                cap.Cap = CAP.CAP_SUPPORTEDCAPS;
-
-                var sts = _twain.DatCapability(DG.CONTROL, MSG.GET, ref cap);
-                if (sts == STS.SUCCESS)
+                if (State >= STATE.S4)
                 {
-                    var csv = TWAIN.CapabilityToCsv(cap, true);
-                    caps = csv.Split(',').Skip(4).Select(val =>
-                    {
-                        if (Enum.TryParse(val, out CAP c))
-                        {
-                            return new CapWrapper(_twain, c);
-                        }
-                        else if (val.StartsWith("0x"))
-                        {
-                            return new CapWrapper(_twain, (CAP)Convert.ToUInt16(val, 16));
-                        }
-                        else if (ushort.TryParse(val, out ushort num))
-                        {
-                            return new CapWrapper(_twain, (CAP)num);
-                        }
-                        return null;
-
-                    })
-                        .Where(cs => cs != null)
-                    .ToDictionary(cs => cs.Cap, cs => cs);
+                    return _caps ?? (_caps = new Capabilities(_twain));
                 }
-                else
-                {
-                    // don't support list, just give everything
-                    caps = Enum.GetValues(typeof(CAP)).Cast<CAP>()
-                        .ToDictionary(c => c, c => new CapWrapper(_twain, c));
-                }
+                return null;
             }
-            return caps ?? new Dictionary<CAP, CapWrapper>();
         }
 
         /// <summary>

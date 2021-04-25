@@ -9,6 +9,21 @@ namespace TWAINWorkingGroup
 {
     // contains my additions that makes twain types easier to work with.
 
+    /// <summary>
+    /// TWAIN's boolean values.
+    /// </summary>
+    public enum BoolType : ushort
+    {
+        /// <summary>
+        /// The false value (0).
+        /// </summary>
+        False = 0,
+        /// <summary>
+        /// The true value (1).
+        /// </summary>
+        True = 1
+    }
+
     partial struct TW_FIX32 : IEquatable<TW_FIX32>
     {
         // the conversion logic is found in the spec.

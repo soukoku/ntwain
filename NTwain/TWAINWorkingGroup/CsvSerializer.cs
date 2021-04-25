@@ -1228,7 +1228,7 @@ namespace TWAINWorkingGroup
                     szCvt = t.ToString();
                     if (szCvt != i32.ToString())
                     {
-                        return (typeof(T).ToString().Replace("TWAINWorkingGroup.TWAIN+", "") + "_" + szCvt);
+                        return (typeof(T).Name + "_" + szCvt);
                     }
                 }
             }
@@ -1285,7 +1285,7 @@ namespace TWAINWorkingGroup
                     // Everybody else needs the name decoration removed...
                     else
                     {
-                        return (typeof(T).ToString().Replace("TWAINWorkingGroup.TWAIN+", "") + "_" + szCvt);
+                        return (typeof(T).Name + "_" + szCvt);
                     }
                 }
 
