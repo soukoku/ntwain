@@ -1,0 +1,37 @@
+<Project ToolsVersion="15.0">
+  <PropertyGroup>
+    <!--change in each release-->
+    <PackageVersion>4.0.0</PackageVersion>
+
+    <!--keep major the same until it changes-->
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    
+    <PackageProjectUrl>https://github.com/soukoku/ntwain</PackageProjectUrl>
+    <PackageTags>twain scan</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>https://github.com/soukoku/ntwain/blob/master/Scanner-Icon.png?raw=true</PackageIconUrl>
+    <RepositoryUrl>https://github.com/soukoku/ntwain</RepositoryUrl>
+    <RepositoryType>GIT</RepositoryType>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <!--<Copyright>Eugene Wang 2012</Copyright>-->
+    <Authors>Eugene Wang</Authors>
+
+    <Version>$(PkgVersion)</Version>
+    <FileVersion>$(PkgVersion)</FileVersion>
+    <LangVersion>7.1</LangVersion>
+    <!--don't warn missing xml docs-->
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+</Project>

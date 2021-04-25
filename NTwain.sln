@@ -5,18 +5,20 @@ VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{4CE0B9ED-2CD1-440F-B4EC-35ECA6D61EFE}"
 	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
 		LICENSE.txt = LICENSE.txt
-		size-test\main.cpp = size-test\main.cpp
 		README.md = README.md
 		twain-doc\TWAIN-2.4-Specification.pdf = twain-doc\TWAIN-2.4-Specification.pdf
 		twain-doc\twain2.4.h = twain-doc\twain2.4.h
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTwain", "NTwain\NTwain.csproj", "{B391C1B7-5647-4B7A-9079-81E835E633DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain", "src\NTwain\NTwain.csproj", "{B391C1B7-5647-4B7A-9079-81E835E633DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net5Console", "samples\Net5Console\Net5Console.csproj", "{9F6C1B39-D0C9-4466-96A0-AB41C58762A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Console", "samples\Net5Console\Net5Console.csproj", "{9F6C1B39-D0C9-4466-96A0-AB41C58762A9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{707B4313-8EF8-4D0F-A95E-590783422187}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain.Win", "src\NTwain.Win\NTwain.Win.csproj", "{F836149E-E64D-476E-A325-478D18BE1CC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{9F6C1B39-D0C9-4466-96A0-AB41C58762A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F6C1B39-D0C9-4466-96A0-AB41C58762A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F6C1B39-D0C9-4466-96A0-AB41C58762A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F836149E-E64D-476E-A325-478D18BE1CC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F836149E-E64D-476E-A325-478D18BE1CC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F836149E-E64D-476E-A325-478D18BE1CC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F836149E-E64D-476E-A325-478D18BE1CC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

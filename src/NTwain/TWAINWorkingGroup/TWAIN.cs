@@ -116,7 +116,6 @@ namespace TWAINWorkingGroup
         /// <param name="a_scancallback">Function to handle scanning</param>
         /// <param name="a_runinuithreaddelegate">Help us run in the GUI thread on Windows</param>
         /// <param name="a_intptrHwnd">window handle</param>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public TWAIN
         (
             string a_szManufacturer,
@@ -264,10 +263,10 @@ namespace TWAINWorkingGroup
                         // we find an old DSM...
                         foreach (string szDsm in aszDsm)
                         {
-                            if (    szDsm.EndsWith("so.2.0") || szDsm.Contains(".so.2.0.")
-                                ||  szDsm.EndsWith("so.2.1") || szDsm.Contains(".so.2.1.")
-                                ||  szDsm.EndsWith("so.2.2") || szDsm.Contains(".so.2.2.")
-                                ||  szDsm.EndsWith("so.2.3") || szDsm.Contains(".so.2.3."))
+                            if (szDsm.EndsWith("so.2.0") || szDsm.Contains(".so.2.0.")
+                                || szDsm.EndsWith("so.2.1") || szDsm.Contains(".so.2.1.")
+                                || szDsm.EndsWith("so.2.2") || szDsm.Contains(".so.2.2.")
+                                || szDsm.EndsWith("so.2.3") || szDsm.Contains(".so.2.3."))
                             {
                                 // If we get a match, see if the symbolic link is
                                 // pointing to old junk...
@@ -281,11 +280,11 @@ namespace TWAINWorkingGroup
                                 p.WaitForExit();
                                 p.Dispose();
                                 // We never did any 1.x stuff...
-                                if (    (szOutput != null)
-                                    &&  (szOutput.EndsWith(".so.2.0") || szOutput.Contains(".so.2.0.")
-                                    ||   szOutput.EndsWith(".so.2.1") || szOutput.Contains(".so.2.1.")
-                                    ||   szOutput.EndsWith(".so.2.2") || szOutput.Contains(".so.2.2.")
-                                    ||   szOutput.EndsWith(".so.2.3") || szOutput.Contains(".so.2.3.")))
+                                if ((szOutput != null)
+                                    && (szOutput.EndsWith(".so.2.0") || szOutput.Contains(".so.2.0.")
+                                    || szOutput.EndsWith(".so.2.1") || szOutput.Contains(".so.2.1.")
+                                    || szOutput.EndsWith(".so.2.2") || szOutput.Contains(".so.2.2.")
+                                    || szOutput.EndsWith(".so.2.3") || szOutput.Contains(".so.2.3.")))
                                 {
                                     // libtwaindsm.so is pointing to an old DSM...
                                     blCheckForNewDsm = false;
@@ -301,19 +300,19 @@ namespace TWAINWorkingGroup
                         foreach (string szDsm in aszDsm)
                         {
                             // I guess this is reasonably future-proof...
-                            if (    szDsm.Contains("so.2.4")
-                                ||  szDsm.Contains("so.2.5")
-                                ||  szDsm.Contains("so.2.6")
-                                ||  szDsm.Contains("so.2.7")
-                                ||  szDsm.Contains("so.2.8")
-                                ||  szDsm.Contains("so.2.9")
-                                ||  szDsm.Contains("so.2.10")
-                                ||  szDsm.Contains("so.2.11")
-                                ||  szDsm.Contains("so.2.12")
-                                ||  szDsm.Contains("so.2.13")
-                                ||  szDsm.Contains("so.2.14")
-                                ||  szDsm.Contains("so.3")
-                                ||  szDsm.Contains("so.4"))
+                            if (szDsm.Contains("so.2.4")
+                                || szDsm.Contains("so.2.5")
+                                || szDsm.Contains("so.2.6")
+                                || szDsm.Contains("so.2.7")
+                                || szDsm.Contains("so.2.8")
+                                || szDsm.Contains("so.2.9")
+                                || szDsm.Contains("so.2.10")
+                                || szDsm.Contains("so.2.11")
+                                || szDsm.Contains("so.2.12")
+                                || szDsm.Contains("so.2.13")
+                                || szDsm.Contains("so.2.14")
+                                || szDsm.Contains("so.3")
+                                || szDsm.Contains("so.4"))
                             {
                                 // libtwaindsm.so is pointing to a new DSM...
                                 if (szDsm.Contains("lib64"))
@@ -474,7 +473,6 @@ namespace TWAINWorkingGroup
         /// </summary>
         /// <param name="a_u32Size">Number of bytes to allocate</param>
         /// <returns>Point to memory</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public IntPtr DsmMemAlloc(uint a_u32Size, bool a_blForcePointer = false)
         {
             IntPtr intptr;
@@ -540,7 +538,6 @@ namespace TWAINWorkingGroup
         /// Free memory used with the data source...
         /// </summary>
         /// <param name="a_intptrHandle">Pointer to free</param>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public void DsmMemFree(ref IntPtr a_intptrHandle, bool a_blForcePointer = false)
         {
             // Validate...
@@ -593,7 +590,6 @@ namespace TWAINWorkingGroup
         /// </summary>
         /// <param name="a_intptrHandle">Handle to lock</param>
         /// <returns>Locked pointer</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public IntPtr DsmMemLock(IntPtr a_intptrHandle)
         {
             // Validate...
@@ -636,7 +632,6 @@ namespace TWAINWorkingGroup
         /// Unlock memory used with the data source...
         /// </summary>
         /// <param name="a_intptrHandle">Handle to unlock</param>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public void DsmMemUnlock(IntPtr a_intptrHandle)
         {
             // Validate...
@@ -748,7 +743,6 @@ namespace TWAINWorkingGroup
         /// <param name="a_intptrWparam">a parameter for the message</param>
         /// <param name="a_intptrLparam">another parameter for the message</param>
         /// <returns></returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public bool PreFilterMessage
         (
             IntPtr a_intptrHwnd,
@@ -925,7 +919,7 @@ namespace TWAINWorkingGroup
                     m_blAcceptXferReady = false;
                     m_blIsMsgclosedsok = false;
                     m_blIsMsgclosedsreq = false;
-                    m_blIsMsgxferready = false; 
+                    m_blIsMsgxferready = false;
                 }
 
                 // State 4 --> State 3...
@@ -1324,13 +1318,14 @@ namespace TWAINWorkingGroup
                     break;
 
                 // DAT_IMAGENATIVEXFER...
-                case (int)DAT.IMAGENATIVEXFER:
-                    {
-                        IntPtr intptrBitmapHandle = IntPtr.Zero;
-                        sts = DatImagenativexferHandle((DG)iDg, (MSG)iMsg, ref intptrBitmapHandle);
-                        a_szTwmemref = intptrBitmapHandle.ToString();
-                    }
-                    break;
+                // TODO: Recode later
+                //case (int)DAT.IMAGENATIVEXFER:
+                //    {
+                //        IntPtr intptrBitmapHandle = IntPtr.Zero;
+                //        sts = DatImagenativexferHandle((DG)iDg, (MSG)iMsg, ref intptrBitmapHandle);
+                //        a_szTwmemref = intptrBitmapHandle.ToString();
+                //    }
+                //    break;
 
                 // DAT_JPEGCOMPRESSION...
                 case (int)DAT.JPEGCOMPRESSION:
@@ -1601,7 +1596,6 @@ namespace TWAINWorkingGroup
         /// </summary>
         /// <param name="a_twcapability">A TWAIN structure</param>
         /// <returns>A CSV string of the TWAIN structure</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public string CapabilityToCsv(TW_CAPABILITY a_twcapability, bool a_blUseSymbols)
         {
             IntPtr intptr;
@@ -1951,7 +1945,6 @@ namespace TWAINWorkingGroup
         /// <param name="a_szSetting">A CSV string of the TWAIN structure</param>
         /// <param name="a_szValue">The container for this capability</param>
         /// <returns>True if the conversion is successful</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public bool CsvToCapability(ref TW_CAPABILITY a_twcapability, ref string a_szSetting, string a_szValue)
         {
             int ii = 0;
@@ -1989,7 +1982,7 @@ namespace TWAINWorkingGroup
                     else
                     {
                         a_twcapability.Cap = (CAP)Enum.Parse(typeof(CAP), asz[0], true);
-					}
+                    }
                 }
                 catch
                 {
@@ -2285,7 +2278,6 @@ namespace TWAINWorkingGroup
         /// </summary>
         /// <param name="a_twcustomdsdata">A TWAIN structure</param>
         /// <returns>A CSV string of the TWAIN structure</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public string CustomdsdataToCsv(TW_CUSTOMDSDATA a_twcustomdsdata)
         {
             try
@@ -2310,7 +2302,6 @@ namespace TWAINWorkingGroup
         /// <param name="a_twcustomdsdata">A TWAIN structure</param>
         /// <param name="a_szCustomdsdata">A CSV string of the TWAIN structure</param>
         /// <returns>True if the conversion is successful</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public bool CsvToCustomdsdata(ref TW_CUSTOMDSDATA a_twcustomdsdata, string a_szCustomdsdata)
         {
             // Init stuff...
@@ -3112,7 +3103,6 @@ namespace TWAINWorkingGroup
                 ref m_threaddataDatAudionativexfer.intptrAudio
             );
         }
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public STS DatAudionativexfer(DG a_dg, MSG a_msg, ref IntPtr a_intptrAudio)
         {
             STS sts;
@@ -3596,7 +3586,6 @@ namespace TWAINWorkingGroup
         /// <param name="a_msg">Operation</param>
         /// <param name="a_twcapability">CAPABILITY structure</param>
         /// <returns>TWAIN status</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         private void DatCapabilityWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -3656,7 +3645,7 @@ namespace TWAINWorkingGroup
                             ThreadToCallerWaitOne();
 
                             // Hmmm...
-                            if (   (a_msg == MSG.GETCURRENT)
+                            if ((a_msg == MSG.GETCURRENT)
                                 && (m_twaincommand.Get(lIndex).sts == STS.SUCCESS)
                                 && (m_twaincommand.Get(lIndex).twcapability.ConType == (TWON)0)
                                 && (m_twaincommand.Get(lIndex).twcapability.hContainer == IntPtr.Zero))
@@ -3876,7 +3865,7 @@ namespace TWAINWorkingGroup
                     int result;
                     if (int.TryParse(astr[astr.Length - 1], out result))
                     {
-                       twlg = (TWLG)result;
+                        twlg = (TWLG)result;
                     }
                 }
                 catch
@@ -4042,7 +4031,6 @@ namespace TWAINWorkingGroup
         /// <param name="a_msg">Operation</param>
         /// <param name="a_twcustomdsdata">CUSTOMDSDATA structure</param>
         /// <returns>TWAIN status</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public STS DatCustomdsdata(DG a_dg, MSG a_msg, ref TW_CUSTOMDSDATA a_twcustomdsdata)
         {
             STS sts;
@@ -4333,7 +4321,6 @@ namespace TWAINWorkingGroup
         /// <param name="a_msg">Operation</param>
         /// <param name="a_twentrypoint">ENTRYPOINT structure</param>
         /// <returns>TWAIN status</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public STS DatEntrypoint(DG a_dg, MSG a_msg, ref TW_ENTRYPOINT a_twentrypoint)
         {
             STS sts;
@@ -4489,7 +4476,7 @@ namespace TWAINWorkingGroup
                 m_twentrypointdelegates.DSM_Entry = a_twentrypoint.DSM_Entry;
                 if (a_twentrypoint.DSM_MemAllocate != null)
                 {
-                    m_twentrypointdelegates.DSM_MemAllocate = (DSM_MEMALLOC)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemAllocate,typeof(DSM_MEMALLOC));
+                    m_twentrypointdelegates.DSM_MemAllocate = (DSM_MEMALLOC)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemAllocate, typeof(DSM_MEMALLOC));
                 }
                 if (a_twentrypoint.DSM_MemFree != null)
                 {
@@ -5554,7 +5541,6 @@ namespace TWAINWorkingGroup
                 ref m_threaddataDatIdentity.twidentitylegacy
             );
         }
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public STS DatIdentity(DG a_dg, MSG a_msg, ref TW_IDENTITY a_twidentity)
         {
             STS sts;
@@ -7313,220 +7299,218 @@ namespace TWAINWorkingGroup
                 ref m_threaddataDatImagenativexfer.intptrBitmap
             );
         }
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
-        public STS DatImagenativexfer(DG a_dg, MSG a_msg, ref Bitmap a_bitmap)
-        {
-            IntPtr intptrBitmapHandle = IntPtr.Zero;
-            return (DatImagenativexferBitmap(a_dg, a_msg, ref a_bitmap, ref intptrBitmapHandle, false));
-        }
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
-        public STS DatImagenativexferHandle(DG a_dg, MSG a_msg, ref IntPtr a_intptrBitmapHandle)
-        {
-            Bitmap bitmap = null;
-            return (DatImagenativexferBitmap(a_dg, a_msg, ref bitmap, ref a_intptrBitmapHandle, true));
-        }
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
-        public STS DatImagenativexferBitmap(DG a_dg, MSG a_msg, ref Bitmap a_bitmap, ref IntPtr a_intptrBitmapHandle, bool a_blUseBitmapHandle)
-        {
-            STS sts;
-            IntPtr intptrBitmap = IntPtr.Zero;
+        // TODO: Recode later
+        //public STS DatImagenativexfer(DG a_dg, MSG a_msg, ref Bitmap a_bitmap)
+        //{
+        //    IntPtr intptrBitmapHandle = IntPtr.Zero;
+        //    return (DatImagenativexferBitmap(a_dg, a_msg, ref a_bitmap, ref intptrBitmapHandle, false));
+        //}
+        //public STS DatImagenativexferHandle(DG a_dg, MSG a_msg, ref IntPtr a_intptrBitmapHandle)
+        //{
+        //    Bitmap bitmap = null;
+        //    return (DatImagenativexferBitmap(a_dg, a_msg, ref bitmap, ref a_intptrBitmapHandle, true));
+        //}
+        //public STS DatImagenativexferBitmap(DG a_dg, MSG a_msg, ref Bitmap a_bitmap, ref IntPtr a_intptrBitmapHandle, bool a_blUseBitmapHandle)
+        //{
+        //    STS sts;
+        //    IntPtr intptrBitmap = IntPtr.Zero;
 
-            // Submit the work to the TWAIN thread...
-            if (this.m_runinuithreaddelegate == null)
-            {
-                if ((m_threadTwain != null) && (m_threadTwain.ManagedThreadId != Thread.CurrentThread.ManagedThreadId))
-                {
-                    lock (m_lockTwain)
-                    {
-                        // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
-                        threaddata.bitmap = a_bitmap;
-                        threaddata.blUseBitmapHandle = a_blUseBitmapHandle;
-                        threaddata.dg = a_dg;
-                        threaddata.msg = a_msg;
-                        threaddata.dat = DAT.IMAGENATIVEXFER;
-                        long lIndex = m_twaincommand.Submit(threaddata);
+        //    // Submit the work to the TWAIN thread...
+        //    if (this.m_runinuithreaddelegate == null)
+        //    {
+        //        if ((m_threadTwain != null) && (m_threadTwain.ManagedThreadId != Thread.CurrentThread.ManagedThreadId))
+        //        {
+        //            lock (m_lockTwain)
+        //            {
+        //                // Set our command variables...
+        //                ThreadData threaddata = default(ThreadData);
+        //                threaddata.bitmap = a_bitmap;
+        //                threaddata.blUseBitmapHandle = a_blUseBitmapHandle;
+        //                threaddata.dg = a_dg;
+        //                threaddata.msg = a_msg;
+        //                threaddata.dat = DAT.IMAGENATIVEXFER;
+        //                long lIndex = m_twaincommand.Submit(threaddata);
 
-                        // Submit the command and wait for the reply...
-                        CallerToThreadSet();
-                        ThreadToCallerWaitOne();
+        //                // Submit the command and wait for the reply...
+        //                CallerToThreadSet();
+        //                ThreadToCallerWaitOne();
 
-                        // Return the result...
-                        a_bitmap = m_twaincommand.Get(lIndex).bitmap;
-                        a_intptrBitmapHandle = m_twaincommand.Get(lIndex).intptrBitmap;
-                        sts = m_twaincommand.Get(lIndex).sts;
+        //                // Return the result...
+        //                a_bitmap = m_twaincommand.Get(lIndex).bitmap;
+        //                a_intptrBitmapHandle = m_twaincommand.Get(lIndex).intptrBitmap;
+        //                sts = m_twaincommand.Get(lIndex).sts;
 
-                        // Clear the command variables...
-                        m_twaincommand.Delete(lIndex);
-                    }
-                    return (sts);
-                }
-            }
+        //                // Clear the command variables...
+        //                m_twaincommand.Delete(lIndex);
+        //            }
+        //            return (sts);
+        //        }
+        //    }
 
-            // Log it...
-            if (Log.GetLevel() > 0)
-            {
-                Log.LogSendBefore(a_dg.ToString(), DAT.IMAGENATIVEXFER.ToString(), a_msg.ToString(), "");
-            }
+        //    // Log it...
+        //    if (Log.GetLevel() > 0)
+        //    {
+        //        Log.LogSendBefore(a_dg.ToString(), DAT.IMAGENATIVEXFER.ToString(), a_msg.ToString(), "");
+        //    }
 
-            // Windows...
-            if (ms_platform == Platform.WINDOWS)
-            {
-                // Issue the command...
-                try
-                {
-                    if (m_threaddataDatImagenativexfer.blIsInuse || (this.m_runinuithreaddelegate == null))
-                    {
-                        if (m_blUseLegacyDSM)
-                        {
-                            sts = (STS)NativeMethods.WindowsTwain32DsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-                        }
-                        else
-                        {
-                            sts = (STS)NativeMethods.WindowsTwaindsmDsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-                        }
-                    }
-                    else
-                    {
-                        if (m_blUseLegacyDSM)
-                        {
-                            lock (m_lockTwain)
-                            {
-                                m_threaddataDatImagenativexfer = default(ThreadData);
-                                m_threaddataDatImagenativexfer.blIsInuse = true;
-                                m_threaddataDatImagenativexfer.dg = a_dg;
-                                m_threaddataDatImagenativexfer.msg = a_msg;
-                                m_threaddataDatImagenativexfer.dat = DAT.IMAGENATIVEXFER;
-                                RunInUiThread(DatImagenativexferWindowsTwain32);
-                                intptrBitmap = a_intptrBitmapHandle = m_threaddataDatImagenativexfer.intptrBitmap;
-                                sts = m_threaddataDatImagenativexfer.sts;
-                                m_threaddataDatImagenativexfer = default(ThreadData);
-                            }
-                        }
-                        else
-                        {
-                            lock (m_lockTwain)
-                            {
-                                m_threaddataDatImagenativexfer = default(ThreadData);
-                                m_threaddataDatImagenativexfer.blIsInuse = true;
-                                m_threaddataDatImagenativexfer.dg = a_dg;
-                                m_threaddataDatImagenativexfer.msg = a_msg;
-                                m_threaddataDatImagenativexfer.dat = DAT.IMAGENATIVEXFER;
-                                RunInUiThread(DatImagenativexferWindowsTwainDsm);
-                                intptrBitmap = a_intptrBitmapHandle = m_threaddataDatImagenativexfer.intptrBitmap;
-                                sts = m_threaddataDatImagenativexfer.sts;
-                                m_threaddataDatImagenativexfer = default(ThreadData);
-                            }
-                        }
-                    }
-                }
-                catch (Exception exception)
-                {
-                    // The driver crashed...
-                    Log.Error("crash - " + exception.Message);
-                    Log.LogSendAfter(STS.BUMMER, "");
-                    return (STS.BUMMER);
-                }
-            }
+        //    // Windows...
+        //    if (ms_platform == Platform.WINDOWS)
+        //    {
+        //        // Issue the command...
+        //        try
+        //        {
+        //            if (m_threaddataDatImagenativexfer.blIsInuse || (this.m_runinuithreaddelegate == null))
+        //            {
+        //                if (m_blUseLegacyDSM)
+        //                {
+        //                    sts = (STS)NativeMethods.WindowsTwain32DsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+        //                }
+        //                else
+        //                {
+        //                    sts = (STS)NativeMethods.WindowsTwaindsmDsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (m_blUseLegacyDSM)
+        //                {
+        //                    lock (m_lockTwain)
+        //                    {
+        //                        m_threaddataDatImagenativexfer = default(ThreadData);
+        //                        m_threaddataDatImagenativexfer.blIsInuse = true;
+        //                        m_threaddataDatImagenativexfer.dg = a_dg;
+        //                        m_threaddataDatImagenativexfer.msg = a_msg;
+        //                        m_threaddataDatImagenativexfer.dat = DAT.IMAGENATIVEXFER;
+        //                        RunInUiThread(DatImagenativexferWindowsTwain32);
+        //                        intptrBitmap = a_intptrBitmapHandle = m_threaddataDatImagenativexfer.intptrBitmap;
+        //                        sts = m_threaddataDatImagenativexfer.sts;
+        //                        m_threaddataDatImagenativexfer = default(ThreadData);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    lock (m_lockTwain)
+        //                    {
+        //                        m_threaddataDatImagenativexfer = default(ThreadData);
+        //                        m_threaddataDatImagenativexfer.blIsInuse = true;
+        //                        m_threaddataDatImagenativexfer.dg = a_dg;
+        //                        m_threaddataDatImagenativexfer.msg = a_msg;
+        //                        m_threaddataDatImagenativexfer.dat = DAT.IMAGENATIVEXFER;
+        //                        RunInUiThread(DatImagenativexferWindowsTwainDsm);
+        //                        intptrBitmap = a_intptrBitmapHandle = m_threaddataDatImagenativexfer.intptrBitmap;
+        //                        sts = m_threaddataDatImagenativexfer.sts;
+        //                        m_threaddataDatImagenativexfer = default(ThreadData);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        catch (Exception exception)
+        //        {
+        //            // The driver crashed...
+        //            Log.Error("crash - " + exception.Message);
+        //            Log.LogSendAfter(STS.BUMMER, "");
+        //            return (STS.BUMMER);
+        //        }
+        //    }
 
-            // Linux...
-            else if (ms_platform == Platform.LINUX)
-            {
-                // Issue the command...
-                try
-                {
-                    if (m_blFoundLatestDsm64 && (m_linuxdsm == LinuxDsm.IsLatestDsm))
-                    {
-                        sts = (STS)NativeMethods.Linux64DsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-                    }
-                    else if (m_blFoundLatestDsm && (m_linuxdsm == LinuxDsm.IsLatestDsm))
-                    {
-                        sts = (STS)NativeMethods.LinuxDsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-                    }
-                    else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
-                    {
-                        sts = (STS)NativeMethods.Linux020302Dsm64bitEntryImagenativexfer(ref m_twidentityApp, ref m_twidentityDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-                    }
-                    else
-                    {
-                        Log.Error("apparently we don't have a DSM...");
-                        sts = STS.BUMMER;
-                    }
-                }
-                catch (Exception exception)
-                {
-                    // The driver crashed...
-                    Log.Error("crash - " + exception.Message);
-                    Log.LogSendAfter(STS.BUMMER, "");
-                    return (STS.BUMMER);
-                }
-            }
+        //    // Linux...
+        //    else if (ms_platform == Platform.LINUX)
+        //    {
+        //        // Issue the command...
+        //        try
+        //        {
+        //            if (m_blFoundLatestDsm64 && (m_linuxdsm == LinuxDsm.IsLatestDsm))
+        //            {
+        //                sts = (STS)NativeMethods.Linux64DsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+        //            }
+        //            else if (m_blFoundLatestDsm && (m_linuxdsm == LinuxDsm.IsLatestDsm))
+        //            {
+        //                sts = (STS)NativeMethods.LinuxDsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+        //            }
+        //            else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
+        //            {
+        //                sts = (STS)NativeMethods.Linux020302Dsm64bitEntryImagenativexfer(ref m_twidentityApp, ref m_twidentityDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+        //            }
+        //            else
+        //            {
+        //                Log.Error("apparently we don't have a DSM...");
+        //                sts = STS.BUMMER;
+        //            }
+        //        }
+        //        catch (Exception exception)
+        //        {
+        //            // The driver crashed...
+        //            Log.Error("crash - " + exception.Message);
+        //            Log.LogSendAfter(STS.BUMMER, "");
+        //            return (STS.BUMMER);
+        //        }
+        //    }
 
-            // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
-            {
-                // Issue the command...
-                try
-                {
-                    intptrBitmap = IntPtr.Zero;
-                    if (m_blUseLegacyDSM)
-                    {
-                        sts = (STS)NativeMethods.MacosxTwainDsmEntryImagenativexfer(ref m_twidentitymacosxApp, ref m_twidentitymacosxDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-                    }
-                    else
-                    {
-                        sts = (STS)NativeMethods.MacosxTwaindsmDsmEntryImagenativexfer(ref m_twidentitymacosxApp, ref m_twidentitymacosxDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-                    }
-                }
-                catch (Exception exception)
-                {
-                    // The driver crashed...
-                    Log.Error("crash - " + exception.Message);
-                    Log.LogSendAfter(STS.BUMMER, "");
-                    return (STS.BUMMER);
-                }
-            }
+        //    // Mac OS X, which has to be different...
+        //    else if (ms_platform == Platform.MACOSX)
+        //    {
+        //        // Issue the command...
+        //        try
+        //        {
+        //            intptrBitmap = IntPtr.Zero;
+        //            if (m_blUseLegacyDSM)
+        //            {
+        //                sts = (STS)NativeMethods.MacosxTwainDsmEntryImagenativexfer(ref m_twidentitymacosxApp, ref m_twidentitymacosxDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+        //            }
+        //            else
+        //            {
+        //                sts = (STS)NativeMethods.MacosxTwaindsmDsmEntryImagenativexfer(ref m_twidentitymacosxApp, ref m_twidentitymacosxDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+        //            }
+        //        }
+        //        catch (Exception exception)
+        //        {
+        //            // The driver crashed...
+        //            Log.Error("crash - " + exception.Message);
+        //            Log.LogSendAfter(STS.BUMMER, "");
+        //            return (STS.BUMMER);
+        //        }
+        //    }
 
-            // Uh-oh...
-            else
-            {
-                Log.LogSendAfter(STS.BUMMER, "");
-                return (STS.BUMMER);
-            }
+        //    // Uh-oh...
+        //    else
+        //    {
+        //        Log.LogSendAfter(STS.BUMMER, "");
+        //        return (STS.BUMMER);
+        //    }
 
-            // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+        //    // Get DAT_STATUS, if needed...
+        //    STS stsRcOrCc = AutoDatStatus(sts);
 
-            // Log it...
-            if (Log.GetLevel() > 0)
-            {
-                Log.LogSendAfter(stsRcOrCc, "");
-            }
+        //    // Log it...
+        //    if (Log.GetLevel() > 0)
+        //    {
+        //        Log.LogSendAfter(stsRcOrCc, "");
+        //    }
 
-            // If we had a successful transfer, then convert the data...
-            if (sts == STS.XFERDONE)
-            {
-                if (a_blUseBitmapHandle)
-                {
-                    a_intptrBitmapHandle = intptrBitmap;
-                }
-                else
-                {
-                    // Bump our state...
-                    m_state = STATE.S7;
+        //    // If we had a successful transfer, then convert the data...
+        //    if (sts == STS.XFERDONE)
+        //    {
+        //        if (a_blUseBitmapHandle)
+        //        {
+        //            a_intptrBitmapHandle = intptrBitmap;
+        //        }
+        //        else
+        //        {
+        //            // Bump our state...
+        //            m_state = STATE.S7;
 
-                    // Turn the DIB into a Bitmap object...
-                    a_bitmap = NativeToBitmap(ms_platform, intptrBitmap);
+        //            // Turn the DIB into a Bitmap object...
+        //            a_bitmap = NativeToBitmap(ms_platform, intptrBitmap);
 
-                    // We're done with the data we got from the driver...
-                    Marshal.FreeHGlobal(intptrBitmap);
-                    intptrBitmap = IntPtr.Zero;
-                }
-            }
+        //            // We're done with the data we got from the driver...
+        //            Marshal.FreeHGlobal(intptrBitmap);
+        //            intptrBitmap = IntPtr.Zero;
+        //        }
+        //    }
 
-            // All done...
-            return (stsRcOrCc);
-        }
+        //    // All done...
+        //    return (stsRcOrCc);
+        //}
 
         /// <summary>
         /// Get/Set JPEG compression tables...
@@ -7998,7 +7982,6 @@ namespace TWAINWorkingGroup
                 ref m_threaddataDatParent.intptrHwnd
             );
         }
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public STS DatParent(DG a_dg, MSG a_msg, ref IntPtr a_intptrHwnd)
         {
             STS sts;
@@ -10720,16 +10703,17 @@ namespace TWAINWorkingGroup
                         break;
 
                     // Native transfer...
-                    case DAT.IMAGENATIVEXFER:
-                        if (threaddata.blUseBitmapHandle)
-                        {
-                            threaddata.sts = DatImagenativexferHandle(threaddata.dg, threaddata.msg, ref threaddata.intptrBitmap);
-                        }
-                        else
-                        {
-                            threaddata.sts = DatImagenativexfer(threaddata.dg, threaddata.msg, ref threaddata.bitmap);
-                        }
-                        break;
+                    // TODO: Recode later
+                    //case DAT.IMAGENATIVEXFER:
+                    //    if (threaddata.blUseBitmapHandle)
+                    //    {
+                    //        threaddata.sts = DatImagenativexferHandle(threaddata.dg, threaddata.msg, ref threaddata.intptrBitmap);
+                    //    }
+                    //    else
+                    //    {
+                    //        threaddata.sts = DatImagenativexfer(threaddata.dg, threaddata.msg, ref threaddata.bitmap);
+                    //    }
+                    //    break;
 
                     // JPEG compression...
                     case DAT.JPEGCOMPRESSION:
@@ -11189,7 +11173,6 @@ namespace TWAINWorkingGroup
         /// <param name="a_intptr">Pointer to the data</param>
         /// <param name="a_iIndex">Index of the item in the data</param>
         /// <returns>Data in CSV form</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public string GetIndexedItem(TW_CAPABILITY a_twcapability, TWTY a_twty, IntPtr a_intptr, int a_iIndex)
         {
             IntPtr intptr;
@@ -11301,7 +11284,6 @@ namespace TWAINWorkingGroup
         /// <param name="a_iIndex">Index for item in the data</param>
         /// <param name="a_szValue">CSV value to be used to set the data</param>
         /// <returns>Empty string or an error string</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public string SetIndexedItem(TW_CAPABILITY a_twcapability, TWTY a_twty, IntPtr a_intptr, int a_iIndex, string a_szValue)
         {
             IntPtr intptr;
@@ -11479,7 +11461,6 @@ namespace TWAINWorkingGroup
         /// <param name="a_intptr">Pointer to the data</param>
         /// <param name="a_asz">List of strings</param>
         /// <returns>Empty string or an error string</returns>
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public string SetRangeItem(TWTY a_twty, IntPtr a_intptr, string[] a_asz)
         {
             TW_RANGE twrange = default(TW_RANGE);
@@ -11819,167 +11800,167 @@ namespace TWAINWorkingGroup
             return ((UInt16)STS.SUCCESS);
         }
 
-        /// <summary>
-        /// Get .NET 'Bitmap' object from memory DIB via stream constructor.
-        /// This should work for most DIBs.
-        /// </summary>
-        /// <param name="a_platform">Our operating system</param>
-        /// <param name="a_intptrNative">The pointer to something (presumably a BITMAP or a TIFF image)</param>
-        /// <returns>C# Bitmap of image</returns>
-        private Bitmap NativeToBitmap(Platform a_platform, IntPtr a_intptrNative)
-        {
-            ushort u16Magic;
-            IntPtr intptrNative;
+        ///// <summary>
+        ///// Get .NET 'Bitmap' object from memory DIB via stream constructor.
+        ///// This should work for most DIBs.
+        ///// </summary>
+        ///// <param name="a_platform">Our operating system</param>
+        ///// <param name="a_intptrNative">The pointer to something (presumably a BITMAP or a TIFF image)</param>
+        ///// <returns>C# Bitmap of image</returns>
+        //private Bitmap NativeToBitmap(Platform a_platform, IntPtr a_intptrNative)
+        //{
+        //    ushort u16Magic;
+        //    IntPtr intptrNative;
 
-            // We need the first two bytes to decide if we have a DIB or a TIFF.  Don't
-            // forget to lock the silly thing...
-            intptrNative = DsmMemLock(a_intptrNative);
-            u16Magic = (ushort)Marshal.PtrToStructure(intptrNative, typeof(ushort));
+        //    // We need the first two bytes to decide if we have a DIB or a TIFF.  Don't
+        //    // forget to lock the silly thing...
+        //    intptrNative = DsmMemLock(a_intptrNative);
+        //    u16Magic = (ushort)Marshal.PtrToStructure(intptrNative, typeof(ushort));
 
-            // Windows uses a DIB, the first usigned short is 40...
-            if (u16Magic == 40)
-            {
-                byte[] bBitmap;
-                BITMAPFILEHEADER bitmapfileheader;
-                BITMAPINFOHEADER bitmapinfoheader;
+        //    // Windows uses a DIB, the first usigned short is 40...
+        //    if (u16Magic == 40)
+        //    {
+        //        byte[] bBitmap;
+        //        BITMAPFILEHEADER bitmapfileheader;
+        //        BITMAPINFOHEADER bitmapinfoheader;
 
-                // Our incoming DIB is a bitmap info header...
-                bitmapinfoheader = (BITMAPINFOHEADER)Marshal.PtrToStructure(intptrNative, typeof(BITMAPINFOHEADER));
+        //        // Our incoming DIB is a bitmap info header...
+        //        bitmapinfoheader = (BITMAPINFOHEADER)Marshal.PtrToStructure(intptrNative, typeof(BITMAPINFOHEADER));
 
-                // Build our file header...
-                bitmapfileheader = new BITMAPFILEHEADER();
-                bitmapfileheader.bfType = 0x4D42; // "BM"
-                bitmapfileheader.bfSize
-                    = (uint)Marshal.SizeOf(typeof(BITMAPFILEHEADER)) +
-                       bitmapinfoheader.biSize +
-                       (bitmapinfoheader.biClrUsed * 4) +
-                       bitmapinfoheader.biSizeImage;
-                bitmapfileheader.bfOffBits
-                    = (uint)Marshal.SizeOf(typeof(BITMAPFILEHEADER)) +
-                       bitmapinfoheader.biSize +
-                       (bitmapinfoheader.biClrUsed * 4);
+        //        // Build our file header...
+        //        bitmapfileheader = new BITMAPFILEHEADER();
+        //        bitmapfileheader.bfType = 0x4D42; // "BM"
+        //        bitmapfileheader.bfSize
+        //            = (uint)Marshal.SizeOf(typeof(BITMAPFILEHEADER)) +
+        //               bitmapinfoheader.biSize +
+        //               (bitmapinfoheader.biClrUsed * 4) +
+        //               bitmapinfoheader.biSizeImage;
+        //        bitmapfileheader.bfOffBits
+        //            = (uint)Marshal.SizeOf(typeof(BITMAPFILEHEADER)) +
+        //               bitmapinfoheader.biSize +
+        //               (bitmapinfoheader.biClrUsed * 4);
 
-                // Copy the file header into our byte array...
-                IntPtr intptr = Marshal.AllocHGlobal(Marshal.SizeOf(bitmapfileheader));
-                Marshal.StructureToPtr(bitmapfileheader, intptr, true);
-                bBitmap = new byte[bitmapfileheader.bfSize];
-                Marshal.Copy(intptr, bBitmap, 0, Marshal.SizeOf(bitmapfileheader));
-                Marshal.FreeHGlobal(intptr);
-                intptr = IntPtr.Zero;
+        //        // Copy the file header into our byte array...
+        //        IntPtr intptr = Marshal.AllocHGlobal(Marshal.SizeOf(bitmapfileheader));
+        //        Marshal.StructureToPtr(bitmapfileheader, intptr, true);
+        //        bBitmap = new byte[bitmapfileheader.bfSize];
+        //        Marshal.Copy(intptr, bBitmap, 0, Marshal.SizeOf(bitmapfileheader));
+        //        Marshal.FreeHGlobal(intptr);
+        //        intptr = IntPtr.Zero;
 
-                // Copy the rest of the DIB into our byte array......
-                Marshal.Copy(intptrNative, bBitmap, Marshal.SizeOf(typeof(BITMAPFILEHEADER)), (int)bitmapfileheader.bfSize - Marshal.SizeOf(typeof(BITMAPFILEHEADER)));
+        //        // Copy the rest of the DIB into our byte array......
+        //        Marshal.Copy(intptrNative, bBitmap, Marshal.SizeOf(typeof(BITMAPFILEHEADER)), (int)bitmapfileheader.bfSize - Marshal.SizeOf(typeof(BITMAPFILEHEADER)));
 
-                // Now we can turn the in-memory bitmap file into a Bitmap object...
-                MemoryStream memorystream = new MemoryStream(bBitmap);
+        //        // Now we can turn the in-memory bitmap file into a Bitmap object...
+        //        MemoryStream memorystream = new MemoryStream(bBitmap);
 
-                // Unfortunately the stream has to be kept with the bitmap...
-                Bitmap bitmapStream = new Bitmap(memorystream);
+        //        // Unfortunately the stream has to be kept with the bitmap...
+        //        Bitmap bitmapStream = new Bitmap(memorystream);
 
-                // So we make a copy (ick)...
-                Bitmap bitmap;
-                switch (bitmapinfoheader.biBitCount)
-                {
-                    default:
-                    case 24:
-                        bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                        break;
-                    case 8:
-                        bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
-                        break;
-                    case 1:
-                        bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-                        break;
-                }
+        //        // So we make a copy (ick)...
+        //        Bitmap bitmap;
+        //        switch (bitmapinfoheader.biBitCount)
+        //        {
+        //            default:
+        //            case 24:
+        //                bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+        //                break;
+        //            case 8:
+        //                bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
+        //                break;
+        //            case 1:
+        //                bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+        //                break;
+        //        }
 
-                // Fix the resolution...
-                bitmap.SetResolution((int)(bitmap.HorizontalResolution + 0.5), (int)(bitmap.VerticalResolution + 0.5));
+        //        // Fix the resolution...
+        //        bitmap.SetResolution((int)(bitmap.HorizontalResolution + 0.5), (int)(bitmap.VerticalResolution + 0.5));
 
-                // Cleanup...
-                //bitmapStream.Dispose();
-                //memorystream.Close();
-                bitmapStream = null;
-                memorystream = null;
-                bBitmap = null;
+        //        // Cleanup...
+        //        //bitmapStream.Dispose();
+        //        //memorystream.Close();
+        //        bitmapStream = null;
+        //        memorystream = null;
+        //        bBitmap = null;
 
-                // Return our bitmap...
-                DsmMemUnlock(a_intptrNative);
-                return (bitmap);
-            }
+        //        // Return our bitmap...
+        //        DsmMemUnlock(a_intptrNative);
+        //        return (bitmap);
+        //    }
 
-            // Linux and Mac OS X use TIFF.  We'll handle a simple Intel TIFF ("II")...
-            else if (u16Magic == 0x4949)
-            {
-                int iTiffSize;
-                ulong u64;
-                ulong u64Pointer;
-                ulong u64TiffHeaderSize;
-                ulong u64TiffTagSize;
-                byte[] abTiff;
-                TIFFHEADER tiffheader;
-                TIFFTAG tifftag;
+        //    // Linux and Mac OS X use TIFF.  We'll handle a simple Intel TIFF ("II")...
+        //    else if (u16Magic == 0x4949)
+        //    {
+        //        int iTiffSize;
+        //        ulong u64;
+        //        ulong u64Pointer;
+        //        ulong u64TiffHeaderSize;
+        //        ulong u64TiffTagSize;
+        //        byte[] abTiff;
+        //        TIFFHEADER tiffheader;
+        //        TIFFTAG tifftag;
 
-                // Init stuff...
-                tiffheader = new TIFFHEADER();
-                tifftag = new TIFFTAG();
-                u64TiffHeaderSize = (ulong)Marshal.SizeOf(tiffheader);
-                u64TiffTagSize = (ulong)Marshal.SizeOf(tifftag);
+        //        // Init stuff...
+        //        tiffheader = new TIFFHEADER();
+        //        tifftag = new TIFFTAG();
+        //        u64TiffHeaderSize = (ulong)Marshal.SizeOf(tiffheader);
+        //        u64TiffTagSize = (ulong)Marshal.SizeOf(tifftag);
 
-                // Find the size of the image so we can turn it into a memory stream...
-                iTiffSize = 0;
-                tiffheader = (TIFFHEADER)Marshal.PtrToStructure(intptrNative, typeof(TIFFHEADER));
-                for (u64 = 0; u64 < 999; u64++)
-                {
-                    u64Pointer = (ulong)intptrNative + u64TiffHeaderSize + (u64TiffTagSize * u64);
-                    tifftag = (TIFFTAG)Marshal.PtrToStructure((IntPtr)u64Pointer, typeof(TIFFTAG));
+        //        // Find the size of the image so we can turn it into a memory stream...
+        //        iTiffSize = 0;
+        //        tiffheader = (TIFFHEADER)Marshal.PtrToStructure(intptrNative, typeof(TIFFHEADER));
+        //        for (u64 = 0; u64 < 999; u64++)
+        //        {
+        //            u64Pointer = (ulong)intptrNative + u64TiffHeaderSize + (u64TiffTagSize * u64);
+        //            tifftag = (TIFFTAG)Marshal.PtrToStructure((IntPtr)u64Pointer, typeof(TIFFTAG));
 
-                    // StripOffsets...
-                    if (tifftag.u16Tag == 273)
-                    {
-                        iTiffSize += (int)tifftag.u32Value;
-                    }
+        //            // StripOffsets...
+        //            if (tifftag.u16Tag == 273)
+        //            {
+        //                iTiffSize += (int)tifftag.u32Value;
+        //            }
 
-                    // StripByteCounts...
-                    if (tifftag.u16Tag == 279)
-                    {
-                        iTiffSize += (int)tifftag.u32Value;
-                    }
-                }
+        //            // StripByteCounts...
+        //            if (tifftag.u16Tag == 279)
+        //            {
+        //                iTiffSize += (int)tifftag.u32Value;
+        //            }
+        //        }
 
-                // No joy...
-                if (iTiffSize == 0)
-                {
-                    DsmMemUnlock(a_intptrNative);
-                    return (null);
-                }
+        //        // No joy...
+        //        if (iTiffSize == 0)
+        //        {
+        //            DsmMemUnlock(a_intptrNative);
+        //            return (null);
+        //        }
 
-                // Copy the data to our byte array...
-                abTiff = new byte[iTiffSize];
-                Marshal.Copy(intptrNative, abTiff, 0, iTiffSize);
+        //        // Copy the data to our byte array...
+        //        abTiff = new byte[iTiffSize];
+        //        Marshal.Copy(intptrNative, abTiff, 0, iTiffSize);
 
-                // Move the image into a memory stream...
-                MemoryStream memorystream = new MemoryStream(abTiff);
+        //        // Move the image into a memory stream...
+        //        MemoryStream memorystream = new MemoryStream(abTiff);
 
-                // Turn the memory stream into an in-memory TIFF image...
-                Image imageTiff = Image.FromStream(memorystream);
+        //        // Turn the memory stream into an in-memory TIFF image...
+        //        Image imageTiff = Image.FromStream(memorystream);
 
-                // Convert the in-memory tiff to a Bitmap object...
-                Bitmap bitmap = new Bitmap(imageTiff);
+        //        // Convert the in-memory tiff to a Bitmap object...
+        //        Bitmap bitmap = new Bitmap(imageTiff);
 
-                // Cleanup...
-                abTiff = null;
-                memorystream = null;
-                imageTiff = null;
+        //        // Cleanup...
+        //        abTiff = null;
+        //        memorystream = null;
+        //        imageTiff = null;
 
-                // Return our bitmap...
-                DsmMemUnlock(a_intptrNative);
-                return (bitmap);
-            }
+        //        // Return our bitmap...
+        //        DsmMemUnlock(a_intptrNative);
+        //        return (bitmap);
+        //    }
 
-            // Uh-oh...
-            DsmMemUnlock(a_intptrNative);
-            return (null);
-        }
+        //    // Uh-oh...
+        //    DsmMemUnlock(a_intptrNative);
+        //    return (null);
+        //}
 
         /// <summary>
         /// Get .NET 'Bitmap' object from memory DIB via stream constructor.
@@ -12316,8 +12297,9 @@ namespace TWAINWorkingGroup
             public IntPtr intptrBitmap;
             public IntPtr intptrAudio;
             public IntPtr twmemref;
-            public Bitmap bitmap;
-            public bool blUseBitmapHandle;
+            // TODO: Recode later
+            //public Bitmap bitmap;
+            //public bool blUseBitmapHandle;
             public UInt32 twuint32;
             public TW_AUDIOINFO twaudioinfo;
             public TW_CALLBACK twcallback;
@@ -12729,7 +12711,7 @@ namespace TWAINWorkingGroup
                 a_threaddata = default(ThreadData);
 
                 // Cycle once through the commands to see if we have any...
-                for (;;)
+                for (; ; )
                 {
                     // We found something, copy it out, point to the next
                     // item (so we know we're looking at the whole list)
@@ -12771,7 +12753,7 @@ namespace TWAINWorkingGroup
                 long ll;
 
                 // We won't leave until we've submitted the beastie...
-                for (;;)
+                for (; ; )
                 {
                     // Look for a free slot...
                     for (ll = 0; ll < m_athreaddata.Length; ll++)
