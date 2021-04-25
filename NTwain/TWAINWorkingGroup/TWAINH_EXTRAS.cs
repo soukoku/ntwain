@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TWAINWorkingGroup
 {
-    // contains my additions
+    // contains my additions that makes twain types easier to work with.
 
     partial struct TW_FIX32 : IEquatable<TW_FIX32>
     {
@@ -15,7 +15,11 @@ namespace TWAINWorkingGroup
 
         float ToFloat()
         {
-            return (float)Whole + Frac / 65536f;
+            return Whole + Frac / 65536f;
+        }
+        double ToDouble()
+        {
+            return Whole + Frac / 65536.0;
         }
         TW_FIX32(float value)
         {
@@ -55,7 +59,7 @@ namespace TWAINWorkingGroup
         public static implicit operator float(TW_FIX32 value) => value.ToFloat();
         public static implicit operator TW_FIX32(float value) => new TW_FIX32(value);
 
-        public static implicit operator double(TW_FIX32 value) => value.ToFloat();
+        public static implicit operator double(TW_FIX32 value) => value.ToDouble();
         public static implicit operator TW_FIX32(double value) => new TW_FIX32((float)value);
 
         public static bool operator ==(TW_FIX32 value1, TW_FIX32 value2) => value1.Equals(value2);
@@ -64,9 +68,33 @@ namespace TWAINWorkingGroup
 
     partial struct TW_FRAME : IEquatable<TW_FRAME>
     {
+        /// <summary>
+        /// Creates <see cref="TW_FRAME"/> from a string representation of it.
+        /// </summary>
+        /// <param name="value"></param>
+        public TW_FRAME(string value) : this()
+        {
+            var parts = value.Split(',');
+            if (parts.Length == 4)
+            {
+                Left = float.Parse(parts[0]);
+                Top = float.Parse(parts[1]);
+                Right = float.Parse(parts[2]);
+                Bottom = float.Parse(parts[3]);
+            }
+            else
+            {
+                throw new ArgumentException($"Cannot create frame from \"{value}\".");
+            }
+        }
+
+        /// <summary>
+        /// String representation of Left,Top,Right,Bottom.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-            return $"L={Left}, T={Top}, R={Right}, B={Bottom}";
+            return $"{Left},{Top},{Right},{Bottom}";
         }
 
         public bool Equals(TW_FRAME other)

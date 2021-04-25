@@ -2546,6 +2546,7 @@ namespace TWAINWorkingGroup
     /// <summary>
     /// Flags used in TW_MEMORY structure.
     /// </summary>
+    [Flags]
     public enum TWMF : ushort
     {
         APPOWNS = 0x0001,
@@ -3753,6 +3754,7 @@ namespace TWAINWorkingGroup
     /// <summary>
     /// Data Groups...
     /// </summary>
+    [Flags]
     public enum DG : uint
     {
         CONTROL = 0x1,
@@ -4273,6 +4275,7 @@ namespace TWAINWorkingGroup
     /// bit patterns: for query the operation that are supported by the data source on a capability
     /// Application gets these through DG_CONTROL/DAT_CAPABILITY/MSG_QUERYSUPPORT
     /// </summary>
+    [Flags]
     public enum TWQC : ushort
     {
         GET = 0x0001,

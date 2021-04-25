@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -283,6 +284,62 @@ namespace NTwain
             {
                 _twain.DatParent(DG.CONTROL, MSG.CLOSEDSM, ref _hWnd);
             }
+        }
+
+        /// <summary>
+        /// Queries current device for supported capabilities.
+        /// Not all devices supports this.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<CAP> SupportedCaps()
+        {
+            List<CAP> caps = null;
+            if (State >= STATE.S4)
+            {
+                TW_CAPABILITY cap = default;
+
+                // get list of supported caps
+                cap.Cap = CAP.CAP_SUPPORTEDCAPS;
+
+                var sts = _twain.DatCapability(DG.CONTROL, MSG.GET, ref cap);
+                if (sts == STS.SUCCESS)
+                {
+                    var csv = TWAIN.CapabilityToCsv(cap, true);
+                    caps = csv.Split(',').Skip(4).Select(val =>
+                    {
+                        if (Enum.TryParse(val, out CAP c))
+                        {
+                            return c;
+                        }
+                        else if (val.StartsWith("0x"))
+                        {
+                            return (CAP)Convert.ToUInt16(val, 16);
+                        }
+                        else if (ushort.TryParse(val, out ushort num))
+                        {
+                            return (CAP)num;
+                        }
+                        return (CAP)0;
+
+                    }).ToList();
+                }
+
+                //foreach (CAP capId in Enum.GetValues(typeof(CAP)))
+                //{
+                //    cap.ConType = TWON.ONEVALUE;
+                //    cap.Cap = capId;
+
+                //    var sts = _twain.DatCapability(DG.CONTROL, MSG.QUERYSUPPORT, ref cap);
+                //    if (sts == STS.SUCCESS)
+                //    {
+                //        if (Enum.TryParse(_twain.CapabilityOneValueToString(cap), out TWQC qc))
+                //        {
+
+                //        }
+                //    }
+                //}
+            }
+            return caps ?? Enumerable.Empty<CAP>();
         }
 
         /// <summary>

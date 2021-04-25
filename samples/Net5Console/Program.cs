@@ -1,5 +1,6 @@
 ﻿using NTwain;
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using TWAINWorkingGroup;
@@ -12,6 +13,7 @@ namespace Net5Console
         static void Main(string[] args)
         {
             Console.WriteLine("Starting twain test in console...");
+            Console.WriteLine();
 
             using (var session = new TwainSession(Assembly.GetExecutingAssembly(), null, IntPtr.Zero))
             using (var hold = new ManualResetEventSlim())
@@ -19,10 +21,12 @@ namespace Net5Console
                 session.DeviceEvent += (sender, e) =>
                 {
                     Console.WriteLine($"Got device event " + (TWDE)e.Event);
+                    Console.WriteLine();
                 };
                 session.ScanEvent += (sender, closing) =>
                 {
                     Console.WriteLine($"Got scan event " + closing);
+                    Console.WriteLine();
 
                     // don't care, just end it
                     TW_PENDINGXFERS pending = default;
@@ -32,10 +36,12 @@ namespace Net5Console
                     if (session.TWAIN.DatUserinterface(DG.CONTROL, MSG.DISABLEDS, ref twuserinterface) == STS.SUCCESS)
                     {
                         Console.WriteLine("Disabled device.");
+                        Console.WriteLine();
                     }
                     else
                     {
                         Console.Error.WriteLine("Failed to disabled device.");
+                        Console.WriteLine();
                     }
                     hold.Set();
                 };
@@ -43,9 +49,11 @@ namespace Net5Console
                 if (session.Open() == TWAINWorkingGroup.STS.SUCCESS)
                 {
                     Console.WriteLine("Opened DSM");
+                    Console.WriteLine();
 
                     Console.WriteLine("Default device:");
                     Console.WriteLine($"\t{session.DefaultDevice}");
+                    Console.WriteLine();
 
                     Console.WriteLine("All devices:");
                     TW_IDENTITY dsToUse = default;
@@ -57,28 +65,41 @@ namespace Net5Console
                             dsToUse = dev;
                         }
                     }
+                    Console.WriteLine();
 
                     session.CurrentDevice = dsToUse;
                     if (session.CurrentDevice.HasValue)
                     {
                         Console.WriteLine("Current device after opening attempt:");
                         Console.WriteLine($"\t{session.CurrentDevice}");
+                        Console.WriteLine();
+
+                        var caps = session.SupportedCaps();
+                        Console.WriteLine("Device supports these caps:");
+                        foreach (var cap in caps.OrderBy(c => c))
+                        {
+                            Console.WriteLine($"\t{cap}");
+                        }
+                        Console.WriteLine();
 
                         var sts = session.StartCapture(false);
                         if (sts == STS.SUCCESS)
                         {
                             Console.Error.WriteLine("Waiting for capture to complete.");
+                            Console.WriteLine();
 
                             while (!hold.IsSet) Thread.Sleep(100);
                         }
                         else
                         {
                             Console.Error.WriteLine("Failed to start capture: " + sts);
+                            Console.WriteLine();
                         }
                     }
                     else
                     {
                         Console.WriteLine("No devices opened.");
+                        Console.WriteLine();
                     }
                 }
                 else
