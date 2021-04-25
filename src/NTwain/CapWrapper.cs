@@ -185,6 +185,120 @@ namespace NTwain
             var sts = _twain.DatCapability(DG.CONTROL, MSG.RESET, ref twCap);
             return sts;
         }
-    }
 
+        /// <summary>
+        /// Try to set a one value for the cap.
+        /// </summary>
+        /// <param name="setMsg"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetOrConstraint(MSG setMsg, TValue value)
+        {
+            if (setMsg != MSG.SET && setMsg != MSG.SETCONSTRAINT)
+                throw new ArgumentException($"Only {nameof(MSG.SET)} and {nameof(MSG.SETCONSTRAINT)} messages are supported.", nameof(setMsg));
+
+            var twCap = new TW_CAPABILITY
+            {
+                Cap = Cap,
+                ConType = TWON.ONEVALUE
+            };
+            try
+            {
+                ValueWriter.WriteOneValue(_twain, twCap, value);
+                return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
+            }
+            finally
+            {
+                if (twCap.hContainer != IntPtr.Zero)
+                    _twain.DsmMemFree(ref twCap.hContainer);
+            }
+        }
+
+        /// <summary>
+        /// Try to set an array value for the cap.
+        /// </summary>
+        /// <param name="setMsg"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public STS SetOrConstraint(MSG setMsg, TValue[] values)
+        {
+            if (setMsg != MSG.SET && setMsg != MSG.SETCONSTRAINT)
+                throw new ArgumentException($"Only {nameof(MSG.SET)} and {nameof(MSG.SETCONSTRAINT)} messages are supported.", nameof(setMsg));
+            if (values == null) throw new ArgumentNullException(nameof(values));
+
+            var twCap = new TW_CAPABILITY
+            {
+                Cap = Cap,
+                ConType = TWON.ARRAY
+            };
+            try
+            {
+                ValueWriter.WriteArray(_twain, twCap, values);
+                return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
+            }
+            finally
+            {
+                if (twCap.hContainer != IntPtr.Zero)
+                    _twain.DsmMemFree(ref twCap.hContainer);
+            }
+        }
+
+        /// <summary>
+        /// Try to set a range value for the cap.
+        /// </summary>
+        /// <param name="setMsg"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetOrConstraint(MSG setMsg, Range<TValue> value)
+        {
+            if (setMsg != MSG.SET && setMsg != MSG.SETCONSTRAINT)
+                throw new ArgumentException($"Only {nameof(MSG.SET)} and {nameof(MSG.SETCONSTRAINT)} messages are supported.", nameof(setMsg));
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
+            var twCap = new TW_CAPABILITY
+            {
+                Cap = Cap,
+                ConType = TWON.RANGE
+            };
+            try
+            {
+                ValueWriter.WriteRange(_twain, twCap, value);
+                return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
+            }
+            finally
+            {
+                if (twCap.hContainer != IntPtr.Zero)
+                    _twain.DsmMemFree(ref twCap.hContainer);
+            }
+        }
+
+        /// <summary>
+        /// Try to set an array value for the cap.
+        /// </summary>
+        /// <param name="setMsg"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetOrConstraint(MSG setMsg, Enumeration<TValue> value)
+        {
+            if (setMsg != MSG.SET && setMsg != MSG.SETCONSTRAINT)
+                throw new ArgumentException($"Only {nameof(MSG.SET)} and {nameof(MSG.SETCONSTRAINT)} messages are supported.", nameof(setMsg));
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
+            var twCap = new TW_CAPABILITY
+            {
+                Cap = Cap,
+                ConType = TWON.ENUMERATION
+            };
+            try
+            {
+                ValueWriter.WriteEnum(_twain, twCap, value);
+                return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
+            }
+            finally
+            {
+                if (twCap.hContainer != IntPtr.Zero)
+                    _twain.DsmMemFree(ref twCap.hContainer);
+            }
+        }
+    }
 }
