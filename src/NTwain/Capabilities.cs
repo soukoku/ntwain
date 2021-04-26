@@ -1331,12 +1331,12 @@ namespace NTwain
             }
         }
 
-        private CapWrapper<int> _printerIndex;
-        public CapWrapper<int> CAP_PRINTERINDEX
+        private CapWrapper<uint> _printerIndex;
+        public CapWrapper<uint> CAP_PRINTERINDEX
         {
             get
             {
-                return _printerIndex ?? (_printerIndex = new CapWrapper<int>(_twain, CAP.CAP_PRINTERINDEX));
+                return _printerIndex ?? (_printerIndex = new CapWrapper<uint>(_twain, CAP.CAP_PRINTERINDEX));
             }
         }
 

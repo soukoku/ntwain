@@ -94,6 +94,18 @@ namespace Net5Console
                         }
                         Console.WriteLine();
 
+
+                        sts = caps.ICAP_PIXELTYPE.SetOrConstraint(MSG.SET, TWPT.GRAY);
+                        if (sts == STS.SUCCESS)
+                        {
+                            Console.WriteLine("Successfully set pixel type to GRAY.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Failed set pixel type: {sts}.");
+                        }
+                        Console.WriteLine();
+
                         sts = session.StartCapture(false);
                         if (sts == STS.SUCCESS)
                         {
