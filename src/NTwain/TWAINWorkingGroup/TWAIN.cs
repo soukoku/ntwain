@@ -470,6 +470,7 @@ namespace TWAINWorkingGroup
         /// Alloc memory used with the data source.
         /// </summary>
         /// <param name="a_u32Size">Number of bytes to allocate</param>
+        /// <param name="a_blForcePointer"></param>
         /// <returns>Point to memory</returns>
         public IntPtr DsmMemAlloc(uint a_u32Size, bool a_blForcePointer = false)
         {
@@ -536,6 +537,7 @@ namespace TWAINWorkingGroup
         /// Free memory used with the data source...
         /// </summary>
         /// <param name="a_intptrHandle">Pointer to free</param>
+        /// <param name="a_blForcePointer"></param>
         public void DsmMemFree(ref IntPtr a_intptrHandle, bool a_blForcePointer = false)
         {
             // Validate...
@@ -789,12 +791,12 @@ namespace TWAINWorkingGroup
             return (sts == STS.DSEVENT);
         }
 
+        static int s_iCloseDsmDelay = 0;
         /// <summary>
         /// Rollback the TWAIN state machine to the specified value, with an
         /// automatic resync if it detects a sequence error...
         /// </summary>
         /// <param name="a_stateTarget">The TWAIN state that we want to end up at</param>
-        static int s_iCloseDsmDelay = 0;
         public STATE Rollback(STATE a_stateTarget)
         {
             int iRetry;
@@ -961,9 +963,14 @@ namespace TWAINWorkingGroup
         }
 
         /// <summary>
-        /// Send a command to the currently loaded DSM...
+        /// Send a command to the currently loaded DSM
+        /// using tokenized command and anything needed.
         /// </summary>
-        /// <param name="a_functionarguments">tokenized command and anything needed</param>
+        /// <param name="a_szDat"></param>
+        /// <param name="a_szDg"></param>
+        /// <param name="a_szMsg"></param>
+        /// <param name="a_szTwmemref"></param>"
+        /// <param name="a_szResult"></param>
         /// <returns>true to quit</returns>
         public STS Send(string a_szDg, string a_szDat, string a_szMsg, ref string a_szTwmemref, ref string a_szResult)
         {
@@ -1514,6 +1521,7 @@ namespace TWAINWorkingGroup
         /// <param name="a_szFilename"></param>
         /// <param name="a_intptrPtr"></param>
         /// <param name="a_iBytes"></param>
+        /// <param name="a_szFinalFilename"></param>
         /// <returns></returns>
         public static int WriteImageFile(string a_szFilename, IntPtr a_intptrPtr, int a_iBytes, out string a_szFinalFilename)
         {
@@ -1592,6 +1600,7 @@ namespace TWAINWorkingGroup
         /// our simple GUI....
         /// </summary>
         /// <param name="a_twcapability">A TWAIN structure</param>
+        /// <param name="a_blUseSymbols"></param>
         /// <returns>A CSV string of the TWAIN structure</returns>
         public string CapabilityToCsv(TW_CAPABILITY a_twcapability, bool a_blUseSymbols)
         {
@@ -2710,9 +2719,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue file audio transfer commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <returns>TWAIN status</returns>
         private void DatAudiofilexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -3068,10 +3074,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue native audio transfer commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_intptr">handle</param>
-        /// <returns>TWAIN status</returns>
         private void DatAudionativexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -3579,10 +3581,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue capabilities commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twcapability">CAPABILITY structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatCapabilityWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -3881,7 +3879,7 @@ namespace TWAINWorkingGroup
         /// </summary>
         /// <param name="a_dg">Data group</param>
         /// <param name="a_msg">Operation</param>
-        /// <param name="a_twceicolor">CIECOLOR structure</param>
+        /// <param name="a_twciecolor">CIECOLOR structure</param>
         /// <returns>TWAIN status</returns>
         public STS DatCiecolor(DG a_dg, MSG a_msg, ref TW_CIECOLOR a_twciecolor)
         {
@@ -4505,10 +4503,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue event commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twevent">EVENT structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatEventWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -4695,10 +4689,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Get/Set extended image info information...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twextimageinfo">EXTIMAGEINFO structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatExtimageinfoWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -5489,10 +5479,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue identity commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twidentity">IDENTITY structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatIdentityWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -6081,10 +6067,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Get/Set image info information...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twimageinfo">IMAGEINFO structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatImageinfoWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -6313,10 +6295,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Get/Set layout information...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twimagelayout">IMAGELAYOUT structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatImagelayoutWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -6527,9 +6505,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue file image transfer commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <returns>TWAIN status</returns>
         private void DatImagefilexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -6740,10 +6715,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue memory file image transfer commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twimagememxfer">IMAGEMEMXFER structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatImagememfilexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -7002,10 +6973,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue memory image transfer commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twimagememxfer">IMAGEMEMXFER structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatImagememxferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -7264,10 +7231,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue native image transfer commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_bitmap">BITMAP structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatImagenativexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -7947,10 +7910,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue DSM commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_intptrHwnd">PARENT structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatParentWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -8360,10 +8319,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue pendingxfers commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twpendingxfers">PENDINGXFERS structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatPendingxfersWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -8748,10 +8703,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Get/Set for a file xfer...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twsetupfilexfer">SETUPFILEXFER structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatSetupfilexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -8959,13 +8910,6 @@ namespace TWAINWorkingGroup
             return (stsRcOrCc);
         }
 
-        /// <summary>
-        /// Get info about the memory xfer...
-        /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twsetupmemxfer">SETUPMEMXFER structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatSetupmemxferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -9176,10 +9120,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Get some text for an error...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twstatus">STATUS structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatStatusWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -9680,10 +9620,6 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue capabilities commands...
         /// </summary>
-        /// <param name="a_dg">Data group</param>
-        /// <param name="a_msg">Operation</param>
-        /// <param name="a_twuserinterface">USERINTERFACE structure</param>
-        /// <returns>TWAIN status</returns>
         private void DatUserinterfaceWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -10911,7 +10847,7 @@ namespace TWAINWorkingGroup
         /// TWAIN needs help, if we want it to run stuff in our main
         /// UI thread...
         /// </summary>
-        /// <param name="code">the code to run</param>
+        /// <param name="a_action">the code to run</param>
         private void RunInUiThread(Action a_action)
         {
             m_runinuithreaddelegate(a_action);
@@ -11164,6 +11100,7 @@ namespace TWAINWorkingGroup
         /// Convert the contents of a capability to a string that we can show in
         /// our simple GUI...
         /// </summary>
+        /// <param name="a_twcapability"></param>
         /// <param name="a_twty">Data type</param>
         /// <param name="a_intptr">Pointer to the data</param>
         /// <param name="a_iIndex">Index of the item in the data</param>
@@ -11962,6 +11899,8 @@ namespace TWAINWorkingGroup
         /// This should work for most DIBs.
         /// </summary>
         /// <param name="a_intptrNative">The pointer to something (presumably a BITMAP or a TIFF image)</param>
+        /// <param name="a_blIsHandle"></param>
+        /// <param name="a_iHeaderBytes"></param>
         /// <returns>C# Bitmap of image</returns>
         public byte[] NativeToByteArray(IntPtr a_intptrNative, bool a_blIsHandle, out int a_iHeaderBytes)
         {
@@ -12217,7 +12156,7 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Convert a linux64 identity to a public identity...
         /// </summary>
-        /// <param name="a_twidentitylegacy">Legacy identity to convert</param>
+        /// <param name="a_twidentitylinux64">identity to convert</param>
         /// <returns>Regular form of identity</returns>
         private TW_IDENTITY Twidentitylinux64ToTwidentity(TW_IDENTITY_LINUX64 a_twidentitylinux64)
         {

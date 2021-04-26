@@ -1,9 +1,9 @@
-<Project ToolsVersion="15.0">
+<Project>
   <PropertyGroup>
     <!--change in each release-->
     <PackageVersion>4.0.0</PackageVersion>
 
-    <!--keep major the same until it changes-->
+    <!--keep it the same until major # changes-->
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
     
     <PackageProjectUrl>https://github.com/soukoku/ntwain</PackageProjectUrl>
@@ -20,11 +20,11 @@
     <Version>$(PkgVersion)</Version>
     <FileVersion>$(PkgVersion)</FileVersion>
     <LangVersion>7.1</LangVersion>
-    <!--don't warn missing xml docs-->
-    <NoWarn>1591,1572,1573</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <!--don't warn missing xml docs-->
+    <NoWarn>1591</NoWarn>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>

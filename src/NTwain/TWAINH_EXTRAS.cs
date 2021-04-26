@@ -54,7 +54,7 @@ namespace TWAINWorkingGroup
         IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
         {
             if (!(MinValue is IConvertible))
-                throw new NotSupportedException($"The value type {typeof(TValue).Name} is not supported as range.");
+                throw new NotSupportedException($"The value type {typeof(TValue).Name} is not supported for range enumeration.");
 
             return new DynamicEnumerator(MinValue, MaxValue, StepSize);
         }

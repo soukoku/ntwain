@@ -154,7 +154,7 @@ namespace TWAINWorkingGroup
         /// destination must be IntPtr.Zero (null)...
         /// </summary>
         /// <param name="origin"></param>
-        /// <param name="dest"></param>
+        /// <param name="zero"></param>
         /// <param name="dg"></param>
         /// <param name="dat"></param>
         /// <param name="msg"></param>
@@ -649,9 +649,9 @@ namespace TWAINWorkingGroup
         /// <param name="dg"></param>
         /// <param name="dat"></param>
         /// <param name="msg"></param>
-        /// <param name="twcallback"></param>
+        /// <param name="twcallback2"></param>
         /// <returns></returns>
-        
+
         [DllImport("twain_32.dll", EntryPoint = "DSM_Entry", CharSet = CharSet.Ansi)]
         internal static extern UInt16 WindowsTwain32DsmEntryCallback2
         (
@@ -863,7 +863,7 @@ namespace TWAINWorkingGroup
         /// <param name="msg"></param>
         /// <param name="twcustomdsdata"></param>
         /// <returns></returns>
-        
+
         [DllImport("twain_32.dll", EntryPoint = "DSM_Entry", CharSet = CharSet.Ansi)]
         internal static extern UInt16 WindowsTwain32DsmEntryCustomdsdata
         (
@@ -872,7 +872,7 @@ namespace TWAINWorkingGroup
             DG dg,
             DAT dat,
             MSG msg,
-            ref TW_CUSTOMDSDATA twcustomedsdata
+            ref TW_CUSTOMDSDATA twcustomdsdata
         );
         
         [DllImport("twaindsm.dll", EntryPoint = "DSM_Entry", CharSet = CharSet.Ansi)]
@@ -1213,9 +1213,9 @@ namespace TWAINWorkingGroup
         /// <param name="dg"></param>
         /// <param name="dat"></param>
         /// <param name="msg"></param>
-        /// <param name="twentrypoint"></param>
+        /// <param name="twfilesystem"></param>
         /// <returns></returns>
-        
+
         [DllImport("twain_32.dll", EntryPoint = "DSM_Entry", CharSet = CharSet.Ansi)]
         internal static extern UInt16 WindowsTwain32DsmEntryFilesystem
         (
@@ -1412,9 +1412,9 @@ namespace TWAINWorkingGroup
         /// <param name="dg"></param>
         /// <param name="dat"></param>
         /// <param name="msg"></param>
-        /// <param name="hbitmap"></param>
+        /// <param name="hwnd"></param>
         /// <returns></returns>
-        
+
         [DllImport("twain_32.dll", EntryPoint = "DSM_Entry", CharSet = CharSet.Ansi)]
         internal static extern UInt16 WindowsTwain32DsmEntryParent
         (
@@ -2457,9 +2457,9 @@ namespace TWAINWorkingGroup
         /// <param name="dg"></param>
         /// <param name="dat"></param>
         /// <param name="msg"></param>
-        /// <param name="intptr"></param>
+        /// <param name="intptrWav"></param>
         /// <returns></returns>
-        
+
         [DllImport("twain_32.dll", EntryPoint = "DSM_Entry", CharSet = CharSet.Ansi)]
         internal static extern UInt16 WindowsTwain32DsmEntryAudionativexfer
         (
@@ -3425,9 +3425,9 @@ namespace TWAINWorkingGroup
         /// <param name="dg"></param>
         /// <param name="dat"></param>
         /// <param name="msg"></param>
-        /// <param name="bitmap"></param>
+        /// <param name="intptrBitmap"></param>
         /// <returns></returns>
-        
+
         [DllImport("twain_32.dll", EntryPoint = "DSM_Entry", CharSet = CharSet.Ansi)]
         internal static extern UInt16 WindowsTwain32DsmEntryImagenativexfer
         (
