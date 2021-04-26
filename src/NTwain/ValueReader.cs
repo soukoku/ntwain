@@ -41,11 +41,11 @@ namespace NTwain
                     lockedPtr += Marshal.SizeOf(onevalue);
                 }
 
-                return ReadContainerData<TValue>(lockedPtr, itemType);
+                return ReadContainerData<TValue>(lockedPtr, itemType, 0);
             }
             finally
             {
-                twain.DsmMemUnlock(cap.hContainer);
+                if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(cap.hContainer);
                 if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
             }
         }
@@ -112,7 +112,7 @@ namespace NTwain
             }
             finally
             {
-                twain.DsmMemUnlock(cap.hContainer);
+                if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(cap.hContainer);
                 if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
             }
             return retVal;
@@ -155,7 +155,7 @@ namespace NTwain
             }
             finally
             {
-                twain.DsmMemUnlock(cap.hContainer);
+                if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(cap.hContainer);
                 if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
             }
         }
@@ -248,7 +248,7 @@ namespace NTwain
             }
             finally
             {
-                twain.DsmMemUnlock(cap.hContainer);
+                if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(cap.hContainer);
                 if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
             }
         }
@@ -318,7 +318,7 @@ namespace NTwain
             }
             finally
             {
-                twain.DsmMemUnlock(cap.hContainer);
+                if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(cap.hContainer);
                 if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
             }
             return null;
@@ -330,7 +330,7 @@ namespace NTwain
         /// <param name="type">The twain type.</param>
         /// <param name="itemIndex">Index of the item if pointer is array.</param>
         /// <returns></returns>
-        static TValue ReadContainerData<TValue>(IntPtr intptr, TWTY type, int itemIndex = 0) where TValue : struct
+        static TValue ReadContainerData<TValue>(IntPtr intptr, TWTY type, int itemIndex) where TValue : struct
         {
             var isEnum = typeof(TValue).IsEnum;
 
@@ -338,6 +338,7 @@ namespace NTwain
             {
                 default:
                     throw new NotSupportedException($"Unsupported item type {type} for reading.");
+                // TODO: verify if needs to read int32 for small types
                 case TWTY.INT8:
                     intptr += 1 * itemIndex;
                     if (isEnum)

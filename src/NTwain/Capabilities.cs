@@ -902,12 +902,12 @@ namespace NTwain
 
         #region mandatory
 
-        private CapWrapper<int> _xferCount;
-        public CapWrapper<int> CAP_XFERCOUNT
+        private CapWrapper<short> _xferCount;
+        public CapWrapper<short> CAP_XFERCOUNT
         {
             get
             {
-                return _xferCount ?? (_xferCount = new CapWrapper<int>(_twain, CAP.CAP_XFERCOUNT));
+                return _xferCount ?? (_xferCount = new CapWrapper<short>(_twain, CAP.CAP_XFERCOUNT));
             }
         }
 

@@ -204,7 +204,7 @@ namespace NTwain
             };
             try
             {
-                ValueWriter.WriteOneValue(_twain, twCap, value);
+                ValueWriter.WriteOneValue(_twain, ref twCap, value);
                 return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
             }
             finally
@@ -233,7 +233,7 @@ namespace NTwain
             };
             try
             {
-                ValueWriter.WriteArray(_twain, twCap, values);
+                ValueWriter.WriteArray(_twain, ref twCap, values);
                 return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
             }
             finally
@@ -262,7 +262,7 @@ namespace NTwain
             };
             try
             {
-                ValueWriter.WriteRange(_twain, twCap, value);
+                ValueWriter.WriteRange(_twain, ref twCap, value);
                 return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
             }
             finally
@@ -291,7 +291,7 @@ namespace NTwain
             };
             try
             {
-                ValueWriter.WriteEnum(_twain, twCap, value);
+                ValueWriter.WriteEnum(_twain, ref twCap, value);
                 return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
             }
             finally

@@ -83,7 +83,18 @@ namespace Net5Console
                         }
                         Console.WriteLine();
 
-                        var sts = session.StartCapture(false);
+                        var sts = caps.CAP_XFERCOUNT.SetOrConstraint(MSG.SET, 2);
+                        if (sts == STS.SUCCESS)
+                        {
+                            Console.WriteLine("Successfully set xfercount to 2.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Failed set xfercount: {sts}.");
+                        }
+                        Console.WriteLine();
+
+                        sts = session.StartCapture(false);
                         if (sts == STS.SUCCESS)
                         {
                             Console.Error.WriteLine("Waiting for capture to complete.");
