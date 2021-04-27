@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using TWAINWorkingGroup;
@@ -329,6 +330,34 @@ namespace NTwain
             ui.ShowUI = (ushort)(showUI ? 1 : 0);
             return _twain.DatUserinterface(DG.CONTROL, MSG.ENABLEDS, ref ui);
         }
+
+        /// <summary>
+        /// Reads information relating to the last capture run.
+        /// Only valid on state 4 after a capture.
+        /// </summary>
+        public Metrics GetMetrics()
+        {
+            TW_METRICS twmetrics = default;
+            twmetrics.SizeOf = (uint)Marshal.SizeOf(twmetrics);
+            var sts = _twain.DatMetrics(DG.CONTROL, MSG.GET, ref twmetrics);
+            if (sts == STS.SUCCESS)
+            {
+                return new Metrics
+                {
+                    ReturnCode = sts,
+                    Images = (int)twmetrics.ImageCount,
+                    Sheets = (int)twmetrics.SheetCount
+                };
+            }
+            return new Metrics { ReturnCode = sts };
+        }
+
+        //public sts SetTwainDirectTask()
+        //{
+        //    TW_TWAINDIRECT task = default;
+        //    var sts = _twain.DatTwaindirect(DG.CONTROL, MSG.SETTASK, ref task);
+        //    return sts;
+        //}
 
         #endregion
     }

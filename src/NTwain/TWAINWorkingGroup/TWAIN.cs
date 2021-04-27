@@ -145,7 +145,7 @@ namespace TWAINWorkingGroup
             m_state = STATE.S2;
 
             // Register the caller's info...
-            twidentity = default(TW_IDENTITY);
+            twidentity = default;
             twidentity.Manufacturer.Set(a_szManufacturer);
             twidentity.ProductFamily.Set(a_szProductFamily);
             twidentity.ProductName.Set(a_szProductName);
@@ -166,39 +166,39 @@ namespace TWAINWorkingGroup
             m_intptrHwnd = a_intptrHwnd;
 
             // Help for RunInUiThread...
-            m_threaddataDatAudiofilexfer = default(ThreadData);
-            m_threaddataDatAudionativexfer = default(ThreadData);
-            m_threaddataDatCapability = default(ThreadData);
-            m_threaddataDatEvent = default(ThreadData);
-            m_threaddataDatExtimageinfo = default(ThreadData);
-            m_threaddataDatIdentity = default(ThreadData);
-            m_threaddataDatImagefilexfer = default(ThreadData);
-            m_threaddataDatImageinfo = default(ThreadData);
-            m_threaddataDatImagelayout = default(ThreadData);
-            m_threaddataDatImagememfilexfer = default(ThreadData);
-            m_threaddataDatImagememxfer = default(ThreadData);
-            m_threaddataDatImagenativexfer = default(ThreadData);
-            m_threaddataDatParent = default(ThreadData);
-            m_threaddataDatPendingxfers = default(ThreadData);
-            m_threaddataDatSetupfilexfer = default(ThreadData);
-            m_threaddataDatSetupmemxfer = default(ThreadData);
-            m_threaddataDatStatus = default(ThreadData);
-            m_threaddataDatUserinterface = default(ThreadData);
+            m_threaddataDatAudiofilexfer = default;
+            m_threaddataDatAudionativexfer = default;
+            m_threaddataDatCapability = default;
+            m_threaddataDatEvent = default;
+            m_threaddataDatExtimageinfo = default;
+            m_threaddataDatIdentity = default;
+            m_threaddataDatImagefilexfer = default;
+            m_threaddataDatImageinfo = default;
+            m_threaddataDatImagelayout = default;
+            m_threaddataDatImagememfilexfer = default;
+            m_threaddataDatImagememxfer = default;
+            m_threaddataDatImagenativexfer = default;
+            m_threaddataDatParent = default;
+            m_threaddataDatPendingxfers = default;
+            m_threaddataDatSetupfilexfer = default;
+            m_threaddataDatSetupmemxfer = default;
+            m_threaddataDatStatus = default;
+            m_threaddataDatUserinterface = default;
 
             // We always go through a discovery process, even on 32-bit...
             m_linuxdsm = LinuxDsm.Unknown;
 
             // Placeholder for our DS identity...
-            m_twidentityDs = default(TW_IDENTITY);
-            m_twidentitylegacyDs = default(TW_IDENTITY_LEGACY);
-            m_twidentitymacosxDs = default(TW_IDENTITY_MACOSX);
+            m_twidentityDs = default;
+            m_twidentitylegacyDs = default;
+            m_twidentitymacosxDs = default;
 
             // We'll normally do an automatic get of DAT.STATUS, but if we'd
             // like to turn it off, this is the variable to hit...
             m_blAutoDatStatus = true;
 
             // Our helper functions from the DSM...
-            m_twentrypointdelegates = default(TW_ENTRYPOINT_DELEGATES);
+            m_twentrypointdelegates = default;
 
             // Our events...
             m_autoreseteventCaller = new AutoResetEvent(false);
@@ -461,7 +461,7 @@ namespace TWAINWorkingGroup
         {
             if (m_state < STATE.S4)
             {
-                return (CsvSerializer.IdentityToCsv(default(TW_IDENTITY)));
+                return (CsvSerializer.IdentityToCsv(default));
             }
             return (CsvSerializer.IdentityToCsv(m_twidentityDs));
         }
@@ -821,7 +821,7 @@ namespace TWAINWorkingGroup
                     }
 
                     // Set the command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.blExitThread = true;
                     long lIndex = m_twaincommand.Submit(threaddata);
 
@@ -848,7 +848,7 @@ namespace TWAINWorkingGroup
                     }
 
                     // Set the command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.stateRollback = a_stateTarget;
                     threaddata.blRollback = true;
                     long lIndex = m_twaincommand.Submit(threaddata);
@@ -876,7 +876,7 @@ namespace TWAINWorkingGroup
                 // State 7 --> State 6...
                 if ((stateStart >= STATE.S7) && (a_stateTarget < STATE.S7))
                 {
-                    TW_PENDINGXFERS twpendingxfers = default(TW_PENDINGXFERS);
+                    TW_PENDINGXFERS twpendingxfers = default;
                     sts = DatPendingxfers(DG.CONTROL, MSG.ENDXFER, ref twpendingxfers);
                     if (sts == STS.SEQERROR)
                     {
@@ -889,7 +889,7 @@ namespace TWAINWorkingGroup
                 // State 6 --> State 5...
                 if ((stateStart >= STATE.S6) && (a_stateTarget < STATE.S6))
                 {
-                    TW_PENDINGXFERS twpendingxfers = default(TW_PENDINGXFERS);
+                    TW_PENDINGXFERS twpendingxfers = default;
                     sts = DatPendingxfers(DG.CONTROL, MSG.RESET, ref twpendingxfers);
                     if (sts == STS.SEQERROR)
                     {
@@ -902,7 +902,7 @@ namespace TWAINWorkingGroup
                 // State 5 --> State 4...
                 if ((stateStart >= STATE.S5) && (a_stateTarget < STATE.S5))
                 {
-                    TW_USERINTERFACE twuserinterface = default(TW_USERINTERFACE);
+                    TW_USERINTERFACE twuserinterface = default;
                     sts = DatUserinterface(DG.CONTROL, MSG.DISABLEDS, ref twuserinterface);
                     if (sts == STS.SEQERROR)
                     {
@@ -1094,7 +1094,7 @@ namespace TWAINWorkingGroup
                 // DAT_AUDIOINFO..
                 case (int)DAT.AUDIOINFO:
                     {
-                        TW_AUDIOINFO twaudioinfo = default(TW_AUDIOINFO);
+                        TW_AUDIOINFO twaudioinfo = default;
                         sts = DatAudioinfo((DG)iDg, (MSG)iMsg, ref twaudioinfo);
                         a_szTwmemref = CsvSerializer.AudioinfoToCsv(twaudioinfo);
                     }
@@ -1112,7 +1112,7 @@ namespace TWAINWorkingGroup
                 // DAT_CALLBACK...
                 case (int)DAT.CALLBACK:
                     {
-                        TW_CALLBACK twcallback = default(TW_CALLBACK);
+                        TW_CALLBACK twcallback = default;
                         CsvSerializer.CsvToCallback(ref twcallback, a_szTwmemref);
                         sts = DatCallback((DG)iDg, (MSG)iMsg, ref twcallback);
                         a_szTwmemref = CsvSerializer.CallbackToCsv(twcallback);
@@ -1122,7 +1122,7 @@ namespace TWAINWorkingGroup
                 // DAT_CALLBACK2...
                 case (int)DAT.CALLBACK2:
                     {
-                        TW_CALLBACK2 twcallback2 = default(TW_CALLBACK2);
+                        TW_CALLBACK2 twcallback2 = default;
                         CsvSerializer.CsvToCallback2(ref twcallback2, a_szTwmemref);
                         sts = DatCallback2((DG)iDg, (MSG)iMsg, ref twcallback2);
                         a_szTwmemref = CsvSerializer.Callback2ToCsv(twcallback2);
@@ -1136,7 +1136,7 @@ namespace TWAINWorkingGroup
                         // if the command fails the return value is whatever was sent into us, which
                         // matches the experience one should get with C/C++...
                         string szStatus = "";
-                        TW_CAPABILITY twcapability = default(TW_CAPABILITY);
+                        TW_CAPABILITY twcapability = default;
                         CsvToCapability(ref twcapability, ref szStatus, a_szTwmemref);
                         sts = DatCapability((DG)iDg, (MSG)iMsg, ref twcapability);
                         if ((sts == STS.SUCCESS) || (sts == STS.CHECKSTATUS))
@@ -1171,7 +1171,7 @@ namespace TWAINWorkingGroup
                 // DAT_CUSTOMDSDATA...
                 case (int)DAT.CUSTOMDSDATA:
                     {
-                        TW_CUSTOMDSDATA twcustomdsdata = default(TW_CUSTOMDSDATA);
+                        TW_CUSTOMDSDATA twcustomdsdata = default;
                         CsvToCustomdsdata(ref twcustomdsdata, a_szTwmemref);
                         sts = DatCustomdsdata((DG)iDg, (MSG)iMsg, ref twcustomdsdata);
                         a_szTwmemref = CustomdsdataToCsv(twcustomdsdata);
@@ -1181,7 +1181,7 @@ namespace TWAINWorkingGroup
                 // DAT_DEVICEEVENT...
                 case (int)DAT.DEVICEEVENT:
                     {
-                        TW_DEVICEEVENT twdeviceevent = default(TW_DEVICEEVENT);
+                        TW_DEVICEEVENT twdeviceevent = default;
                         sts = DatDeviceevent((DG)iDg, (MSG)iMsg, ref twdeviceevent);
                         a_szTwmemref = CsvSerializer.DeviceeventToCsv(twdeviceevent);
                     }
@@ -1190,7 +1190,7 @@ namespace TWAINWorkingGroup
                 // DAT_ENTRYPOINT...
                 case (int)DAT.ENTRYPOINT:
                     {
-                        TW_ENTRYPOINT twentrypoint = default(TW_ENTRYPOINT);
+                        TW_ENTRYPOINT twentrypoint = default;
                         twentrypoint.Size = (uint)Marshal.SizeOf(twentrypoint);
                         sts = DatEntrypoint((DG)iDg, (MSG)iMsg, ref twentrypoint);
                         a_szTwmemref = CsvSerializer.EntrypointToCsv(twentrypoint);
@@ -1200,7 +1200,7 @@ namespace TWAINWorkingGroup
                 // DAT_EVENT...
                 case (int)DAT.EVENT:
                     {
-                        TW_EVENT twevent = default(TW_EVENT);
+                        TW_EVENT twevent = default;
                         sts = DatEvent((DG)iDg, (MSG)iMsg, ref twevent);
                         a_szTwmemref = CsvSerializer.EventToCsv(twevent);
                     }
@@ -1209,7 +1209,7 @@ namespace TWAINWorkingGroup
                 // DAT_EXTIMAGEINFO...
                 case (int)DAT.EXTIMAGEINFO:
                     {
-                        TW_EXTIMAGEINFO twextimageinfo = default(TW_EXTIMAGEINFO);
+                        TW_EXTIMAGEINFO twextimageinfo = default;
                         CsvSerializer.CsvToExtimageinfo(ref twextimageinfo, a_szTwmemref);
                         sts = DatExtimageinfo((DG)iDg, (MSG)iMsg, ref twextimageinfo);
                         a_szTwmemref = CsvSerializer.ExtimageinfoToCsv(twextimageinfo);
@@ -1219,7 +1219,7 @@ namespace TWAINWorkingGroup
                 // DAT_FILESYSTEM...
                 case (int)DAT.FILESYSTEM:
                     {
-                        TW_FILESYSTEM twfilesystem = default(TW_FILESYSTEM);
+                        TW_FILESYSTEM twfilesystem = default;
                         CsvSerializer.CsvToFilesystem(ref twfilesystem, a_szTwmemref);
                         sts = DatFilesystem((DG)iDg, (MSG)iMsg, ref twfilesystem);
                         a_szTwmemref = CsvSerializer.FilesystemToCsv(twfilesystem);
@@ -1249,7 +1249,7 @@ namespace TWAINWorkingGroup
                 // DAT_ICCPROFILE...
                 case (int)DAT.ICCPROFILE:
                     {
-                        TW_MEMORY twmemory = default(TW_MEMORY);
+                        TW_MEMORY twmemory = default;
                         sts = DatIccprofile((DG)iDg, (MSG)iMsg, ref twmemory);
                         a_szTwmemref = CsvSerializer.IccprofileToCsv(twmemory);
                     }
@@ -1258,7 +1258,7 @@ namespace TWAINWorkingGroup
                 // DAT_IDENTITY...
                 case (int)DAT.IDENTITY:
                     {
-                        TW_IDENTITY twidentity = default(TW_IDENTITY);
+                        TW_IDENTITY twidentity = default;
                         switch (iMsg)
                         {
                             default:
@@ -1284,7 +1284,7 @@ namespace TWAINWorkingGroup
                 // DAT_IMAGEINFO...
                 case (int)DAT.IMAGEINFO:
                     {
-                        TW_IMAGEINFO twimageinfo = default(TW_IMAGEINFO);
+                        TW_IMAGEINFO twimageinfo = default;
                         CsvSerializer.CsvToImageinfo(ref twimageinfo, a_szTwmemref);
                         sts = DatImageinfo((DG)iDg, (MSG)iMsg, ref twimageinfo);
                         a_szTwmemref = CsvSerializer.ImageinfoToCsv(twimageinfo);
@@ -1294,7 +1294,7 @@ namespace TWAINWorkingGroup
                 // DAT_IMAGELAYOUT...
                 case (int)DAT.IMAGELAYOUT:
                     {
-                        TW_IMAGELAYOUT twimagelayout = default(TW_IMAGELAYOUT);
+                        TW_IMAGELAYOUT twimagelayout = default;
                         CsvSerializer.CsvToImagelayout(ref twimagelayout, a_szTwmemref);
                         sts = DatImagelayout((DG)iDg, (MSG)iMsg, ref twimagelayout);
                         a_szTwmemref = CsvSerializer.ImagelayoutToCsv(twimagelayout);
@@ -1304,7 +1304,7 @@ namespace TWAINWorkingGroup
                 // DAT_IMAGEMEMFILEXFER...
                 case (int)DAT.IMAGEMEMFILEXFER:
                     {
-                        TW_IMAGEMEMXFER twimagememxfer = default(TW_IMAGEMEMXFER);
+                        TW_IMAGEMEMXFER twimagememxfer = default;
                         CsvSerializer.CsvToImagememxfer(ref twimagememxfer, a_szTwmemref);
                         sts = DatImagememfilexfer((DG)iDg, (MSG)iMsg, ref twimagememxfer);
                         a_szTwmemref = CsvSerializer.ImagememxferToCsv(twimagememxfer);
@@ -1314,7 +1314,7 @@ namespace TWAINWorkingGroup
                 // DAT_IMAGEMEMXFER...
                 case (int)DAT.IMAGEMEMXFER:
                     {
-                        TW_IMAGEMEMXFER twimagememxfer = default(TW_IMAGEMEMXFER);
+                        TW_IMAGEMEMXFER twimagememxfer = default;
                         CsvSerializer.CsvToImagememxfer(ref twimagememxfer, a_szTwmemref);
                         sts = DatImagememxfer((DG)iDg, (MSG)iMsg, ref twimagememxfer);
                         a_szTwmemref = CsvSerializer.ImagememxferToCsv(twimagememxfer);
@@ -1344,7 +1344,7 @@ namespace TWAINWorkingGroup
                 // DAT_METRICS...
                 case (int)DAT.METRICS:
                     {
-                        TW_METRICS twmetrics = default(TW_METRICS);
+                        TW_METRICS twmetrics = default;
                         twmetrics.SizeOf = (uint)Marshal.SizeOf(twmetrics);
                         sts = DatMetrics((DG)iDg, (MSG)iMsg, ref twmetrics);
                         a_szTwmemref = CsvSerializer.MetricsToCsv(twmetrics);
@@ -1372,7 +1372,7 @@ namespace TWAINWorkingGroup
                 // DAT_PASSTHRU...
                 case (int)DAT.PASSTHRU:
                     {
-                        TW_PASSTHRU twpassthru = default(TW_PASSTHRU);
+                        TW_PASSTHRU twpassthru = default;
                         CsvSerializer.CsvToPassthru(ref twpassthru, a_szTwmemref);
                         sts = DatPassthru((DG)iDg, (MSG)iMsg, ref twpassthru);
                         a_szTwmemref = CsvSerializer.PassthruToCsv(twpassthru);
@@ -1382,7 +1382,7 @@ namespace TWAINWorkingGroup
                 // DAT_PENDINGXFERS...
                 case (int)DAT.PENDINGXFERS:
                     {
-                        TW_PENDINGXFERS twpendingxfers = default(TW_PENDINGXFERS);
+                        TW_PENDINGXFERS twpendingxfers = default;
                         sts = DatPendingxfers((DG)iDg, (MSG)iMsg, ref twpendingxfers);
                         a_szTwmemref = CsvSerializer.PendingxfersToCsv(twpendingxfers);
                     }
@@ -1401,7 +1401,7 @@ namespace TWAINWorkingGroup
                 // DAT_SETUPFILEXFER...
                 case (int)DAT.SETUPFILEXFER:
                     {
-                        TW_SETUPFILEXFER twsetupfilexfer = default(TW_SETUPFILEXFER);
+                        TW_SETUPFILEXFER twsetupfilexfer = default;
                         CsvSerializer.CsvToSetupfilexfer(ref twsetupfilexfer, a_szTwmemref);
                         sts = DatSetupfilexfer((DG)iDg, (MSG)iMsg, ref twsetupfilexfer);
                         a_szTwmemref = CsvSerializer.SetupfilexferToCsv(twsetupfilexfer);
@@ -1411,7 +1411,7 @@ namespace TWAINWorkingGroup
                 // DAT_SETUPMEMXFER...
                 case (int)DAT.SETUPMEMXFER:
                     {
-                        TW_SETUPMEMXFER twsetupmemxfer = default(TW_SETUPMEMXFER);
+                        TW_SETUPMEMXFER twsetupmemxfer = default;
                         sts = DatSetupmemxfer((DG)iDg, (MSG)iMsg, ref twsetupmemxfer);
                         a_szTwmemref = CsvSerializer.SetupmemxferToCsv(twsetupmemxfer);
                     }
@@ -1420,7 +1420,7 @@ namespace TWAINWorkingGroup
                 // DAT_STATUS...
                 case (int)DAT.STATUS:
                     {
-                        TW_STATUS twstatus = default(TW_STATUS);
+                        TW_STATUS twstatus = default;
                         sts = DatStatus((DG)iDg, (MSG)iMsg, ref twstatus);
                         a_szTwmemref = CsvSerializer.StatusToCsv(twstatus);
                     }
@@ -1429,7 +1429,7 @@ namespace TWAINWorkingGroup
                 // DAT_STATUSUTF8...
                 case (int)DAT.STATUSUTF8:
                     {
-                        TW_STATUSUTF8 twstatusutf8 = default(TW_STATUSUTF8);
+                        TW_STATUSUTF8 twstatusutf8 = default;
                         sts = DatStatusutf8((DG)iDg, (MSG)iMsg, ref twstatusutf8);
                         a_szTwmemref = Statusutf8ToCsv(twstatusutf8);
                     }
@@ -1438,7 +1438,7 @@ namespace TWAINWorkingGroup
                 // DAT_TWAINDIRECT...
                 case (int)DAT.TWAINDIRECT:
                     {
-                        TW_TWAINDIRECT twtwaindirect = default(TW_TWAINDIRECT);
+                        TW_TWAINDIRECT twtwaindirect = default;
                         CsvSerializer.CsvToTwaindirect(ref twtwaindirect, a_szTwmemref);
                         sts = DatTwaindirect((DG)iDg, (MSG)iMsg, ref twtwaindirect);
                         a_szTwmemref = CsvSerializer.TwaindirectToCsv(twtwaindirect);
@@ -1448,7 +1448,7 @@ namespace TWAINWorkingGroup
                 // DAT_USERINTERFACE...
                 case (int)DAT.USERINTERFACE:
                     {
-                        TW_USERINTERFACE twuserinterface = default(TW_USERINTERFACE);
+                        TW_USERINTERFACE twuserinterface = default;
                         CsvToUserinterface(ref twuserinterface, a_szTwmemref);
                         sts = DatUserinterface((DG)iDg, (MSG)iMsg, ref twuserinterface);
                         a_szTwmemref = CsvSerializer.UserinterfaceToCsv(twuserinterface);
@@ -1624,7 +1624,7 @@ namespace TWAINWorkingGroup
                         if (ms_platform == Platform.MACOSX)
                         {
                             // Crack the container...
-                            TW_ARRAY_MACOSX twarraymacosx = default(TW_ARRAY_MACOSX);
+                            TW_ARRAY_MACOSX twarraymacosx = default;
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twarraymacosx = (TW_ARRAY_MACOSX)Marshal.PtrToStructure(intptrLocked, typeof(TW_ARRAY_MACOSX));
                             ItemType = (TWTY)twarraymacosx.ItemType;
@@ -1634,7 +1634,7 @@ namespace TWAINWorkingGroup
                         else
                         {
                             // Crack the container...
-                            TW_ARRAY twarray = default(TW_ARRAY);
+                            TW_ARRAY twarray = default;
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twarray = (TW_ARRAY)Marshal.PtrToStructure(intptrLocked, typeof(TW_ARRAY));
                             ItemType = twarray.ItemType;
@@ -1679,7 +1679,7 @@ namespace TWAINWorkingGroup
                         if (ms_platform == Platform.MACOSX)
                         {
                             // Crack the container...
-                            TW_ENUMERATION_MACOSX twenumerationmacosx = default(TW_ENUMERATION_MACOSX);
+                            TW_ENUMERATION_MACOSX twenumerationmacosx = default;
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twenumerationmacosx = (TW_ENUMERATION_MACOSX)Marshal.PtrToStructure(intptrLocked, typeof(TW_ENUMERATION_MACOSX));
                             ItemType = (TWTY)twenumerationmacosx.ItemType;
@@ -1696,7 +1696,7 @@ namespace TWAINWorkingGroup
                         else if ((ms_platform == Platform.WINDOWS) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm)))
                         {
                             // Crack the container...
-                            TW_ENUMERATION twenumeration = default(TW_ENUMERATION);
+                            TW_ENUMERATION twenumeration = default;
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twenumeration = (TW_ENUMERATION)Marshal.PtrToStructure(intptrLocked, typeof(TW_ENUMERATION));
                             ItemType = twenumeration.ItemType;
@@ -1713,7 +1713,7 @@ namespace TWAINWorkingGroup
                         else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
                         {
                             // Crack the container...
-                            TW_ENUMERATION_LINUX64 twenumerationlinux64 = default(TW_ENUMERATION_LINUX64);
+                            TW_ENUMERATION_LINUX64 twenumerationlinux64 = default;
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twenumerationlinux64 = (TW_ENUMERATION_LINUX64)Marshal.PtrToStructure(intptrLocked, typeof(TW_ENUMERATION_LINUX64));
                             ItemType = twenumerationlinux64.ItemType;
@@ -1766,7 +1766,7 @@ namespace TWAINWorkingGroup
                         if (ms_platform == Platform.MACOSX)
                         {
                             // Crack the container...
-                            TW_ONEVALUE_MACOSX twonevaluemacosx = default(TW_ONEVALUE_MACOSX);
+                            TW_ONEVALUE_MACOSX twonevaluemacosx = default;
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twonevaluemacosx = (TW_ONEVALUE_MACOSX)Marshal.PtrToStructure(intptrLocked, typeof(TW_ONEVALUE_MACOSX));
                             ItemType = (TWTY)twonevaluemacosx.ItemType;
@@ -1775,7 +1775,7 @@ namespace TWAINWorkingGroup
                         else
                         {
                             // Crack the container...
-                            TW_ONEVALUE twonevalue = default(TW_ONEVALUE);
+                            TW_ONEVALUE twonevalue = default;
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twonevalue = (TW_ONEVALUE)Marshal.PtrToStructure(intptrLocked, typeof(TW_ONEVALUE));
                             ItemType = (TWTY)twonevalue.ItemType;
@@ -1814,7 +1814,7 @@ namespace TWAINWorkingGroup
                         TW_RANGE_FIX32_MACOSX twrangefix32macosx;
 
                         // Mac has a level of indirection and a different structure (ick)...
-                        twrange = default(TW_RANGE);
+                        twrange = default;
                         if (ms_platform == Platform.MACOSX)
                         {
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
@@ -2056,7 +2056,7 @@ namespace TWAINWorkingGroup
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ARRAY_MACOSX twarraymacosx = default(TW_ARRAY_MACOSX);
+                                TW_ARRAY_MACOSX twarraymacosx = default;
                                 twarraymacosx.ItemType = (uint)twty;
                                 twarraymacosx.NumItems = u32NumItems;
                                 Marshal.StructureToPtr(twarraymacosx, intptr, true);
@@ -2071,7 +2071,7 @@ namespace TWAINWorkingGroup
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ARRAY twarray = default(TW_ARRAY);
+                                TW_ARRAY twarray = default;
                                 twarray.ItemType = twty;
                                 twarray.NumItems = u32NumItems;
                                 Marshal.StructureToPtr(twarray, intptr, true);
@@ -2113,7 +2113,7 @@ namespace TWAINWorkingGroup
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ENUMERATION_MACOSX twenumerationmacosx = default(TW_ENUMERATION_MACOSX);
+                                TW_ENUMERATION_MACOSX twenumerationmacosx = default;
                                 twenumerationmacosx.ItemType = (uint)twty;
                                 twenumerationmacosx.NumItems = u32NumItems;
                                 twenumerationmacosx.CurrentIndex = uint.Parse(asz[4]);
@@ -2131,7 +2131,7 @@ namespace TWAINWorkingGroup
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ENUMERATION twenumeration = default(TW_ENUMERATION);
+                                TW_ENUMERATION twenumeration = default;
                                 twenumeration.ItemType = twty;
                                 twenumeration.NumItems = u32NumItems;
                                 twenumeration.CurrentIndex = uint.Parse(asz[4]);
@@ -2149,7 +2149,7 @@ namespace TWAINWorkingGroup
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ENUMERATION_LINUX64 twenumerationlinux64 = default(TW_ENUMERATION_LINUX64);
+                                TW_ENUMERATION_LINUX64 twenumerationlinux64 = default;
                                 twenumerationlinux64.ItemType = twty;
                                 twenumerationlinux64.NumItems = u32NumItems;
                                 twenumerationlinux64.CurrentIndex = uint.Parse(asz[4]);
@@ -2190,7 +2190,7 @@ namespace TWAINWorkingGroup
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ONEVALUE_MACOSX twonevaluemacosx = default(TW_ONEVALUE_MACOSX);
+                                TW_ONEVALUE_MACOSX twonevaluemacosx = default;
                                 twonevaluemacosx.ItemType = (uint)twty;
                                 Marshal.StructureToPtr(twonevaluemacosx, intptr, true);
 
@@ -2204,7 +2204,7 @@ namespace TWAINWorkingGroup
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ONEVALUE twonevalue = default(TW_ONEVALUE);
+                                TW_ONEVALUE twonevalue = default;
                                 twonevalue.ItemType = twty;
                                 Marshal.StructureToPtr(twonevalue, intptr, true);
 
@@ -2311,7 +2311,7 @@ namespace TWAINWorkingGroup
         public bool CsvToCustomdsdata(ref TW_CUSTOMDSDATA a_twcustomdsdata, string a_szCustomdsdata)
         {
             // Init stuff...
-            a_twcustomdsdata = default(TW_CUSTOMDSDATA);
+            a_twcustomdsdata = default;
 
             // Build the string...
             try
@@ -2371,7 +2371,7 @@ namespace TWAINWorkingGroup
         public bool CsvToUserinterface(ref TW_USERINTERFACE a_twuserinterface, string a_szUserinterface)
         {
             // Init stuff...
-            a_twuserinterface = default(TW_USERINTERFACE);
+            a_twuserinterface = default;
 
             // Build the string...
             try
@@ -2442,7 +2442,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twmemref = a_twmemref;
                     threaddata.msg = a_msg;
                     threaddata.dg = a_dg;
@@ -2588,7 +2588,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twmemref = a_twmemref;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -2759,7 +2759,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
                         threaddata.dat = DAT.AUDIOFILEXFER;
@@ -2808,28 +2808,28 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatAudiofilexfer = default(ThreadData);
+                                m_threaddataDatAudiofilexfer = default;
                                 m_threaddataDatAudiofilexfer.blIsInuse = true;
                                 m_threaddataDatAudiofilexfer.dg = a_dg;
                                 m_threaddataDatAudiofilexfer.msg = a_msg;
                                 m_threaddataDatAudiofilexfer.dat = DAT.AUDIOFILEXFER;
                                 RunInUiThread(DatAudiofilexferWindowsTwain32);
                                 sts = m_threaddataDatAudiofilexfer.sts;
-                                m_threaddataDatAudiofilexfer = default(ThreadData);
+                                m_threaddataDatAudiofilexfer = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatAudiofilexfer = default(ThreadData);
+                                m_threaddataDatAudiofilexfer = default;
                                 m_threaddataDatAudiofilexfer.blIsInuse = true;
                                 m_threaddataDatAudiofilexfer.dg = a_dg;
                                 m_threaddataDatAudiofilexfer.msg = a_msg;
                                 m_threaddataDatAudiofilexfer.dat = DAT.AUDIOFILEXFER;
                                 RunInUiThread(DatAudiofilexferWindowsTwainDsm);
                                 sts = m_threaddataDatAudiofilexfer.sts;
-                                m_threaddataDatAudiofilexfer = default(ThreadData);
+                                m_threaddataDatAudiofilexfer = default;
                             }
                         }
                     }
@@ -2943,7 +2943,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twaudioinfo = a_twaudioinfo;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -3114,7 +3114,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.intptrAudio = a_intptrAudio;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -3165,7 +3165,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatAudionativexfer = default(ThreadData);
+                                m_threaddataDatAudionativexfer = default;
                                 m_threaddataDatAudionativexfer.blIsInuse = true;
                                 m_threaddataDatAudionativexfer.dg = a_dg;
                                 m_threaddataDatAudionativexfer.msg = a_msg;
@@ -3173,14 +3173,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatAudionativexferWindowsTwain32);
                                 a_intptrAudio = m_threaddataDatAudionativexfer.intptrAudio;
                                 sts = m_threaddataDatAudionativexfer.sts;
-                                m_threaddataDatAudionativexfer = default(ThreadData);
+                                m_threaddataDatAudionativexfer = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatAudionativexfer = default(ThreadData);
+                                m_threaddataDatAudionativexfer = default;
                                 m_threaddataDatAudionativexfer.blIsInuse = true;
                                 m_threaddataDatAudionativexfer.dg = a_dg;
                                 m_threaddataDatAudionativexfer.msg = a_msg;
@@ -3188,7 +3188,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatAudionativexferWindowsTwainDsm);
                                 a_intptrAudio = m_threaddataDatAudionativexfer.intptrAudio;
                                 sts = m_threaddataDatAudionativexfer.sts;
-                                m_threaddataDatAudionativexfer = default(ThreadData);
+                                m_threaddataDatAudionativexfer = default;
                             }
                         }
                     }
@@ -3305,7 +3305,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twcallback = a_twcallback;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -3450,7 +3450,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twcallback2 = a_twcallback2;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -3620,7 +3620,7 @@ namespace TWAINWorkingGroup
                 {
                     lock (m_lockTwain)
                     {
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         long lIndex = 0;
 
                         // TBD: sometimes this doesn't work!  Not sure why
@@ -3628,7 +3628,7 @@ namespace TWAINWorkingGroup
                         for (int ii = 0; ii < 5; ii++)
                         {
                             // Set our command variables...
-                            threaddata = default(ThreadData);
+                            threaddata = default;
                             threaddata.twcapability = a_twcapability;
                             threaddata.dg = a_dg;
                             threaddata.msg = a_msg;
@@ -3705,7 +3705,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatCapability = default(ThreadData);
+                                m_threaddataDatCapability = default;
                                 m_threaddataDatCapability.blIsInuse = true;
                                 m_threaddataDatCapability.dg = a_dg;
                                 m_threaddataDatCapability.msg = a_msg;
@@ -3714,14 +3714,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatCapabilityWindowsTwain32);
                                 a_twcapability = m_threaddataDatCapability.twcapability;
                                 sts = m_threaddataDatCapability.sts;
-                                m_threaddataDatCapability = default(ThreadData);
+                                m_threaddataDatCapability = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatCapability = default(ThreadData);
+                                m_threaddataDatCapability = default;
                                 m_threaddataDatCapability.blIsInuse = true;
                                 m_threaddataDatCapability.dg = a_dg;
                                 m_threaddataDatCapability.msg = a_msg;
@@ -3730,7 +3730,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatCapabilityWindowsTwainDsm);
                                 a_twcapability = m_threaddataDatCapability.twcapability;
                                 sts = m_threaddataDatCapability.sts;
-                                m_threaddataDatCapability = default(ThreadData);
+                                m_threaddataDatCapability = default;
                             }
                         }
                     }
@@ -3891,7 +3891,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twciecolor = a_twciecolor;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -4036,7 +4036,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twcustomdsdata = a_twcustomdsdata;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -4181,7 +4181,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twdeviceevent = a_twdeviceevent;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -4326,7 +4326,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twentrypoint = a_twentrypoint;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -4403,14 +4403,14 @@ namespace TWAINWorkingGroup
                     }
                     else if (m_blFound020302Dsm64bit)
                     {
-                        TW_ENTRYPOINT_LINUX64 twentrypointlinux64 = default(TW_ENTRYPOINT_LINUX64);
+                        TW_ENTRYPOINT_LINUX64 twentrypointlinux64 = default;
                         twentrypointlinux64.Size = a_twentrypoint.Size;
                         twentrypointlinux64.DSM_MemAllocate = a_twentrypoint.DSM_MemAllocate;
                         twentrypointlinux64.DSM_MemFree = a_twentrypoint.DSM_MemFree;
                         twentrypointlinux64.DSM_MemLock = a_twentrypoint.DSM_MemLock;
                         twentrypointlinux64.DSM_MemUnlock = a_twentrypoint.DSM_MemUnlock;
                         sts = (STS)NativeMethods.Linux020302Dsm64bitEntryEntrypoint(ref m_twidentityApp, ref m_twidentityDs, a_dg, DAT.ENTRYPOINT, a_msg, ref twentrypointlinux64);
-                        a_twentrypoint = default(TW_ENTRYPOINT);
+                        a_twentrypoint = default;
                         a_twentrypoint.Size = (uint)(twentrypointlinux64.Size & 0xFFFFFFFF);
                         a_twentrypoint.DSM_MemAllocate = twentrypointlinux64.DSM_MemAllocate;
                         a_twentrypoint.DSM_MemFree = twentrypointlinux64.DSM_MemFree;
@@ -4466,7 +4466,7 @@ namespace TWAINWorkingGroup
             // If we were successful, then squirrel away the data...
             if (sts == STS.SUCCESS)
             {
-                m_twentrypointdelegates = default(TW_ENTRYPOINT_DELEGATES);
+                m_twentrypointdelegates = default;
                 m_twentrypointdelegates.Size = a_twentrypoint.Size;
                 m_twentrypointdelegates.DSM_Entry = a_twentrypoint.DSM_Entry;
                 if (a_twentrypoint.DSM_MemAllocate != IntPtr.Zero)
@@ -4564,7 +4564,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatEvent = default(ThreadData);
+                                m_threaddataDatEvent = default;
                                 m_threaddataDatEvent.blIsInuse = true;
                                 m_threaddataDatEvent.dg = a_dg;
                                 m_threaddataDatEvent.msg = a_msg;
@@ -4573,14 +4573,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatEventWindowsTwain32);
                                 a_twevent = m_threaddataDatEvent.twevent;
                                 sts = m_threaddataDatEvent.sts;
-                                m_threaddataDatEvent = default(ThreadData);
+                                m_threaddataDatEvent = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatEvent = default(ThreadData);
+                                m_threaddataDatEvent = default;
                                 m_threaddataDatEvent.blIsInuse = true;
                                 m_threaddataDatEvent.dg = a_dg;
                                 m_threaddataDatEvent.msg = a_msg;
@@ -4589,7 +4589,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatEventWindowsTwainDsm);
                                 a_twevent = m_threaddataDatEvent.twevent;
                                 sts = m_threaddataDatEvent.sts;
-                                m_threaddataDatEvent = default(ThreadData);
+                                m_threaddataDatEvent = default;
                             }
                         }
                     }
@@ -4729,7 +4729,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.twextimageinfo = a_twextimageinfo;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -4780,7 +4780,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatExtimageinfo = default(ThreadData);
+                                m_threaddataDatExtimageinfo = default;
                                 m_threaddataDatExtimageinfo.blIsInuse = true;
                                 m_threaddataDatExtimageinfo.dg = a_dg;
                                 m_threaddataDatExtimageinfo.msg = a_msg;
@@ -4789,14 +4789,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatExtimageinfoWindowsTwain32);
                                 a_twextimageinfo = m_threaddataDatExtimageinfo.twextimageinfo;
                                 sts = m_threaddataDatExtimageinfo.sts;
-                                m_threaddataDatExtimageinfo = default(ThreadData);
+                                m_threaddataDatExtimageinfo = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatExtimageinfo = default(ThreadData);
+                                m_threaddataDatExtimageinfo = default;
                                 m_threaddataDatExtimageinfo.blIsInuse = true;
                                 m_threaddataDatExtimageinfo.dg = a_dg;
                                 m_threaddataDatExtimageinfo.msg = a_msg;
@@ -4805,7 +4805,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatExtimageinfoWindowsTwainDsm);
                                 a_twextimageinfo = m_threaddataDatExtimageinfo.twextimageinfo;
                                 sts = m_threaddataDatExtimageinfo.sts;
-                                m_threaddataDatExtimageinfo = default(ThreadData);
+                                m_threaddataDatExtimageinfo = default;
                             }
                         }
                     }
@@ -4913,7 +4913,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twfilesystem = a_twfilesystem;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -5058,7 +5058,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twfilter = a_twfilter;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -5203,7 +5203,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twgrayresponse = a_twgrayresponse;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -5348,7 +5348,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twmemory = a_twmemory;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -5536,7 +5536,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.twidentity = a_twidentity;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -5597,7 +5597,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatIdentity = default(ThreadData);
+                                m_threaddataDatIdentity = default;
                                 m_threaddataDatIdentity.blIsInuse = true;
                                 m_threaddataDatIdentity.dg = a_dg;
                                 m_threaddataDatIdentity.msg = a_msg;
@@ -5606,14 +5606,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatIdentityWindowsTwain32);
                                 twidentitylegacy = m_threaddataDatIdentity.twidentitylegacy;
                                 sts = m_threaddataDatIdentity.sts;
-                                m_threaddataDatIdentity = default(ThreadData);
+                                m_threaddataDatIdentity = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatIdentity = default(ThreadData);
+                                m_threaddataDatIdentity = default;
                                 m_threaddataDatIdentity.blIsInuse = true;
                                 m_threaddataDatIdentity.dg = a_dg;
                                 m_threaddataDatIdentity.msg = a_msg;
@@ -5622,7 +5622,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatIdentityWindowsTwainDsm);
                                 twidentitylegacy = m_threaddataDatIdentity.twidentitylegacy;
                                 sts = m_threaddataDatIdentity.sts;
-                                m_threaddataDatIdentity = default(ThreadData);
+                                m_threaddataDatIdentity = default;
                             }
                         }
                     }
@@ -5789,7 +5789,7 @@ namespace TWAINWorkingGroup
                     // Open always tries the current DSM, and then the older one, if needed...
                     else if (a_msg == MSG.OPENDS)
                     {
-                        TW_IDENTITY_LEGACY twidentitylegacy = default(TW_IDENTITY_LEGACY);
+                        TW_IDENTITY_LEGACY twidentitylegacy = default;
 
                         // Prime the pump by assuming we didn't find anything...
                         sts = STS.NODS;
@@ -6107,7 +6107,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.twimageinfo = a_twimageinfo;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -6158,7 +6158,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImageinfo = default(ThreadData);
+                                m_threaddataDatImageinfo = default;
                                 m_threaddataDatImageinfo.blIsInuse = true;
                                 m_threaddataDatImageinfo.dg = a_dg;
                                 m_threaddataDatImageinfo.msg = a_msg;
@@ -6167,14 +6167,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImageinfoWindowsTwain32);
                                 a_twimageinfo = m_threaddataDatImageinfo.twimageinfo;
                                 sts = m_threaddataDatImageinfo.sts;
-                                m_threaddataDatImageinfo = default(ThreadData);
+                                m_threaddataDatImageinfo = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImageinfo = default(ThreadData);
+                                m_threaddataDatImageinfo = default;
                                 m_threaddataDatImageinfo.blIsInuse = true;
                                 m_threaddataDatImageinfo.dg = a_dg;
                                 m_threaddataDatImageinfo.msg = a_msg;
@@ -6183,7 +6183,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImageinfoWindowsTwainDsm);
                                 a_twimageinfo = m_threaddataDatImageinfo.twimageinfo;
                                 sts = m_threaddataDatImageinfo.sts;
-                                m_threaddataDatImageinfo = default(ThreadData);
+                                m_threaddataDatImageinfo = default;
                             }
                         }
                     }
@@ -6213,7 +6213,7 @@ namespace TWAINWorkingGroup
                     }
                     else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
                     {
-                        TW_IMAGEINFO_LINUX64 twimageinfolinux64 = default(TW_IMAGEINFO_LINUX64);
+                        TW_IMAGEINFO_LINUX64 twimageinfolinux64 = default
                         sts = (STS)NativeMethods.Linux020302Dsm64bitEntryImageinfo(ref m_twidentityApp, ref m_twidentityDs, a_dg, DAT.IMAGEINFO, a_msg, ref twimageinfolinux64);
                         a_twimageinfo.XResolution = twimageinfolinux64.XResolution;
                         a_twimageinfo.YResolution = twimageinfolinux64.YResolution;
@@ -6335,7 +6335,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.twimagelayout = a_twimagelayout;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -6386,7 +6386,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagelayout = default(ThreadData);
+                                m_threaddataDatImagelayout = default;
                                 m_threaddataDatImagelayout.blIsInuse = true;
                                 m_threaddataDatImagelayout.dg = a_dg;
                                 m_threaddataDatImagelayout.msg = a_msg;
@@ -6395,14 +6395,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagelayoutWindowsTwain32);
                                 a_twimagelayout = m_threaddataDatImagelayout.twimagelayout;
                                 sts = m_threaddataDatImagelayout.sts;
-                                m_threaddataDatImagelayout = default(ThreadData);
+                                m_threaddataDatImagelayout = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagelayout = default(ThreadData);
+                                m_threaddataDatImagelayout = default;
                                 m_threaddataDatImagelayout.blIsInuse = true;
                                 m_threaddataDatImagelayout.dg = a_dg;
                                 m_threaddataDatImagelayout.msg = a_msg;
@@ -6411,7 +6411,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagelayoutWindowsTwainDsm);
                                 a_twimagelayout = m_threaddataDatImagelayout.twimagelayout;
                                 sts = m_threaddataDatImagelayout.sts;
-                                m_threaddataDatImagelayout = default(ThreadData);
+                                m_threaddataDatImagelayout = default;
                             }
                         }
                     }
@@ -6545,7 +6545,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
                         threaddata.dat = DAT.IMAGEFILEXFER;
@@ -6594,28 +6594,28 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagefilexfer = default(ThreadData);
+                                m_threaddataDatImagefilexfer = default;
                                 m_threaddataDatImagefilexfer.blIsInuse = true;
                                 m_threaddataDatImagefilexfer.dg = a_dg;
                                 m_threaddataDatImagefilexfer.msg = a_msg;
                                 m_threaddataDatImagefilexfer.dat = DAT.IMAGEFILEXFER;
                                 RunInUiThread(DatImagefilexferWindowsTwain32);
                                 sts = m_threaddataDatImagefilexfer.sts;
-                                m_threaddataDatImagefilexfer = default(ThreadData);
+                                m_threaddataDatImagefilexfer = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagefilexfer = default(ThreadData);
+                                m_threaddataDatImagefilexfer = default;
                                 m_threaddataDatImagefilexfer.blIsInuse = true;
                                 m_threaddataDatImagefilexfer.dg = a_dg;
                                 m_threaddataDatImagefilexfer.msg = a_msg;
                                 m_threaddataDatImagefilexfer.dat = DAT.IMAGEFILEXFER;
                                 RunInUiThread(DatImagefilexferWindowsTwainDsm);
                                 sts = m_threaddataDatImagefilexfer.sts;
-                                m_threaddataDatImagefilexfer = default(ThreadData);
+                                m_threaddataDatImagefilexfer = default;
                             }
                         }
                     }
@@ -6755,7 +6755,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.twimagememxfer = a_twimagememxfer;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -6806,7 +6806,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagememfilexfer = default(ThreadData);
+                                m_threaddataDatImagememfilexfer = default;
                                 m_threaddataDatImagememfilexfer.blIsInuse = true;
                                 m_threaddataDatImagememfilexfer.dg = a_dg;
                                 m_threaddataDatImagememfilexfer.msg = a_msg;
@@ -6815,14 +6815,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagememfilexferWindowsTwain32);
                                 a_twimagememxfer = m_threaddataDatImagememfilexfer.twimagememxfer;
                                 sts = m_threaddataDatImagememfilexfer.sts;
-                                m_threaddataDatImagememfilexfer = default(ThreadData);
+                                m_threaddataDatImagememfilexfer = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagememfilexfer = default(ThreadData);
+                                m_threaddataDatImagememfilexfer = default;
                                 m_threaddataDatImagememfilexfer.blIsInuse = true;
                                 m_threaddataDatImagememfilexfer.dg = a_dg;
                                 m_threaddataDatImagememfilexfer.msg = a_msg;
@@ -6831,7 +6831,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagememfilexferWindowsTwainDsm);
                                 a_twimagememxfer = m_threaddataDatImagememfilexfer.twimagememxfer;
                                 sts = m_threaddataDatImagememfilexfer.sts;
-                                m_threaddataDatImagememfilexfer = default(ThreadData);
+                                m_threaddataDatImagememfilexfer = default;
                             }
                         }
                     }
@@ -6861,7 +6861,7 @@ namespace TWAINWorkingGroup
                     }
                     else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
                     {
-                        TW_IMAGEMEMXFER_LINUX64 twimagememxferlinux64 = default(TW_IMAGEMEMXFER_LINUX64);
+                        TW_IMAGEMEMXFER_LINUX64 twimagememxferlinux64 = default;
                         twimagememxferlinux64.BytesPerRow = a_twimagememxfer.BytesPerRow;
                         twimagememxferlinux64.BytesWritten = a_twimagememxfer.BytesWritten;
                         twimagememxferlinux64.Columns = a_twimagememxfer.Columns;
@@ -6905,7 +6905,7 @@ namespace TWAINWorkingGroup
                 // Issue the command...
                 try
                 {
-                    TW_IMAGEMEMXFER_MACOSX twimagememxfermacosx = default(TW_IMAGEMEMXFER_MACOSX);
+                    TW_IMAGEMEMXFER_MACOSX twimagememxfermacosx = default;
                     twimagememxfermacosx.BytesPerRow = a_twimagememxfer.BytesPerRow;
                     twimagememxfermacosx.BytesWritten = a_twimagememxfer.BytesWritten;
                     twimagememxfermacosx.Columns = a_twimagememxfer.Columns;
@@ -7013,7 +7013,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.twimagememxfer = a_twimagememxfer;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -7064,7 +7064,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagememxfer = default(ThreadData);
+                                m_threaddataDatImagememxfer = default;
                                 m_threaddataDatImagememxfer.blIsInuse = true;
                                 m_threaddataDatImagememxfer.dg = a_dg;
                                 m_threaddataDatImagememxfer.msg = a_msg;
@@ -7073,14 +7073,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagememxferWindowsTwain32);
                                 a_twimagememxfer = m_threaddataDatImagememxfer.twimagememxfer;
                                 sts = m_threaddataDatImagememxfer.sts;
-                                m_threaddataDatImagememxfer = default(ThreadData);
+                                m_threaddataDatImagememxfer = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagememxfer = default(ThreadData);
+                                m_threaddataDatImagememxfer = default;
                                 m_threaddataDatImagememxfer.blIsInuse = true;
                                 m_threaddataDatImagememxfer.dg = a_dg;
                                 m_threaddataDatImagememxfer.msg = a_msg;
@@ -7089,7 +7089,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagememxferWindowsTwainDsm);
                                 a_twimagememxfer = m_threaddataDatImagememxfer.twimagememxfer;
                                 sts = m_threaddataDatImagememxfer.sts;
-                                m_threaddataDatImagememxfer = default(ThreadData);
+                                m_threaddataDatImagememxfer = default;
                             }
                         }
                     }
@@ -7119,7 +7119,7 @@ namespace TWAINWorkingGroup
                     }
                     else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
                     {
-                        TW_IMAGEMEMXFER_LINUX64 twimagememxferlinux64 = default(TW_IMAGEMEMXFER_LINUX64);
+                        TW_IMAGEMEMXFER_LINUX64 twimagememxferlinux64 = default;
                         twimagememxferlinux64.BytesPerRow = a_twimagememxfer.BytesPerRow;
                         twimagememxferlinux64.BytesWritten = a_twimagememxfer.BytesWritten;
                         twimagememxferlinux64.Columns = a_twimagememxfer.Columns;
@@ -7163,7 +7163,7 @@ namespace TWAINWorkingGroup
                 // Issue the command...
                 try
                 {
-                    TW_IMAGEMEMXFER_MACOSX twimagememxfermacosx = default(TW_IMAGEMEMXFER_MACOSX);
+                    TW_IMAGEMEMXFER_MACOSX twimagememxfermacosx = default;
                     twimagememxfermacosx.BytesPerRow = a_twimagememxfer.BytesPerRow;
                     twimagememxfermacosx.BytesWritten = a_twimagememxfer.BytesWritten;
                     twimagememxfermacosx.Columns = a_twimagememxfer.Columns;
@@ -7283,7 +7283,7 @@ namespace TWAINWorkingGroup
         //            lock (m_lockTwain)
         //            {
         //                // Set our command variables...
-        //                ThreadData threaddata = default(ThreadData);
+        //                ThreadData threaddata = default;
         //                threaddata.bitmap = a_bitmap;
         //                threaddata.blUseBitmapHandle = a_blUseBitmapHandle;
         //                threaddata.dg = a_dg;
@@ -7336,7 +7336,7 @@ namespace TWAINWorkingGroup
         //                {
         //                    lock (m_lockTwain)
         //                    {
-        //                        m_threaddataDatImagenativexfer = default(ThreadData);
+        //                        m_threaddataDatImagenativexfer = default;
         //                        m_threaddataDatImagenativexfer.blIsInuse = true;
         //                        m_threaddataDatImagenativexfer.dg = a_dg;
         //                        m_threaddataDatImagenativexfer.msg = a_msg;
@@ -7344,14 +7344,14 @@ namespace TWAINWorkingGroup
         //                        RunInUiThread(DatImagenativexferWindowsTwain32);
         //                        intptrBitmap = a_intptrBitmapHandle = m_threaddataDatImagenativexfer.intptrBitmap;
         //                        sts = m_threaddataDatImagenativexfer.sts;
-        //                        m_threaddataDatImagenativexfer = default(ThreadData);
+        //                        m_threaddataDatImagenativexfer = default;
         //                    }
         //                }
         //                else
         //                {
         //                    lock (m_lockTwain)
         //                    {
-        //                        m_threaddataDatImagenativexfer = default(ThreadData);
+        //                        m_threaddataDatImagenativexfer = default;
         //                        m_threaddataDatImagenativexfer.blIsInuse = true;
         //                        m_threaddataDatImagenativexfer.dg = a_dg;
         //                        m_threaddataDatImagenativexfer.msg = a_msg;
@@ -7359,7 +7359,7 @@ namespace TWAINWorkingGroup
         //                        RunInUiThread(DatImagenativexferWindowsTwainDsm);
         //                        intptrBitmap = a_intptrBitmapHandle = m_threaddataDatImagenativexfer.intptrBitmap;
         //                        sts = m_threaddataDatImagenativexfer.sts;
-        //                        m_threaddataDatImagenativexfer = default(ThreadData);
+        //                        m_threaddataDatImagenativexfer = default;
         //                    }
         //                }
         //            }
@@ -7489,7 +7489,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twjpegcompression = a_twjpegcompression;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -7634,7 +7634,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twmetrics = a_twmetrics;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -7779,7 +7779,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twpalette8 = a_twpalette8;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -7950,7 +7950,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.intptrHwnd = a_intptrHwnd;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -8001,7 +8001,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatParent = default(ThreadData);
+                                m_threaddataDatParent = default;
                                 m_threaddataDatParent.blIsInuse = true;
                                 m_threaddataDatParent.dg = a_dg;
                                 m_threaddataDatParent.msg = a_msg;
@@ -8009,14 +8009,14 @@ namespace TWAINWorkingGroup
                                 m_threaddataDatParent.intptrHwnd = a_intptrHwnd;
                                 RunInUiThread(DatParentWindowsTwain32);
                                 sts = m_threaddataDatParent.sts;
-                                m_threaddataDatParent = default(ThreadData);
+                                m_threaddataDatParent = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatParent = default(ThreadData);
+                                m_threaddataDatParent = default;
                                 m_threaddataDatParent.blIsInuse = true;
                                 m_threaddataDatParent.dg = a_dg;
                                 m_threaddataDatParent.msg = a_msg;
@@ -8024,7 +8024,7 @@ namespace TWAINWorkingGroup
                                 m_threaddataDatParent.intptrHwnd = a_intptrHwnd;
                                 RunInUiThread(DatParentWindowsTwainDsm);
                                 sts = m_threaddataDatParent.sts;
-                                m_threaddataDatParent = default(ThreadData);
+                                m_threaddataDatParent = default;
                             }
                         }
                     }
@@ -8188,7 +8188,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twpassthru = a_twpassthru;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -8359,7 +8359,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.twpendingxfers = a_twpendingxfers;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -8410,7 +8410,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatPendingxfers = default(ThreadData);
+                                m_threaddataDatPendingxfers = default;
                                 m_threaddataDatPendingxfers.blIsInuse = true;
                                 m_threaddataDatPendingxfers.dg = a_dg;
                                 m_threaddataDatPendingxfers.msg = a_msg;
@@ -8419,14 +8419,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatPendingxfersWindowsTwain32);
                                 a_twpendingxfers = m_threaddataDatPendingxfers.twpendingxfers;
                                 sts = m_threaddataDatPendingxfers.sts;
-                                m_threaddataDatPendingxfers = default(ThreadData);
+                                m_threaddataDatPendingxfers = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatPendingxfers = default(ThreadData);
+                                m_threaddataDatPendingxfers = default;
                                 m_threaddataDatPendingxfers.blIsInuse = true;
                                 m_threaddataDatPendingxfers.dg = a_dg;
                                 m_threaddataDatPendingxfers.msg = a_msg;
@@ -8435,7 +8435,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatPendingxfersWindowsTwainDsm);
                                 a_twpendingxfers = m_threaddataDatPendingxfers.twpendingxfers;
                                 sts = m_threaddataDatPendingxfers.sts;
-                                m_threaddataDatPendingxfers = default(ThreadData);
+                                m_threaddataDatPendingxfers = default;
                             }
                         }
                     }
@@ -8572,7 +8572,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twrgbresponse = a_twrgbresponse;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -8743,7 +8743,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.twsetupfilexfer = a_twsetupfilexfer;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -8794,7 +8794,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatSetupfilexfer = default(ThreadData);
+                                m_threaddataDatSetupfilexfer = default;
                                 m_threaddataDatSetupfilexfer.blIsInuse = true;
                                 m_threaddataDatSetupfilexfer.dg = a_dg;
                                 m_threaddataDatSetupfilexfer.msg = a_msg;
@@ -8803,14 +8803,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatSetupfilexferWindowsTwain32);
                                 a_twsetupfilexfer = m_threaddataDatSetupfilexfer.twsetupfilexfer;
                                 sts = m_threaddataDatSetupfilexfer.sts;
-                                m_threaddataDatSetupfilexfer = default(ThreadData);
+                                m_threaddataDatSetupfilexfer = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatSetupfilexfer = default(ThreadData);
+                                m_threaddataDatSetupfilexfer = default;
                                 m_threaddataDatSetupfilexfer.blIsInuse = true;
                                 m_threaddataDatSetupfilexfer.dg = a_dg;
                                 m_threaddataDatSetupfilexfer.msg = a_msg;
@@ -8819,7 +8819,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatSetupfilexferWindowsTwainDsm);
                                 a_twsetupfilexfer = m_threaddataDatSetupfilexfer.twsetupfilexfer;
                                 sts = m_threaddataDatSetupfilexfer.sts;
-                                m_threaddataDatSetupfilexfer = default(ThreadData);
+                                m_threaddataDatSetupfilexfer = default;
                             }
                         }
                     }
@@ -8950,7 +8950,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.twsetupmemxfer = a_twsetupmemxfer;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -9001,7 +9001,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatSetupmemxfer = default(ThreadData);
+                                m_threaddataDatSetupmemxfer = default;
                                 m_threaddataDatSetupmemxfer.blIsInuse = true;
                                 m_threaddataDatSetupmemxfer.dg = a_dg;
                                 m_threaddataDatSetupmemxfer.msg = a_msg;
@@ -9010,14 +9010,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatSetupmemxferWindowsTwain32);
                                 a_twsetupmemxfer = m_threaddataDatSetupmemxfer.twsetupmemxfer;
                                 sts = m_threaddataDatSetupmemxfer.sts;
-                                m_threaddataDatSetupmemxfer = default(ThreadData);
+                                m_threaddataDatSetupmemxfer = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatSetupmemxfer = default(ThreadData);
+                                m_threaddataDatSetupmemxfer = default;
                                 m_threaddataDatSetupmemxfer.blIsInuse = true;
                                 m_threaddataDatSetupmemxfer.dg = a_dg;
                                 m_threaddataDatSetupmemxfer.msg = a_msg;
@@ -9026,7 +9026,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatSetupmemxferWindowsTwainDsm);
                                 a_twsetupmemxfer = m_threaddataDatSetupmemxfer.twsetupmemxfer;
                                 sts = m_threaddataDatSetupmemxfer.sts;
-                                m_threaddataDatSetupmemxfer = default(ThreadData);
+                                m_threaddataDatSetupmemxfer = default;
                             }
                         }
                     }
@@ -9160,7 +9160,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.twstatus = a_twstatus;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -9211,7 +9211,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatStatus = default(ThreadData);
+                                m_threaddataDatStatus = default;
                                 m_threaddataDatStatus.blIsInuse = true;
                                 m_threaddataDatStatus.dg = a_dg;
                                 m_threaddataDatStatus.msg = a_msg;
@@ -9220,14 +9220,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatStatusWindowsTwain32);
                                 a_twstatus = m_threaddataDatStatus.twstatus;
                                 sts = m_threaddataDatStatus.sts;
-                                m_threaddataDatStatus = default(ThreadData);
+                                m_threaddataDatStatus = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatStatus = default(ThreadData);
+                                m_threaddataDatStatus = default;
                                 m_threaddataDatStatus.blIsInuse = true;
                                 m_threaddataDatStatus.dg = a_dg;
                                 m_threaddataDatStatus.msg = a_msg;
@@ -9236,7 +9236,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatStatusWindowsTwainDsm);
                                 a_twstatus = m_threaddataDatStatus.twstatus;
                                 sts = m_threaddataDatStatus.sts;
-                                m_threaddataDatStatus = default(ThreadData);
+                                m_threaddataDatStatus = default;
                             }
                         }
                     }
@@ -9344,7 +9344,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twstatusutf8 = a_twstatusutf8;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -9489,7 +9489,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twtwaindirect = a_twtwaindirect;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -9660,7 +9660,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default(ThreadData);
+                        ThreadData threaddata = default;
                         threaddata.twuserinterface = a_twuserinterface;
                         threaddata.twuserinterface.hParent = m_intptrHwnd;
                         threaddata.dg = a_dg;
@@ -9717,7 +9717,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatUserinterface = default(ThreadData);
+                                m_threaddataDatUserinterface = default;
                                 m_threaddataDatUserinterface.blIsInuse = true;
                                 m_threaddataDatUserinterface.dg = a_dg;
                                 m_threaddataDatUserinterface.msg = a_msg;
@@ -9726,14 +9726,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatUserinterfaceWindowsTwain32);
                                 a_twuserinterface = m_threaddataDatUserinterface.twuserinterface;
                                 sts = m_threaddataDatUserinterface.sts;
-                                m_threaddataDatUserinterface = default(ThreadData);
+                                m_threaddataDatUserinterface = default;
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatUserinterface = default(ThreadData);
+                                m_threaddataDatUserinterface = default;
                                 m_threaddataDatUserinterface.blIsInuse = true;
                                 m_threaddataDatUserinterface.dg = a_dg;
                                 m_threaddataDatUserinterface.msg = a_msg;
@@ -9742,7 +9742,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatUserinterfaceWindowsTwainDsm);
                                 a_twuserinterface = m_threaddataDatUserinterface.twuserinterface;
                                 sts = m_threaddataDatUserinterface.sts;
-                                m_threaddataDatUserinterface = default(ThreadData);
+                                m_threaddataDatUserinterface = default;
                             }
                         }
                     }
@@ -9879,7 +9879,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default(ThreadData);
+                    ThreadData threaddata = default;
                     threaddata.twuint32 = a_twuint32;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -11323,7 +11323,7 @@ namespace TWAINWorkingGroup
                 case TWTY.FIX32:
                     {
                         // Entire value will always be overwritten, so we don't have to get fancy...
-                        TW_FIX32 twfix32 = default(TW_FIX32);
+                        TW_FIX32 twfix32 = default;
                         twfix32.Whole = (short)Convert.ToDouble(a_szValue);
                         twfix32.Frac = (ushort)((Convert.ToDouble(a_szValue) - (double)twfix32.Whole) * 65536.0);
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(4 * a_iIndex));
@@ -11333,7 +11333,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.FRAME:
                     {
-                        TW_FRAME twframe = default(TW_FRAME);
+                        TW_FRAME twframe = default;
                         string[] asz = CSV.Parse(a_szValue);
                         twframe.Left.Whole = (short)Convert.ToDouble(asz[0]);
                         twframe.Left.Frac = (ushort)((Convert.ToDouble(asz[0]) - (double)twframe.Left.Whole) * 65536.0);
@@ -11350,7 +11350,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.STR32:
                     {
-                        TW_STR32 twstr32 = default(TW_STR32);
+                        TW_STR32 twstr32 = default;
                         twstr32.Set(a_szValue);
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(34 * a_iIndex));
                         Marshal.StructureToPtr(twstr32, intptr, true);
@@ -11359,7 +11359,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.STR64:
                     {
-                        TW_STR64 twstr64 = default(TW_STR64);
+                        TW_STR64 twstr64 = default;
                         twstr64.Set(a_szValue);
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(66 * a_iIndex));
                         Marshal.StructureToPtr(twstr64, intptr, true);
@@ -11368,7 +11368,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.STR128:
                     {
-                        TW_STR128 twstr128 = default(TW_STR128);
+                        TW_STR128 twstr128 = default;
                         twstr128.Set(a_szValue);
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(130 * a_iIndex));
                         Marshal.StructureToPtr(twstr128, intptr, true);
@@ -11377,7 +11377,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.STR255:
                     {
-                        TW_STR255 twstr255 = default(TW_STR255);
+                        TW_STR255 twstr255 = default;
                         twstr255.Set(a_szValue);
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(256 * a_iIndex));
                         Marshal.StructureToPtr(twstr255, intptr, true);
@@ -11395,11 +11395,11 @@ namespace TWAINWorkingGroup
         /// <returns>Empty string or an error string</returns>
         public string SetRangeItem(TWTY a_twty, IntPtr a_intptr, string[] a_asz)
         {
-            TW_RANGE twrange = default(TW_RANGE);
-            TW_RANGE_MACOSX twrangemacosx = default(TW_RANGE_MACOSX);
-            TW_RANGE_LINUX64 twrangelinux64 = default(TW_RANGE_LINUX64);
-            TW_RANGE_FIX32 twrangefix32 = default(TW_RANGE_FIX32);
-            TW_RANGE_FIX32_MACOSX twrangefix32macosx = default(TW_RANGE_FIX32_MACOSX);
+            TW_RANGE twrange = default;
+            TW_RANGE_MACOSX twrangemacosx = default;
+            TW_RANGE_LINUX64 twrangelinux64 = default;
+            TW_RANGE_FIX32 twrangefix32 = default;
+            TW_RANGE_FIX32_MACOSX twrangefix32macosx = default;
 
             // Index by type...
             switch (a_twty)
@@ -12211,7 +12211,7 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// The data we share with the thread...
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable")]
+        
         private struct ThreadData
         {
             // The state of the structure...
@@ -12610,7 +12610,7 @@ namespace TWAINWorkingGroup
                 }
 
                 // Clear the record...
-                m_athreaddata[a_lIndex] = default(ThreadData);
+                m_athreaddata[a_lIndex] = default;
             }
 
             /// <summary>
@@ -12642,7 +12642,7 @@ namespace TWAINWorkingGroup
                 // Init stuff...
                 lIndex = m_lIndex;
                 a_lIndex = 0;
-                a_threaddata = default(ThreadData);
+                a_threaddata = default;
 
                 // Cycle once through the commands to see if we have any...
                 for (; ; )

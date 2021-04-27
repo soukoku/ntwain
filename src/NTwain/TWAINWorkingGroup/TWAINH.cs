@@ -1121,11 +1121,11 @@ namespace TWAINWorkingGroup
     /// <summary>
     /// Used to register callbacks.
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable")]
+    
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     public partial struct TW_CALLBACK
     {
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr CallBackProc;
         public uint RefCon;
         public ushort Message;
@@ -1137,9 +1137,9 @@ namespace TWAINWorkingGroup
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     public partial struct TW_CALLBACK2
     {
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr CallBackProc;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public UIntPtr RefCon;
         public ushort Message;
     }
@@ -1152,7 +1152,7 @@ namespace TWAINWorkingGroup
     {
         public CAP Cap;
         public TWON ConType;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr hContainer;
     }
 
@@ -1193,7 +1193,7 @@ namespace TWAINWorkingGroup
     public partial struct TW_CUSTOMDSDATA
     {
         public uint InfoLength;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr hData;
     }
 
@@ -1235,36 +1235,36 @@ namespace TWAINWorkingGroup
     public partial struct TW_ENTRYPOINT
     {
         public UInt32 Size;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr DSM_Entry;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr DSM_MemAllocate;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr DSM_MemFree;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr DSM_MemLock;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr DSM_MemUnlock;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     public partial struct TW_ENTRYPOINT_LINUX64
     {
         public long Size;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr DSM_Entry;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr DSM_MemAllocate;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr DSM_MemFree;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr DSM_MemLock;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr DSM_MemUnlock;
     }
     public partial struct TW_ENTRYPOINT_DELEGATES
     {
         public UInt32 Size;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr DSM_Entry;
         public DSM_MEMALLOC DSM_MemAllocate;
         public DSM_MEMFREE DSM_MemFree;
@@ -1312,11 +1312,11 @@ namespace TWAINWorkingGroup
     /// <summary>
     /// Used to pass application events/messages from the application to the Source.
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable")]
+    
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     public partial struct TW_EVENT
     {
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr pEvent;
         public ushort TWMessage;
     }
@@ -1347,7 +1347,7 @@ namespace TWAINWorkingGroup
         public UInt32 DescriptorCount;
         public UInt32 MaxDescriptorCount;
         public UInt32 Condition;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr hDescriptors;
     }
 
@@ -1361,7 +1361,7 @@ namespace TWAINWorkingGroup
         public ushort ItemType;
         public ushort NumItems;
         public ushort ReturnCode;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public UIntPtr Item;
     }
 
@@ -1994,8 +1994,8 @@ namespace TWAINWorkingGroup
     /// Provides information about the currently selected device.
     /// TBD -- need a 32/64 bit solution for this mess
     /// </summary>
-    [SuppressMessage("Microsoft.Portability", "CA1900:ValueTypeFieldsShouldBePortable", MessageId = "ModifiedTimeDate")]
-    [SuppressMessage("Microsoft.Portability", "CA1900:ValueTypeFieldsShouldBePortable", MessageId = "CreateTimeDate")]
+    
+    
     [StructLayout(LayoutKind.Explicit, Pack = 2)]
     public partial struct TW_FILESYSTEM
     {
@@ -2005,7 +2005,7 @@ namespace TWAINWorkingGroup
         [FieldOffset(256)]
         public TW_STR255 OutputName;
 
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         [FieldOffset(512)]
         public IntPtr Context;
 
@@ -2049,7 +2049,7 @@ namespace TWAINWorkingGroup
         [FieldOffset(1127)] // 620 + 508 - 1
         private byte ReservedEnd;
     }
-    [SuppressMessage("Microsoft.Portability", "CA1900:ValueTypeFieldsShouldBePortable", MessageId = "ModifiedTimeDate")]
+    
     [StructLayout(LayoutKind.Explicit, Pack = 2)]
     public partial struct TW_FILESYSTEM_LEGACY
     {
@@ -2251,7 +2251,7 @@ namespace TWAINWorkingGroup
     {
         public uint Flags;
         public uint Length;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr TheMem;
     }
 
@@ -2282,7 +2282,7 @@ namespace TWAINWorkingGroup
         public UInt64 BytesWritten;
         public UInt64 MemoryFlags;
         public UInt64 MemoryLength;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr MemoryTheMem;
     }
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -2369,11 +2369,11 @@ namespace TWAINWorkingGroup
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     public partial struct TW_PASSTHRU
     {
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr pCommand;
         public uint CommandBytes;
         public int Direction;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr pData;
         public uint DataBytes;
         public uint DataBytesXfered;
@@ -2492,7 +2492,7 @@ namespace TWAINWorkingGroup
     {
         public TW_STATUS Status;
         public uint Size;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr UTF8string;
     }
 
@@ -2504,10 +2504,10 @@ namespace TWAINWorkingGroup
     {
         public uint SizeOf;
         public ushort CommunicationManager;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr Send;
         public uint SendSize;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr Receive;
         public uint ReceiveSize;
     }
@@ -2520,7 +2520,7 @@ namespace TWAINWorkingGroup
     {
         public ushort ShowUI;
         public ushort ModalUI;
-        [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
+        
         public IntPtr hParent;
     }
 

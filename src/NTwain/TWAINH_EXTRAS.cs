@@ -27,6 +27,29 @@ namespace TWAINWorkingGroup
     }
 
     /// <summary>
+    /// A more dotnet-friendly representation of <see cref="TW_METRICS"/>.
+    /// </summary>
+    public struct Metrics
+    {
+        /// <summary>
+        /// Return code of querying the metrics.
+        /// </summary>
+        public STS ReturnCode;
+
+        /// <summary>
+        /// The number of sheets of paper processed by the scanner.
+        /// </summary>
+        public int Sheets;
+
+        /// <summary>
+        /// The number of images made available for transfer by the driver. This is not
+        /// necessarily the same as the number of images actually transferred, since the
+        /// application may opt to skip transfers or to end without transferring all images.
+        /// </summary>
+        public int Images;
+    }
+
+    /// <summary>
     /// A more dotnet-friendly representation of <see cref="TW_ENUMERATION"/>.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
