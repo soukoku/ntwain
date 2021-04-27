@@ -2733,15 +2733,16 @@ namespace TWAINWorkingGroup
         BOTTOM = 2
     }
 
-    /// <summary>
-    /// CAP_CLEARBUFFERS values
-    /// </summary>
-    public enum TWCB : ushort
-    {
-        AUTO = 0,
-        CLEAR = 1,
-        NOCLEAR = 2
-    }
+    // deprecated
+    ///// <summary>
+    ///// CAP_CLEARBUFFERS values
+    ///// </summary>
+    //public enum TWCB : ushort
+    //{
+    //    AUTO = 0,
+    //    CLEAR = 1,
+    //    NOCLEAR = 2
+    //}
 
     /// <summary>
     /// CAP_DEVICEEVENT values
@@ -4289,7 +4290,8 @@ namespace TWAINWorkingGroup
         GETCURRENT = 0x0008,
         RESET = 0x0010,
         SETCONSTRAINT = 0x0020,
-        CONSTRAINABLE = 0x0040
+        // deprecated
+        //CONSTRAINABLE = 0x0040
     }
 
     /// <summary>

@@ -1236,14 +1236,15 @@ namespace NTwain
             }
         }
 
-        private CapWrapper<TWCB> _clearBuff;
-        public CapWrapper<TWCB> CAP_CLEARBUFFERS
-        {
-            get
-            {
-                return _clearBuff ?? (_clearBuff = new CapWrapper<TWCB>(_twain, CAP.CAP_CLEARBUFFERS));
-            }
-        }
+        // deprecated
+        //private CapWrapper<TWCB> _clearBuff;
+        //public CapWrapper<TWCB> CAP_CLEARBUFFERS
+        //{
+        //    get
+        //    {
+        //        return _clearBuff ?? (_clearBuff = new CapWrapper<TWCB>(_twain, CAP.CAP_CLEARBUFFERS));
+        //    }
+        //}
 
         private CapWrapper<uint> _maxBatchBuff;
 
