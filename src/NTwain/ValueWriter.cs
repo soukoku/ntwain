@@ -13,21 +13,26 @@ namespace NTwain
     /// </summary>
     public static class ValueWriter
     {
+        // most of these are modified from the original TWAIN.CsvToCapability()
 
-        public static void WriteOneValue<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, TValue value) where TValue : struct
+        public static void WriteOneValueContainer<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, TValue value) where TValue : struct
         {
             IntPtr lockedPtr = IntPtr.Zero;
             try
             {
+                if (twCap.hContainer != IntPtr.Zero) twain.DsmMemFree(ref twCap.hContainer);
+
                 TWTY itemType = GetItemType<TValue>();
+
+                // Allocate the container (go for worst case, which is TW_STR255)...
                 if (PlatformTools.GetPlatform() == Platform.MACOSX)
                 {
                     twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ONEVALUE_MACOSX)) + Marshal.SizeOf(default(TW_STR255))));
                     lockedPtr = twain.DsmMemLock(twCap.hContainer);
 
-                    TW_ONEVALUE_MACOSX twonevaluemacosx = default(TW_ONEVALUE_MACOSX);
+                    TW_ONEVALUE_MACOSX twonevaluemacosx = default;
                     twonevaluemacosx.ItemType = (uint)itemType;
-                    Marshal.StructureToPtr(twonevaluemacosx, lockedPtr, true);
+                    Marshal.StructureToPtr(twonevaluemacosx, lockedPtr, false);
 
                     lockedPtr += Marshal.SizeOf(twonevaluemacosx);
                 }
@@ -36,9 +41,9 @@ namespace NTwain
                     twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ONEVALUE)) + Marshal.SizeOf(default(TW_STR255))));
                     lockedPtr = twain.DsmMemLock(twCap.hContainer);
 
-                    TW_ONEVALUE twonevalue = default(TW_ONEVALUE);
+                    TW_ONEVALUE twonevalue = default;
                     twonevalue.ItemType = itemType;
-                    Marshal.StructureToPtr(twonevalue, lockedPtr, true);
+                    Marshal.StructureToPtr(twonevalue, lockedPtr, false);
 
                     lockedPtr += Marshal.SizeOf(twonevalue);
                 }
@@ -51,18 +56,183 @@ namespace NTwain
             }
         }
 
-        public static void WriteArray<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, TValue[] values) where TValue : struct
+        public static void WriteArrayContainer<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, TValue[] values) where TValue : struct
         {
-            throw new NotImplementedException();
+            IntPtr lockedPtr = IntPtr.Zero;
+            try
+            {
+                if (twCap.hContainer != IntPtr.Zero) twain.DsmMemFree(ref twCap.hContainer);
+
+                TWTY itemType = GetItemType<TValue>();
+
+                // Allocate the container (go for worst case, which is TW_STR255)...
+                if (PlatformTools.GetPlatform() == Platform.MACOSX)
+                {
+                    // Allocate...
+                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ARRAY_MACOSX)) + ((values.Length + 1) * Marshal.SizeOf(default(TW_STR255)))));
+                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
+
+                    // Set the meta data...
+                    TW_ARRAY_MACOSX twarraymacosx = default;
+                    twarraymacosx.ItemType = (uint)itemType;
+                    twarraymacosx.NumItems = (uint)values.Length;
+                    Marshal.StructureToPtr(twarraymacosx, lockedPtr, false);
+
+                    // Get the pointer to the ItemList...
+                    lockedPtr += Marshal.SizeOf(twarraymacosx);
+                }
+                else
+                {
+                    // Allocate...
+                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ARRAY)) + ((values.Length + 1) * Marshal.SizeOf(default(TW_STR255)))));
+                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
+
+                    // Set the meta data...
+                    TW_ARRAY twarray = default;
+                    twarray.ItemType = itemType;
+                    twarray.NumItems = (uint)values.Length;
+                    Marshal.StructureToPtr(twarray, lockedPtr, false);
+
+                    // Get the pointer to the ItemList...
+                    lockedPtr += Marshal.SizeOf(twarray);
+                }
+
+                // Set the ItemList...
+                for (var i = 0; i < values.Length; i++)
+                {
+                    WriteContainerData(lockedPtr, itemType, values[i], i);
+                }
+            }
+            finally
+            {
+                if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(twCap.hContainer);
+            }
         }
-        public static void WriteRange<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, Range<TValue> value) where TValue : struct
+        public static void WriteRangeContainer<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, Range<TValue> value) where TValue : struct
+        {
+            IntPtr lockedPtr = IntPtr.Zero;
+            try
+            {
+                if (twCap.hContainer != IntPtr.Zero) twain.DsmMemFree(ref twCap.hContainer);
+
+                TWTY itemType = GetItemType<TValue>();
+                var platform = PlatformTools.GetPlatform();
+
+                // Allocate the container (go for worst case, which is TW_STR255)...
+                if (platform == Platform.MACOSX)
+                {
+                    // Allocate...
+                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE_MACOSX))));
+                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
+                }
+                // Windows or the 2.4+ Linux DSM...
+                else if ((platform == Platform.WINDOWS) ||
+                    (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm) ||
+                    ((twain.m_blFoundLatestDsm || twain.m_blFoundLatestDsm64) && (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm)))
+                {
+                    // Allocate...
+                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE))));
+                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
+                }
+                // The -2.3 Linux DSM...
+                else
+                {
+                    // Allocate...
+                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE_LINUX64))));
+                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
+                }
+
+                // Set the Item...
+                WriteRangeValues(lockedPtr, itemType, value);
+            }
+            finally
+            {
+                if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(twCap.hContainer);
+            }
+        }
+
+        private static void WriteRangeValues<TValue>(IntPtr lockedPtr, TWTY itemType, Range<TValue> value) where TValue : struct
         {
             throw new NotImplementedException();
         }
 
-        public static void WriteEnum<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, Enumeration<TValue> value) where TValue : struct
+        public static void WriteEnumContainer<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, Enumeration<TValue> value) where TValue : struct
         {
-            throw new NotImplementedException();
+            IntPtr lockedPtr = IntPtr.Zero;
+            try
+            {
+                if (twCap.hContainer != IntPtr.Zero) twain.DsmMemFree(ref twCap.hContainer);
+
+                TWTY itemType = GetItemType<TValue>();
+                var platform = PlatformTools.GetPlatform();
+
+                // Allocate the container (go for worst case, which is TW_STR255)...
+                if (platform == Platform.MACOSX)
+                {
+                    // Allocate...
+                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ENUMERATION_MACOSX)) + ((value.Items.Length + 1) * Marshal.SizeOf(default(TW_STR255)))));
+                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
+
+                    // Set the meta data...
+                    TW_ENUMERATION_MACOSX twenumerationmacosx = default;
+                    twenumerationmacosx.ItemType = (uint)itemType;
+                    twenumerationmacosx.NumItems = (uint)value.Items.Length;
+                    twenumerationmacosx.CurrentIndex = (uint)value.CurrentIndex;
+                    twenumerationmacosx.DefaultIndex = (uint)value.DefaultIndex;
+                    Marshal.StructureToPtr(twenumerationmacosx, lockedPtr, false);
+
+                    // Get the pointer to the ItemList...
+                    lockedPtr += Marshal.SizeOf(twenumerationmacosx);
+                }
+                // Windows or the 2.4+ Linux DSM...
+                else if ((platform == Platform.WINDOWS) ||
+                    (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm) ||
+                    ((twain.m_blFoundLatestDsm || twain.m_blFoundLatestDsm64) && (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm)))
+                {
+                    // Allocate...
+                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ENUMERATION)) + ((value.Items.Length + 1) * Marshal.SizeOf(default(TW_STR255)))));
+                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
+
+                    // Set the meta data...
+                    TW_ENUMERATION twenumeration = default;
+                    twenumeration.ItemType = itemType;
+                    twenumeration.NumItems = (uint)value.Items.Length;
+                    twenumeration.CurrentIndex = (uint)value.CurrentIndex;
+                    twenumeration.DefaultIndex = (uint)value.CurrentIndex;
+                    Marshal.StructureToPtr(twenumeration, lockedPtr, false);
+
+                    // Get the pointer to the ItemList...
+                    lockedPtr += Marshal.SizeOf(twenumeration);
+                }
+                // The -2.3 Linux DSM...
+                else
+                {
+                    // Allocate...
+                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ENUMERATION_LINUX64)) + ((value.Items.Length + 1) * Marshal.SizeOf(default(TW_STR255)))));
+                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
+
+                    // Set the meta data...
+                    TW_ENUMERATION_LINUX64 twenumerationlinux64 = default;
+                    twenumerationlinux64.ItemType = itemType;
+                    twenumerationlinux64.NumItems = (ulong)value.Items.Length;
+                    twenumerationlinux64.CurrentIndex = (ulong)value.CurrentIndex;
+                    twenumerationlinux64.DefaultIndex = (ulong)value.CurrentIndex;
+                    Marshal.StructureToPtr(twenumerationlinux64, lockedPtr, false);
+
+                    // Get the pointer to the ItemList...
+                    lockedPtr += Marshal.SizeOf(twenumerationlinux64);
+                }
+
+                // Set the ItemList...
+                for (var i = 0; i < value.Items.Length; i++)
+                {
+                    WriteContainerData(lockedPtr, itemType, value.Items[i], i);
+                }
+            }
+            finally
+            {
+                if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(twCap.hContainer);
+            }
         }
 
 
@@ -133,9 +303,12 @@ namespace NTwain
                     Marshal.StructureToPtr(Convert.ToUInt16(value), intptr, false);
                     break;
                 case TWTY.INT32:
+                    intptr += 4 * itemIndex;
+                    Marshal.StructureToPtr(Convert.ToInt32(value), intptr, false);
+                    break;
                 case TWTY.UINT32:
                     intptr += 4 * itemIndex;
-                    Marshal.StructureToPtr(value, intptr, false);
+                    Marshal.StructureToPtr(Convert.ToUInt32(value), intptr, false);
                     break;
                 case TWTY.FIX32:
                     intptr += 4 * itemIndex;

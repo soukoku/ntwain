@@ -16,7 +16,7 @@ namespace NTwain
     {
         // most of these are modified from the original TWAIN.CapabilityToCsv()
 
-        public static TValue ReadOneValue<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
+        public static TValue ReadOneValueContainer<TValue>(TWAIN twain, ref TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
         {
             if (cap.hContainer == IntPtr.Zero) return default;
 
@@ -49,7 +49,7 @@ namespace NTwain
                 if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
             }
         }
-        public static Enumeration<TValue> ReadEnumeration<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
+        public static Enumeration<TValue> ReadEnumerationContainer<TValue>(TWAIN twain, ref TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
         {
             Enumeration<TValue> retVal = new Enumeration<TValue>();
 
@@ -117,7 +117,7 @@ namespace NTwain
             }
             return retVal;
         }
-        public static IList<TValue> ReadArray<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
+        public static IList<TValue> ReadArrayContainer<TValue>(TWAIN twain, ref TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
         {
             if (cap.hContainer == IntPtr.Zero) return EmptyArray<TValue>.Value;
 
@@ -159,7 +159,7 @@ namespace NTwain
                 if (freeMemory) twain.DsmMemFree(ref cap.hContainer);
             }
         }
-        public static Range<TValue> ReadRange<TValue>(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
+        public static Range<TValue> ReadRangeContainer<TValue>(TWAIN twain, ref TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct
         {
             var retVal = new Range<TValue>();
 
@@ -260,7 +260,7 @@ namespace NTwain
         /// <param name="cap"></param>
         /// <param name="freeMemory"></param>
         /// <returns></returns>
-        public static string ReadOneString(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true)
+        public static string ReadOneValueContainerString(TWAIN twain, TW_CAPABILITY cap, bool freeMemory = true)
         {
             if (cap.hContainer == IntPtr.Zero) return null;
 

@@ -39,7 +39,7 @@ namespace NTwain
             var sts = _twain.DatCapability(DG.CONTROL, MSG.QUERYSUPPORT, ref twCap);
             if (sts == STS.SUCCESS && twCap.ConType == TWON.ONEVALUE)
             {
-                return ValueReader.ReadOneValue<TWQC>(_twain, twCap);
+                return ValueReader.ReadOneValueContainer<TWQC>(_twain, ref twCap);
             }
             return TWQC.Uknown;
         }
@@ -61,13 +61,13 @@ namespace NTwain
                 switch (twCap.ConType)
                 {
                     case TWON.ONEVALUE:
-                        return new[] { ValueReader.ReadOneValue<TValue>(_twain, twCap) };
+                        return new[] { ValueReader.ReadOneValueContainer<TValue>(_twain, ref twCap) };
                     case TWON.ENUMERATION:
-                        return ValueReader.ReadEnumeration<TValue>(_twain, twCap).Items;
+                        return ValueReader.ReadEnumerationContainer<TValue>(_twain, ref twCap).Items;
                     case TWON.ARRAY:
-                        return ValueReader.ReadArray<TValue>(_twain, twCap);
+                        return ValueReader.ReadArrayContainer<TValue>(_twain, ref twCap);
                     case TWON.RANGE:
-                        return ValueReader.ReadRange<TValue>(_twain, twCap).ToList();
+                        return ValueReader.ReadRangeContainer<TValue>(_twain, ref twCap).ToList();
                 }
             }
             return EmptyArray<TValue>.Value;
@@ -90,14 +90,14 @@ namespace NTwain
                 switch (twCap.ConType)
                 {
                     case TWON.ONEVALUE:
-                        return ValueReader.ReadOneValue<TValue>(_twain, twCap);
+                        return ValueReader.ReadOneValueContainer<TValue>(_twain, ref twCap);
                     case TWON.ENUMERATION:
-                        var enumeration = ValueReader.ReadEnumeration<TValue>(_twain, twCap);
+                        var enumeration = ValueReader.ReadEnumerationContainer<TValue>(_twain, ref twCap);
                         if (enumeration.CurrentIndex < enumeration.Items.Length)
                             return enumeration.Items[enumeration.CurrentIndex];
                         break;
                     case TWON.RANGE:
-                        return ValueReader.ReadRange<TValue>(_twain, twCap).CurrentValue;
+                        return ValueReader.ReadRangeContainer<TValue>(_twain, ref twCap).CurrentValue;
                 }
             }
             return default;
@@ -120,14 +120,14 @@ namespace NTwain
                 switch (twCap.ConType)
                 {
                     case TWON.ONEVALUE:
-                        return ValueReader.ReadOneValue<TValue>(_twain, twCap);
+                        return ValueReader.ReadOneValueContainer<TValue>(_twain, ref twCap);
                     case TWON.ENUMERATION:
-                        var enumeration = ValueReader.ReadEnumeration<TValue>(_twain, twCap);
+                        var enumeration = ValueReader.ReadEnumerationContainer<TValue>(_twain, ref twCap);
                         if (enumeration.DefaultIndex < enumeration.Items.Length)
                             return enumeration.Items[enumeration.DefaultIndex];
                         break;
                     case TWON.RANGE:
-                        return ValueReader.ReadRange<TValue>(_twain, twCap).DefaultValue;
+                        return ValueReader.ReadRangeContainer<TValue>(_twain, ref twCap).DefaultValue;
                 }
             }
             return default;
@@ -147,7 +147,7 @@ namespace NTwain
             var sts = _twain.DatCapability(DG.CONTROL, MSG.GETLABEL, ref twCap);
             if (sts == STS.SUCCESS)
             {
-                return ValueReader.ReadOneString(_twain, twCap);
+                return ValueReader.ReadOneValueContainerString(_twain, twCap);
             }
             return null;
         }
@@ -166,7 +166,7 @@ namespace NTwain
             var sts = _twain.DatCapability(DG.CONTROL, MSG.GETHELP, ref twCap);
             if (sts == STS.SUCCESS)
             {
-                return ValueReader.ReadOneString(_twain, twCap);
+                return ValueReader.ReadOneValueContainerString(_twain, twCap);
             }
             return null;
         }
@@ -204,7 +204,7 @@ namespace NTwain
             };
             try
             {
-                ValueWriter.WriteOneValue(_twain, ref twCap, value);
+                ValueWriter.WriteOneValueContainer(_twain, ref twCap, value);
                 return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
             }
             finally
@@ -233,7 +233,7 @@ namespace NTwain
             };
             try
             {
-                ValueWriter.WriteArray(_twain, ref twCap, values);
+                ValueWriter.WriteArrayContainer(_twain, ref twCap, values);
                 return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
             }
             finally
@@ -262,7 +262,7 @@ namespace NTwain
             };
             try
             {
-                ValueWriter.WriteRange(_twain, ref twCap, value);
+                ValueWriter.WriteRangeContainer(_twain, ref twCap, value);
                 return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
             }
             finally
@@ -291,7 +291,7 @@ namespace NTwain
             };
             try
             {
-                ValueWriter.WriteEnum(_twain, ref twCap, value);
+                ValueWriter.WriteEnumContainer(_twain, ref twCap, value);
                 return _twain.DatCapability(DG.CONTROL, setMsg, ref twCap);
             }
             finally
