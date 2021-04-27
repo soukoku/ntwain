@@ -14,6 +14,30 @@ namespace NTwain
     /// </summary>
     public static class ValueReader
     {
+        /// <summary>
+        /// Reads pointer as UTF8 string.
+        /// </summary>
+        /// <param name="intPtr">Pointer to string.</param>
+        /// <param name="length">Number of bytes to read.</param>
+        /// <returns></returns>
+        public static unsafe string PtrToStringUTF8(IntPtr intPtr, int length)
+        {
+            if (intPtr == IntPtr.Zero) throw new ArgumentNullException(nameof(intPtr));
+            if (length == 0) throw new ArgumentOutOfRangeException(nameof(length), length, "Length must be greater than 0.");
+
+            //// safe method with 2 copies
+            //var bytes = new byte[length];
+            //Marshal.Copy(intPtr, bytes, 0, length);
+            //return Encoding.UTF8.GetString(bytes);
+
+            // unsafe method with 1 copy (does it work?)
+            sbyte* bytes = (sbyte*)intPtr;
+            var str = new string(bytes, 0, length, Encoding.UTF8);
+            return str;
+        }
+
+
+
         // most of these are modified from the original TWAIN.CapabilityToCsv()
 
         public static TValue ReadOneValueContainer<TValue>(TWAIN twain, ref TW_CAPABILITY cap, bool freeMemory = true) where TValue : struct

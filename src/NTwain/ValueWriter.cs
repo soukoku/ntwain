@@ -13,6 +13,45 @@ namespace NTwain
     /// </summary>
     public static class ValueWriter
     {
+        /// <summary>
+        /// Allocates and copies the string value into a pointer in UTF8 that's null-terminated.
+        /// </summary>
+        /// <param name="twain"></param>
+        /// <param name="value"></param>
+        /// <param name="length">Actual number of bytes used to encode the string without the null.</param>
+        /// <returns></returns>
+        internal static unsafe IntPtr StringToPtrUTF8(TWAIN twain, string value, out int length)
+        {
+            var utf8 = Encoding.UTF8;
+            length = utf8.GetByteCount(value);
+
+            var ptr = twain.DsmMemAlloc((uint)length + 1); // +1 for null-terminated
+
+            // TODO: test if this works
+            int written;
+            byte* bytes = (byte*)ptr;
+            try
+            {
+                fixed (char* firstChar = value)
+                {
+                    written = Encoding.UTF8.GetBytes(firstChar, value.Length, bytes, length);
+                }
+
+                bytes[written] = 0;
+            }
+            catch
+            {
+                // just in case
+                if (ptr != IntPtr.Zero) twain.DsmMemFree(ref ptr);
+
+                throw;
+            }
+
+            return ptr;
+        }
+
+
+
         // most of these are modified from the original TWAIN.CsvToCapability()
 
         public static void WriteOneValueContainer<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, TValue value) where TValue : struct
@@ -469,7 +508,6 @@ namespace NTwain
                     break;
             }
         }
-
 
         static TWTY GetItemType<TValue>() where TValue : struct
         {

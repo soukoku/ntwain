@@ -49,6 +49,19 @@ namespace TWAINWorkingGroup
         public int Images;
     }
 
+    public struct TwainDirectTaskResult
+    {
+        /// <summary>
+        /// Return code of task.
+        /// </summary>
+        public STS ReturnCode;
+
+        /// <summary>
+        /// The response of the task in JSON if successful.
+        /// </summary>
+        public string ResponseJson;
+    }
+
     /// <summary>
     /// A more dotnet-friendly representation of <see cref="TW_ENUMERATION"/>.
     /// </summary>

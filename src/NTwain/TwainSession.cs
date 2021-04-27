@@ -131,16 +131,16 @@ namespace NTwain
             get { return _twain.GetState(); }
         }
 
-        /// <summary>
-        /// Gets the manager status. Useful after getting a non-success return code.
-        /// </summary>
-        /// <returns></returns>
-        public TW_STATUS GetStatus()
-        {
-            TW_STATUS stat = default;
-            _ = _twain.DatStatus(DG.CONTROL, MSG.GET, ref stat);
-            return stat;
-        }
+        ///// <summary>
+        ///// Gets the manager status. Useful after getting a non-success return code.
+        ///// </summary>
+        ///// <returns></returns>
+        //public TW_STATUS GetStatus()
+        //{
+        //    TW_STATUS stat = default;
+        //    _ = _twain.DatStatus(DG.CONTROL, MSG.GET, ref stat);
+        //    return stat;
+        //}
 
         /// <summary>
         /// Opens the TWAIN data source manager.
@@ -352,12 +352,36 @@ namespace NTwain
             return new Metrics { ReturnCode = sts };
         }
 
-        //public sts SetTwainDirectTask()
-        //{
-        //    TW_TWAINDIRECT task = default;
-        //    var sts = _twain.DatTwaindirect(DG.CONTROL, MSG.SETTASK, ref task);
-        //    return sts;
-        //}
+        /// <summary>
+        /// Sends a TWAIN Direct task from the application to the driver.
+        /// </summary>
+        /// <param name="taskJson">The TWAIN Direct task in JSON.</param>
+        /// <param name="communicationManager">The current system being used to connect the application to the scanner.</param>
+        /// <returns></returns>
+        public TwainDirectTaskResult SetTwainDirectTask(string taskJson, ushort communicationManager = 0)
+        {
+            var result = new TwainDirectTaskResult { ReturnCode = STS.FAILURE };
+            TW_TWAINDIRECT task = default;
+            try
+            {
+                task.SizeOf = (uint)Marshal.SizeOf(typeof(TW_TWAINDIRECT));
+                task.CommunicationManager = communicationManager;
+                task.Send = ValueWriter.StringToPtrUTF8(_twain, taskJson, out int length);
+                task.SendSize = (uint)length;
+
+                result.ReturnCode = _twain.DatTwaindirect(DG.CONTROL, MSG.SETTASK, ref task);
+                if (result.ReturnCode == STS.SUCCESS && task.ReceiveSize > 0 && task.Receive != IntPtr.Zero)
+                {
+                    result.ResponseJson = ValueReader.PtrToStringUTF8(task.Receive, (int)task.ReceiveSize);
+                }
+            }
+            finally
+            {
+                if (task.Send != IntPtr.Zero) _twain.DsmMemFree(ref task.Send); // just in case
+                if (task.Receive != IntPtr.Zero) _twain.DsmMemFree(ref task.Receive);
+            }
+            return result;
+        }
 
         #endregion
     }
