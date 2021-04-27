@@ -20,8 +20,14 @@ namespace NTwain
         /// <param name="value"></param>
         /// <param name="length">Actual number of bytes used to encode the string without the null.</param>
         /// <returns></returns>
-        internal static unsafe IntPtr StringToPtrUTF8(TWAIN twain, string value, out int length)
+        public static unsafe IntPtr StringToPtrUTF8(TWAIN twain, string value, out int length)
         {
+            if (value == null)
+            {
+                length = 0;
+                return IntPtr.Zero;
+            }
+
             var utf8 = Encoding.UTF8;
             length = utf8.GetByteCount(value);
 
@@ -32,6 +38,7 @@ namespace NTwain
             byte* bytes = (byte*)ptr;
             try
             {
+                // fixed for managed pointer
                 fixed (char* firstChar = value)
                 {
                     written = Encoding.UTF8.GetBytes(firstChar, value.Length, bytes, length);
