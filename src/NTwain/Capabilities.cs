@@ -1679,6 +1679,16 @@ namespace NTwain
             }
         }
 
+        private CapWrapper<uint> _sheetCount;
+        public CapWrapper<uint> CAP_SHEETCOUNT
+        {
+            get
+            {
+                return _sheetCount ?? (_sheetCount = new CapWrapper<uint>(_twain, CAP.CAP_SHEETCOUNT));
+            }
+        }
+
+
         #endregion
     }
 }
