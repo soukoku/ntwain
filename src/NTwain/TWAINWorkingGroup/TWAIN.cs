@@ -6213,7 +6213,7 @@ namespace TWAINWorkingGroup
                     }
                     else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
                     {
-                        TW_IMAGEINFO_LINUX64 twimageinfolinux64 = default
+                        TW_IMAGEINFO_LINUX64 twimageinfolinux64 = default;
                         sts = (STS)NativeMethods.Linux020302Dsm64bitEntryImageinfo(ref m_twidentityApp, ref m_twidentityDs, a_dg, DAT.IMAGEINFO, a_msg, ref twimageinfolinux64);
                         a_twimageinfo.XResolution = twimageinfolinux64.XResolution;
                         a_twimageinfo.YResolution = twimageinfolinux64.YResolution;

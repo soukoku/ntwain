@@ -20,11 +20,11 @@
     <Version>$(PkgVersion)</Version>
     <FileVersion>$(PkgVersion)</FileVersion>
     <LangVersion>7.1</LangVersion>
+    <!--don't warn missing xml docs and naming conventions-->
+    <NoWarn>1591,IDE1006</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <!--don't warn missing xml docs-->
-    <NoWarn>1591</NoWarn>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
