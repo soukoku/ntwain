@@ -217,11 +217,7 @@ namespace NTwain
             {
                 if (State > STATE.S3)
                 {
-                    TW_IDENTITY twidentity = default;
-                    if (CsvSerializer.CsvToIdentity(ref twidentity, _twain.GetDsIdentity()))
-                    {
-                        return twidentity;
-                    }
+                    return _twain.m_twidentityDs;
                 }
                 return null;
             }
@@ -276,9 +272,7 @@ namespace NTwain
             if ((_twain.GetState() == STATE.S4) && (state < STATE.S4))
             {
                 _caps = null;
-                TW_IDENTITY twidentity = default;
-                CsvSerializer.CsvToIdentity(ref twidentity, _twain.GetDsIdentity());
-                _twain.DatIdentity(DG.CONTROL, MSG.CLOSEDS, ref twidentity);
+                _twain.DatIdentity(DG.CONTROL, MSG.CLOSEDS, ref _twain.m_twidentityDs);
             }
 
             // 3 --> 2
