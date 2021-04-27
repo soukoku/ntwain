@@ -30,10 +30,10 @@ namespace NTwain
     }
 
     /// <summary>
-    /// Doesn't actually use any particular thread. 
+    /// Async calls are marshalled to threadpool thread. 
     /// Should only be used in non-UI apps.
     /// </summary>
-    public class NoParticularMarshaller : IThreadMarshaller
+    public class ThreadPoolMarshaller : IThreadMarshaller
     {
         public bool InvokeRequired => throw new NotImplementedException();
 

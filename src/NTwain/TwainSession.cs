@@ -29,7 +29,7 @@ namespace NTwain
                (uint)(DG.APP2 | DG.IMAGE),
                country, "", language, 2, 4, false, true, HandleDeviceEvent, HandleScanEvent, HandleUIThreadAction, hWnd);
 
-            _threadMarshaller = threadMarshaller ?? new NoParticularMarshaller();
+            _threadMarshaller = threadMarshaller ?? new ThreadPoolMarshaller();
             _hWnd = hWnd;
         }
 
