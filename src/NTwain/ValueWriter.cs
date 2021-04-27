@@ -108,53 +108,6 @@ namespace NTwain
                 if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(twCap.hContainer);
             }
         }
-        public static void WriteRangeContainer<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, Range<TValue> value) where TValue : struct
-        {
-            IntPtr lockedPtr = IntPtr.Zero;
-            try
-            {
-                if (twCap.hContainer != IntPtr.Zero) twain.DsmMemFree(ref twCap.hContainer);
-
-                TWTY itemType = GetItemType<TValue>();
-                var platform = PlatformTools.GetPlatform();
-
-                // Allocate the container (go for worst case, which is TW_STR255)...
-                if (platform == Platform.MACOSX)
-                {
-                    // Allocate...
-                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE_MACOSX))));
-                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
-                }
-                // Windows or the 2.4+ Linux DSM...
-                else if ((platform == Platform.WINDOWS) ||
-                    (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm) ||
-                    ((twain.m_blFoundLatestDsm || twain.m_blFoundLatestDsm64) && (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm)))
-                {
-                    // Allocate...
-                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE))));
-                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
-                }
-                // The -2.3 Linux DSM...
-                else
-                {
-                    // Allocate...
-                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE_LINUX64))));
-                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
-                }
-
-                // Set the Item...
-                WriteRangeValues(lockedPtr, itemType, value);
-            }
-            finally
-            {
-                if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(twCap.hContainer);
-            }
-        }
-
-        private static void WriteRangeValues<TValue>(IntPtr lockedPtr, TWTY itemType, Range<TValue> value) where TValue : struct
-        {
-            throw new NotImplementedException();
-        }
 
         public static void WriteEnumContainer<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, Enumeration<TValue> value) where TValue : struct
         {
@@ -232,6 +185,288 @@ namespace NTwain
             finally
             {
                 if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(twCap.hContainer);
+            }
+        }
+
+        public static void WriteRangeContainer<TValue>(TWAIN twain, ref TW_CAPABILITY twCap, Range<TValue> value) where TValue : struct
+        {
+            IntPtr lockedPtr = IntPtr.Zero;
+            try
+            {
+                if (twCap.hContainer != IntPtr.Zero) twain.DsmMemFree(ref twCap.hContainer);
+
+                TWTY itemType = GetItemType<TValue>();
+                var platform = PlatformTools.GetPlatform();
+
+                // Allocate the container (go for worst case, which is TW_STR255)...
+                if (platform == Platform.MACOSX)
+                {
+                    // Allocate...
+                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE_MACOSX))));
+                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
+                }
+                // Windows or the 2.4+ Linux DSM...
+                else if ((platform == Platform.WINDOWS) ||
+                    (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm) ||
+                    ((twain.m_blFoundLatestDsm || twain.m_blFoundLatestDsm64) && (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm)))
+                {
+                    // Allocate...
+                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE))));
+                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
+                }
+                // The -2.3 Linux DSM...
+                else
+                {
+                    // Allocate...
+                    twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE_LINUX64))));
+                    lockedPtr = twain.DsmMemLock(twCap.hContainer);
+                }
+
+                // Set the Item...
+                WriteRangeValues(twain, lockedPtr, itemType, value);
+            }
+            finally
+            {
+                if (lockedPtr != IntPtr.Zero) twain.DsmMemUnlock(twCap.hContainer);
+            }
+        }
+
+        static void WriteRangeValues<TValue>(TWAIN twain, IntPtr lockedPtr, TWTY itemType, Range<TValue> value) where TValue : struct
+        {
+            // TODO: reduce this later
+
+            var platform = PlatformTools.GetPlatform();
+
+            TW_RANGE twrange = default;
+            TW_RANGE_MACOSX twrangemacosx = default;
+            TW_RANGE_LINUX64 twrangelinux64 = default;
+
+            switch (itemType)
+            {
+                default:
+                    throw new NotSupportedException($"{itemType} is not supported for range.");
+                case TWTY.INT8:
+                    if (platform == Platform.MACOSX)
+                    {
+                        twrangemacosx.ItemType = (uint)itemType;
+                        twrangemacosx.MinValue = (uint)Convert.ToSByte(value.MinValue);
+                        twrangemacosx.MaxValue = (uint)Convert.ToSByte(value.MaxValue);
+                        twrangemacosx.StepSize = (uint)Convert.ToSByte(value.StepSize);
+                        twrangemacosx.DefaultValue = (uint)Convert.ToSByte(value.DefaultValue);
+                        twrangemacosx.CurrentValue = (uint)Convert.ToSByte(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangemacosx, lockedPtr, false);
+                    }
+                    else if ((twain.m_linuxdsm == TWAIN.LinuxDsm.Unknown) || (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm))
+                    {
+                        twrange.ItemType = itemType;
+                        twrange.MinValue = (uint)Convert.ToSByte(value.MinValue);
+                        twrange.MaxValue = (uint)Convert.ToSByte(value.MaxValue);
+                        twrange.StepSize = (uint)Convert.ToSByte(value.StepSize);
+                        twrange.DefaultValue = (uint)Convert.ToSByte(value.DefaultValue);
+                        twrange.CurrentValue = (uint)Convert.ToSByte(value.CurrentValue);
+                        Marshal.StructureToPtr(twrange, lockedPtr, false);
+                    }
+                    else
+                    {
+                        twrangelinux64.ItemType = itemType;
+                        twrangelinux64.MinValue = (uint)Convert.ToSByte(value.MinValue);
+                        twrangelinux64.MaxValue = (uint)Convert.ToSByte(value.MaxValue);
+                        twrangelinux64.StepSize = (uint)Convert.ToSByte(value.StepSize);
+                        twrangelinux64.DefaultValue = (uint)Convert.ToSByte(value.DefaultValue);
+                        twrangelinux64.CurrentValue = (uint)Convert.ToSByte(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangelinux64, lockedPtr, false);
+                    }
+                    break;
+                case TWTY.UINT8:
+                    if (platform == Platform.MACOSX)
+                    {
+                        twrangemacosx.ItemType = (uint)itemType;
+                        twrangemacosx.MinValue = Convert.ToByte(value.MinValue);
+                        twrangemacosx.MaxValue = Convert.ToByte(value.MaxValue);
+                        twrangemacosx.StepSize = Convert.ToByte(value.StepSize);
+                        twrangemacosx.DefaultValue = Convert.ToByte(value.DefaultValue);
+                        twrangemacosx.CurrentValue = Convert.ToByte(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangemacosx, lockedPtr, false);
+                    }
+                    else if ((twain.m_linuxdsm == TWAIN.LinuxDsm.Unknown) || (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm))
+                    {
+                        twrange.ItemType = itemType;
+                        twrange.MinValue = Convert.ToByte(value.MinValue);
+                        twrange.MaxValue = Convert.ToByte(value.MaxValue);
+                        twrange.StepSize = Convert.ToByte(value.StepSize);
+                        twrange.DefaultValue = Convert.ToByte(value.DefaultValue);
+                        twrange.CurrentValue = Convert.ToByte(value.CurrentValue);
+                        Marshal.StructureToPtr(twrange, lockedPtr, false);
+                    }
+                    else
+                    {
+                        twrangelinux64.ItemType = itemType;
+                        twrangelinux64.MinValue = Convert.ToByte(value.MinValue);
+                        twrangelinux64.MaxValue = Convert.ToByte(value.MaxValue);
+                        twrangelinux64.StepSize = Convert.ToByte(value.StepSize);
+                        twrangelinux64.DefaultValue = Convert.ToByte(value.DefaultValue);
+                        twrangelinux64.CurrentValue = Convert.ToByte(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangelinux64, lockedPtr, false);
+                    }
+                    break;
+                case TWTY.INT16:
+                    if (platform == Platform.MACOSX)
+                    {
+                        twrangemacosx.ItemType = (uint)itemType;
+                        twrangemacosx.MinValue = (uint)Convert.ToInt16(value.MinValue);
+                        twrangemacosx.MaxValue = (uint)Convert.ToInt16(value.MaxValue);
+                        twrangemacosx.StepSize = (uint)Convert.ToInt16(value.StepSize);
+                        twrangemacosx.DefaultValue = (uint)Convert.ToInt16(value.DefaultValue);
+                        twrangemacosx.CurrentValue = (uint)Convert.ToInt16(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangemacosx, lockedPtr, false);
+                    }
+                    else if ((twain.m_linuxdsm == TWAIN.LinuxDsm.Unknown) || (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm))
+                    {
+                        twrange.ItemType = itemType;
+                        twrange.MinValue = (uint)Convert.ToInt16(value.MinValue);
+                        twrange.MaxValue = (uint)Convert.ToInt16(value.MaxValue);
+                        twrange.StepSize = (uint)Convert.ToInt16(value.StepSize);
+                        twrange.DefaultValue = (uint)Convert.ToInt16(value.DefaultValue);
+                        twrange.CurrentValue = (uint)Convert.ToInt16(value.CurrentValue);
+                        Marshal.StructureToPtr(twrange, lockedPtr, false);
+                    }
+                    else
+                    {
+                        twrangelinux64.ItemType = itemType;
+                        twrangelinux64.MinValue = (uint)Convert.ToInt16(value.MinValue);
+                        twrangelinux64.MaxValue = (uint)Convert.ToInt16(value.MaxValue);
+                        twrangelinux64.StepSize = (uint)Convert.ToInt16(value.StepSize);
+                        twrangelinux64.DefaultValue = (uint)Convert.ToInt16(value.DefaultValue);
+                        twrangelinux64.CurrentValue = (uint)Convert.ToInt16(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangelinux64, lockedPtr, false);
+                    }
+                    break;
+                case TWTY.BOOL:
+                case TWTY.UINT16:
+                    if (platform == Platform.MACOSX)
+                    {
+                        twrangemacosx.ItemType = (uint)itemType;
+                        twrangemacosx.MinValue = Convert.ToUInt16(value.MinValue);
+                        twrangemacosx.MaxValue = Convert.ToUInt16(value.MaxValue);
+                        twrangemacosx.StepSize = Convert.ToUInt16(value.StepSize);
+                        twrangemacosx.DefaultValue = Convert.ToUInt16(value.DefaultValue);
+                        twrangemacosx.CurrentValue = Convert.ToUInt16(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangemacosx, lockedPtr, false);
+                    }
+                    else if ((twain.m_linuxdsm == TWAIN.LinuxDsm.Unknown) || (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm))
+                    {
+                        twrange.ItemType = itemType;
+                        twrange.MinValue = Convert.ToUInt16(value.MinValue);
+                        twrange.MaxValue = Convert.ToUInt16(value.MaxValue);
+                        twrange.StepSize = Convert.ToUInt16(value.StepSize);
+                        twrange.DefaultValue = Convert.ToUInt16(value.DefaultValue);
+                        twrange.CurrentValue = Convert.ToUInt16(value.CurrentValue);
+                        Marshal.StructureToPtr(twrange, lockedPtr, false);
+                    }
+                    else
+                    {
+                        twrangelinux64.ItemType = itemType;
+                        twrangelinux64.MinValue = Convert.ToUInt16(value.MinValue);
+                        twrangelinux64.MaxValue = Convert.ToUInt16(value.MaxValue);
+                        twrangelinux64.StepSize = Convert.ToUInt16(value.StepSize);
+                        twrangelinux64.DefaultValue = Convert.ToUInt16(value.DefaultValue);
+                        twrangelinux64.CurrentValue = Convert.ToUInt16(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangelinux64, lockedPtr, false);
+                    }
+                    break;
+                case TWTY.INT32:
+                    if (platform == Platform.MACOSX)
+                    {
+                        twrangemacosx.ItemType = (uint)itemType;
+                        twrangemacosx.MinValue = (uint)Convert.ToInt32(value.MinValue);
+                        twrangemacosx.MaxValue = (uint)Convert.ToInt32(value.MaxValue);
+                        twrangemacosx.StepSize = (uint)Convert.ToInt32(value.StepSize);
+                        twrangemacosx.DefaultValue = (uint)Convert.ToInt32(value.DefaultValue);
+                        twrangemacosx.CurrentValue = (uint)Convert.ToInt32(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangemacosx, lockedPtr, false);
+                    }
+                    else if ((twain.m_linuxdsm == TWAIN.LinuxDsm.Unknown) || (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm))
+                    {
+                        twrange.ItemType = itemType;
+                        twrange.MinValue = (uint)Convert.ToInt32(value.MinValue);
+                        twrange.MaxValue = (uint)Convert.ToInt32(value.MaxValue);
+                        twrange.StepSize = (uint)Convert.ToInt32(value.StepSize);
+                        twrange.DefaultValue = (uint)Convert.ToInt32(value.DefaultValue);
+                        twrange.CurrentValue = (uint)Convert.ToInt32(value.CurrentValue);
+                        Marshal.StructureToPtr(twrange, lockedPtr, false);
+                    }
+                    else
+                    {
+                        twrangelinux64.ItemType = itemType;
+                        twrangelinux64.MinValue = (uint)Convert.ToInt32(value.MinValue);
+                        twrangelinux64.MaxValue = (uint)Convert.ToInt32(value.MaxValue);
+                        twrangelinux64.StepSize = (uint)Convert.ToInt32(value.StepSize);
+                        twrangelinux64.DefaultValue = (uint)Convert.ToInt32(value.DefaultValue);
+                        twrangelinux64.CurrentValue = (uint)Convert.ToInt32(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangelinux64, lockedPtr, false);
+                    }
+                    break;
+                case TWTY.UINT32:
+                    if (platform == Platform.MACOSX)
+                    {
+                        twrangemacosx.ItemType = (uint)itemType;
+                        twrangemacosx.MinValue = Convert.ToUInt32(value.MinValue);
+                        twrangemacosx.MaxValue = Convert.ToUInt32(value.MaxValue);
+                        twrangemacosx.StepSize = Convert.ToUInt32(value.StepSize);
+                        twrangemacosx.DefaultValue = Convert.ToUInt32(value.DefaultValue);
+                        twrangemacosx.CurrentValue = Convert.ToUInt32(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangemacosx, lockedPtr, false);
+                    }
+                    else if ((twain.m_linuxdsm == TWAIN.LinuxDsm.Unknown) || (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm))
+                    {
+                        twrange.ItemType = itemType;
+                        twrange.MinValue = Convert.ToUInt32(value.MinValue);
+                        twrange.MaxValue = Convert.ToUInt32(value.MaxValue);
+                        twrange.StepSize = Convert.ToUInt32(value.StepSize);
+                        twrange.DefaultValue = Convert.ToUInt32(value.DefaultValue);
+                        twrange.CurrentValue = Convert.ToUInt32(value.CurrentValue);
+                        Marshal.StructureToPtr(twrange, lockedPtr, false);
+                    }
+                    else
+                    {
+                        twrangelinux64.ItemType = itemType;
+                        twrangelinux64.MinValue = Convert.ToUInt32(value.MinValue);
+                        twrangelinux64.MaxValue = Convert.ToUInt32(value.MaxValue);
+                        twrangelinux64.StepSize = Convert.ToUInt32(value.StepSize);
+                        twrangelinux64.DefaultValue = Convert.ToUInt32(value.DefaultValue);
+                        twrangelinux64.CurrentValue = Convert.ToUInt32(value.CurrentValue);
+                        Marshal.StructureToPtr(twrangelinux64, lockedPtr, false);
+                    }
+                    break;
+                case TWTY.FIX32:
+                    double min = Convert.ToDouble(value.MinValue);
+                    double max = Convert.ToDouble(value.MaxValue);
+                    double step = Convert.ToDouble(value.StepSize);
+                    double def = Convert.ToDouble(value.DefaultValue);
+                    double current = Convert.ToDouble(value.CurrentValue);
+                    if (platform == Platform.MACOSX)
+                    {
+                        TW_RANGE_FIX32_MACOSX twrangefix32macosx = default;
+                        twrangefix32macosx.ItemType = (uint)itemType;
+                        twrangefix32macosx.MinValue = new TW_FIX32(min);
+                        twrangefix32macosx.MaxValue = new TW_FIX32(max);
+                        twrangefix32macosx.StepSize = new TW_FIX32(step);
+                        twrangefix32macosx.DefaultValue = new TW_FIX32(def);
+                        twrangefix32macosx.CurrentValue = new TW_FIX32(current);
+                        Marshal.StructureToPtr(twrangefix32macosx, lockedPtr, false);
+                    }
+                    else
+                    {
+                        TW_RANGE_FIX32 twrangefix32 = default;
+                        twrangefix32.ItemType = itemType;
+                        twrangefix32.MinValue = new TW_FIX32(min);
+                        twrangefix32.MaxValue = new TW_FIX32(max);
+                        twrangefix32.StepSize = new TW_FIX32(step);
+                        twrangefix32.DefaultValue = new TW_FIX32(def);
+                        twrangefix32.CurrentValue = new TW_FIX32(current);
+                        Marshal.StructureToPtr(twrangefix32, lockedPtr, false);
+                    }
+                    break;
             }
         }
 

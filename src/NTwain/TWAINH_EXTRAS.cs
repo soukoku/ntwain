@@ -122,7 +122,12 @@ namespace TWAINWorkingGroup
         {
             return Whole + Frac / 65536.0;
         }
-        TW_FIX32(float value)
+        public TW_FIX32(double value)
+        {
+            Whole = (short)value;
+            Frac = (ushort)((value - Whole) * 65536.0);
+        }
+        public TW_FIX32(float value)
         {
             //int temp = (int)(value * 65536.0 + 0.5);
             //Whole = (short)(temp >> 16);

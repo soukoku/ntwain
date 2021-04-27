@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <!--change in each release-->
-    <PackageVersion>4.0.0</PackageVersion>
+    <PackageVersion>4.0.0-alpha.1</PackageVersion>
 
     <!--keep it the same until major # changes-->
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
