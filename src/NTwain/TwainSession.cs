@@ -24,10 +24,15 @@ namespace NTwain
         {
             var info = FileVersionInfo.GetVersionInfo(application.Location);
 
-            _twain = new TWAIN(info.CompanyName, info.ProductName, info.ProductName,
+            _twain = new TWAIN(
+                info.CompanyName, info.ProductName, info.ProductName,
                 (ushort)TWON_PROTOCOL.MAJOR, (ushort)TWON_PROTOCOL.MINOR,
-               (uint)(DG.APP2 | DG.IMAGE),
-               country, "", language, 2, 4, false, true, HandleDeviceEvent, HandleScanEvent, HandleUIThreadAction, hWnd);
+                (uint)(DG.APP2 | DG.IMAGE),
+                country, "", language, 2, 4, false, true,
+                HandleDeviceEvent,
+                HandleScanEvent,
+                HandleUIThreadAction,
+                hWnd);
 
             _threadMarshaller = threadMarshaller ?? new ThreadPoolMarshaller();
             _hWnd = hWnd;
@@ -45,6 +50,7 @@ namespace NTwain
                         _twain.Dispose();
                         _twain = null;
                     }
+                    Log.Close();
                 }
                 _disposed = true;
             }
@@ -52,36 +58,32 @@ namespace NTwain
 
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
         /// Gets the low-level twain object.
+        /// Only use if you know what you're doing.
         /// </summary>
         public TWAIN TWAIN { get { return _twain; } }
 
         #region event callbacks
 
+        /// <summary>
+        /// Raised when data source has encountered some hardwar event.
+        /// </summary>
+        public event EventHandler<TW_DEVICEEVENT> DeviceEvent;
+
+        /// <summary>
+        /// Raised when data source comes down to state 4 from higher.
+        /// </summary>
+        public event EventHandler SourceDisabled;
+
         private void HandleUIThreadAction(Action action)
         {
             _threadMarshaller.Invoke(action);
         }
-
-        private STS HandleScanEvent(bool a_blClosing)
-        {
-            _threadMarshaller.BeginInvoke(new Action<bool>(RaiseScanEvent), a_blClosing);
-            return STS.SUCCESS;
-        }
-        void RaiseScanEvent(bool closing)
-        {
-            OnScanEvent(closing);
-            ScanEvent?.Invoke(this, closing);
-        }
-
-        protected virtual void OnScanEvent(bool closing) { }
-        public event EventHandler<bool> ScanEvent;
 
         private STS HandleDeviceEvent()
         {
@@ -100,7 +102,11 @@ namespace NTwain
                 }
                 else
                 {
-                    RaiseDeviceEvent(twdeviceevent);
+                    try
+                    {
+                        DeviceEvent?.Invoke(this, twdeviceevent);
+                    }
+                    catch { }
                 }
             }
 
@@ -108,15 +114,86 @@ namespace NTwain
             return STS.SUCCESS;
         }
 
-        void RaiseDeviceEvent(TW_DEVICEEVENT twdeviceevent)
+        private STS HandleScanEvent(bool closing)
         {
-            OnDeviceEvent(twdeviceevent);
-            DeviceEvent?.Invoke(this, twdeviceevent);
+            // the scan event needs to return asap since it can come from msg loop
+            // so fire off the handling work to another thread
+            _threadMarshaller.BeginInvoke(new Func<bool, STS>(HandleScanEventReal), closing);
+            return STS.SUCCESS;
         }
 
-        protected virtual void OnDeviceEvent(TW_DEVICEEVENT twdeviceevent) { }
+        // tracks transfer state
+        bool _xferReadySent;
+        bool _disableDsSent;
 
-        public event EventHandler<TW_DEVICEEVENT> DeviceEvent;
+        void HandleScanEventReal(bool closing)
+        {
+            //// Scoot...
+            //if (_twain == null) return STS.FAILURE;
+
+            //// We're superfluous...
+            //if (_twain.GetState() <= STATE.S4 || closing) return STS.SUCCESS;
+
+            //// Handle DAT_NULL/MSG_XFERREADY...
+            //if (_twain.IsMsgXferReady() && !_xferReadySent)
+            //{
+            //    _xferReadySent = true;
+
+            //    // Get the amount of memory needed...
+            //    TW_SETUPMEMXFER m_twsetupmemxfer = default;
+            //    var sts = _twain.DatSetupmemxfer(DG.CONTROL, MSG.GET, ref m_twsetupmemxfer);
+            //    if ((sts != STS.SUCCESS) || (m_twsetupmemxfer.Preferred == 0))
+            //    {
+            //        _xferReadySent = false;
+            //        if (!_disableDsSent)
+            //        {
+            //            _disableDsSent = true;
+            //            StepDown(STATE.S4);
+            //        }
+            //    }
+
+            //    // Allocate the transfer memory (with a little extra to protect ourselves)...
+            //    var m_intptrXfer = Marshal.AllocHGlobal((int)m_twsetupmemxfer.Preferred + 65536);
+            //    if (m_intptrXfer == IntPtr.Zero)
+            //    {
+            //        _disableDsSent = true;
+            //        StepDown(STATE.S4);
+            //    }
+            //}
+
+            //// Handle DAT_NULL/MSG_CLOSEDSREQ...
+            //if (_twain.IsMsgCloseDsReq() && !_disableDsSent)
+            //{
+            //    _disableDsSent = true;
+            //    StepDown(STATE.S4);
+            //}
+
+            //// Handle DAT_NULL/MSG_CLOSEDSOK...
+            //if (_twain.IsMsgCloseDsOk() && !_disableDsSent)
+            //{
+            //    _disableDsSent = true;
+            //    StepDown(STATE.S4);
+            //}
+
+            //// This is where the statemachine runs that transfers and optionally
+            //// saves the images to disk (it also displays them).  It'll go back
+            //// and forth between states 6 and 7 until an error occurs, or until
+            //// we run out of images...
+            //if (_xferReadySent && !_disableDsSent)
+            //{
+            //    CaptureImages();
+            //}
+
+            //// Trigger the next event, this is where things all chain together.
+            //// We need begininvoke to prevent blockking, so that we don't get
+            //// backed up into a messy kind of recursion.  We need DoEvents,
+            //// because if things really start moving fast it's really hard for
+            //// application events, like button clicks to break through...
+            //HandleScanEvent(_twain.GetState() <= STATE.S3);
+        }
+
+        //protected virtual void OnScanEvent(bool closing) { }
+        //public event EventHandler<bool> ScanEvent;
 
         #endregion
 
@@ -255,6 +332,7 @@ namespace NTwain
             {
                 TW_USERINTERFACE twuserinterface = default;
                 _twain.DatUserinterface(DG.CONTROL, MSG.DISABLEDS, ref twuserinterface);
+                SourceDisabled?.Invoke(this, EventArgs.Empty);
             }
 
             // 4 --> 3
