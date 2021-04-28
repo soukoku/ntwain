@@ -131,17 +131,6 @@ namespace NTwain
             get { return _twain.GetState(); }
         }
 
-        ///// <summary>
-        ///// Gets the manager status. Useful after getting a non-success return code.
-        ///// </summary>
-        ///// <returns></returns>
-        //public TW_STATUS GetStatus()
-        //{
-        //    TW_STATUS stat = default;
-        //    _ = _twain.DatStatus(DG.CONTROL, MSG.GET, ref stat);
-        //    return stat;
-        //}
-
         /// <summary>
         /// Opens the TWAIN data source manager.
         /// This needs to be done before anything else.
@@ -163,10 +152,10 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Gets list of TWAIN devices.
+        /// Gets list of TWAIN data sources.
         /// </summary>
         /// <returns></returns>
-        public IList<TW_IDENTITY> GetDevices()
+        public IList<TW_IDENTITY> GetDataSources()
         {
             var list = new List<TW_IDENTITY>();
             if (State > STATE.S2)
@@ -185,9 +174,9 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Gets or sets the default device.
+        /// Gets or sets the default data source.
         /// </summary>
-        public TW_IDENTITY? DefaultDevice
+        public TW_IDENTITY? DefaultDataSource
         {
             get
             {
@@ -208,10 +197,10 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Gets or sets the currently open device.
+        /// Gets or sets the currently open data source.
         /// Setting it will try to open it.
         /// </summary>
-        public TW_IDENTITY? CurrentDevice
+        public TW_IDENTITY? CurrentDataSource
         {
             get
             {
@@ -285,7 +274,7 @@ namespace NTwain
         private Capabilities _caps;
 
         /// <summary>
-        /// Get current device's capabilities. Will be null if no device is open.
+        /// Get current data source's capabilities. Will be null if no data source is open.
         /// </summary>
         /// <returns></returns>
         public Capabilities Capabilities
@@ -301,7 +290,60 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Attempts to show the current device's settings dialog if supported.
+        /// Gets/sets the current source's settings as opaque data.
+        /// Returns null if not supported.
+        /// </summary>
+        public byte[] CustomDsData
+        {
+            get
+            {
+                TW_CUSTOMDSDATA data = default;
+                var sts = _twain.DatCustomdsdata(DG.CONTROL, MSG.GET, ref data);
+                if (sts == STS.SUCCESS)
+                {
+                    if (data.hData != IntPtr.Zero && data.InfoLength > 0)
+                    {
+                        try
+                        {
+                            var lockedPtr = _twain.DsmMemLock(data.hData);
+                            var bytes = new byte[data.InfoLength];
+                            Marshal.Copy(lockedPtr, bytes, 0, bytes.Length);
+                        }
+                        finally
+                        {
+                            _twain.DsmMemUnlock(data.hData);
+                            _twain.DsmMemFree(ref data.hData);
+                        }
+                    }
+                    return EmptyArray<byte>.Value;
+                }
+                return null;
+            }
+            set
+            {
+                if (value == null || value.Length == 0) return;
+
+                TW_CUSTOMDSDATA data = default;
+                data.InfoLength = (uint)value.Length;
+                data.hData = _twain.DsmMemAlloc(data.InfoLength);
+                try
+                {
+                    var lockedPtr = _twain.DsmMemLock(data.hData);
+                    Marshal.Copy(value, 0, lockedPtr, value.Length);
+                    _twain.DsmMemUnlock(data.hData);
+                    var sts = _twain.DatCustomdsdata(DG.CONTROL, MSG.SET, ref data);
+                }
+                finally
+                {
+                    // should be freed already if no error but just in case
+                    if (data.hData != IntPtr.Zero) _twain.DsmMemFree(ref data.hData);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Attempts to show the current data source's settings dialog if supported.
         /// </summary>
         /// <returns></returns>
         public STS ShowSettings()
@@ -313,9 +355,9 @@ namespace NTwain
         }
 
         /// <summary>
-        /// Begins the capture process on the current device.
+        /// Begins the capture process on the current data source.
         /// </summary>
-        /// <param name="showUI">Whether to display settings UI. Not all devices support this.</param>
+        /// <param name="showUI">Whether to display settings UI. Not all data sources support this.</param>
         /// <returns></returns>
         public STS StartCapture(bool showUI)
         {

@@ -53,12 +53,12 @@ namespace Net5Console
                     Console.WriteLine();
 
                     Console.WriteLine("Default device:");
-                    Console.WriteLine($"\t{session.DefaultDevice}");
+                    Console.WriteLine($"\t{session.DefaultDataSource}");
                     Console.WriteLine();
 
                     Console.WriteLine("All devices:");
                     TW_IDENTITY dsToUse = default;
-                    foreach (var dev in session.GetDevices())
+                    foreach (var dev in session.GetDataSources())
                     {
                         Console.WriteLine($"\t{dev}");
                         if (dev.ProductName == "TWAIN2 FreeImage Software Scanner")
@@ -68,11 +68,11 @@ namespace Net5Console
                     }
                     Console.WriteLine();
 
-                    session.CurrentDevice = dsToUse;
-                    if (session.CurrentDevice.HasValue)
+                    session.CurrentDataSource = dsToUse;
+                    if (session.CurrentDataSource.HasValue)
                     {
                         Console.WriteLine("Current device after opening attempt:");
-                        Console.WriteLine($"\t{session.CurrentDevice}");
+                        Console.WriteLine($"\t{session.CurrentDataSource}");
                         Console.WriteLine();
 
                         var caps = session.Capabilities;
