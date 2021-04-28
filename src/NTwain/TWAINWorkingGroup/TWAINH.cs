@@ -40,6 +40,7 @@
 //  DEALINGS IN THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////////
 
+using NTwain;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -89,27 +90,27 @@ namespace TWAINWorkingGroup
 
     ******************************************************************************/
 
-    /// <summary>
-    /// Our supported platforms...
-    /// </summary>
-    public enum Platform
-    {
-        UNKNOWN,
-        WINDOWS,
-        LINUX,
-        MACOSX
-    };
+    ///// <summary>
+    ///// Our supported platforms...
+    ///// </summary>
+    //public enum Platform
+    //{
+    //    UNKNOWN,
+    //    WINDOWS,
+    //    LINUX,
+    //    MACOSX
+    //};
 
-    /// <summary>
-    /// Our supported processors...
-    /// </summary>
-    public enum Processor
-    {
-        UNKNOWN,
-        X86,
-        X86_64,
-        MIPS64EL
-    };
+    ///// <summary>
+    ///// Our supported processors...
+    ///// </summary>
+    //public enum Processor
+    //{
+    //    UNKNOWN,
+    //    X86,
+    //    X86_64,
+    //    MIPS64EL
+    //};
 
     /// <summary>
     /// Used for strings that go up to 32-bytes...
@@ -198,7 +199,7 @@ namespace TWAINWorkingGroup
             }
 
             // If we're running on a Mac, take off the prefix 'byte'...
-            if (a_blMayHavePrefix && (PlatformTools.GetPlatform() == Platform.MACOSX))
+            if (a_blMayHavePrefix && (PlatformInfo.IsMacOSX))
             {
                 sz = sz.Remove(0, 1);
             }
@@ -244,7 +245,7 @@ namespace TWAINWorkingGroup
             {
                 a_sz = "";
             }
-            else if (a_blMayHavePrefix && (PlatformTools.GetPlatform() == Platform.MACOSX))
+            else if (a_blMayHavePrefix && (PlatformInfo.IsMacOSX))
             {
                 a_sz = (char)a_sz.Length + a_sz;
             }
@@ -374,7 +375,7 @@ namespace TWAINWorkingGroup
             }
 
             // If we're running on a Mac, take off the prefix 'byte'...
-            if (a_blMayHavePrefix && (PlatformTools.GetPlatform() == Platform.MACOSX))
+            if (a_blMayHavePrefix && (PlatformInfo.IsMacOSX))
             {
                 sz = sz.Remove(0, 1);
             }
@@ -420,7 +421,7 @@ namespace TWAINWorkingGroup
             {
                 a_sz = "";
             }
-            else if (a_blMayHavePrefix && (PlatformTools.GetPlatform() == Platform.MACOSX))
+            else if (a_blMayHavePrefix && (PlatformInfo.IsMacOSX))
             {
                 a_sz = (char)a_sz.Length + a_sz;
             }
@@ -589,7 +590,7 @@ namespace TWAINWorkingGroup
             }
 
             // If we're running on a Mac, take off the prefix 'byte'...
-            if (a_blMayHavePrefix && (PlatformTools.GetPlatform() == Platform.MACOSX))
+            if (a_blMayHavePrefix && (PlatformInfo.IsMacOSX))
             {
                 sz = sz.Remove(0, 1);
             }
@@ -635,7 +636,7 @@ namespace TWAINWorkingGroup
             {
                 a_sz = "";
             }
-            else if (a_blMayHavePrefix && (PlatformTools.GetPlatform() == Platform.MACOSX))
+            else if (a_blMayHavePrefix && (PlatformInfo.IsMacOSX))
             {
                 a_sz = (char)a_sz.Length + a_sz;
             }
@@ -884,7 +885,7 @@ namespace TWAINWorkingGroup
             }
 
             // If we're running on a Mac, take off the prefix 'byte'...
-            if (a_blMayHavePrefix && (PlatformTools.GetPlatform() == Platform.MACOSX))
+            if (a_blMayHavePrefix && (PlatformInfo.IsMacOSX))
             {
                 sz = sz.Remove(0, 1);
             }
@@ -930,7 +931,7 @@ namespace TWAINWorkingGroup
             {
                 a_sz = "";
             }
-            else if (a_blMayHavePrefix && (PlatformTools.GetPlatform() == Platform.MACOSX))
+            else if (a_blMayHavePrefix && (PlatformInfo.IsMacOSX))
             {
                 a_sz = (char)a_sz.Length + a_sz;
             }

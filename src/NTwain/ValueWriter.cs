@@ -71,7 +71,7 @@ namespace NTwain
                 TWTY itemType = GetItemType<TValue>();
 
                 // Allocate the container (go for worst case, which is TW_STR255)...
-                if (PlatformTools.GetPlatform() == Platform.MACOSX)
+                if (PlatformInfo.IsMacOSX)
                 {
                     twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ONEVALUE_MACOSX)) + Marshal.SizeOf(default(TW_STR255))));
                     lockedPtr = twain.DsmMemLock(twCap.hContainer);
@@ -112,7 +112,7 @@ namespace NTwain
                 TWTY itemType = GetItemType<TValue>();
 
                 // Allocate the container (go for worst case, which is TW_STR255)...
-                if (PlatformTools.GetPlatform() == Platform.MACOSX)
+                if (PlatformInfo.IsMacOSX)
                 {
                     // Allocate...
                     twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ARRAY_MACOSX)) + ((values.Length + 1) * Marshal.SizeOf(default(TW_STR255)))));
@@ -163,10 +163,9 @@ namespace NTwain
                 if (twCap.hContainer != IntPtr.Zero) twain.DsmMemFree(ref twCap.hContainer);
 
                 TWTY itemType = GetItemType<TValue>();
-                var platform = PlatformTools.GetPlatform();
-
+                
                 // Allocate the container (go for worst case, which is TW_STR255)...
-                if (platform == Platform.MACOSX)
+                if (PlatformInfo.IsMacOSX)
                 {
                     // Allocate...
                     twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ENUMERATION_MACOSX)) + ((value.Items.Length + 1) * Marshal.SizeOf(default(TW_STR255)))));
@@ -184,7 +183,7 @@ namespace NTwain
                     lockedPtr += Marshal.SizeOf(twenumerationmacosx);
                 }
                 // Windows or the 2.4+ Linux DSM...
-                else if ((platform == Platform.WINDOWS) ||
+                else if ((PlatformInfo.IsWindows) ||
                     (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm) ||
                     ((twain.m_blFoundLatestDsm || twain.m_blFoundLatestDsm64) && (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm)))
                 {
@@ -242,17 +241,16 @@ namespace NTwain
                 if (twCap.hContainer != IntPtr.Zero) twain.DsmMemFree(ref twCap.hContainer);
 
                 TWTY itemType = GetItemType<TValue>();
-                var platform = PlatformTools.GetPlatform();
 
                 // Allocate the container (go for worst case, which is TW_STR255)...
-                if (platform == Platform.MACOSX)
+                if (PlatformInfo.IsMacOSX)
                 {
                     // Allocate...
                     twCap.hContainer = twain.DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE_MACOSX))));
                     lockedPtr = twain.DsmMemLock(twCap.hContainer);
                 }
                 // Windows or the 2.4+ Linux DSM...
-                else if ((platform == Platform.WINDOWS) ||
+                else if ((PlatformInfo.IsWindows) ||
                     (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm) ||
                     ((twain.m_blFoundLatestDsm || twain.m_blFoundLatestDsm64) && (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm)))
                 {
@@ -281,8 +279,6 @@ namespace NTwain
         {
             // TODO: reduce this later
 
-            var platform = PlatformTools.GetPlatform();
-
             TW_RANGE twrange = default;
             TW_RANGE_MACOSX twrangemacosx = default;
             TW_RANGE_LINUX64 twrangelinux64 = default;
@@ -292,7 +288,7 @@ namespace NTwain
                 default:
                     throw new NotSupportedException($"{itemType} is not supported for range.");
                 case TWTY.INT8:
-                    if (platform == Platform.MACOSX)
+                    if (PlatformInfo.IsMacOSX)
                     {
                         twrangemacosx.ItemType = (uint)itemType;
                         twrangemacosx.MinValue = (uint)Convert.ToSByte(value.MinValue);
@@ -324,7 +320,7 @@ namespace NTwain
                     }
                     break;
                 case TWTY.UINT8:
-                    if (platform == Platform.MACOSX)
+                    if (PlatformInfo.IsMacOSX)
                     {
                         twrangemacosx.ItemType = (uint)itemType;
                         twrangemacosx.MinValue = Convert.ToByte(value.MinValue);
@@ -356,7 +352,7 @@ namespace NTwain
                     }
                     break;
                 case TWTY.INT16:
-                    if (platform == Platform.MACOSX)
+                    if (PlatformInfo.IsMacOSX)
                     {
                         twrangemacosx.ItemType = (uint)itemType;
                         twrangemacosx.MinValue = (uint)Convert.ToInt16(value.MinValue);
@@ -389,7 +385,7 @@ namespace NTwain
                     break;
                 case TWTY.BOOL:
                 case TWTY.UINT16:
-                    if (platform == Platform.MACOSX)
+                    if (PlatformInfo.IsMacOSX)
                     {
                         twrangemacosx.ItemType = (uint)itemType;
                         twrangemacosx.MinValue = Convert.ToUInt16(value.MinValue);
@@ -421,7 +417,7 @@ namespace NTwain
                     }
                     break;
                 case TWTY.INT32:
-                    if (platform == Platform.MACOSX)
+                    if (PlatformInfo.IsMacOSX)
                     {
                         twrangemacosx.ItemType = (uint)itemType;
                         twrangemacosx.MinValue = (uint)Convert.ToInt32(value.MinValue);
@@ -453,7 +449,7 @@ namespace NTwain
                     }
                     break;
                 case TWTY.UINT32:
-                    if (platform == Platform.MACOSX)
+                    if (PlatformInfo.IsMacOSX)
                     {
                         twrangemacosx.ItemType = (uint)itemType;
                         twrangemacosx.MinValue = Convert.ToUInt32(value.MinValue);
@@ -490,7 +486,7 @@ namespace NTwain
                     double step = Convert.ToDouble(value.StepSize);
                     double def = Convert.ToDouble(value.DefaultValue);
                     double current = Convert.ToDouble(value.CurrentValue);
-                    if (platform == Platform.MACOSX)
+                    if (PlatformInfo.IsMacOSX)
                     {
                         TW_RANGE_FIX32_MACOSX twrangefix32macosx = default;
                         twrangefix32macosx.ItemType = (uint)itemType;

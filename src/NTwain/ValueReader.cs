@@ -50,7 +50,7 @@ namespace NTwain
             {
                 TWTY itemType;
                 // Mac has a level of indirection and a different structure (ick)...
-                if (PlatformTools.GetPlatform() == Platform.MACOSX)
+                if (PlatformInfo.IsMacOSX)
                 {
                     // Crack the container...
                     var onevalue = MarshalTo<TW_ONEVALUE_MACOSX>(lockedPtr);
@@ -83,12 +83,11 @@ namespace NTwain
 
             try
             {
-                var platform = PlatformTools.GetPlatform();
                 TWTY itemType;
                 int count = 0;
 
                 // Mac has a level of indirection and a different structure (ick)...
-                if (platform == Platform.MACOSX)
+                if (PlatformInfo.IsMacOSX)
                 {
                     // Crack the container...
                     var twenumerationmacosx = MarshalTo<TW_ENUMERATION_MACOSX>(lockedPtr);
@@ -99,7 +98,7 @@ namespace NTwain
                     lockedPtr += Marshal.SizeOf(twenumerationmacosx);
                 }
                 // Windows or the 2.4+ Linux DSM...
-                else if ((platform == Platform.WINDOWS) || ((twain.m_blFoundLatestDsm || twain.m_blFoundLatestDsm64) && (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm)))
+                else if ((PlatformInfo.IsWindows) || ((twain.m_blFoundLatestDsm || twain.m_blFoundLatestDsm64) && (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm)))
                 {
                     // Crack the container...
                     var twenumeration = MarshalTo<TW_ENUMERATION>(lockedPtr);
@@ -153,7 +152,7 @@ namespace NTwain
                 uint count;
 
                 // Mac has a level of indirection and a different structure (ick)...
-                if (PlatformTools.GetPlatform() == Platform.MACOSX)
+                if (PlatformInfo.IsMacOSX)
                 {
                     // Crack the container...
                     var twarraymacosx = MarshalTo<TW_ARRAY_MACOSX>(lockedPtr);
@@ -195,10 +194,9 @@ namespace NTwain
             {
                 TW_RANGE twrange = default;
                 TW_RANGE_FIX32 twrangefix32 = default;
-                var platform = PlatformTools.GetPlatform();
-
+                
                 // Mac has a level of indirection and a different structure (ick)...
-                if (platform == Platform.MACOSX)
+                if (PlatformInfo.IsMacOSX)
                 {
                     var twrangemacosx = MarshalTo<TW_RANGE_MACOSX>(lockedPtr);
                     var twrangefix32macosx = MarshalTo<TW_RANGE_FIX32_MACOSX>(lockedPtr);
@@ -216,7 +214,7 @@ namespace NTwain
                     twrangefix32.CurrentValue = twrangefix32macosx.CurrentValue;
                 }
                 // Windows or the 2.4+ Linux DSM...
-                else if ((platform == Platform.WINDOWS) || (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm) ||
+                else if ((PlatformInfo.IsWindows) || (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm) ||
                     ((twain.m_blFoundLatestDsm || twain.m_blFoundLatestDsm64) && (twain.m_linuxdsm == TWAIN.LinuxDsm.IsLatestDsm)))
                 {
                     twrange = MarshalTo<TW_RANGE>(lockedPtr);
@@ -296,7 +294,7 @@ namespace NTwain
                 {
                     TWTY itemType;
                     // Mac has a level of indirection and a different structure (ick)...
-                    if (PlatformTools.GetPlatform() == Platform.MACOSX)
+                    if (PlatformInfo.IsMacOSX)
                     {
                         // Crack the container...
                         var onevalue = MarshalTo<TW_ONEVALUE_MACOSX>(lockedPtr);

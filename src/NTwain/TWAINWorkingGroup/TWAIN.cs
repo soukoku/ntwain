@@ -41,6 +41,7 @@
 //  DEALINGS IN THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////////
 
+using NTwain;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -207,10 +208,10 @@ namespace TWAINWorkingGroup
             m_autoreseteventThreadStarted = new AutoResetEvent(false);
             m_lockTwain = new Object();
 
-            ms_platform = PlatformTools.GetPlatform();
-
+            //ms_platform = PlatformTools.Platform;
+            
             // Windows only...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 m_blUseLegacyDSM = a_blUseLegacyDSM;
                 m_blUseCallbacks = a_blUseCallbacks;
@@ -218,7 +219,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux only...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // The user can't set these value, we have to decide automatically
                 // which DSM to use, and only callbacks are supported...
@@ -227,7 +228,7 @@ namespace TWAINWorkingGroup
                 m_linuxdsmentrycontrolcallbackdelegate = LinuxDsmEntryCallbackProxy;
 
                 // We assume the new DSM for 32-bit systems...
-                if (PlatformTools.GetMachineWordBitSize() == 32)
+                if (!PlatformInfo.IsApp64Bit)
                 {
                     m_blFound020302Dsm64bit = false;
                     if (File.Exists("/usr/local/lib64/libtwaindsm.so"))
@@ -241,13 +242,13 @@ namespace TWAINWorkingGroup
                 }
 
                 // Check for the old DSM, but only on 64-bit systems...
-                if ((PlatformTools.GetMachineWordBitSize() == 64) && File.Exists("/usr/local/lib/libtwaindsm.so.2.3.2"))
+                if ((PlatformInfo.IsApp64Bit) && File.Exists("/usr/local/lib/libtwaindsm.so.2.3.2"))
                 {
                     m_blFound020302Dsm64bit = true;
                 }
 
                 // Check for any newer DSM, but only on 64-bit systems...
-                if ((PlatformTools.GetMachineWordBitSize() == 64) && (File.Exists("/usr/local/lib/libtwaindsm.so") || File.Exists("/usr/local/lib64/libtwaindsm.so")))
+                if ((PlatformInfo.IsApp64Bit) && (File.Exists("/usr/local/lib/libtwaindsm.so") || File.Exists("/usr/local/lib64/libtwaindsm.so")))
                 {
                     bool blCheckForNewDsm = true;
 
@@ -331,7 +332,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X only...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 m_blUseLegacyDSM = a_blUseLegacyDSM;
                 m_blUseCallbacks = true;
@@ -341,7 +342,7 @@ namespace TWAINWorkingGroup
             // Uh-oh, Log will throw an exception for us...
             else
             {
-                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
+                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
             }
 
             // Activate our thread...
@@ -386,7 +387,7 @@ namespace TWAINWorkingGroup
             string szDsmPath = "";
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 if (m_blUseLegacyDSM)
                 {
@@ -399,7 +400,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 if (m_blFoundLatestDsm64 && (m_linuxdsm == LinuxDsm.IsLatestDsm))
                 {
@@ -416,7 +417,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 if (m_blUseLegacyDSM)
                 {
@@ -437,7 +438,7 @@ namespace TWAINWorkingGroup
             // Ruh-roh...
             if (string.IsNullOrEmpty(szDsmPath))
             {
-                return ("(could not identify a DSM candidate for this platform - '" + ms_platform + "')");
+                return ("(could not identify a DSM candidate for this platform - '" + Environment.OSVersion.Platform + "')");
             }
 
             // Hmmm...
@@ -488,7 +489,7 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 intptr = (IntPtr)NativeMethods.GlobalAlloc((uint)(a_blForcePointer ? 0x0040 /* GPTR */ : 0x0042 /* GHND */), (UIntPtr)a_u32Size);
                 if (intptr == IntPtr.Zero)
@@ -499,7 +500,7 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Linux...
-            if (ms_platform == Platform.LINUX)
+            if (PlatformInfo.IsLinux)
             {
                 intptr = Marshal.AllocHGlobal((int)a_u32Size);
                 if (intptr == IntPtr.Zero)
@@ -510,7 +511,7 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Mac OS X...
-            if (ms_platform == Platform.MACOSX)
+            if (PlatformInfo.IsMacOSX)
             {
                 IntPtr intptrIndirect = Marshal.AllocHGlobal((int)a_u32Size);
                 if (intptrIndirect == IntPtr.Zero)
@@ -529,7 +530,7 @@ namespace TWAINWorkingGroup
             }
 
             // Trouble, Log will throw an exception for us...
-            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
+            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
             return (IntPtr.Zero);
         }
 
@@ -553,19 +554,19 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Windows...
-            else if (ms_platform == Platform.WINDOWS)
+            else if (PlatformInfo.IsWindows)
             {
                 NativeMethods.GlobalFree(a_intptrHandle);
             }
 
             // Do it ourselves, Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 Marshal.FreeHGlobal(a_intptrHandle);
             }
 
             // Do it ourselves, Mac OS X...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Free the indirect pointer...
                 IntPtr intptr = (IntPtr)Marshal.PtrToStructure(a_intptrHandle, typeof(IntPtr));
@@ -605,26 +606,26 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 return (NativeMethods.GlobalLock(a_intptrHandle));
             }
 
             // Do it ourselves, Linux...
-            if (ms_platform == Platform.LINUX)
+            if (PlatformInfo.IsLinux)
             {
                 return (a_intptrHandle);
             }
 
             // Do it ourselves, Mac OS X...
-            if (ms_platform == Platform.MACOSX)
+            if (PlatformInfo.IsMacOSX)
             {
                 IntPtr intptr = (IntPtr)Marshal.PtrToStructure(a_intptrHandle, typeof(IntPtr));
                 return (intptr);
             }
 
             // Trouble, Log will throw an exception for us...
-            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
+            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
             return (IntPtr.Zero);
         }
 
@@ -648,26 +649,26 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 NativeMethods.GlobalUnlock(a_intptrHandle);
                 return;
             }
 
             // Do it ourselves, Linux...
-            if (ms_platform == Platform.LINUX)
+            if (PlatformInfo.IsLinux)
             {
                 return;
             }
 
             // Do it ourselves, Mac OS X...
-            if (ms_platform == Platform.MACOSX)
+            if (PlatformInfo.IsMacOSX)
             {
                 return;
             }
 
             // Trouble, Log will throw an exception for us...
-            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
+            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
         }
 
         /// <summary>
@@ -686,25 +687,25 @@ namespace TWAINWorkingGroup
         public bool IsDsm2()
         {
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 return ((m_twidentitylegacyApp.SupportedGroups & (uint)DG.DSM2) != 0);
             }
 
             // Linux...
-            if (ms_platform == Platform.LINUX)
+            if (PlatformInfo.IsLinux)
             {
                 return ((m_twidentitylegacyApp.SupportedGroups & (uint)DG.DSM2) != 0);
             }
 
             // Mac OS X...
-            if (ms_platform == Platform.MACOSX)
+            if (PlatformInfo.IsMacOSX)
             {
                 return ((m_twidentitymacosxApp.SupportedGroups & (uint)DG.DSM2) != 0);
             }
 
             // Trouble, Log will throw an exception for us...
-            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
+            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
             return (false);
         }
 
@@ -938,7 +939,7 @@ namespace TWAINWorkingGroup
                 {
                     // Do this to prevent a deadlock on Mac OS X, two seconds
                     // better be enough to finish up...
-                    if (PlatformTools.GetPlatform() == Platform.MACOSX)
+                    if (PlatformInfo.IsMacOSX)
                     {
                         ThreadToRollbackSet();
                         s_iCloseDsmDelay = 2000;
@@ -1487,7 +1488,7 @@ namespace TWAINWorkingGroup
         /// <param name="count"></param>
         public static void MemCpy(IntPtr dest, IntPtr src, int count)
         {
-            if (PlatformTools.GetPlatform() == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 NativeMethods.CopyMemory(dest, src, (uint)count);
             }
@@ -1505,7 +1506,7 @@ namespace TWAINWorkingGroup
         /// <param name="count"></param>
         public static void MemMove(IntPtr dest, IntPtr src, int count)
         {
-            if (PlatformTools.GetPlatform() == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 NativeMethods.MoveMemory(dest, src, (uint)count);
             }
@@ -1559,7 +1560,7 @@ namespace TWAINWorkingGroup
                 a_szFinalFilename = a_szFilename;
 
                 // Handle Windows...
-                if (PlatformTools.GetPlatform() == Platform.WINDOWS)
+                if (PlatformInfo.IsWindows)
                 {
                     IntPtr intptrFile;
                     IntPtr intptrBytes = (IntPtr)a_iBytes;
@@ -1621,7 +1622,7 @@ namespace TWAINWorkingGroup
                         CSV csvArray;
 
                         // Mac has a level of indirection and a different structure (ick)...
-                        if (ms_platform == Platform.MACOSX)
+                        if (PlatformInfo.IsMacOSX)
                         {
                             // Crack the container...
                             TW_ARRAY_MACOSX twarraymacosx = default;
@@ -1676,7 +1677,7 @@ namespace TWAINWorkingGroup
                         CSV csvEnum;
 
                         // Mac has a level of indirection and a different structure (ick)...
-                        if (ms_platform == Platform.MACOSX)
+                        if (PlatformInfo.IsMacOSX)
                         {
                             // Crack the container...
                             TW_ENUMERATION_MACOSX twenumerationmacosx = default;
@@ -1693,7 +1694,7 @@ namespace TWAINWorkingGroup
                             csvEnum.Add(twenumerationmacosx.DefaultIndex.ToString());
                         }
                         // Windows or the 2.4+ Linux DSM...
-                        else if ((ms_platform == Platform.WINDOWS) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm)))
+                        else if ((PlatformInfo.IsWindows) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm)))
                         {
                             // Crack the container...
                             TW_ENUMERATION twenumeration = default;
@@ -1763,7 +1764,7 @@ namespace TWAINWorkingGroup
                         CSV csvOnevalue;
 
                         // Mac has a level of indirection and a different structure (ick)...
-                        if (ms_platform == Platform.MACOSX)
+                        if (PlatformInfo.IsMacOSX)
                         {
                             // Crack the container...
                             TW_ONEVALUE_MACOSX twonevaluemacosx = default;
@@ -1815,7 +1816,7 @@ namespace TWAINWorkingGroup
 
                         // Mac has a level of indirection and a different structure (ick)...
                         twrange = default;
-                        if (ms_platform == Platform.MACOSX)
+                        if (PlatformInfo.IsMacOSX)
                         {
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twrangemacosx = (TW_RANGE_MACOSX)Marshal.PtrToStructure(intptrLocked, typeof(TW_RANGE_MACOSX));
@@ -1834,7 +1835,7 @@ namespace TWAINWorkingGroup
                             twrangefix32.CurrentValue = twrangefix32macosx.CurrentValue;
                         }
                         // Windows or the 2.4+ Linux DSM...
-                        else if ((ms_platform == Platform.WINDOWS) || (m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm)))
+                        else if ((PlatformInfo.IsWindows) || (m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm)))
                         {
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twrange = (TW_RANGE)Marshal.PtrToStructure(intptrLocked, typeof(TW_RANGE));
@@ -2049,7 +2050,7 @@ namespace TWAINWorkingGroup
                             u32NumItems = uint.Parse(asz[3]);
 
                             // Allocate the container (go for worst case, which is TW_STR255)...
-                            if (ms_platform == Platform.MACOSX)
+                            if (PlatformInfo.IsMacOSX)
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ARRAY_MACOSX)) + (((int)u32NumItems + 1) * Marshal.SizeOf(default(TW_STR255)))));
@@ -2106,7 +2107,7 @@ namespace TWAINWorkingGroup
                             u32NumItems = uint.Parse(asz[3]);
 
                             // Allocate the container (go for worst case, which is TW_STR255)...
-                            if (ms_platform == Platform.MACOSX)
+                            if (PlatformInfo.IsMacOSX)
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ENUMERATION_MACOSX)) + (((int)u32NumItems + 1) * Marshal.SizeOf(default(TW_STR255)))));
@@ -2124,7 +2125,7 @@ namespace TWAINWorkingGroup
                                 intptr = (IntPtr)((UInt64)intptr + (UInt64)Marshal.SizeOf(twenumerationmacosx));
                             }
                             // Windows or the 2.4+ Linux DSM...
-                            else if ((ms_platform == Platform.WINDOWS) || ((m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm))))
+                            else if ((PlatformInfo.IsWindows) || ((m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm))))
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ENUMERATION)) + (((int)u32NumItems + 1) * Marshal.SizeOf(default(TW_STR255)))));
@@ -2183,7 +2184,7 @@ namespace TWAINWorkingGroup
                             }
 
                             // Allocate the container (go for worst case, which is TW_STR255)...
-                            if (ms_platform == Platform.MACOSX)
+                            if (PlatformInfo.IsMacOSX)
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ONEVALUE_MACOSX)) + Marshal.SizeOf(default(TW_STR255))));
@@ -2232,14 +2233,14 @@ namespace TWAINWorkingGroup
                             }
 
                             // Allocate the container (go for worst case, which is TW_STR255)...
-                            if (ms_platform == Platform.MACOSX)
+                            if (PlatformInfo.IsMacOSX)
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE_MACOSX))));
                                 intptr = DsmMemLock(a_twcapability.hContainer);
                             }
                             // Windows or the 2.4+ Linux DSM...
-                            else if ((ms_platform == Platform.WINDOWS) || ((m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm))))
+                            else if ((PlatformInfo.IsWindows) || ((m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm))))
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE))));
@@ -2470,7 +2471,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -2494,7 +2495,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -2527,7 +2528,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -2553,7 +2554,7 @@ namespace TWAINWorkingGroup
             // Uh-oh...
             else
             {
-                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
+                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
                 return (STS.BUMMER);
             }
 
@@ -2616,7 +2617,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -2640,7 +2641,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -2673,7 +2674,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -2786,7 +2787,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -2844,7 +2845,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -2877,7 +2878,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -2971,7 +2972,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -2995,7 +2996,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -3028,7 +3029,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -3143,7 +3144,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -3203,7 +3204,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -3237,7 +3238,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -3333,7 +3334,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -3357,7 +3358,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -3390,7 +3391,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -3478,7 +3479,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -3502,7 +3503,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -3535,7 +3536,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -3683,7 +3684,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -3745,7 +3746,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -3778,7 +3779,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -3919,7 +3920,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -3943,7 +3944,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -3976,7 +3977,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -4064,7 +4065,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -4088,7 +4089,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -4121,7 +4122,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -4209,7 +4210,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -4233,7 +4234,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -4266,7 +4267,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -4354,7 +4355,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -4378,7 +4379,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -4433,7 +4434,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -4542,7 +4543,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -4604,7 +4605,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -4637,7 +4638,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -4758,7 +4759,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -4820,7 +4821,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -4853,7 +4854,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -4941,7 +4942,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -4965,7 +4966,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -4998,7 +4999,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -5086,7 +5087,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -5110,7 +5111,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -5143,7 +5144,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -5231,7 +5232,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -5255,7 +5256,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -5288,7 +5289,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -5376,7 +5377,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -5400,7 +5401,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -5433,7 +5434,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -5565,7 +5566,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Convert the identity structure...
                 TW_IDENTITY_LEGACY twidentitylegacy = TwidentityToTwidentitylegacy(a_twidentity);
@@ -5638,7 +5639,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command, we have a serious problem with 64-bit stuff
                 // because TW_INT32 and TW_UINT32 were defined using long, which
@@ -5871,7 +5872,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 TW_IDENTITY_MACOSX twidentitymacosx = TwidentityToTwidentitymacosx(a_twidentity);
                 // Issue the command...
@@ -5929,7 +5930,7 @@ namespace TWAINWorkingGroup
                     // Register for callbacks...
 
                     // Windows...
-                    if (ms_platform == Platform.WINDOWS)
+                    if (PlatformInfo.IsWindows)
                     {
                         if (m_blUseCallbacks)
                         {
@@ -5968,7 +5969,7 @@ namespace TWAINWorkingGroup
                     }
 
                     // Linux...
-                    else if (ms_platform == Platform.LINUX)
+                    else if (PlatformInfo.IsLinux)
                     {
                         TW_CALLBACK twcallback = new TW_CALLBACK();
                         twcallback.CallBackProc = Marshal.GetFunctionPointerForDelegate(m_linuxdsmentrycontrolcallbackdelegate);
@@ -6013,7 +6014,7 @@ namespace TWAINWorkingGroup
                     }
 
                     // Mac OS X, which has to be different...
-                    else if (ms_platform == Platform.MACOSX)
+                    else if (PlatformInfo.IsMacOSX)
                     {
                         IntPtr intptr = IntPtr.Zero;
                         TW_CALLBACK twcallback = new TW_CALLBACK();
@@ -6136,7 +6137,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -6198,7 +6199,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -6249,7 +6250,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -6364,7 +6365,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -6426,7 +6427,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -6459,7 +6460,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -6572,7 +6573,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -6630,7 +6631,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -6663,7 +6664,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -6784,7 +6785,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -6846,7 +6847,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -6900,7 +6901,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -7042,7 +7043,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -7104,7 +7105,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -7158,7 +7159,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -7314,7 +7315,7 @@ namespace TWAINWorkingGroup
         //    }
 
         //    // Windows...
-        //    if (ms_platform == Platform.WINDOWS)
+        //    if (PlatformInfo.IsWindows)
         //    {
         //        // Issue the command...
         //        try
@@ -7374,7 +7375,7 @@ namespace TWAINWorkingGroup
         //    }
 
         //    // Linux...
-        //    else if (ms_platform == Platform.LINUX)
+        //    else if (PlatformInfo.IsLinux)
         //    {
         //        // Issue the command...
         //        try
@@ -7407,7 +7408,7 @@ namespace TWAINWorkingGroup
         //    }
 
         //    // Mac OS X, which has to be different...
-        //    else if (ms_platform == Platform.MACOSX)
+        //    else if (PlatformInfo.IsMacOSX)
         //    {
         //        // Issue the command...
         //        try
@@ -7517,7 +7518,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -7541,7 +7542,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -7574,7 +7575,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -7662,7 +7663,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -7686,7 +7687,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -7719,7 +7720,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -7807,7 +7808,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -7831,7 +7832,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -7864,7 +7865,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -7979,7 +7980,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -8041,7 +8042,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 STS stsLatest = STS.BUMMER;
                 STS sts020302Dsm64bit = STS.BUMMER;
@@ -8104,7 +8105,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -8216,7 +8217,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -8240,7 +8241,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -8273,7 +8274,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -8388,7 +8389,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -8450,7 +8451,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -8483,7 +8484,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -8600,7 +8601,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -8624,7 +8625,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -8657,7 +8658,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -8772,7 +8773,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -8834,7 +8835,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -8867,7 +8868,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -8979,7 +8980,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -9041,7 +9042,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -9074,7 +9075,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -9189,7 +9190,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -9251,7 +9252,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -9284,7 +9285,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -9372,7 +9373,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -9396,7 +9397,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -9429,7 +9430,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -9517,7 +9518,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -9541,7 +9542,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -9574,7 +9575,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -9695,7 +9696,7 @@ namespace TWAINWorkingGroup
             m_blRunningDatUserinterface = (a_msg == MSG.ENABLEDS);
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -9758,7 +9759,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -9792,7 +9793,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -9907,7 +9908,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -9931,7 +9932,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -9964,7 +9965,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -10656,7 +10657,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (ms_platform == Platform.WINDOWS)
+            if (PlatformInfo.IsWindows)
             {
                 // Issue the command...
                 try
@@ -10694,7 +10695,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (ms_platform == Platform.LINUX)
+            else if (PlatformInfo.IsLinux)
             {
                 // Issue the command...
                 try
@@ -10748,7 +10749,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (ms_platform == Platform.MACOSX)
+            else if (PlatformInfo.IsMacOSX)
             {
                 // Issue the command...
                 try
@@ -10774,7 +10775,7 @@ namespace TWAINWorkingGroup
             // Uh-oh...
             else
             {
-                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
+                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
                 return (STS.BUMMER);
             }
 
@@ -11101,7 +11102,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.INT8:
                     {
-                        if (ms_platform == Platform.MACOSX)
+                        if (PlatformInfo.IsMacOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = (uint)sbyte.Parse(a_asz[3]);
@@ -11136,7 +11137,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.INT16:
                     {
-                        if (ms_platform == Platform.MACOSX)
+                        if (PlatformInfo.IsMacOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = (uint)short.Parse(a_asz[3]);
@@ -11171,7 +11172,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.INT32:
                     {
-                        if (ms_platform == Platform.MACOSX)
+                        if (PlatformInfo.IsMacOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = (uint)int.Parse(a_asz[3]);
@@ -11206,7 +11207,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.UINT8:
                     {
-                        if (ms_platform == Platform.MACOSX)
+                        if (PlatformInfo.IsMacOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = (uint)byte.Parse(a_asz[3]);
@@ -11242,7 +11243,7 @@ namespace TWAINWorkingGroup
                 case TWTY.BOOL:
                 case TWTY.UINT16:
                     {
-                        if (ms_platform == Platform.MACOSX)
+                        if (PlatformInfo.IsMacOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = (uint)ushort.Parse(a_asz[3]);
@@ -11277,7 +11278,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.UINT32:
                     {
-                        if (ms_platform == Platform.MACOSX)
+                        if (PlatformInfo.IsMacOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = uint.Parse(a_asz[3]);
@@ -11317,7 +11318,7 @@ namespace TWAINWorkingGroup
                         double dStepSize = Convert.ToDouble(a_asz[5]);
                         double dDefaultValue = Convert.ToDouble(a_asz[6]);
                         double dCurrentValue = Convert.ToDouble(a_asz[7]);
-                        if (ms_platform == Platform.MACOSX)
+                        if (PlatformInfo.IsMacOSX)
                         {
                             twrangefix32macosx.ItemType = (uint)a_twty;
                             twrangefix32macosx.MinValue.Whole = (short)dMinValue;
@@ -11723,21 +11724,24 @@ namespace TWAINWorkingGroup
                     byte[] abJfif;
 
                     // We need the size of this memory block...
-                    switch (PlatformTools.GetPlatform())
+                    if (PlatformInfo.IsWindows)
                     {
-                        default:
-                            Log.Error("Really? <" + PlatformTools.GetPlatform() + ">");
-                            return (null);
-                        case Platform.WINDOWS:
-                            uintptrBytes = NativeMethods._msize(a_intptrNative);
-                            break;
-                        case Platform.LINUX:
-                            uintptrBytes = NativeMethods.malloc_usable_size(a_intptrNative);
-                            break;
-                        case Platform.MACOSX:
-                            uintptrBytes = NativeMethods.malloc_size(a_intptrNative);
-                            break;
+                        uintptrBytes = NativeMethods._msize(a_intptrNative);
                     }
+                    else if (PlatformInfo.IsLinux)
+                    {
+                        uintptrBytes = NativeMethods.malloc_usable_size(a_intptrNative);
+                    }
+                    else if (PlatformInfo.IsMacOSX)
+                    {
+                        uintptrBytes = NativeMethods.malloc_size(a_intptrNative);
+                    }
+                    else
+                    {
+                        Log.Error("Really? <" + Environment.OSVersion.Platform + ">");
+                        return (null);
+                    }
+
                     abJfif = new byte[(int)uintptrBytes];
                     Marshal.Copy(a_intptrNative, abJfif, 0, (int)(int)uintptrBytes);
                     return (abJfif);
@@ -12061,10 +12065,10 @@ namespace TWAINWorkingGroup
         /// </summary>
         private bool m_blUseCallbacks;
 
-        /// <summary>
-        /// The platform we're running on...
-        /// </summary>
-        static Platform ms_platform;
+        ///// <summary>
+        ///// The platform we're running on...
+        ///// </summary>
+        //static Platform ms_platform;
 
         /// <summary>
         /// Delegates for DAT_CALLBACK...
