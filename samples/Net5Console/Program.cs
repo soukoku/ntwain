@@ -32,7 +32,7 @@ namespace Net5Console
                 {
                     Console.WriteLine($"Transfer ready, count={e.PendingCount}.");
                 };
-                session.SourceDisabled += (sender,e)=>
+                session.SourceDisabled += (sender, e) =>
                 {
                     Console.WriteLine("Disabled device.");
                     Console.WriteLine();
@@ -49,73 +49,81 @@ namespace Net5Console
                     Console.WriteLine();
 
                     Console.WriteLine("All devices:");
-                    TW_IDENTITY dsToUse = default;
+                    TW_IDENTITY? dsToUse = null;
                     foreach (var dev in session.GetDataSources())
                     {
                         Console.WriteLine($"\t{dev}");
-                        if (dev.ProductName == "TWAIN2 FreeImage Software Scanner")
+                        if (dev.ProductName == "TWAIN2 Software Scanner")
                         {
                             dsToUse = dev;
                         }
                     }
                     Console.WriteLine();
 
-                    session.CurrentDataSource = dsToUse;
-                    if (session.CurrentDataSource.HasValue)
+                    if (!dsToUse.HasValue)
                     {
-                        Console.WriteLine("Current device after opening attempt:");
-                        Console.WriteLine($"\t{session.CurrentDataSource}");
-                        Console.WriteLine();
-
-                        var caps = session.Capabilities;
-                        Console.WriteLine("All device caps:");
-                        foreach (var cap in caps.CAP_SUPPORTEDCAPS.GetValues())
-                        {
-                            WriteCapInfo(caps, cap);
-                        }
-                        Console.WriteLine();
-
-                        var sts = caps.CAP_XFERCOUNT.SetOrConstraint(MSG.SET, 2);
-                        if (sts == STS.SUCCESS)
-                        {
-                            Console.WriteLine("Successfully set xfercount to 2.");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Failed set xfercount: {sts}.");
-                        }
-                        Console.WriteLine();
-
-
-                        sts = caps.ICAP_PIXELTYPE.SetOrConstraint(MSG.SET, TWPT.GRAY);
-                        if (sts == STS.SUCCESS)
-                        {
-                            Console.WriteLine("Successfully set pixel type to GRAY.");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Failed set pixel type: {sts}.");
-                        }
-                        Console.WriteLine();
-
-                        sts = session.StartCapture(false);
-                        if (sts == STS.SUCCESS)
-                        {
-                            Console.Error.WriteLine("Waiting for capture to complete.");
-                            Console.WriteLine();
-
-                            while (!hold.IsSet) Thread.Sleep(100);
-                        }
-                        else
-                        {
-                            Console.Error.WriteLine("Failed to start capture: " + sts);
-                            Console.WriteLine();
-                        }
+                        Console.WriteLine("Sample scanner not found.");
                     }
                     else
                     {
-                        Console.WriteLine("No devices opened.");
-                        Console.WriteLine();
+                        session.CurrentDataSource = dsToUse.Value;
+                        if (session.CurrentDataSource.HasValue)
+                        {
+                            Console.WriteLine("Current device after opening attempt:");
+                            Console.WriteLine($"\t{session.CurrentDataSource}");
+                            Console.WriteLine();
+
+                            var caps = session.Capabilities;
+                            Console.WriteLine("All device caps:");
+                            foreach (var cap in caps.CAP_SUPPORTEDCAPS.GetValues())
+                            {
+                                WriteCapInfo(caps, cap);
+                            }
+                            Console.WriteLine();
+
+                            short count = 3;
+                            var sts = caps.CAP_XFERCOUNT.SetOrConstraint(MSG.SET, count);
+                            if (sts == STS.SUCCESS)
+                            {
+                                Console.WriteLine($"Successfully set xfercount to {count}.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Failed set xfercount: {sts}.");
+                            }
+                            Console.WriteLine();
+
+
+                            sts = caps.ICAP_PIXELTYPE.SetOrConstraint(MSG.SET, TWPT.GRAY);
+                            if (sts == STS.SUCCESS)
+                            {
+                                Console.WriteLine("Successfully set pixel type to GRAY.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Failed set pixel type: {sts}.");
+                            }
+                            Console.WriteLine();
+
+                            sts = session.StartCapture(false);
+                            if (sts == STS.SUCCESS)
+                            {
+                                Console.Error.WriteLine("Waiting for capture to complete.");
+                                Console.WriteLine();
+
+                                while (!hold.IsSet) Thread.Sleep(100);
+                            }
+                            else
+                            {
+                                Console.Error.WriteLine("Failed to start capture: " + sts);
+                                Console.WriteLine();
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("No devices opened.");
+                            Console.WriteLine();
+                        }
                     }
                 }
                 else
