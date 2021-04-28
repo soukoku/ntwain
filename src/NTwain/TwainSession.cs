@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TWAINWorkingGroup;
 
@@ -80,8 +82,20 @@ namespace NTwain
         /// </summary>
         public event EventHandler SourceDisabled;
 
+        /// <summary>
+        /// Raised when there's some error during transfer.
+        /// </summary>
+        public event EventHandler<TransferErrorEventArgs> TransferError;
+
+        /// <summary>
+        /// Raised when there's a pending transfer. Can be used to cancel transfers.
+        /// </summary>
+        public event EventHandler<TransferReadyEventArgs> TransferReady;
+
         private void HandleUIThreadAction(Action action)
         {
+            DebugThreadInfo("begin");
+
             _threadMarshaller.Invoke(action);
         }
 
@@ -93,6 +107,8 @@ namespace NTwain
             // Drain the event queue...
             while (true)
             {
+                DebugThreadInfo("in loop");
+
                 // Try to get an event...
                 twdeviceevent = default;
                 sts = _twain.DatDeviceevent(DG.CONTROL, MSG.GET, ref twdeviceevent);
@@ -116,23 +132,103 @@ namespace NTwain
 
         private STS HandleScanEvent(bool closing)
         {
+            DebugThreadInfo("begin");
+
             // the scan event needs to return asap since it can come from msg loop
             // so fire off the handling work to another thread
-            _threadMarshaller.BeginInvoke(new Func<bool, STS>(HandleScanEventReal), closing);
+            _threadMarshaller.BeginInvoke(new Action<bool>(HandleScanEventReal), closing);
             return STS.SUCCESS;
         }
 
-        // tracks transfer state
-        bool _xferReadySent;
-        bool _disableDsSent;
-
         void HandleScanEventReal(bool closing)
         {
-            //// Scoot...
-            //if (_twain == null) return STS.FAILURE;
+            DebugThreadInfo("begin");
 
-            //// We're superfluous...
-            //if (_twain.GetState() <= STATE.S4 || closing) return STS.SUCCESS;
+            if (_twain == null || State <= STATE.S4 || closing) return;
+
+            if (_twain.IsMsgCloseDsReq() || _twain.IsMsgCloseDsOk())
+            {
+                StepDown(STATE.S4);
+                return;
+            }
+
+            // all except mem xfer will run this once and raise event.
+            // mem xfer will run this multiple times until complete image is assembled
+            if (_twain.IsMsgXferReady())
+            {
+                TW_PENDINGXFERS pending = default;
+                var sts = _twain.DatPendingxfers(DG.CONTROL, MSG.GET, ref pending);
+                if (sts != STS.SUCCESS)
+                {
+                    try
+                    {
+                        TransferError?.Invoke(this, new TransferErrorEventArgs(sts));
+                    }
+                    catch { }
+                    return; // do more?
+                }
+
+                var xferMech = Capabilities.ICAP_XFERMECH.GetCurrent();
+
+                var readyArgs = new TransferReadyEventArgs(_twain, pending.Count, (TWEJ)pending.EOJ);
+                try
+                {
+                    TransferReady?.Invoke(this, readyArgs);
+                }
+                catch { }
+
+                if (readyArgs.CancelCapture == CancelType.Immediate)
+                {
+                    sts = _twain.DatPendingxfers(DG.CONTROL, MSG.RESET, ref pending);
+                }
+                else
+                {
+                    if (readyArgs.CancelCapture == CancelType.Graceful) StopCapture();
+
+                    if (!readyArgs.SkipCurrent)
+                    {
+                        switch (xferMech)
+                        {
+                            case TWSX.NATIVE:
+                                RunImageNativeXfer();
+                                break;
+                            case TWSX.MEMFILE:
+                                RunImageMemFileXfer();
+                                break;
+                            case TWSX.FILE:
+                                RunImageFileXfer();
+                                break;
+                            case TWSX.MEMORY:
+                                RunImageMemoryXfer();
+                                break;
+                        }
+                    }
+                    sts = _twain.DatPendingxfers(DG.CONTROL, MSG.ENDXFER, ref pending);
+                }
+
+                // TODO: may be wrong for now
+                if (pending.Count == 0 || sts == STS.CANCEL || sts == STS.XFERDONE)
+                {
+                    StepDown(STATE.S4);
+                }
+                else
+                {
+                    HandleScanEvent(State <= STATE.S3);
+                }
+            }
+
+        }
+
+        [Conditional("DEBUG")]
+        private void DebugThreadInfo(string description, [CallerMemberName] string callerName = "")
+        {
+            var tid = Thread.CurrentThread.ManagedThreadId;
+            Debug.WriteLine($"[Thread {tid}] {callerName}() {description}");
+        }
+
+        private void RunImageMemoryXfer()
+        {
+            throw new NotImplementedException();
 
             //// Handle DAT_NULL/MSG_XFERREADY...
             //if (_twain.IsMsgXferReady() && !_xferReadySent)
@@ -161,20 +257,6 @@ namespace NTwain
             //    }
             //}
 
-            //// Handle DAT_NULL/MSG_CLOSEDSREQ...
-            //if (_twain.IsMsgCloseDsReq() && !_disableDsSent)
-            //{
-            //    _disableDsSent = true;
-            //    StepDown(STATE.S4);
-            //}
-
-            //// Handle DAT_NULL/MSG_CLOSEDSOK...
-            //if (_twain.IsMsgCloseDsOk() && !_disableDsSent)
-            //{
-            //    _disableDsSent = true;
-            //    StepDown(STATE.S4);
-            //}
-
             //// This is where the statemachine runs that transfers and optionally
             //// saves the images to disk (it also displays them).  It'll go back
             //// and forth between states 6 and 7 until an error occurs, or until
@@ -183,13 +265,21 @@ namespace NTwain
             //{
             //    CaptureImages();
             //}
+        }
 
-            //// Trigger the next event, this is where things all chain together.
-            //// We need begininvoke to prevent blockking, so that we don't get
-            //// backed up into a messy kind of recursion.  We need DoEvents,
-            //// because if things really start moving fast it's really hard for
-            //// application events, like button clicks to break through...
-            //HandleScanEvent(_twain.GetState() <= STATE.S3);
+        private void RunImageFileXfer()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void RunImageMemFileXfer()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void RunImageNativeXfer()
+        {
+
         }
 
         //protected virtual void OnScanEvent(bool closing) { }
@@ -301,34 +391,31 @@ namespace NTwain
         /// <summary>
         /// Steps down the TWAIN state to the specified state.
         /// </summary>
-        /// <param name="state"></param>
-        public void StepDown(STATE state)
+        /// <param name="target"></param>
+        public void StepDown(STATE target)
         {
-            TW_PENDINGXFERS twpendingxfers = default;
-
             // Make sure we have something to work with...
-            if (_twain == null)
-            {
-                return;
-            }
+            if (_twain == null) return;
 
             // Walk the states, we don't care about the status returns.  Basically,
             // these need to work, or we're guaranteed to hang...
 
             // 7 --> 6
-            if ((_twain.GetState() == STATE.S7) && (state < STATE.S7))
+            if ((State == STATE.S7) && (target < STATE.S7))
             {
+                TW_PENDINGXFERS twpendingxfers = default;
                 _twain.DatPendingxfers(DG.CONTROL, MSG.ENDXFER, ref twpendingxfers);
             }
 
             // 6 --> 5
-            if ((_twain.GetState() == STATE.S6) && (state < STATE.S6))
+            if ((State == STATE.S6) && (target < STATE.S6))
             {
+                TW_PENDINGXFERS twpendingxfers = default;
                 _twain.DatPendingxfers(DG.CONTROL, MSG.RESET, ref twpendingxfers);
             }
 
             // 5 --> 4
-            if ((_twain.GetState() == STATE.S5) && (state < STATE.S5))
+            if ((State == STATE.S5) && (target < STATE.S5))
             {
                 TW_USERINTERFACE twuserinterface = default;
                 _twain.DatUserinterface(DG.CONTROL, MSG.DISABLEDS, ref twuserinterface);
@@ -336,14 +423,14 @@ namespace NTwain
             }
 
             // 4 --> 3
-            if ((_twain.GetState() == STATE.S4) && (state < STATE.S4))
+            if ((State == STATE.S4) && (target < STATE.S4))
             {
                 _caps = null;
                 _twain.DatIdentity(DG.CONTROL, MSG.CLOSEDS, ref _twain.m_twidentityDs);
             }
 
             // 3 --> 2
-            if ((_twain.GetState() == STATE.S3) && (state < STATE.S3))
+            if ((State == STATE.S3) && (target < STATE.S3))
             {
                 _twain.DatParent(DG.CONTROL, MSG.CLOSEDSM, ref _hWnd);
             }

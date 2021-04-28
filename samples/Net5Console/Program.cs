@@ -11,7 +11,7 @@ namespace Net5Console
     class Program
     {
         [STAThread]
-        static void Main(string[] args)
+        static void Main()
         {
             Console.WriteLine("Starting twain test in console...");
             Console.WriteLine();
@@ -21,29 +21,21 @@ namespace Net5Console
             {
                 session.DeviceEvent += (sender, e) =>
                 {
-                    Console.WriteLine($"Got device event " + (TWDE)e.Event);
+                    Console.WriteLine($"Got device event " + e.Event);
                     Console.WriteLine();
                 };
-                session.ScanEvent += (sender, closing) =>
+                session.TransferError += (sender, e) =>
                 {
-                    Console.WriteLine($"Got scan event " + closing);
+                    Console.WriteLine($"Transfer error {e.Code} {e.Exception}.");
+                };
+                session.TransferReady += (sender, e) =>
+                {
+                    Console.WriteLine($"Transfer ready, count={e.PendingCount}.");
+                };
+                session.SourceDisabled += (sender,e)=>
+                {
+                    Console.WriteLine("Disabled device.");
                     Console.WriteLine();
-
-                    // don't care, just end it
-                    TW_PENDINGXFERS pending = default;
-                    var sts = session.TWAIN.DatPendingxfers(DG.CONTROL, MSG.RESET, ref pending);
-
-                    TW_USERINTERFACE twuserinterface = default;
-                    if (session.TWAIN.DatUserinterface(DG.CONTROL, MSG.DISABLEDS, ref twuserinterface) == STS.SUCCESS)
-                    {
-                        Console.WriteLine("Disabled device.");
-                        Console.WriteLine();
-                    }
-                    else
-                    {
-                        Console.Error.WriteLine("Failed to disabled device.");
-                        Console.WriteLine();
-                    }
                     hold.Set();
                 };
 
@@ -133,6 +125,11 @@ namespace Net5Console
                 Console.WriteLine("Test Ended");
             }
 
+        }
+
+        private static void Session_SourceDisabled(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private static void WriteCapInfo(Capabilities caps, CAP cap)
