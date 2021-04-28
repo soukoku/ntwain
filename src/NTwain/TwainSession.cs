@@ -368,6 +368,17 @@ namespace NTwain
         }
 
         /// <summary>
+        /// Stops the data source's automated feeder
+        /// if <see cref="Capabilities.CAP_AUTOSCAN"/> is set to true.
+        /// </summary>
+        /// <returns></returns>
+        public STS StopCapture()
+        {
+            TW_PENDINGXFERS pending = default;
+            return _twain.DatPendingxfers(DG.CONTROL, MSG.STOPFEEDER, ref pending);
+        }
+
+        /// <summary>
         /// Reads information relating to the last capture run.
         /// Only valid on state 4 after a capture.
         /// </summary>
