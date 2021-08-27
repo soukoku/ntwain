@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>NTwain.Win</PackageId>
     <Description>Contains Windows specific things for NTwain.</Description>
-    <TargetFrameworks>net45;netcoreapp3.1;net5.0-windows</TargetFrameworks>
+    <TargetFrameworks>net462;netcoreapp3.1;net5.0-windows;net6.0-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <RootNamespace>NTwain</RootNamespace>
