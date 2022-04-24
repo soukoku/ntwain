@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31205.134
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_common", "_common", "{4CE0B9ED-2CD1-440F-B4EC-35ECA6D61EFE}"
 	ProjectSection(SolutionItems) = preProject
@@ -21,10 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain.Win", "src\NTwain.Wi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_twain-doc", "_twain-doc", "{0C94E5AD-E226-4A30-92B4-C28FE5B7FC23}"
 	ProjectSection(SolutionItems) = preProject
-		twain-doc\TWAIN-2.4-Features.pdf = twain-doc\TWAIN-2.4-Features.pdf
-		twain-doc\TWAIN-2.4-Specification.pdf = twain-doc\TWAIN-2.4-Specification.pdf
-		twain-doc\twain2.4.h = twain-doc\twain2.4.h
-		twain-doc\TWAIN_Errata_for_Version_2.4.pdf = twain-doc\TWAIN_Errata_for_Version_2.4.pdf
+		twain-doc\TWAIN-2.5-Features.pdf = twain-doc\TWAIN-2.5-Features.pdf
+		twain-doc\TWAIN-2.5-Specification.pdf = twain-doc\TWAIN-2.5-Specification.pdf
+		twain-doc\twain2.5.h = twain-doc\twain2.5.h
 	EndProjectSection
 EndProject
 Global

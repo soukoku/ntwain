@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TWAINWorkingGroup;
+using static TWAINWorkingGroup.TWAIN;
 
 namespace NTwain
 {
@@ -41,7 +42,7 @@ namespace NTwain
             {
                 return ValueReader.ReadOneValueContainer<TWQC>(_twain, ref twCap);
             }
-            return TWQC.Uknown;
+            return TWQC.Unknown;
         }
 
         /// <summary>

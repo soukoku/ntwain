@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using TWAINWorkingGroup;
+using static TWAINWorkingGroup.TWAIN;
 
 namespace NTwain
 {

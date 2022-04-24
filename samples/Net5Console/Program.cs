@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using TWAINWorkingGroup;
+using static TWAINWorkingGroup.TWAIN;
 
 namespace Net5Console
 {
@@ -39,7 +40,7 @@ namespace Net5Console
                     hold.Set();
                 };
 
-                if (session.Open() == TWAINWorkingGroup.STS.SUCCESS)
+                if (session.Open() == STS.SUCCESS)
                 {
                     Console.WriteLine("Opened DSM");
                     Console.WriteLine();

@@ -9,6 +9,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 //  Author          Date            TWAIN       Comment
+//  M.McLaughlin    17-May-2021     2.5.0.0     Updated to latest spec
 //  M.McLaughlin    13-Mar-2019     2.4.0.3     Add language code page support for strings
 //  M.McLaughlin    13-Nov-2015     2.4.0.0     Updated to latest spec
 //  M.McLaughlin    13-Sep-2015     2.3.1.2     DsmMem bug fixes
@@ -20,7 +21,7 @@
 //  M.McLaughlin    27-Feb-2014     2.3.0.1     AnyCPU support
 //  M.McLaughlin    21-Oct-2013     2.3.0.0     Initial Release
 ///////////////////////////////////////////////////////////////////////////////////////
-//  Copyright (C) 2013-2020 Kodak Alaris Inc.
+//  Copyright (C) 2013-2021 Kodak Alaris Inc.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a
 //  copy of this software and associated documentation files (the "Software"),
@@ -41,7 +42,6 @@
 //  DEALINGS IN THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////////
 
-using NTwain;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -117,6 +117,7 @@ namespace TWAINWorkingGroup
         /// <param name="a_scancallback">Function to handle scanning</param>
         /// <param name="a_runinuithreaddelegate">Help us run in the GUI thread on Windows</param>
         /// <param name="a_intptrHwnd">window handle</param>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public TWAIN
         (
             string a_szManufacturer,
@@ -146,7 +147,7 @@ namespace TWAINWorkingGroup
             m_state = STATE.S2;
 
             // Register the caller's info...
-            twidentity = default;
+            twidentity = default(TW_IDENTITY);
             twidentity.Manufacturer.Set(a_szManufacturer);
             twidentity.ProductFamily.Set(a_szProductFamily);
             twidentity.ProductName.Set(a_szProductName);
@@ -167,39 +168,39 @@ namespace TWAINWorkingGroup
             m_intptrHwnd = a_intptrHwnd;
 
             // Help for RunInUiThread...
-            m_threaddataDatAudiofilexfer = default;
-            m_threaddataDatAudionativexfer = default;
-            m_threaddataDatCapability = default;
-            m_threaddataDatEvent = default;
-            m_threaddataDatExtimageinfo = default;
-            m_threaddataDatIdentity = default;
-            m_threaddataDatImagefilexfer = default;
-            m_threaddataDatImageinfo = default;
-            m_threaddataDatImagelayout = default;
-            m_threaddataDatImagememfilexfer = default;
-            m_threaddataDatImagememxfer = default;
-            m_threaddataDatImagenativexfer = default;
-            m_threaddataDatParent = default;
-            m_threaddataDatPendingxfers = default;
-            m_threaddataDatSetupfilexfer = default;
-            m_threaddataDatSetupmemxfer = default;
-            m_threaddataDatStatus = default;
-            m_threaddataDatUserinterface = default;
+            m_threaddataDatAudiofilexfer = default(ThreadData);
+            m_threaddataDatAudionativexfer = default(ThreadData);
+            m_threaddataDatCapability = default(ThreadData);
+            m_threaddataDatEvent = default(ThreadData);
+            m_threaddataDatExtimageinfo = default(ThreadData);
+            m_threaddataDatIdentity = default(ThreadData);
+            m_threaddataDatImagefilexfer = default(ThreadData);
+            m_threaddataDatImageinfo = default(ThreadData);
+            m_threaddataDatImagelayout = default(ThreadData);
+            m_threaddataDatImagememfilexfer = default(ThreadData);
+            m_threaddataDatImagememxfer = default(ThreadData);
+            m_threaddataDatImagenativexfer = default(ThreadData);
+            m_threaddataDatParent = default(ThreadData);
+            m_threaddataDatPendingxfers = default(ThreadData);
+            m_threaddataDatSetupfilexfer = default(ThreadData);
+            m_threaddataDatSetupmemxfer = default(ThreadData);
+            m_threaddataDatStatus = default(ThreadData);
+            m_threaddataDatUserinterface = default(ThreadData);
 
             // We always go through a discovery process, even on 32-bit...
             m_linuxdsm = LinuxDsm.Unknown;
 
             // Placeholder for our DS identity...
-            m_twidentityDs = default;
-            m_twidentitylegacyDs = default;
-            m_twidentitymacosxDs = default;
+            m_twidentityDs = default(TW_IDENTITY);
+            m_twidentitylegacyDs = default(TW_IDENTITY_LEGACY);
+            m_twidentitymacosxDs = default(TW_IDENTITY_MACOSX);
 
             // We'll normally do an automatic get of DAT.STATUS, but if we'd
             // like to turn it off, this is the variable to hit...
             m_blAutoDatStatus = true;
 
             // Our helper functions from the DSM...
-            m_twentrypointdelegates = default;
+            m_twentrypointdelegates = default(TW_ENTRYPOINT_DELEGATES);
 
             // Our events...
             m_autoreseteventCaller = new AutoResetEvent(false);
@@ -208,10 +209,8 @@ namespace TWAINWorkingGroup
             m_autoreseteventThreadStarted = new AutoResetEvent(false);
             m_lockTwain = new Object();
 
-            //ms_platform = PlatformTools.Platform;
-            
             // Windows only...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 m_blUseLegacyDSM = a_blUseLegacyDSM;
                 m_blUseCallbacks = a_blUseCallbacks;
@@ -219,7 +218,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux only...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // The user can't set these value, we have to decide automatically
                 // which DSM to use, and only callbacks are supported...
@@ -228,7 +227,7 @@ namespace TWAINWorkingGroup
                 m_linuxdsmentrycontrolcallbackdelegate = LinuxDsmEntryCallbackProxy;
 
                 // We assume the new DSM for 32-bit systems...
-                if (!PlatformInfo.IsApp64Bit)
+                if (GetMachineWordBitSize() == 32)
                 {
                     m_blFound020302Dsm64bit = false;
                     if (File.Exists("/usr/local/lib64/libtwaindsm.so"))
@@ -242,13 +241,13 @@ namespace TWAINWorkingGroup
                 }
 
                 // Check for the old DSM, but only on 64-bit systems...
-                if ((PlatformInfo.IsApp64Bit) && File.Exists("/usr/local/lib/libtwaindsm.so.2.3.2"))
+                if ((GetMachineWordBitSize() == 64) && File.Exists("/usr/local/lib/libtwaindsm.so.2.3.2"))
                 {
                     m_blFound020302Dsm64bit = true;
                 }
 
                 // Check for any newer DSM, but only on 64-bit systems...
-                if ((PlatformInfo.IsApp64Bit) && (File.Exists("/usr/local/lib/libtwaindsm.so") || File.Exists("/usr/local/lib64/libtwaindsm.so")))
+                if ((GetMachineWordBitSize() == 64) && (File.Exists("/usr/local/lib/libtwaindsm.so") || File.Exists("/usr/local/lib64/libtwaindsm.so")))
                 {
                     bool blCheckForNewDsm = true;
 
@@ -264,10 +263,10 @@ namespace TWAINWorkingGroup
                         // we find an old DSM...
                         foreach (string szDsm in aszDsm)
                         {
-                            if (szDsm.EndsWith("so.2.0") || szDsm.Contains(".so.2.0.")
-                                || szDsm.EndsWith("so.2.1") || szDsm.Contains(".so.2.1.")
-                                || szDsm.EndsWith("so.2.2") || szDsm.Contains(".so.2.2.")
-                                || szDsm.EndsWith("so.2.3") || szDsm.Contains(".so.2.3."))
+                            if (    szDsm.EndsWith("so.2.0") || szDsm.Contains(".so.2.0.")
+                                ||  szDsm.EndsWith("so.2.1") || szDsm.Contains(".so.2.1.")
+                                ||  szDsm.EndsWith("so.2.2") || szDsm.Contains(".so.2.2.")
+                                ||  szDsm.EndsWith("so.2.3") || szDsm.Contains(".so.2.3."))
                             {
                                 // If we get a match, see if the symbolic link is
                                 // pointing to old junk...
@@ -281,11 +280,11 @@ namespace TWAINWorkingGroup
                                 p.WaitForExit();
                                 p.Dispose();
                                 // We never did any 1.x stuff...
-                                if ((szOutput != null)
-                                    && (szOutput.EndsWith(".so.2.0") || szOutput.Contains(".so.2.0.")
-                                    || szOutput.EndsWith(".so.2.1") || szOutput.Contains(".so.2.1.")
-                                    || szOutput.EndsWith(".so.2.2") || szOutput.Contains(".so.2.2.")
-                                    || szOutput.EndsWith(".so.2.3") || szOutput.Contains(".so.2.3.")))
+                                if (    (szOutput != null)
+                                    &&  (szOutput.EndsWith(".so.2.0") || szOutput.Contains(".so.2.0.")
+                                    ||   szOutput.EndsWith(".so.2.1") || szOutput.Contains(".so.2.1.")
+                                    ||   szOutput.EndsWith(".so.2.2") || szOutput.Contains(".so.2.2.")
+                                    ||   szOutput.EndsWith(".so.2.3") || szOutput.Contains(".so.2.3.")))
                                 {
                                     // libtwaindsm.so is pointing to an old DSM...
                                     blCheckForNewDsm = false;
@@ -301,19 +300,19 @@ namespace TWAINWorkingGroup
                         foreach (string szDsm in aszDsm)
                         {
                             // I guess this is reasonably future-proof...
-                            if (szDsm.Contains("so.2.4")
-                                || szDsm.Contains("so.2.5")
-                                || szDsm.Contains("so.2.6")
-                                || szDsm.Contains("so.2.7")
-                                || szDsm.Contains("so.2.8")
-                                || szDsm.Contains("so.2.9")
-                                || szDsm.Contains("so.2.10")
-                                || szDsm.Contains("so.2.11")
-                                || szDsm.Contains("so.2.12")
-                                || szDsm.Contains("so.2.13")
-                                || szDsm.Contains("so.2.14")
-                                || szDsm.Contains("so.3")
-                                || szDsm.Contains("so.4"))
+                            if (    szDsm.Contains("so.2.4")
+                                ||  szDsm.Contains("so.2.5")
+                                ||  szDsm.Contains("so.2.6")
+                                ||  szDsm.Contains("so.2.7")
+                                ||  szDsm.Contains("so.2.8")
+                                ||  szDsm.Contains("so.2.9")
+                                ||  szDsm.Contains("so.2.10")
+                                ||  szDsm.Contains("so.2.11")
+                                ||  szDsm.Contains("so.2.12")
+                                ||  szDsm.Contains("so.2.13")
+                                ||  szDsm.Contains("so.2.14")
+                                ||  szDsm.Contains("so.3")
+                                ||  szDsm.Contains("so.4"))
                             {
                                 // libtwaindsm.so is pointing to a new DSM...
                                 if (szDsm.Contains("lib64"))
@@ -332,7 +331,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X only...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 m_blUseLegacyDSM = a_blUseLegacyDSM;
                 m_blUseCallbacks = true;
@@ -342,7 +341,7 @@ namespace TWAINWorkingGroup
             // Uh-oh, Log will throw an exception for us...
             else
             {
-                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
+                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
             }
 
             // Activate our thread...
@@ -372,6 +371,8 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Cleanup...
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase")]
+        [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public void Dispose()
         {
             Dispose(true);
@@ -387,7 +388,7 @@ namespace TWAINWorkingGroup
             string szDsmPath = "";
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 if (m_blUseLegacyDSM)
                 {
@@ -400,7 +401,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 if (m_blFoundLatestDsm64 && (m_linuxdsm == LinuxDsm.IsLatestDsm))
                 {
@@ -417,7 +418,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 if (m_blUseLegacyDSM)
                 {
@@ -438,7 +439,7 @@ namespace TWAINWorkingGroup
             // Ruh-roh...
             if (string.IsNullOrEmpty(szDsmPath))
             {
-                return ("(could not identify a DSM candidate for this platform - '" + Environment.OSVersion.Platform + "')");
+                return ("(could not identify a DSM candidate for this platform - '" + ms_platform + "')");
             }
 
             // Hmmm...
@@ -451,7 +452,7 @@ namespace TWAINWorkingGroup
         /// <returns></returns>
         public string GetAppIdentity()
         {
-            return (CsvSerializer.IdentityToCsv(m_twidentityApp));
+            return (IdentityToCsv(m_twidentityApp));
         }
 
         /// <summary>
@@ -462,17 +463,17 @@ namespace TWAINWorkingGroup
         {
             if (m_state < STATE.S4)
             {
-                return (CsvSerializer.IdentityToCsv(default));
+                return (IdentityToCsv(default(TW_IDENTITY)));
             }
-            return (CsvSerializer.IdentityToCsv(m_twidentityDs));
+            return (IdentityToCsv(m_twidentityDs));
         }
 
         /// <summary>
         /// Alloc memory used with the data source.
         /// </summary>
         /// <param name="a_u32Size">Number of bytes to allocate</param>
-        /// <param name="a_blForcePointer"></param>
         /// <returns>Point to memory</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public IntPtr DsmMemAlloc(uint a_u32Size, bool a_blForcePointer = false)
         {
             IntPtr intptr;
@@ -489,7 +490,7 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 intptr = (IntPtr)NativeMethods.GlobalAlloc((uint)(a_blForcePointer ? 0x0040 /* GPTR */ : 0x0042 /* GHND */), (UIntPtr)a_u32Size);
                 if (intptr == IntPtr.Zero)
@@ -500,7 +501,7 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Linux...
-            if (PlatformInfo.IsLinux)
+            if (ms_platform == Platform.LINUX)
             {
                 intptr = Marshal.AllocHGlobal((int)a_u32Size);
                 if (intptr == IntPtr.Zero)
@@ -511,7 +512,7 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Mac OS X...
-            if (PlatformInfo.IsMacOSX)
+            if (ms_platform == Platform.MACOSX)
             {
                 IntPtr intptrIndirect = Marshal.AllocHGlobal((int)a_u32Size);
                 if (intptrIndirect == IntPtr.Zero)
@@ -530,7 +531,7 @@ namespace TWAINWorkingGroup
             }
 
             // Trouble, Log will throw an exception for us...
-            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
+            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
             return (IntPtr.Zero);
         }
 
@@ -538,7 +539,7 @@ namespace TWAINWorkingGroup
         /// Free memory used with the data source...
         /// </summary>
         /// <param name="a_intptrHandle">Pointer to free</param>
-        /// <param name="a_blForcePointer"></param>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public void DsmMemFree(ref IntPtr a_intptrHandle, bool a_blForcePointer = false)
         {
             // Validate...
@@ -554,19 +555,19 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Windows...
-            else if (PlatformInfo.IsWindows)
+            else if (ms_platform == Platform.WINDOWS)
             {
                 NativeMethods.GlobalFree(a_intptrHandle);
             }
 
             // Do it ourselves, Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 Marshal.FreeHGlobal(a_intptrHandle);
             }
 
             // Do it ourselves, Mac OS X...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Free the indirect pointer...
                 IntPtr intptr = (IntPtr)Marshal.PtrToStructure(a_intptrHandle, typeof(IntPtr));
@@ -591,6 +592,7 @@ namespace TWAINWorkingGroup
         /// </summary>
         /// <param name="a_intptrHandle">Handle to lock</param>
         /// <returns>Locked pointer</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public IntPtr DsmMemLock(IntPtr a_intptrHandle)
         {
             // Validate...
@@ -606,26 +608,26 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 return (NativeMethods.GlobalLock(a_intptrHandle));
             }
 
             // Do it ourselves, Linux...
-            if (PlatformInfo.IsLinux)
+            if (ms_platform == Platform.LINUX)
             {
                 return (a_intptrHandle);
             }
 
             // Do it ourselves, Mac OS X...
-            if (PlatformInfo.IsMacOSX)
+            if (ms_platform == Platform.MACOSX)
             {
                 IntPtr intptr = (IntPtr)Marshal.PtrToStructure(a_intptrHandle, typeof(IntPtr));
                 return (intptr);
             }
 
             // Trouble, Log will throw an exception for us...
-            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
+            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
             return (IntPtr.Zero);
         }
 
@@ -633,6 +635,7 @@ namespace TWAINWorkingGroup
         /// Unlock memory used with the data source...
         /// </summary>
         /// <param name="a_intptrHandle">Handle to unlock</param>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public void DsmMemUnlock(IntPtr a_intptrHandle)
         {
             // Validate...
@@ -649,26 +652,26 @@ namespace TWAINWorkingGroup
             }
 
             // Do it ourselves, Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 NativeMethods.GlobalUnlock(a_intptrHandle);
                 return;
             }
 
             // Do it ourselves, Linux...
-            if (PlatformInfo.IsLinux)
+            if (ms_platform == Platform.LINUX)
             {
                 return;
             }
 
             // Do it ourselves, Mac OS X...
-            if (PlatformInfo.IsMacOSX)
+            if (ms_platform == Platform.MACOSX)
             {
                 return;
             }
 
             // Trouble, Log will throw an exception for us...
-            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
+            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
         }
 
         /// <summary>
@@ -687,25 +690,25 @@ namespace TWAINWorkingGroup
         public bool IsDsm2()
         {
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 return ((m_twidentitylegacyApp.SupportedGroups & (uint)DG.DSM2) != 0);
             }
 
             // Linux...
-            if (PlatformInfo.IsLinux)
+            if (ms_platform == Platform.LINUX)
             {
                 return ((m_twidentitylegacyApp.SupportedGroups & (uint)DG.DSM2) != 0);
             }
 
             // Mac OS X...
-            if (PlatformInfo.IsMacOSX)
+            if (ms_platform == Platform.MACOSX)
             {
                 return ((m_twidentitymacosxApp.SupportedGroups & (uint)DG.DSM2) != 0);
             }
 
             // Trouble, Log will throw an exception for us...
-            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
+            TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
             return (false);
         }
 
@@ -744,6 +747,7 @@ namespace TWAINWorkingGroup
         /// <param name="a_intptrWparam">a parameter for the message</param>
         /// <param name="a_intptrLparam">another parameter for the message</param>
         /// <returns></returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public bool PreFilterMessage
         (
             IntPtr a_intptrHwnd,
@@ -792,13 +796,15 @@ namespace TWAINWorkingGroup
             return (sts == STS.DSEVENT);
         }
 
-        static int s_iCloseDsmDelay = 0;
         /// <summary>
         /// Rollback the TWAIN state machine to the specified value, with an
         /// automatic resync if it detects a sequence error...
         /// </summary>
         /// <param name="a_stateTarget">The TWAIN state that we want to end up at</param>
-        public STATE Rollback(STATE a_stateTarget)
+        /// <param name="a_blUseThread">Use the thread (most cases)</param>
+        static int s_iCloseDsmDelay = 0;
+        [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        public TWAIN.STATE Rollback(STATE a_stateTarget, bool a_blUseThread = true)
         {
             int iRetry;
             STS sts;
@@ -811,61 +817,64 @@ namespace TWAINWorkingGroup
             }
 
             // Submit the work to the TWAIN thread...
-            if (m_runinuithreaddelegate != null)
+            if (a_blUseThread)
             {
-                lock (m_lockTwain)
+                if (m_runinuithreaddelegate != null)
                 {
-                    // No point in continuing...
-                    if (m_twaincommand == null)
+                    lock (m_lockTwain)
                     {
-                        return (m_state);
+                        // No point in continuing...
+                        if (m_twaincommand == null)
+                        {
+                            return (m_state);
+                        }
+
+                        // Set the command variables...
+                        ThreadData threaddata = default(ThreadData);
+                        threaddata.blExitThread = true;
+                        long lIndex = m_twaincommand.Submit(threaddata);
+
+                        // Submit the command and wait for the reply, the delay
+                        // is needed because Mac OS X doesn't gracefully handle
+                        // the loss of a mutex...
+                        s_iCloseDsmDelay = 0;
+                        CallerToThreadSet();
+                        ThreadToRollbackWaitOne();
+                        Thread.Sleep(s_iCloseDsmDelay);
+
+                        // Clear the command variables...
+                        m_twaincommand.Delete(lIndex);
                     }
-
-                    // Set the command variables...
-                    ThreadData threaddata = default;
-                    threaddata.blExitThread = true;
-                    long lIndex = m_twaincommand.Submit(threaddata);
-
-                    // Submit the command and wait for the reply, the delay
-                    // is needed because Mac OS X doesn't gracefully handle
-                    // the loss of a mutex...
-                    s_iCloseDsmDelay = 0;
-                    CallerToThreadSet();
-                    ThreadToRollbackWaitOne();
-                    Thread.Sleep(s_iCloseDsmDelay);
-
-                    // Clear the command variables...
-                    m_twaincommand.Delete(lIndex);
                 }
-            }
-            else if ((m_threadTwain != null) && (m_threadTwain.ManagedThreadId != Thread.CurrentThread.ManagedThreadId))
-            {
-                lock (m_lockTwain)
+                else if ((m_threadTwain != null) && (m_threadTwain.ManagedThreadId != Thread.CurrentThread.ManagedThreadId))
                 {
-                    // No point in continuing...
-                    if (m_twaincommand == null)
+                    lock (m_lockTwain)
                     {
-                        return (m_state);
+                        // No point in continuing...
+                        if (m_twaincommand == null)
+                        {
+                            return (m_state);
+                        }
+
+                        // Set the command variables...
+                        ThreadData threaddata = default(ThreadData);
+                        threaddata.stateRollback = a_stateTarget;
+                        threaddata.blRollback = true;
+                        long lIndex = m_twaincommand.Submit(threaddata);
+
+                        // Submit the command and wait for the reply, the delay
+                        // is needed because Mac OS X doesn't gracefully handle
+                        // the loss of a mutex...
+                        s_iCloseDsmDelay = 0;
+                        CallerToThreadSet();
+                        ThreadToRollbackWaitOne();
+                        Thread.Sleep(s_iCloseDsmDelay);
+
+                        // Clear the command variables...
+                        m_twaincommand.Delete(lIndex);
                     }
-
-                    // Set the command variables...
-                    ThreadData threaddata = default;
-                    threaddata.stateRollback = a_stateTarget;
-                    threaddata.blRollback = true;
-                    long lIndex = m_twaincommand.Submit(threaddata);
-
-                    // Submit the command and wait for the reply, the delay
-                    // is needed because Mac OS X doesn't gracefully handle
-                    // the loss of a mutex...
-                    s_iCloseDsmDelay = 0;
-                    CallerToThreadSet();
-                    ThreadToRollbackWaitOne();
-                    Thread.Sleep(s_iCloseDsmDelay);
-
-                    // Clear the command variables...
-                    m_twaincommand.Delete(lIndex);
+                    return (m_state);
                 }
-                return (m_state);
             }
 
             // If we get a sequence error, then we'll repeat the loop from
@@ -877,7 +886,7 @@ namespace TWAINWorkingGroup
                 // State 7 --> State 6...
                 if ((stateStart >= STATE.S7) && (a_stateTarget < STATE.S7))
                 {
-                    TW_PENDINGXFERS twpendingxfers = default;
+                    TW_PENDINGXFERS twpendingxfers = default(TW_PENDINGXFERS);
                     sts = DatPendingxfers(DG.CONTROL, MSG.ENDXFER, ref twpendingxfers);
                     if (sts == STS.SEQERROR)
                     {
@@ -890,7 +899,7 @@ namespace TWAINWorkingGroup
                 // State 6 --> State 5...
                 if ((stateStart >= STATE.S6) && (a_stateTarget < STATE.S6))
                 {
-                    TW_PENDINGXFERS twpendingxfers = default;
+                    TW_PENDINGXFERS twpendingxfers = default(TW_PENDINGXFERS);
                     sts = DatPendingxfers(DG.CONTROL, MSG.RESET, ref twpendingxfers);
                     if (sts == STS.SEQERROR)
                     {
@@ -903,7 +912,7 @@ namespace TWAINWorkingGroup
                 // State 5 --> State 4...
                 if ((stateStart >= STATE.S5) && (a_stateTarget < STATE.S5))
                 {
-                    TW_USERINTERFACE twuserinterface = default;
+                    TW_USERINTERFACE twuserinterface = default(TW_USERINTERFACE);
                     sts = DatUserinterface(DG.CONTROL, MSG.DISABLEDS, ref twuserinterface);
                     if (sts == STS.SEQERROR)
                     {
@@ -919,7 +928,7 @@ namespace TWAINWorkingGroup
                     m_blAcceptXferReady = false;
                     m_blIsMsgclosedsok = false;
                     m_blIsMsgclosedsreq = false;
-                    m_blIsMsgxferready = false;
+                    m_blIsMsgxferready = false; 
                 }
 
                 // State 4 --> State 3...
@@ -939,7 +948,7 @@ namespace TWAINWorkingGroup
                 {
                     // Do this to prevent a deadlock on Mac OS X, two seconds
                     // better be enough to finish up...
-                    if (PlatformInfo.IsMacOSX)
+                    if (GetPlatform() == Platform.MACOSX)
                     {
                         ThreadToRollbackSet();
                         s_iCloseDsmDelay = 2000;
@@ -964,37 +973,32 @@ namespace TWAINWorkingGroup
         }
 
         /// <summary>
-        /// Send a command to the currently loaded DSM
-        /// using tokenized command and anything needed.
+        /// Send a command to the currently loaded DSM...
         /// </summary>
-        /// <param name="a_szDat"></param>
-        /// <param name="a_szDg"></param>
-        /// <param name="a_szMsg"></param>
-        /// <param name="a_szTwmemref"></param>"
-        /// <param name="a_szResult"></param>
+        /// <param name="a_functionarguments">tokenized command and anything needed</param>
         /// <returns>true to quit</returns>
-        public STS Send(string a_szDg, string a_szDat, string a_szMsg, ref string a_szTwmemref, ref string a_szResult)
+        public TWAIN.STS Send(string a_szDg, string a_szDat, string a_szMsg, ref string a_szTwmemref, ref string a_szResult)
         {
             int iDg;
             int iDat;
             int iMsg;
-            STS sts;
-            DG dg = DG.MASK;
-            DAT dat = DAT.NULL;
-            MSG msg = MSG.NULL;
+            TWAIN.STS sts;
+            TWAIN.DG dg = TWAIN.DG.MASK;
+            TWAIN.DAT dat = TWAIN.DAT.NULL;
+            TWAIN.MSG msg = TWAIN.MSG.NULL;
 
             // Init stuff...
             iDg = 0;
             iDat = 0;
             iMsg = 0;
-            sts = STS.BADPROTOCOL;
+            sts = TWAIN.STS.BADPROTOCOL;
             a_szResult = "";
 
             // Look for DG...
             if (!a_szDg.ToLowerInvariant().StartsWith("dg_"))
             {
                 TWAINWorkingGroup.Log.Error("Unrecognized dg - <" + a_szDg + ">");
-                return (STS.BADPROTOCOL);
+                return (TWAIN.STS.BADPROTOCOL);
             }
             else
             {
@@ -1004,7 +1008,7 @@ namespace TWAINWorkingGroup
                     if (!int.TryParse(a_szDg.ToLowerInvariant().Substring(3), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out iDg))
                     {
                         TWAINWorkingGroup.Log.Error("Badly constructed dg - <" + a_szDg + ">");
-                        return (STS.BADPROTOCOL);
+                        return (TWAIN.STS.BADPROTOCOL);
                     }
                 }
                 else
@@ -1012,7 +1016,7 @@ namespace TWAINWorkingGroup
                     if (!Enum.TryParse(a_szDg.ToUpperInvariant().Substring(3), out dg))
                     {
                         TWAINWorkingGroup.Log.Error("Unrecognized dg - <" + a_szDg + ">");
-                        return (STS.BADPROTOCOL);
+                        return (TWAIN.STS.BADPROTOCOL);
                     }
                     iDg = (int)dg;
                 }
@@ -1022,7 +1026,7 @@ namespace TWAINWorkingGroup
             if (!a_szDat.ToLowerInvariant().StartsWith("dat_"))
             {
                 TWAINWorkingGroup.Log.Error("Unrecognized dat - <" + a_szDat + ">");
-                return (STS.BADPROTOCOL);
+                return (TWAIN.STS.BADPROTOCOL);
             }
             else
             {
@@ -1032,7 +1036,7 @@ namespace TWAINWorkingGroup
                     if (!int.TryParse(a_szDat.ToLowerInvariant().Substring(4), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out iDat))
                     {
                         TWAINWorkingGroup.Log.Error("Badly constructed dat - <" + a_szDat + ">");
-                        return (STS.BADPROTOCOL);
+                        return (TWAIN.STS.BADPROTOCOL);
                     }
                 }
                 else
@@ -1040,7 +1044,7 @@ namespace TWAINWorkingGroup
                     if (!Enum.TryParse(a_szDat.ToUpperInvariant().Substring(4), out dat))
                     {
                         TWAINWorkingGroup.Log.Error("Unrecognized dat - <" + a_szDat + ">");
-                        return (STS.BADPROTOCOL);
+                        return (TWAIN.STS.BADPROTOCOL);
                     }
                     iDat = (int)dat;
                 }
@@ -1050,7 +1054,7 @@ namespace TWAINWorkingGroup
             if (!a_szMsg.ToLowerInvariant().StartsWith("msg_"))
             {
                 TWAINWorkingGroup.Log.Error("Unrecognized msg - <" + a_szMsg + ">");
-                return (STS.BADPROTOCOL);
+                return (TWAIN.STS.BADPROTOCOL);
             }
             else
             {
@@ -1060,7 +1064,7 @@ namespace TWAINWorkingGroup
                     if (!int.TryParse(a_szMsg.ToLowerInvariant().Substring(4), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out iMsg))
                     {
                         TWAINWorkingGroup.Log.Error("Badly constructed dat - <" + a_szMsg + ">");
-                        return (STS.BADPROTOCOL);
+                        return (TWAIN.STS.BADPROTOCOL);
                     }
                 }
                 else
@@ -1068,7 +1072,7 @@ namespace TWAINWorkingGroup
                     if (!Enum.TryParse(a_szMsg.ToUpperInvariant().Substring(4), out msg))
                     {
                         TWAINWorkingGroup.Log.Error("Unrecognized msg - <" + a_szMsg + ">");
-                        return (STS.BADPROTOCOL);
+                        return (TWAIN.STS.BADPROTOCOL);
                     }
                     iMsg = (int)msg;
                 }
@@ -1081,78 +1085,78 @@ namespace TWAINWorkingGroup
                 // it would be nice to have a solution for this, but that will need
                 // a dynamic marshalling system...
                 default:
-                    sts = STS.BADPROTOCOL;
+                    sts = TWAIN.STS.BADPROTOCOL;
                     break;
 
                 // DAT_AUDIOFILEXFER...
-                case (int)DAT.AUDIOFILEXFER:
+                case (int)TWAIN.DAT.AUDIOFILEXFER:
                     {
-                        sts = DatAudiofilexfer((DG)iDg, (MSG)iMsg);
+                        sts = DatAudiofilexfer((TWAIN.DG)iDg, (TWAIN.MSG)iMsg);
                         a_szTwmemref = "";
                     }
                     break;
 
                 // DAT_AUDIOINFO..
-                case (int)DAT.AUDIOINFO:
+                case (int)TWAIN.DAT.AUDIOINFO:
                     {
-                        TW_AUDIOINFO twaudioinfo = default;
-                        sts = DatAudioinfo((DG)iDg, (MSG)iMsg, ref twaudioinfo);
-                        a_szTwmemref = CsvSerializer.AudioinfoToCsv(twaudioinfo);
+                        TWAIN.TW_AUDIOINFO twaudioinfo = default(TWAIN.TW_AUDIOINFO);
+                        sts = DatAudioinfo((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twaudioinfo);
+                        a_szTwmemref = AudioinfoToCsv(twaudioinfo);
                     }
                     break;
 
                 // DAT_AUDIONATIVEXFER..
-                case (int)DAT.AUDIONATIVEXFER:
+                case (int)TWAIN.DAT.AUDIONATIVEXFER:
                     {
                         IntPtr intptr = IntPtr.Zero;
-                        sts = DatAudionativexfer((DG)iDg, (MSG)iMsg, ref intptr);
+                        sts = DatAudionativexfer((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref intptr);
                         a_szTwmemref = intptr.ToString();
                     }
                     break;
 
                 // DAT_CALLBACK...
-                case (int)DAT.CALLBACK:
+                case (int)TWAIN.DAT.CALLBACK:
                     {
-                        TW_CALLBACK twcallback = default;
-                        CsvSerializer.CsvToCallback(ref twcallback, a_szTwmemref);
-                        sts = DatCallback((DG)iDg, (MSG)iMsg, ref twcallback);
-                        a_szTwmemref = CsvSerializer.CallbackToCsv(twcallback);
+                        TWAIN.TW_CALLBACK twcallback = default(TWAIN.TW_CALLBACK);
+                        CsvToCallback(ref twcallback, a_szTwmemref);
+                        sts = DatCallback((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twcallback);
+                        a_szTwmemref = CallbackToCsv(twcallback);
                     }
                     break;
 
                 // DAT_CALLBACK2...
-                case (int)DAT.CALLBACK2:
+                case (int)TWAIN.DAT.CALLBACK2:
                     {
-                        TW_CALLBACK2 twcallback2 = default;
-                        CsvSerializer.CsvToCallback2(ref twcallback2, a_szTwmemref);
-                        sts = DatCallback2((DG)iDg, (MSG)iMsg, ref twcallback2);
-                        a_szTwmemref = CsvSerializer.Callback2ToCsv(twcallback2);
+                        TWAIN.TW_CALLBACK2 twcallback2 = default(TWAIN.TW_CALLBACK2);
+                        CsvToCallback2(ref twcallback2, a_szTwmemref);
+                        sts = DatCallback2((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twcallback2);
+                        a_szTwmemref = Callback2ToCsv(twcallback2);
                     }
                     break;
 
                 // DAT_CAPABILITY...
-                case (int)DAT.CAPABILITY:
+                case (int)TWAIN.DAT.CAPABILITY:
                     {
                         // Skip symbols for msg_querysupport, otherwise 0 gets turned into false, also
                         // if the command fails the return value is whatever was sent into us, which
                         // matches the experience one should get with C/C++...
                         string szStatus = "";
-                        TW_CAPABILITY twcapability = default;
+                        TWAIN.TW_CAPABILITY twcapability = default(TWAIN.TW_CAPABILITY);
                         CsvToCapability(ref twcapability, ref szStatus, a_szTwmemref);
-                        sts = DatCapability((DG)iDg, (MSG)iMsg, ref twcapability);
-                        if ((sts == STS.SUCCESS) || (sts == STS.CHECKSTATUS))
+                        sts = DatCapability((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twcapability);
+                        if ((sts == TWAIN.STS.SUCCESS) || (sts == TWAIN.STS.CHECKSTATUS))
                         {
                             // Convert the data to CSV...
-                            a_szTwmemref = CapabilityToCsv(twcapability, ((MSG)iMsg != MSG.QUERYSUPPORT));
+                            a_szTwmemref = CapabilityToCsv(twcapability, ((TWAIN.MSG)iMsg != TWAIN.MSG.QUERYSUPPORT));
                             // Free the handle if the driver created it...
-                            switch ((MSG)iMsg)
+                            switch ((TWAIN.MSG)iMsg)
                             {
                                 default: break;
-                                case MSG.GET:
-                                case MSG.GETCURRENT:
-                                case MSG.GETDEFAULT:
-                                case MSG.QUERYSUPPORT:
-                                case MSG.RESET:
+                                case TWAIN.MSG.GET:
+                                case TWAIN.MSG.GETCURRENT:
+                                case TWAIN.MSG.GETDEFAULT:
+                                case TWAIN.MSG.QUERYSUPPORT:
+                                case TWAIN.MSG.RESET:
                                     DsmMemFree(ref twcapability.hContainer);
                                     break;
                             }
@@ -1161,306 +1165,305 @@ namespace TWAINWorkingGroup
                     break;
 
                 // DAT_CIECOLOR..
-                case (int)DAT.CIECOLOR:
+                case (int)TWAIN.DAT.CIECOLOR:
                     {
-                        //TW_CIECOLOR twciecolor = default(TW_CIECOLOR);
-                        //sts = m_DATCiecolor((DG)iDg, (MSG)iMsg, ref twciecolor);
+                        //TWAIN.TW_CIECOLOR twciecolor = default(TWAIN.TW_CIECOLOR);
+                        //sts = m_twain.DatCiecolor((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twciecolor);
                         //a_szTwmemref = m_twain.CiecolorToCsv(twciecolor);
                     }
                     break;
 
                 // DAT_CUSTOMDSDATA...
-                case (int)DAT.CUSTOMDSDATA:
+                case (int)TWAIN.DAT.CUSTOMDSDATA:
                     {
-                        TW_CUSTOMDSDATA twcustomdsdata = default;
+                        TWAIN.TW_CUSTOMDSDATA twcustomdsdata = default(TWAIN.TW_CUSTOMDSDATA);
                         CsvToCustomdsdata(ref twcustomdsdata, a_szTwmemref);
-                        sts = DatCustomdsdata((DG)iDg, (MSG)iMsg, ref twcustomdsdata);
+                        sts = DatCustomdsdata((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twcustomdsdata);
                         a_szTwmemref = CustomdsdataToCsv(twcustomdsdata);
                     }
                     break;
 
                 // DAT_DEVICEEVENT...
-                case (int)DAT.DEVICEEVENT:
+                case (int)TWAIN.DAT.DEVICEEVENT:
                     {
-                        TW_DEVICEEVENT twdeviceevent = default;
-                        sts = DatDeviceevent((DG)iDg, (MSG)iMsg, ref twdeviceevent);
-                        a_szTwmemref = CsvSerializer.DeviceeventToCsv(twdeviceevent);
+                        TWAIN.TW_DEVICEEVENT twdeviceevent = default(TWAIN.TW_DEVICEEVENT);
+                        sts = DatDeviceevent((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twdeviceevent);
+                        a_szTwmemref = DeviceeventToCsv(twdeviceevent);
                     }
                     break;
 
                 // DAT_ENTRYPOINT...
-                case (int)DAT.ENTRYPOINT:
+                case (int)TWAIN.DAT.ENTRYPOINT:
                     {
-                        TW_ENTRYPOINT twentrypoint = default;
+                        TWAIN.TW_ENTRYPOINT twentrypoint = default(TWAIN.TW_ENTRYPOINT);
                         twentrypoint.Size = (uint)Marshal.SizeOf(twentrypoint);
-                        sts = DatEntrypoint((DG)iDg, (MSG)iMsg, ref twentrypoint);
-                        a_szTwmemref = CsvSerializer.EntrypointToCsv(twentrypoint);
+                        sts = DatEntrypoint((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twentrypoint);
+                        a_szTwmemref = EntrypointToCsv(twentrypoint);
                     }
                     break;
 
                 // DAT_EVENT...
-                case (int)DAT.EVENT:
+                case (int)TWAIN.DAT.EVENT:
                     {
-                        TW_EVENT twevent = default;
-                        sts = DatEvent((DG)iDg, (MSG)iMsg, ref twevent);
-                        a_szTwmemref = CsvSerializer.EventToCsv(twevent);
+                        TWAIN.TW_EVENT twevent = default(TWAIN.TW_EVENT);
+                        sts = DatEvent((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twevent);
+                        a_szTwmemref = EventToCsv(twevent);
                     }
                     break;
 
                 // DAT_EXTIMAGEINFO...
-                case (int)DAT.EXTIMAGEINFO:
+                case (int)TWAIN.DAT.EXTIMAGEINFO:
                     {
-                        TW_EXTIMAGEINFO twextimageinfo = default;
-                        CsvSerializer.CsvToExtimageinfo(ref twextimageinfo, a_szTwmemref);
-                        sts = DatExtimageinfo((DG)iDg, (MSG)iMsg, ref twextimageinfo);
-                        a_szTwmemref = CsvSerializer.ExtimageinfoToCsv(twextimageinfo);
+                        TWAIN.TW_EXTIMAGEINFO twextimageinfo = default(TWAIN.TW_EXTIMAGEINFO);
+                        CsvToExtimageinfo(ref twextimageinfo, a_szTwmemref);
+                        sts = DatExtimageinfo((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twextimageinfo);
+                        a_szTwmemref = ExtimageinfoToCsv(twextimageinfo);
                     }
                     break;
 
                 // DAT_FILESYSTEM...
-                case (int)DAT.FILESYSTEM:
+                case (int)TWAIN.DAT.FILESYSTEM:
                     {
-                        TW_FILESYSTEM twfilesystem = default;
-                        CsvSerializer.CsvToFilesystem(ref twfilesystem, a_szTwmemref);
-                        sts = DatFilesystem((DG)iDg, (MSG)iMsg, ref twfilesystem);
-                        a_szTwmemref = CsvSerializer.FilesystemToCsv(twfilesystem);
+                        TWAIN.TW_FILESYSTEM twfilesystem = default(TWAIN.TW_FILESYSTEM);
+                        CsvToFilesystem(ref twfilesystem, a_szTwmemref);
+                        sts = DatFilesystem((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twfilesystem);
+                        a_szTwmemref = FilesystemToCsv(twfilesystem);
                     }
                     break;
 
                 // DAT_FILTER...
-                case (int)DAT.FILTER:
+                case (int)TWAIN.DAT.FILTER:
                     {
-                        //TW_FILTER twfilter = default(TW_FILTER);
+                        //TWAIN.TW_FILTER twfilter = default(TWAIN.TW_FILTER);
                         //m_twain.CsvToFilter(ref twfilter, a_szTwmemref);
-                        //sts = m_DATFilter((DG)iDg, (MSG)iMsg, ref twfilter);
+                        //sts = m_twain.DatFilter((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twfilter);
                         //a_szTwmemref = m_twain.FilterToCsv(twfilter);
                     }
                     break;
 
                 // DAT_GRAYRESPONSE...
-                case (int)DAT.GRAYRESPONSE:
+                case (int)TWAIN.DAT.GRAYRESPONSE:
                     {
-                        //TW_GRAYRESPONSE twgrayresponse = default(TW_GRAYRESPONSE);
+                        //TWAIN.TW_GRAYRESPONSE twgrayresponse = default(TWAIN.TW_GRAYRESPONSE);
                         //m_twain.CsvToGrayresponse(ref twgrayresponse, a_szTwmemref);
-                        //sts = m_DATGrayresponse((DG)iDg, (MSG)iMsg, ref twgrayresponse);
+                        //sts = m_twain.DatGrayresponse((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twgrayresponse);
                         //a_szTwmemref = m_twain.GrayresponseToCsv(twgrayresponse);
                     }
                     break;
 
                 // DAT_ICCPROFILE...
-                case (int)DAT.ICCPROFILE:
+                case (int)TWAIN.DAT.ICCPROFILE:
                     {
-                        TW_MEMORY twmemory = default;
-                        sts = DatIccprofile((DG)iDg, (MSG)iMsg, ref twmemory);
-                        a_szTwmemref = CsvSerializer.IccprofileToCsv(twmemory);
+                        TWAIN.TW_MEMORY twmemory = default(TWAIN.TW_MEMORY);
+                        sts = DatIccprofile((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twmemory);
+                        a_szTwmemref = IccprofileToCsv(twmemory);
                     }
                     break;
 
                 // DAT_IDENTITY...
-                case (int)DAT.IDENTITY:
+                case (int)TWAIN.DAT.IDENTITY:
                     {
-                        TW_IDENTITY twidentity = default;
+                        TWAIN.TW_IDENTITY twidentity = default(TWAIN.TW_IDENTITY);
                         switch (iMsg)
                         {
                             default:
                                 break;
-                            case (int)MSG.SET:
-                            case (int)MSG.OPENDS:
-                                CsvSerializer.CsvToIdentity(ref twidentity, a_szTwmemref);
+                            case (int)TWAIN.MSG.SET:
+                            case (int)TWAIN.MSG.OPENDS:
+                                CsvToIdentity(ref twidentity, a_szTwmemref);
                                 break;
                         }
-                        sts = DatIdentity((DG)iDg, (MSG)iMsg, ref twidentity);
-                        a_szTwmemref = CsvSerializer.IdentityToCsv(twidentity);
+                        sts = DatIdentity((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twidentity);
+                        a_szTwmemref = IdentityToCsv(twidentity);
                     }
                     break;
 
                 // DAT_IMAGEFILEXFER...
-                case (int)DAT.IMAGEFILEXFER:
+                case (int)TWAIN.DAT.IMAGEFILEXFER:
                     {
-                        sts = DatImagefilexfer((DG)iDg, (MSG)iMsg);
+                        sts = DatImagefilexfer((TWAIN.DG)iDg, (TWAIN.MSG)iMsg);
                         a_szTwmemref = "";
                     }
                     break;
 
                 // DAT_IMAGEINFO...
-                case (int)DAT.IMAGEINFO:
+                case (int)TWAIN.DAT.IMAGEINFO:
                     {
-                        TW_IMAGEINFO twimageinfo = default;
-                        CsvSerializer.CsvToImageinfo(ref twimageinfo, a_szTwmemref);
-                        sts = DatImageinfo((DG)iDg, (MSG)iMsg, ref twimageinfo);
-                        a_szTwmemref = CsvSerializer.ImageinfoToCsv(twimageinfo);
+                        TWAIN.TW_IMAGEINFO twimageinfo = default(TWAIN.TW_IMAGEINFO);
+                        CsvToImageinfo(ref twimageinfo, a_szTwmemref);
+                        sts = DatImageinfo((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twimageinfo);
+                        a_szTwmemref = ImageinfoToCsv(twimageinfo);
                     }
                     break;
 
                 // DAT_IMAGELAYOUT...
-                case (int)DAT.IMAGELAYOUT:
+                case (int)TWAIN.DAT.IMAGELAYOUT:
                     {
-                        TW_IMAGELAYOUT twimagelayout = default;
-                        CsvSerializer.CsvToImagelayout(ref twimagelayout, a_szTwmemref);
-                        sts = DatImagelayout((DG)iDg, (MSG)iMsg, ref twimagelayout);
-                        a_szTwmemref = CsvSerializer.ImagelayoutToCsv(twimagelayout);
+                        TWAIN.TW_IMAGELAYOUT twimagelayout = default(TWAIN.TW_IMAGELAYOUT);
+                        CsvToImagelayout(ref twimagelayout, a_szTwmemref);
+                        sts = DatImagelayout((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twimagelayout);
+                        a_szTwmemref = ImagelayoutToCsv(twimagelayout);
                     }
                     break;
 
                 // DAT_IMAGEMEMFILEXFER...
-                case (int)DAT.IMAGEMEMFILEXFER:
+                case (int)TWAIN.DAT.IMAGEMEMFILEXFER:
                     {
-                        TW_IMAGEMEMXFER twimagememxfer = default;
-                        CsvSerializer.CsvToImagememxfer(ref twimagememxfer, a_szTwmemref);
-                        sts = DatImagememfilexfer((DG)iDg, (MSG)iMsg, ref twimagememxfer);
-                        a_szTwmemref = CsvSerializer.ImagememxferToCsv(twimagememxfer);
+                        TWAIN.TW_IMAGEMEMXFER twimagememxfer = default(TWAIN.TW_IMAGEMEMXFER);
+                        CsvToImagememxfer(ref twimagememxfer, a_szTwmemref);
+                        sts = DatImagememfilexfer((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twimagememxfer);
+                        a_szTwmemref = ImagememxferToCsv(twimagememxfer);
                     }
                     break;
 
                 // DAT_IMAGEMEMXFER...
-                case (int)DAT.IMAGEMEMXFER:
+                case (int)TWAIN.DAT.IMAGEMEMXFER:
                     {
-                        TW_IMAGEMEMXFER twimagememxfer = default;
-                        CsvSerializer.CsvToImagememxfer(ref twimagememxfer, a_szTwmemref);
-                        sts = DatImagememxfer((DG)iDg, (MSG)iMsg, ref twimagememxfer);
-                        a_szTwmemref = CsvSerializer.ImagememxferToCsv(twimagememxfer);
+                        TWAIN.TW_IMAGEMEMXFER twimagememxfer = default(TWAIN.TW_IMAGEMEMXFER);
+                        CsvToImagememxfer(ref twimagememxfer, a_szTwmemref);
+                        sts = DatImagememxfer((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twimagememxfer);
+                        a_szTwmemref = ImagememxferToCsv(twimagememxfer);
                     }
                     break;
 
                 // DAT_IMAGENATIVEXFER...
-                // TODO: Recode later
-                //case (int)DAT.IMAGENATIVEXFER:
-                //    {
-                //        IntPtr intptrBitmapHandle = IntPtr.Zero;
-                //        sts = DatImagenativexferHandle((DG)iDg, (MSG)iMsg, ref intptrBitmapHandle);
-                //        a_szTwmemref = intptrBitmapHandle.ToString();
-                //    }
-                //    break;
+                case (int)TWAIN.DAT.IMAGENATIVEXFER:
+                    {
+                        IntPtr intptrBitmapHandle = IntPtr.Zero;
+                        sts = DatImagenativexferHandle((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref intptrBitmapHandle);
+                        a_szTwmemref = intptrBitmapHandle.ToString();
+                    }
+                    break;
 
                 // DAT_JPEGCOMPRESSION...
-                case (int)DAT.JPEGCOMPRESSION:
+                case (int)TWAIN.DAT.JPEGCOMPRESSION:
                     {
-                        //TW_JPEGCOMPRESSION twjpegcompression = default(TW_JPEGCOMPRESSION);
+                        //TWAIN.TW_JPEGCOMPRESSION twjpegcompression = default(TWAIN.TW_JPEGCOMPRESSION);
                         //m_twain.CsvToJpegcompression(ref twjpegcompression, a_szTwmemref);
-                        //sts = m_DATJpegcompression((DG)iDg, (MSG)iMsg, ref twjpegcompression);
+                        //sts = m_twain.DatJpegcompression((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twjpegcompression);
                         //a_szTwmemref = m_twain.JpegcompressionToCsv(twjpegcompression);
                     }
                     break;
 
                 // DAT_METRICS...
-                case (int)DAT.METRICS:
+                case (int)TWAIN.DAT.METRICS:
                     {
-                        TW_METRICS twmetrics = default;
+                        TWAIN.TW_METRICS twmetrics = default(TWAIN.TW_METRICS);
                         twmetrics.SizeOf = (uint)Marshal.SizeOf(twmetrics);
-                        sts = DatMetrics((DG)iDg, (MSG)iMsg, ref twmetrics);
-                        a_szTwmemref = CsvSerializer.MetricsToCsv(twmetrics);
+                        sts = DatMetrics((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twmetrics);
+                        a_szTwmemref = MetricsToCsv(twmetrics);
                     }
                     break;
 
                 // DAT_PALETTE8...
-                case (int)DAT.PALETTE8:
+                case (int)TWAIN.DAT.PALETTE8:
                     {
-                        //TW_PALETTE8 twpalette8 = default(TW_PALETTE8);
+                        //TWAIN.TW_PALETTE8 twpalette8 = default(TWAIN.TW_PALETTE8);
                         //m_twain.CsvToPalette8(ref twpalette8, a_szTwmemref);
-                        //sts = m_DATPalette8((DG)iDg, (MSG)iMsg, ref twpalette8);
+                        //sts = m_twain.DatPalette8((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twpalette8);
                         //a_szTwmemref = m_twain.Palette8ToCsv(twpalette8);
                     }
                     break;
 
                 // DAT_PARENT...
-                case (int)DAT.PARENT:
+                case (int)TWAIN.DAT.PARENT:
                     {
-                        sts = DatParent((DG)iDg, (MSG)iMsg, ref m_intptrHwnd);
+                        sts = DatParent((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref m_intptrHwnd);
                         a_szTwmemref = "";
                     }
                     break;
 
                 // DAT_PASSTHRU...
-                case (int)DAT.PASSTHRU:
+                case (int)TWAIN.DAT.PASSTHRU:
                     {
-                        TW_PASSTHRU twpassthru = default;
-                        CsvSerializer.CsvToPassthru(ref twpassthru, a_szTwmemref);
-                        sts = DatPassthru((DG)iDg, (MSG)iMsg, ref twpassthru);
-                        a_szTwmemref = CsvSerializer.PassthruToCsv(twpassthru);
+                        TWAIN.TW_PASSTHRU twpassthru = default(TWAIN.TW_PASSTHRU);
+                        CsvToPassthru(ref twpassthru, a_szTwmemref);
+                        sts = DatPassthru((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twpassthru);
+                        a_szTwmemref = PassthruToCsv(twpassthru);
                     }
                     break;
 
                 // DAT_PENDINGXFERS...
-                case (int)DAT.PENDINGXFERS:
+                case (int)TWAIN.DAT.PENDINGXFERS:
                     {
-                        TW_PENDINGXFERS twpendingxfers = default;
-                        sts = DatPendingxfers((DG)iDg, (MSG)iMsg, ref twpendingxfers);
-                        a_szTwmemref = CsvSerializer.PendingxfersToCsv(twpendingxfers);
+                        TWAIN.TW_PENDINGXFERS twpendingxfers = default(TWAIN.TW_PENDINGXFERS);
+                        sts = DatPendingxfers((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twpendingxfers);
+                        a_szTwmemref = PendingxfersToCsv(twpendingxfers);
                     }
                     break;
 
                 // DAT_RGBRESPONSE...
-                case (int)DAT.RGBRESPONSE:
+                case (int)TWAIN.DAT.RGBRESPONSE:
                     {
-                        //TW_RGBRESPONSE twrgbresponse = default(TW_RGBRESPONSE);
+                        //TWAIN.TW_RGBRESPONSE twrgbresponse = default(TWAIN.TW_RGBRESPONSE);
                         //m_twain.CsvToRgbresponse(ref twrgbresponse, a_szTwmemref);
-                        //sts = m_DATRgbresponse((DG)iDg, (MSG)iMsg, ref twrgbresponse);
+                        //sts = m_twain.DatRgbresponse((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twrgbresponse);
                         //a_szTwmemref = m_twain.RgbresponseToCsv(twrgbresponse);
                     }
                     break;
 
                 // DAT_SETUPFILEXFER...
-                case (int)DAT.SETUPFILEXFER:
+                case (int)TWAIN.DAT.SETUPFILEXFER:
                     {
-                        TW_SETUPFILEXFER twsetupfilexfer = default;
-                        CsvSerializer.CsvToSetupfilexfer(ref twsetupfilexfer, a_szTwmemref);
-                        sts = DatSetupfilexfer((DG)iDg, (MSG)iMsg, ref twsetupfilexfer);
-                        a_szTwmemref = CsvSerializer.SetupfilexferToCsv(twsetupfilexfer);
+                        TWAIN.TW_SETUPFILEXFER twsetupfilexfer = default(TWAIN.TW_SETUPFILEXFER);
+                        CsvToSetupfilexfer(ref twsetupfilexfer, a_szTwmemref);
+                        sts = DatSetupfilexfer((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twsetupfilexfer);
+                        a_szTwmemref = SetupfilexferToCsv(twsetupfilexfer);
                     }
                     break;
 
                 // DAT_SETUPMEMXFER...
-                case (int)DAT.SETUPMEMXFER:
+                case (int)TWAIN.DAT.SETUPMEMXFER:
                     {
-                        TW_SETUPMEMXFER twsetupmemxfer = default;
-                        sts = DatSetupmemxfer((DG)iDg, (MSG)iMsg, ref twsetupmemxfer);
-                        a_szTwmemref = CsvSerializer.SetupmemxferToCsv(twsetupmemxfer);
+                        TWAIN.TW_SETUPMEMXFER twsetupmemxfer = default(TWAIN.TW_SETUPMEMXFER);
+                        sts = DatSetupmemxfer((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twsetupmemxfer);
+                        a_szTwmemref = SetupmemxferToCsv(twsetupmemxfer);
                     }
                     break;
 
                 // DAT_STATUS...
-                case (int)DAT.STATUS:
+                case (int)TWAIN.DAT.STATUS:
                     {
-                        TW_STATUS twstatus = default;
-                        sts = DatStatus((DG)iDg, (MSG)iMsg, ref twstatus);
-                        a_szTwmemref = CsvSerializer.StatusToCsv(twstatus);
+                        TWAIN.TW_STATUS twstatus = default(TWAIN.TW_STATUS);
+                        sts = DatStatus((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twstatus);
+                        a_szTwmemref = StatusToCsv(twstatus);
                     }
                     break;
 
                 // DAT_STATUSUTF8...
-                case (int)DAT.STATUSUTF8:
+                case (int)TWAIN.DAT.STATUSUTF8:
                     {
-                        TW_STATUSUTF8 twstatusutf8 = default;
-                        sts = DatStatusutf8((DG)iDg, (MSG)iMsg, ref twstatusutf8);
+                        TWAIN.TW_STATUSUTF8 twstatusutf8 = default(TWAIN.TW_STATUSUTF8);
+                        sts = DatStatusutf8((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twstatusutf8);
                         a_szTwmemref = Statusutf8ToCsv(twstatusutf8);
                     }
                     break;
 
                 // DAT_TWAINDIRECT...
-                case (int)DAT.TWAINDIRECT:
+                case (int)TWAIN.DAT.TWAINDIRECT:
                     {
-                        TW_TWAINDIRECT twtwaindirect = default;
-                        CsvSerializer.CsvToTwaindirect(ref twtwaindirect, a_szTwmemref);
-                        sts = DatTwaindirect((DG)iDg, (MSG)iMsg, ref twtwaindirect);
-                        a_szTwmemref = CsvSerializer.TwaindirectToCsv(twtwaindirect);
+                        TWAIN.TW_TWAINDIRECT twtwaindirect = default(TWAIN.TW_TWAINDIRECT);
+                        CsvToTwaindirect(ref twtwaindirect, a_szTwmemref);
+                        sts = DatTwaindirect((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twtwaindirect);
+                        a_szTwmemref = TwaindirectToCsv(twtwaindirect);
                     }
                     break;
 
                 // DAT_USERINTERFACE...
-                case (int)DAT.USERINTERFACE:
+                case (int)TWAIN.DAT.USERINTERFACE:
                     {
-                        TW_USERINTERFACE twuserinterface = default;
+                        TWAIN.TW_USERINTERFACE twuserinterface = default(TWAIN.TW_USERINTERFACE);
                         CsvToUserinterface(ref twuserinterface, a_szTwmemref);
-                        sts = DatUserinterface((DG)iDg, (MSG)iMsg, ref twuserinterface);
-                        a_szTwmemref = CsvSerializer.UserinterfaceToCsv(twuserinterface);
+                        sts = DatUserinterface((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twuserinterface);
+                        a_szTwmemref = UserinterfaceToCsv(twuserinterface);
                     }
                     break;
 
                 // DAT_XFERGROUP...
-                case (int)DAT.XFERGROUP:
+                case (int)TWAIN.DAT.XFERGROUP:
                     {
                         uint uXferGroup = 0;
-                        sts = DatXferGroup((DG)iDg, (MSG)iMsg, ref uXferGroup);
+                        sts = DatXferGroup((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref uXferGroup);
                         a_szTwmemref = string.Format("0x{0:X}", uXferGroup);
                     }
                     break;
@@ -1488,7 +1491,7 @@ namespace TWAINWorkingGroup
         /// <param name="count"></param>
         public static void MemCpy(IntPtr dest, IntPtr src, int count)
         {
-            if (PlatformInfo.IsWindows)
+            if (TWAIN.GetPlatform() == TWAIN.Platform.WINDOWS)
             {
                 NativeMethods.CopyMemory(dest, src, (uint)count);
             }
@@ -1506,7 +1509,7 @@ namespace TWAINWorkingGroup
         /// <param name="count"></param>
         public static void MemMove(IntPtr dest, IntPtr src, int count)
         {
-            if (PlatformInfo.IsWindows)
+            if (TWAIN.GetPlatform() == TWAIN.Platform.WINDOWS)
             {
                 NativeMethods.MoveMemory(dest, src, (uint)count);
             }
@@ -1522,7 +1525,6 @@ namespace TWAINWorkingGroup
         /// <param name="a_szFilename"></param>
         /// <param name="a_intptrPtr"></param>
         /// <param name="a_iBytes"></param>
-        /// <param name="a_szFinalFilename"></param>
         /// <returns></returns>
         public static int WriteImageFile(string a_szFilename, IntPtr a_intptrPtr, int a_iBytes, out string a_szFinalFilename)
         {
@@ -1560,7 +1562,7 @@ namespace TWAINWorkingGroup
                 a_szFinalFilename = a_szFilename;
 
                 // Handle Windows...
-                if (PlatformInfo.IsWindows)
+                if (TWAIN.GetPlatform() == TWAIN.Platform.WINDOWS)
                 {
                     IntPtr intptrFile;
                     IntPtr intptrBytes = (IntPtr)a_iBytes;
@@ -1597,12 +1599,142 @@ namespace TWAINWorkingGroup
         }
 
         /// <summary>
+        /// Convert the contents of an audio info to a string that we can show in
+        /// our simple GUI...
+        /// </summary>
+        /// <param name="a_twaudioinfo">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string AudioinfoToCsv(TW_AUDIOINFO a_twaudioinfo)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twaudioinfo.Name.Get());
+                csv.Add(a_twaudioinfo.Reserved.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a callback to a string that we can show in
+        /// our simple GUI...
+        /// </summary>
+        /// <param name="a_twcallback">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string CallbackToCsv(TW_CALLBACK a_twcallback)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twcallback.CallBackProc.ToString());
+                csv.Add(a_twcallback.RefCon.ToString());
+                csv.Add(a_twcallback.Message.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a string to an callback structure...
+        /// </summary>
+        /// <param name="a_twcallback">A TWAIN structure</param>
+        /// <param name="a_szCallback">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToCallback(ref TW_CALLBACK a_twcallback, string a_szCallback)
+        {
+            // Init stuff...
+            a_twcallback = default(TW_CALLBACK);
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szCallback);
+
+                // Grab the values...
+                a_twcallback.CallBackProc = (IntPtr)UInt64.Parse(asz[0]);
+                a_twcallback.RefCon = uint.Parse(asz[1]);
+                a_twcallback.Message = ushort.Parse(asz[2]);
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a callback2 to a string that we can show in
+        /// our simple GUI...
+        /// </summary>
+        /// <param name="a_twcallback2">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string Callback2ToCsv(TW_CALLBACK2 a_twcallback2)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twcallback2.CallBackProc.ToString());
+                csv.Add(a_twcallback2.RefCon.ToString());
+                csv.Add(a_twcallback2.Message.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a string to an callback2 structure...
+        /// </summary>
+        /// <param name="a_twcallback2">A TWAIN structure</param>
+        /// <param name="a_szCallback2">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToCallback2(ref TW_CALLBACK2 a_twcallback2, string a_szCallback2)
+        {
+            // Init stuff...
+            a_twcallback2 = default(TW_CALLBACK2);
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szCallback2);
+
+                // Grab the values...
+                a_twcallback2.CallBackProc = (IntPtr)UInt64.Parse(asz[0]);
+                a_twcallback2.RefCon = (UIntPtr)UInt64.Parse(asz[1]);
+                a_twcallback2.Message = ushort.Parse(asz[2]);
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
         /// Convert the contents of a capability to a string that we can show in
         /// our simple GUI....
         /// </summary>
         /// <param name="a_twcapability">A TWAIN structure</param>
-        /// <param name="a_blUseSymbols"></param>
         /// <returns>A CSV string of the TWAIN structure</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public string CapabilityToCsv(TW_CAPABILITY a_twcapability, bool a_blUseSymbols)
         {
             IntPtr intptr;
@@ -1622,10 +1754,10 @@ namespace TWAINWorkingGroup
                         CSV csvArray;
 
                         // Mac has a level of indirection and a different structure (ick)...
-                        if (PlatformInfo.IsMacOSX)
+                        if (ms_platform == Platform.MACOSX)
                         {
                             // Crack the container...
-                            TW_ARRAY_MACOSX twarraymacosx = default;
+                            TW_ARRAY_MACOSX twarraymacosx = default(TW_ARRAY_MACOSX);
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twarraymacosx = (TW_ARRAY_MACOSX)Marshal.PtrToStructure(intptrLocked, typeof(TW_ARRAY_MACOSX));
                             ItemType = (TWTY)twarraymacosx.ItemType;
@@ -1635,7 +1767,7 @@ namespace TWAINWorkingGroup
                         else
                         {
                             // Crack the container...
-                            TW_ARRAY twarray = default;
+                            TW_ARRAY twarray = default(TW_ARRAY);
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twarray = (TW_ARRAY)Marshal.PtrToStructure(intptrLocked, typeof(TW_ARRAY));
                             ItemType = twarray.ItemType;
@@ -1654,7 +1786,7 @@ namespace TWAINWorkingGroup
                             for (uu = 0; uu < NumItems; uu++)
                             {
                                 string szItem = GetIndexedItem(a_twcapability, ItemType, intptr, (int)uu);
-                                szValue = CsvSerializer.CvtCapValueToEnum(a_twcapability.Cap, szItem);
+                                szValue = CvtCapValueToEnum(a_twcapability.Cap, szItem);
                                 csvArray.Add(szValue);
                             }
                         }
@@ -1677,10 +1809,10 @@ namespace TWAINWorkingGroup
                         CSV csvEnum;
 
                         // Mac has a level of indirection and a different structure (ick)...
-                        if (PlatformInfo.IsMacOSX)
+                        if (ms_platform == Platform.MACOSX)
                         {
                             // Crack the container...
-                            TW_ENUMERATION_MACOSX twenumerationmacosx = default;
+                            TW_ENUMERATION_MACOSX twenumerationmacosx = default(TW_ENUMERATION_MACOSX);
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twenumerationmacosx = (TW_ENUMERATION_MACOSX)Marshal.PtrToStructure(intptrLocked, typeof(TW_ENUMERATION_MACOSX));
                             ItemType = (TWTY)twenumerationmacosx.ItemType;
@@ -1694,10 +1826,10 @@ namespace TWAINWorkingGroup
                             csvEnum.Add(twenumerationmacosx.DefaultIndex.ToString());
                         }
                         // Windows or the 2.4+ Linux DSM...
-                        else if ((PlatformInfo.IsWindows) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm)))
+                        else if ((ms_platform == Platform.WINDOWS) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm)))
                         {
                             // Crack the container...
-                            TW_ENUMERATION twenumeration = default;
+                            TW_ENUMERATION twenumeration = default(TW_ENUMERATION);
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twenumeration = (TW_ENUMERATION)Marshal.PtrToStructure(intptrLocked, typeof(TW_ENUMERATION));
                             ItemType = twenumeration.ItemType;
@@ -1714,7 +1846,7 @@ namespace TWAINWorkingGroup
                         else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
                         {
                             // Crack the container...
-                            TW_ENUMERATION_LINUX64 twenumerationlinux64 = default;
+                            TW_ENUMERATION_LINUX64 twenumerationlinux64 = default(TW_ENUMERATION_LINUX64);
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twenumerationlinux64 = (TW_ENUMERATION_LINUX64)Marshal.PtrToStructure(intptrLocked, typeof(TW_ENUMERATION_LINUX64));
                             ItemType = twenumerationlinux64.ItemType;
@@ -1742,7 +1874,7 @@ namespace TWAINWorkingGroup
                             for (uu = 0; uu < NumItems; uu++)
                             {
                                 string szItem = GetIndexedItem(a_twcapability, ItemType, intptr, (int)uu);
-                                szValue = CsvSerializer.CvtCapValueToEnum(a_twcapability.Cap, szItem);
+                                szValue = CvtCapValueToEnum(a_twcapability.Cap, szItem);
                                 csvEnum.Add(szValue);
                             }
                         }
@@ -1764,10 +1896,10 @@ namespace TWAINWorkingGroup
                         CSV csvOnevalue;
 
                         // Mac has a level of indirection and a different structure (ick)...
-                        if (PlatformInfo.IsMacOSX)
+                        if (ms_platform == Platform.MACOSX)
                         {
                             // Crack the container...
-                            TW_ONEVALUE_MACOSX twonevaluemacosx = default;
+                            TW_ONEVALUE_MACOSX twonevaluemacosx = default(TW_ONEVALUE_MACOSX);
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twonevaluemacosx = (TW_ONEVALUE_MACOSX)Marshal.PtrToStructure(intptrLocked, typeof(TW_ONEVALUE_MACOSX));
                             ItemType = (TWTY)twonevaluemacosx.ItemType;
@@ -1776,7 +1908,7 @@ namespace TWAINWorkingGroup
                         else
                         {
                             // Crack the container...
-                            TW_ONEVALUE twonevalue = default;
+                            TW_ONEVALUE twonevalue = default(TW_ONEVALUE);
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twonevalue = (TW_ONEVALUE)Marshal.PtrToStructure(intptrLocked, typeof(TW_ONEVALUE));
                             ItemType = (TWTY)twonevalue.ItemType;
@@ -1791,7 +1923,7 @@ namespace TWAINWorkingGroup
                         {
                             string szValue;
                             string szItem = GetIndexedItem(a_twcapability, ItemType, intptr, 0);
-                            szValue = CsvSerializer.CvtCapValueToEnum(a_twcapability.Cap, szItem);
+                            szValue = CvtCapValueToEnum(a_twcapability.Cap, szItem);
                             csvOnevalue.Add(szValue);
                         }
                         else
@@ -1815,8 +1947,8 @@ namespace TWAINWorkingGroup
                         TW_RANGE_FIX32_MACOSX twrangefix32macosx;
 
                         // Mac has a level of indirection and a different structure (ick)...
-                        twrange = default;
-                        if (PlatformInfo.IsMacOSX)
+                        twrange = default(TW_RANGE);
+                        if (ms_platform == Platform.MACOSX)
                         {
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twrangemacosx = (TW_RANGE_MACOSX)Marshal.PtrToStructure(intptrLocked, typeof(TW_RANGE_MACOSX));
@@ -1835,7 +1967,7 @@ namespace TWAINWorkingGroup
                             twrangefix32.CurrentValue = twrangefix32macosx.CurrentValue;
                         }
                         // Windows or the 2.4+ Linux DSM...
-                        else if ((PlatformInfo.IsWindows) || (m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm)))
+                        else if ((ms_platform == Platform.WINDOWS) || (m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm)))
                         {
                             intptrLocked = DsmMemLock(a_twcapability.hContainer);
                             twrange = (TW_RANGE)Marshal.PtrToStructure(intptrLocked, typeof(TW_RANGE));
@@ -1952,6 +2084,7 @@ namespace TWAINWorkingGroup
         /// <param name="a_szSetting">A CSV string of the TWAIN structure</param>
         /// <param name="a_szValue">The container for this capability</param>
         /// <returns>True if the conversion is successful</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public bool CsvToCapability(ref TW_CAPABILITY a_twcapability, ref string a_szSetting, string a_szValue)
         {
             int ii = 0;
@@ -1989,7 +2122,7 @@ namespace TWAINWorkingGroup
                     else
                     {
                         a_twcapability.Cap = (CAP)Enum.Parse(typeof(CAP), asz[0], true);
-                    }
+					}
                 }
                 catch
                 {
@@ -2006,7 +2139,7 @@ namespace TWAINWorkingGroup
                 {
                     try
                     {
-                        a_twcapability.ConType = (TWON)Enum.Parse(typeof(TWON), asz[1].Replace("TWON_", ""), true);
+                        a_twcapability.ConType = (TWON)Enum.Parse(typeof(TWON), asz[1].Replace("TWON_", "").Replace("twon_", ""), true);
                     }
                     catch
                     {
@@ -2020,7 +2153,7 @@ namespace TWAINWorkingGroup
                 {
                     try
                     {
-                        twty = (TWTY)Enum.Parse(typeof(TWTY), asz[2].Replace("TWTY_", ""), true);
+                        twty = (TWTY)Enum.Parse(typeof(TWTY), asz[2].Replace("TWTY_", "").Replace("twty_", ""), true);
                     }
                     catch
                     {
@@ -2050,14 +2183,14 @@ namespace TWAINWorkingGroup
                             u32NumItems = uint.Parse(asz[3]);
 
                             // Allocate the container (go for worst case, which is TW_STR255)...
-                            if (PlatformInfo.IsMacOSX)
+                            if (ms_platform == Platform.MACOSX)
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ARRAY_MACOSX)) + (((int)u32NumItems + 1) * Marshal.SizeOf(default(TW_STR255)))));
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ARRAY_MACOSX twarraymacosx = default;
+                                TW_ARRAY_MACOSX twarraymacosx = default(TW_ARRAY_MACOSX);
                                 twarraymacosx.ItemType = (uint)twty;
                                 twarraymacosx.NumItems = u32NumItems;
                                 Marshal.StructureToPtr(twarraymacosx, intptr, true);
@@ -2072,7 +2205,7 @@ namespace TWAINWorkingGroup
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ARRAY twarray = default;
+                                TW_ARRAY twarray = default(TW_ARRAY);
                                 twarray.ItemType = twty;
                                 twarray.NumItems = u32NumItems;
                                 Marshal.StructureToPtr(twarray, intptr, true);
@@ -2082,7 +2215,7 @@ namespace TWAINWorkingGroup
                             }
 
                             // Set the ItemList...
-                            for (ii = 0; ii < u32NumItems; ii++)
+                            for (ii = 0; (ii < u32NumItems) && ((ii + 4) < asz.Length); ii++)
                             {
                                 szResult = SetIndexedItem(a_twcapability, twty, intptr, ii, asz[ii + 4]);
                                 if (szResult != "")
@@ -2107,14 +2240,14 @@ namespace TWAINWorkingGroup
                             u32NumItems = uint.Parse(asz[3]);
 
                             // Allocate the container (go for worst case, which is TW_STR255)...
-                            if (PlatformInfo.IsMacOSX)
+                            if (ms_platform == Platform.MACOSX)
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ENUMERATION_MACOSX)) + (((int)u32NumItems + 1) * Marshal.SizeOf(default(TW_STR255)))));
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ENUMERATION_MACOSX twenumerationmacosx = default;
+                                TW_ENUMERATION_MACOSX twenumerationmacosx = default(TW_ENUMERATION_MACOSX);
                                 twenumerationmacosx.ItemType = (uint)twty;
                                 twenumerationmacosx.NumItems = u32NumItems;
                                 twenumerationmacosx.CurrentIndex = uint.Parse(asz[4]);
@@ -2125,14 +2258,14 @@ namespace TWAINWorkingGroup
                                 intptr = (IntPtr)((UInt64)intptr + (UInt64)Marshal.SizeOf(twenumerationmacosx));
                             }
                             // Windows or the 2.4+ Linux DSM...
-                            else if ((PlatformInfo.IsWindows) || ((m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm))))
+                            else if ((ms_platform == Platform.WINDOWS) || ((m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm))))
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ENUMERATION)) + (((int)u32NumItems + 1) * Marshal.SizeOf(default(TW_STR255)))));
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ENUMERATION twenumeration = default;
+                                TW_ENUMERATION twenumeration = default(TW_ENUMERATION);
                                 twenumeration.ItemType = twty;
                                 twenumeration.NumItems = u32NumItems;
                                 twenumeration.CurrentIndex = uint.Parse(asz[4]);
@@ -2150,7 +2283,7 @@ namespace TWAINWorkingGroup
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ENUMERATION_LINUX64 twenumerationlinux64 = default;
+                                TW_ENUMERATION_LINUX64 twenumerationlinux64 = default(TW_ENUMERATION_LINUX64);
                                 twenumerationlinux64.ItemType = twty;
                                 twenumerationlinux64.NumItems = u32NumItems;
                                 twenumerationlinux64.CurrentIndex = uint.Parse(asz[4]);
@@ -2184,14 +2317,14 @@ namespace TWAINWorkingGroup
                             }
 
                             // Allocate the container (go for worst case, which is TW_STR255)...
-                            if (PlatformInfo.IsMacOSX)
+                            if (ms_platform == Platform.MACOSX)
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_ONEVALUE_MACOSX)) + Marshal.SizeOf(default(TW_STR255))));
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ONEVALUE_MACOSX twonevaluemacosx = default;
+                                TW_ONEVALUE_MACOSX twonevaluemacosx = default(TW_ONEVALUE_MACOSX);
                                 twonevaluemacosx.ItemType = (uint)twty;
                                 Marshal.StructureToPtr(twonevaluemacosx, intptr, true);
 
@@ -2205,7 +2338,7 @@ namespace TWAINWorkingGroup
                                 intptr = DsmMemLock(a_twcapability.hContainer);
 
                                 // Set the meta data...
-                                TW_ONEVALUE twonevalue = default;
+                                TW_ONEVALUE twonevalue = default(TW_ONEVALUE);
                                 twonevalue.ItemType = twty;
                                 Marshal.StructureToPtr(twonevalue, intptr, true);
 
@@ -2233,14 +2366,14 @@ namespace TWAINWorkingGroup
                             }
 
                             // Allocate the container (go for worst case, which is TW_STR255)...
-                            if (PlatformInfo.IsMacOSX)
+                            if (ms_platform == Platform.MACOSX)
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE_MACOSX))));
                                 intptr = DsmMemLock(a_twcapability.hContainer);
                             }
                             // Windows or the 2.4+ Linux DSM...
-                            else if ((PlatformInfo.IsWindows) || ((m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm))))
+                            else if ((ms_platform == Platform.WINDOWS) || ((m_linuxdsm == LinuxDsm.IsLatestDsm) || ((m_blFoundLatestDsm || m_blFoundLatestDsm64) && (m_linuxdsm == LinuxDsm.IsLatestDsm))))
                             {
                                 // Allocate...
                                 a_twcapability.hContainer = DsmMemAlloc((uint)(Marshal.SizeOf(default(TW_RANGE))));
@@ -2285,6 +2418,7 @@ namespace TWAINWorkingGroup
         /// </summary>
         /// <param name="a_twcustomdsdata">A TWAIN structure</param>
         /// <returns>A CSV string of the TWAIN structure</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public string CustomdsdataToCsv(TW_CUSTOMDSDATA a_twcustomdsdata)
         {
             try
@@ -2309,10 +2443,11 @@ namespace TWAINWorkingGroup
         /// <param name="a_twcustomdsdata">A TWAIN structure</param>
         /// <param name="a_szCustomdsdata">A CSV string of the TWAIN structure</param>
         /// <returns>True if the conversion is successful</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public bool CsvToCustomdsdata(ref TW_CUSTOMDSDATA a_twcustomdsdata, string a_szCustomdsdata)
         {
             // Init stuff...
-            a_twcustomdsdata = default;
+            a_twcustomdsdata = default(TW_CUSTOMDSDATA);
 
             // Build the string...
             try
@@ -2336,6 +2471,872 @@ namespace TWAINWorkingGroup
 
             // All done...
             return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a device event to a string that we can show in
+        /// our simple GUI...
+        /// </summary>
+        /// <param name="a_twdeviceevent">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string DeviceeventToCsv(TW_DEVICEEVENT a_twdeviceevent)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(((TWDE)a_twdeviceevent.Event).ToString());
+                csv.Add(a_twdeviceevent.DeviceName.Get());
+                csv.Add(a_twdeviceevent.BatteryMinutes.ToString());
+                csv.Add(a_twdeviceevent.BatteryPercentage.ToString());
+                csv.Add(a_twdeviceevent.PowerSupply.ToString());
+                csv.Add(((double)a_twdeviceevent.XResolution.Whole + ((double)a_twdeviceevent.XResolution.Frac / 65536.0)).ToString());
+                csv.Add(((double)a_twdeviceevent.YResolution.Whole + ((double)a_twdeviceevent.YResolution.Frac / 65536.0)).ToString());
+                csv.Add(a_twdeviceevent.FlashUsed2.ToString());
+                csv.Add(a_twdeviceevent.AutomaticCapture.ToString());
+                csv.Add(a_twdeviceevent.TimeBeforeFirstCapture.ToString());
+                csv.Add(a_twdeviceevent.TimeBetweenCaptures.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of an entry point to a string that
+        /// we can show in our simple GUI...
+        /// </summary>
+        /// <param name="a_twentrypoint">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string EntrypointToCsv(TW_ENTRYPOINT a_twentrypoint)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twentrypoint.Size.ToString());
+                csv.Add("0x" + ((a_twentrypoint.DSM_Entry == null)?"0":a_twentrypoint.DSM_Entry.ToString("X")));
+                csv.Add("0x" + ((a_twentrypoint.DSM_MemAllocate == null) ? "0" : a_twentrypoint.DSM_MemAllocate.ToString("X")));
+                csv.Add("0x" + ((a_twentrypoint.DSM_MemFree == null) ? "0" : a_twentrypoint.DSM_MemFree.ToString("X")));
+                csv.Add("0x" + ((a_twentrypoint.DSM_MemLock == null) ? "0" : a_twentrypoint.DSM_MemLock.ToString("X")));
+                csv.Add("0x" + ((a_twentrypoint.DSM_MemUnlock == null) ? "0" : a_twentrypoint.DSM_MemUnlock.ToString("X")));
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of an event to a string that
+        /// we can show in our simple GUI...
+        /// </summary>
+        /// <param name="a_twevent">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string EventToCsv(TW_EVENT a_twevent)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twevent.pEvent.ToString());
+                csv.Add(a_twevent.TWMessage.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of an extimageinfo to a string that we can show in
+        /// our simple GUI...
+        /// </summary>
+        /// <param name="a_twextimageinfo">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string ExtimageinfoToCsv(TW_EXTIMAGEINFO a_twextimageinfo)
+        {
+            try
+            {
+                uint uTwinfo = 0;
+                CSV csv = new CSV();
+                csv.Add(a_twextimageinfo.NumInfos.ToString());
+                for (int ii = 0; (ii < a_twextimageinfo.NumInfos) && (ii < 200); ii++)
+                {
+                    TWEI twei;
+                    TWTY twty;
+                    STS sts;
+                    TW_INFO twinfo = default(TW_INFO);
+                    a_twextimageinfo.Get(uTwinfo, ref twinfo);
+                    twei = (TWEI)twinfo.InfoId;
+                    if (twei.ToString() != twinfo.InfoId.ToString())
+                    {
+                        csv.Add("TWEI_" + twei.ToString());
+                    }
+                    else
+                    {
+                        csv.Add(string.Format("0x{0:X}", twinfo.InfoId));
+                    }
+                    twty = (TWTY)twinfo.ItemType;
+                    if (twty.ToString() != twinfo.ItemType.ToString())
+                    {
+                        csv.Add("TWTY_" + twty.ToString());
+                    }
+                    else
+                    {
+                        csv.Add(string.Format("0x{0:X}", twinfo.ItemType));
+                    }
+                    csv.Add(twinfo.NumItems.ToString());
+                    sts = (STS)twinfo.ReturnCode;
+                    if (sts.ToString() != twinfo.ReturnCode.ToString())
+                    {
+                        csv.Add("TWRC_" + sts.ToString());
+                    }
+                    else
+                    {
+                        csv.Add(string.Format("0x{0:X}", twinfo.ReturnCode));
+                    }
+                    csv.Add(twinfo.Item.ToString());
+                    uTwinfo += 1;
+                }
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a string to an extimageinfo structure,
+        /// note that we don't have to worry about containers going in this
+        /// direction...
+        /// </summary>
+        /// <param name="a_twextimageinfo">A TWAIN structure</param>
+        /// <param name="a_szExtimageinfo">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToExtimageinfo(ref TW_EXTIMAGEINFO a_twextimageinfo, string a_szExtimageinfo)
+        {
+            // Init stuff...
+            a_twextimageinfo = default(TW_EXTIMAGEINFO);
+
+            // Build the string...
+            try
+            {
+                int iField;
+                uint uTwinfo;
+                string[] asz = CSV.Parse(a_szExtimageinfo);
+
+                // Set the number of entries (this is the easy bit)...
+                uint.TryParse(asz[0], out a_twextimageinfo.NumInfos);
+                if (a_twextimageinfo.NumInfos > 200)
+                {
+                    Log.Error("***error*** - we're limited to 200 entries, if this is a problem, just add more, and fix this code...");
+                    return (false);
+                }
+
+                // Okay, walk all the entries in steps of TW_INFO...
+                uTwinfo = 0;
+                for (iField = 1; iField < asz.Length; iField += 5)
+                {
+                    UInt64 u64;
+                    TWEI twei;
+                    TW_INFO twinfo = default(TW_INFO);
+                    if ((iField + 5) > asz.Length)
+                    {
+                        Log.Error("***error*** - badly constructed list, should be: num,(twinfo),(twinfo)...");
+                        return (false);
+                    }
+                    if (TWEI.TryParse(asz[iField + 0].Replace("TWEI_", ""), out twei))
+                    {
+                        twinfo.InfoId = (ushort)twei;
+                    }
+                    else
+                    {
+                        if (asz[iField + 0].ToLowerInvariant().StartsWith("0x"))
+                        {
+                            ushort.TryParse(asz[iField + 0].Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out twinfo.InfoId);
+                        }
+                        else
+                        {
+                            ushort.TryParse(asz[iField + 0], out twinfo.InfoId);
+                        }
+                    }
+                    // We really don't care about these...
+                    ushort.TryParse(asz[iField + 1], out twinfo.ItemType);
+                    ushort.TryParse(asz[iField + 2], out twinfo.NumItems);
+                    ushort.TryParse(asz[iField + 3], out twinfo.ReturnCode);
+                    UInt64.TryParse(asz[iField + 4], out u64);
+                    twinfo.Item = (UIntPtr)u64;
+                    a_twextimageinfo.Set(uTwinfo, ref twinfo);
+                    uTwinfo += 1;
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a filesystem to a string that we can show in
+        /// our simple GUI...
+        /// </summary>
+        /// <param name="a_twfilesystem">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string FilesystemToCsv(TW_FILESYSTEM a_twfilesystem)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twfilesystem.InputName.Get());
+                csv.Add(a_twfilesystem.OutputName.Get());
+                csv.Add(a_twfilesystem.Context.ToString());
+                csv.Add(a_twfilesystem.Recursive.ToString());
+                csv.Add(a_twfilesystem.FileType.ToString());
+                csv.Add(a_twfilesystem.Size.ToString());
+                csv.Add(a_twfilesystem.CreateTimeDate.Get());
+                csv.Add(a_twfilesystem.ModifiedTimeDate.Get());
+                csv.Add(a_twfilesystem.FreeSpace.ToString());
+                csv.Add(a_twfilesystem.NewImageSize.ToString());
+                csv.Add(a_twfilesystem.NumberOfFiles.ToString());
+                csv.Add(a_twfilesystem.NumberOfSnippets.ToString());
+                csv.Add(a_twfilesystem.DeviceGroupMask.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a string to a filesystem structure...
+        /// </summary>
+        /// <param name="a_twfilesystem">A TWAIN structure</param>
+        /// <param name="a_szFilesystem">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToFilesystem(ref TW_FILESYSTEM a_twfilesystem, string a_szFilesystem)
+        {
+            // Init stuff...
+            a_twfilesystem = default(TW_FILESYSTEM);
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szFilesystem);
+
+                // Grab the values...
+                a_twfilesystem.InputName.Set(asz[0]);
+                a_twfilesystem.OutputName.Set(asz[1]);
+                a_twfilesystem.Context = (IntPtr)UInt64.Parse(asz[2]);
+                a_twfilesystem.Recursive = int.Parse(asz[3]);
+                a_twfilesystem.FileType = int.Parse(asz[4]);
+                a_twfilesystem.Size = uint.Parse(asz[5]);
+                a_twfilesystem.CreateTimeDate.Set(asz[6]);
+                a_twfilesystem.ModifiedTimeDate.Set(asz[7]);
+                a_twfilesystem.FreeSpace = (uint)UInt64.Parse(asz[8]);
+                a_twfilesystem.NewImageSize = (uint)UInt64.Parse(asz[9]);
+                a_twfilesystem.NumberOfFiles = (uint)UInt64.Parse(asz[10]);
+                a_twfilesystem.NumberOfSnippets = (uint)UInt64.Parse(asz[11]);
+                a_twfilesystem.DeviceGroupMask = (uint)UInt64.Parse(asz[12]);
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of an iccprofile to a string that we can
+        /// show in our simple GUI...
+        /// </summary>
+        /// <param name="a_twmemory">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string IccprofileToCsv(TW_MEMORY a_twmemory)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twmemory.Flags.ToString());
+                csv.Add(a_twmemory.Length.ToString());
+                csv.Add(a_twmemory.TheMem.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of an identity to a string that we can show in
+        /// our simple GUI...
+        /// </summary>
+        /// <param name="a_twidentity">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string IdentityToCsv(TW_IDENTITY a_twidentity)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twidentity.Id.ToString());
+                csv.Add(a_twidentity.Version.MajorNum.ToString());
+                csv.Add(a_twidentity.Version.MinorNum.ToString());
+                csv.Add(a_twidentity.Version.Language.ToString());
+                csv.Add(a_twidentity.Version.Country.ToString());
+                csv.Add(a_twidentity.Version.Info.Get());
+                csv.Add(a_twidentity.ProtocolMajor.ToString());
+                csv.Add(a_twidentity.ProtocolMinor.ToString());
+                csv.Add("0x" + a_twidentity.SupportedGroups.ToString("X"));
+                csv.Add(a_twidentity.Manufacturer.Get());
+                csv.Add(a_twidentity.ProductFamily.Get());
+                csv.Add(a_twidentity.ProductName.Get());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a string to an identity structure...
+        /// </summary>
+        /// <param name="a_twidentity">A TWAIN structure</param>
+        /// <param name="a_szIdentity">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToIdentity(ref TW_IDENTITY a_twidentity, string a_szIdentity)
+        {
+            // Init stuff...
+            a_twidentity = default(TW_IDENTITY);
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szIdentity);
+
+                // Grab the values...
+                a_twidentity.Id = ulong.Parse(asz[0]);
+                a_twidentity.Version.MajorNum = ushort.Parse(asz[1]);
+                a_twidentity.Version.MinorNum = ushort.Parse(asz[2]);
+                if (asz[3] != "0") a_twidentity.Version.Language = (TWLG)Enum.Parse(typeof(TWLG), asz[3]);
+                if (asz[4] != "0") a_twidentity.Version.Country = (TWCY)Enum.Parse(typeof(TWCY), asz[4]);
+                a_twidentity.Version.Info.Set(asz[5]);
+                a_twidentity.ProtocolMajor = ushort.Parse(asz[6]);
+                a_twidentity.ProtocolMinor = ushort.Parse(asz[7]);
+                a_twidentity.SupportedGroups = asz[8].ToLower().StartsWith("0x") ? Convert.ToUInt32(asz[8].Remove(0, 2), 16) : Convert.ToUInt32(asz[8], 16);
+                a_twidentity.Manufacturer.Set(asz[9]);
+                a_twidentity.ProductFamily.Set(asz[10]);
+                a_twidentity.ProductName.Set(asz[11]);
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a image info to a string that we can show in
+        /// our simple GUI...
+        /// </summary>
+        /// <param name="a_twimageinfo">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string ImageinfoToCsv(TW_IMAGEINFO a_twimageinfo)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(((double)a_twimageinfo.XResolution.Whole + ((double)a_twimageinfo.XResolution.Frac / 65536.0)).ToString());
+                csv.Add(((double)a_twimageinfo.YResolution.Whole + ((double)a_twimageinfo.YResolution.Frac / 65536.0)).ToString());
+                csv.Add(a_twimageinfo.ImageWidth.ToString());
+                csv.Add(a_twimageinfo.ImageLength.ToString());
+                csv.Add(a_twimageinfo.SamplesPerPixel.ToString());
+                csv.Add(a_twimageinfo.BitsPerSample_0.ToString());
+                csv.Add(a_twimageinfo.BitsPerSample_1.ToString());
+                csv.Add(a_twimageinfo.BitsPerSample_2.ToString());
+                csv.Add(a_twimageinfo.BitsPerSample_3.ToString());
+                csv.Add(a_twimageinfo.BitsPerSample_4.ToString());
+                csv.Add(a_twimageinfo.BitsPerSample_5.ToString());
+                csv.Add(a_twimageinfo.BitsPerSample_6.ToString());
+                csv.Add(a_twimageinfo.BitsPerSample_7.ToString());
+                csv.Add(a_twimageinfo.Planar.ToString());
+                csv.Add("TWPT_" + (TWPT)a_twimageinfo.PixelType);
+                csv.Add("TWCP_" + (TWCP)a_twimageinfo.Compression);
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a string to an callback structure...
+        /// </summary>
+        /// <param name="a_twimageinfo">A TWAIN structure</param>
+        /// <param name="a_szImageinfo">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToImageinfo(ref TW_IMAGEINFO a_twimageinfo, string a_szImageinfo)
+        {
+            // Init stuff...
+            a_twimageinfo = default(TW_IMAGEINFO);
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szImageinfo);
+
+                // Grab the values...
+                a_twimageinfo.XResolution.Whole = (short)double.Parse(asz[0]);
+                a_twimageinfo.XResolution.Frac = (ushort)((double.Parse(asz[0]) - (double)a_twimageinfo.XResolution.Whole) * 65536.0);
+                a_twimageinfo.YResolution.Whole = (short)double.Parse(asz[1]);
+                a_twimageinfo.YResolution.Frac = (ushort)((double.Parse(asz[1]) - (double)a_twimageinfo.YResolution.Whole) * 65536.0);
+                a_twimageinfo.ImageWidth = (short)double.Parse(asz[2]);
+                a_twimageinfo.ImageLength = int.Parse(asz[3]);
+                a_twimageinfo.SamplesPerPixel = short.Parse(asz[4]);
+                a_twimageinfo.BitsPerSample_0 = short.Parse(asz[5]);
+                a_twimageinfo.BitsPerSample_1 = short.Parse(asz[6]);
+                a_twimageinfo.BitsPerSample_2 = short.Parse(asz[7]);
+                a_twimageinfo.BitsPerSample_3 = short.Parse(asz[8]);
+                a_twimageinfo.BitsPerSample_4 = short.Parse(asz[9]);
+                a_twimageinfo.BitsPerSample_5 = short.Parse(asz[10]);
+                a_twimageinfo.BitsPerSample_6 = short.Parse(asz[11]);
+                a_twimageinfo.BitsPerSample_7 = short.Parse(asz[12]);
+                a_twimageinfo.Planar = ushort.Parse(CvtCapValueFromEnum(CAP.ICAP_PLANARCHUNKY, asz[13]));
+                a_twimageinfo.PixelType = short.Parse(CvtCapValueFromEnum(CAP.ICAP_PIXELTYPE, asz[14]));
+                a_twimageinfo.Compression = ushort.Parse(CvtCapValueFromEnum(CAP.ICAP_COMPRESSION, asz[15]));
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a image layout to a string that we can show in
+        /// our simple GUI...
+        /// </summary>
+        /// <param name="a_twimagelayout">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string ImagelayoutToCsv(TW_IMAGELAYOUT a_twimagelayout)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(((double)a_twimagelayout.Frame.Left.Whole + ((double)a_twimagelayout.Frame.Left.Frac / 65536.0)).ToString());
+                csv.Add(((double)a_twimagelayout.Frame.Top.Whole + ((double)a_twimagelayout.Frame.Top.Frac / 65536.0)).ToString());
+                csv.Add(((double)a_twimagelayout.Frame.Right.Whole + ((double)a_twimagelayout.Frame.Right.Frac / 65536.0)).ToString());
+                csv.Add(((double)a_twimagelayout.Frame.Bottom.Whole + ((double)a_twimagelayout.Frame.Bottom.Frac / 65536.0)).ToString());
+                csv.Add(a_twimagelayout.DocumentNumber.ToString());
+                csv.Add(a_twimagelayout.PageNumber.ToString());
+                csv.Add(a_twimagelayout.FrameNumber.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a string to an image layout structure...
+        /// </summary>
+        /// <param name="a_twimagelayout">A TWAIN structure</param>
+        /// <param name="a_szImagelayout">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToImagelayout(ref TW_IMAGELAYOUT a_twimagelayout, string a_szImagelayout)
+        {
+            // Init stuff...
+            a_twimagelayout = default(TW_IMAGELAYOUT);
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szImagelayout);
+
+                // Sort out the frame...
+                a_twimagelayout.Frame.Left.Whole = (short)double.Parse(asz[0]);
+                a_twimagelayout.Frame.Left.Frac = (ushort)((double.Parse(asz[0]) - (double)a_twimagelayout.Frame.Left.Whole) * 65536.0);
+                a_twimagelayout.Frame.Top.Whole = (short)double.Parse(asz[1]);
+                a_twimagelayout.Frame.Top.Frac = (ushort)((double.Parse(asz[1]) - (double)a_twimagelayout.Frame.Top.Whole) * 65536.0);
+                a_twimagelayout.Frame.Right.Whole = (short)double.Parse(asz[2]);
+                a_twimagelayout.Frame.Right.Frac = (ushort)((double.Parse(asz[2]) - (double)a_twimagelayout.Frame.Right.Whole) * 65536.0);
+                a_twimagelayout.Frame.Bottom.Whole = (short)double.Parse(asz[3]);
+                a_twimagelayout.Frame.Bottom.Frac = (ushort)((double.Parse(asz[3]) - (double)a_twimagelayout.Frame.Bottom.Whole) * 65536.0);
+
+                // And now the counters...
+                a_twimagelayout.DocumentNumber = (uint)int.Parse(asz[4]);
+                a_twimagelayout.PageNumber = (uint)int.Parse(asz[5]);
+                a_twimagelayout.FrameNumber = (uint)int.Parse(asz[6]);
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of an image mem xfer structure to a string that
+        /// we can show in our simple GUI...
+        /// </summary>
+        /// <param name="a_twimagememxfer">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string ImagememxferToCsv(TW_IMAGEMEMXFER a_twimagememxfer)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add("TWCP_" + (TWCP)a_twimagememxfer.Compression);
+                csv.Add(a_twimagememxfer.BytesPerRow.ToString());
+                csv.Add(a_twimagememxfer.Columns.ToString());
+                csv.Add(a_twimagememxfer.Rows.ToString());
+                csv.Add(a_twimagememxfer.XOffset.ToString());
+                csv.Add(a_twimagememxfer.YOffset.ToString());
+                csv.Add(a_twimagememxfer.BytesWritten.ToString());
+                csv.Add(a_twimagememxfer.Memory.Flags.ToString());
+                csv.Add(a_twimagememxfer.Memory.Length.ToString());
+                csv.Add(a_twimagememxfer.Memory.TheMem.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a string to an image mem xfer structure...
+        /// </summary>
+        /// <param name="a_twimagememxfer">A TWAIN structure</param>
+        /// <param name="a_szImagememxfer">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToImagememxfer(ref TW_IMAGEMEMXFER a_twimagememxfer, string a_szImagememxfer)
+        {
+            // Init stuff...
+            a_twimagememxfer = default(TW_IMAGEMEMXFER);
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szImagememxfer);
+
+                // Sort out the structure...
+                a_twimagememxfer.Compression = ushort.Parse(CvtCapValueFromEnum(CAP.ICAP_COMPRESSION, asz[0]));
+                a_twimagememxfer.BytesPerRow = uint.Parse(asz[1]);
+                a_twimagememxfer.Columns = uint.Parse(asz[2]);
+                a_twimagememxfer.Rows = uint.Parse(asz[3]);
+                a_twimagememxfer.XOffset = uint.Parse(asz[4]);
+                a_twimagememxfer.YOffset = uint.Parse(asz[5]);
+                a_twimagememxfer.BytesWritten = uint.Parse(asz[6]);
+                a_twimagememxfer.Memory.Flags = ushort.Parse(asz[7]);
+                a_twimagememxfer.Memory.Length = uint.Parse(asz[8]);
+                a_twimagememxfer.Memory.TheMem = (IntPtr)ulong.Parse(asz[9]);
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a metrics structure to a string that
+        /// we can show in our simple GUI...
+        /// </summary>
+        /// <param name="a_twmetrics">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string MetricsToCsv(TW_METRICS a_twmetrics)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twmetrics.SizeOf.ToString());
+                csv.Add(a_twmetrics.ImageCount.ToString());
+                csv.Add(a_twmetrics.SheetCount.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a patthru structure to a string that
+        /// we can show in our simple GUI...
+        /// </summary>
+        /// <param name="a_twpassthru">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string PassthruToCsv(TW_PASSTHRU a_twpassthru)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twpassthru.pCommand.ToString());
+                csv.Add(a_twpassthru.CommandBytes.ToString());
+                csv.Add(a_twpassthru.Direction.ToString());
+                csv.Add(a_twpassthru.pData.ToString());
+                csv.Add(a_twpassthru.DataBytes.ToString());
+                csv.Add(a_twpassthru.DataBytesXfered.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a string to a passthru structure...
+        /// </summary>
+        /// <param name="a_twpassthru">A TWAIN structure</param>
+        /// <param name="a_szPassthru">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToPassthru(ref TW_PASSTHRU a_twpassthru, string a_szPassthru)
+        {
+            // Init stuff...
+            a_twpassthru = default(TW_PASSTHRU);
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szPassthru);
+
+                // Sort out the frame...
+                a_twpassthru.pCommand = (IntPtr)UInt64.Parse(asz[0]);
+                a_twpassthru.CommandBytes = uint.Parse(asz[1]);
+                a_twpassthru.Direction = int.Parse(asz[2]);
+                a_twpassthru.pData = (IntPtr)UInt64.Parse(asz[3]);
+                a_twpassthru.DataBytes = uint.Parse(asz[4]);
+                a_twpassthru.DataBytesXfered = uint.Parse(asz[5]);
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a pending xfers structure to a string that
+        /// we can show in our simple GUI...
+        /// </summary>
+        /// <param name="a_twsetupfilexfer">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string PendingxfersToCsv(TW_PENDINGXFERS a_twpendingxfers)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twpendingxfers.Count.ToString());
+                csv.Add(a_twpendingxfers.EOJ.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a string to a pendingxfers structure...
+        /// </summary>
+        /// <param name="a_twpassthru">A TWAIN structure</param>
+        /// <param name="a_szPassthru">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToPendingXfers(ref TW_PENDINGXFERS a_twpendingxfers, string a_szPendingxfers)
+        {
+            // Init stuff...
+            a_twpendingxfers = default(TW_PENDINGXFERS);
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szPendingxfers);
+
+                // Sort out the frame...
+                a_twpendingxfers.Count = ushort.Parse(asz[0]);
+                a_twpendingxfers.EOJ = uint.Parse(asz[1]);
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a setup file xfer structure to a string that
+        /// we can show in our simple GUI...
+        /// </summary>
+        /// <param name="a_twsetupfilexfer">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string SetupfilexferToCsv(TW_SETUPFILEXFER a_twsetupfilexfer)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twsetupfilexfer.FileName.Get());
+                csv.Add("TWFF_" + a_twsetupfilexfer.Format);
+                csv.Add(a_twsetupfilexfer.VRefNum.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert a string to a setupfilexfer...
+        /// </summary>
+        /// <param name="a_twsetupfilexfer">A TWAIN structure</param>
+        /// <param name="a_szSetupfilexfer">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToSetupfilexfer(ref TW_SETUPFILEXFER a_twsetupfilexfer, string a_szSetupfilexfer)
+        {
+            // Init stuff...
+            a_twsetupfilexfer = default(TW_SETUPFILEXFER);
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szSetupfilexfer);
+
+                // Sort out the values...
+                a_twsetupfilexfer.FileName.Set(asz[0]);
+                a_twsetupfilexfer.Format = (TWFF)ushort.Parse(CvtCapValueFromEnum(CAP.ICAP_IMAGEFILEFORMAT, asz[1]));
+                a_twsetupfilexfer.VRefNum = short.Parse(asz[2]);
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a setup mem xfer structure to a string that
+        /// we can show in our simple GUI...
+        /// </summary>
+        /// <param name="a_twsetupmemxfer">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string SetupmemxferToCsv(TW_SETUPMEMXFER a_twsetupmemxfer)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twsetupmemxfer.MinBufSize.ToString());
+                csv.Add(a_twsetupmemxfer.MaxBufSize.ToString());
+                csv.Add(a_twsetupmemxfer.Preferred.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert a string to a setupmemxfer...
+        /// </summary>
+        /// <param name="a_twsetupfilexfer">A TWAIN structure</param>
+        /// <param name="a_szSetupfilexfer">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToSetupmemxfer(ref TW_SETUPMEMXFER a_twsetupmemxfer, string a_szSetupmemxfer)
+        {
+            // Init stuff...
+            a_twsetupmemxfer = default(TW_SETUPMEMXFER);
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szSetupmemxfer);
+
+                // Sort out the values...
+                a_twsetupmemxfer.MinBufSize = uint.Parse(asz[0]);
+                a_twsetupmemxfer.MaxBufSize = uint.Parse(asz[1]);
+                a_twsetupmemxfer.Preferred = uint.Parse(asz[2]);
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a status structure to a string that
+        /// we can show in our simple GUI...
+        /// </summary>
+        /// <param name="a_twstatus">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string StatusToCsv(TW_STATUS a_twstatus)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twstatus.ConditionCode.ToString());
+                csv.Add(a_twstatus.Data.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
         }
 
         /// <summary>
@@ -2364,6 +3365,110 @@ namespace TWAINWorkingGroup
         }
 
         /// <summary>
+        /// Convert a string to a twaindirect...
+        /// </summary>
+        /// <param name="a_twtwaindirect">A TWAIN structure</param>
+        /// <param name="a_szTwaindirect">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToTwaindirect(ref TW_TWAINDIRECT a_twtwaindirect, string a_szTwaindirect)
+        {
+            // Init stuff...
+            a_twtwaindirect = default(TW_TWAINDIRECT);
+
+            // Build the string...
+            try
+            {
+                long lTmp;
+                string[] asz = CSV.Parse(a_szTwaindirect);
+
+                // Sort out the values...
+                if (!uint.TryParse(asz[0], out a_twtwaindirect.SizeOf))
+                {
+                    return (false);
+                }
+                if (!ushort.TryParse(asz[1], out a_twtwaindirect.CommunicationManager))
+                {
+                    return (false);
+                }
+                if (!long.TryParse(asz[2], out lTmp))
+                {
+                    return (false);
+                }
+                a_twtwaindirect.Send = new IntPtr(lTmp);
+                if (!uint.TryParse(asz[3], out a_twtwaindirect.SendSize))
+                {
+                    return (false);
+                }
+                if (!long.TryParse(asz[4], out lTmp))
+                {
+                    return (false);
+                }
+                a_twtwaindirect.Receive = new IntPtr(lTmp);
+                if (!uint.TryParse(asz[5], out a_twtwaindirect.ReceiveSize))
+                {
+                    return (false);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a twaindirect structure to a string that
+        /// we can show in our simple GUI...
+        /// </summary>
+        /// <param name="a_twtwaindirect">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string TwaindirectToCsv(TW_TWAINDIRECT a_twtwaindirect)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(a_twtwaindirect.SizeOf.ToString());
+                csv.Add(a_twtwaindirect.CommunicationManager.ToString());
+                csv.Add(a_twtwaindirect.Send.ToString());
+                csv.Add(a_twtwaindirect.SendSize.ToString());
+                csv.Add(a_twtwaindirect.Receive.ToString());
+                csv.Add(a_twtwaindirect.ReceiveSize.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a userinterface to a string that we can show in
+        /// our simple GUI...
+        /// </summary>
+        /// <param name="a_twuserinterface">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string UserinterfaceToCsv(TW_USERINTERFACE a_twuserinterface)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add(CvtCapValueToEnumHelper<bool>(a_twuserinterface.ShowUI.ToString()));
+                csv.Add(CvtCapValueToEnumHelper<bool>(a_twuserinterface.ModalUI.ToString()));
+                csv.Add(a_twuserinterface.hParent.ToString());
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
         /// Convert a string to a userinterface...
         /// </summary>
         /// <param name="a_twuserinterface">A TWAIN structure</param>
@@ -2372,7 +3477,7 @@ namespace TWAINWorkingGroup
         public bool CsvToUserinterface(ref TW_USERINTERFACE a_twuserinterface, string a_szUserinterface)
         {
             // Init stuff...
-            a_twuserinterface = default;
+            a_twuserinterface = default(TW_USERINTERFACE);
 
             // Build the string...
             try
@@ -2385,8 +3490,8 @@ namespace TWAINWorkingGroup
                 a_twuserinterface.hParent = IntPtr.Zero;
 
                 // Sort out the values...
-                ushort.TryParse(CsvSerializer.CvtCapValueFromEnumHelper<bool>(asz[0]), out a_twuserinterface.ShowUI);
-                ushort.TryParse(CsvSerializer.CvtCapValueFromEnumHelper<bool>(asz[1]), out a_twuserinterface.ModalUI);
+                ushort.TryParse(CvtCapValueFromEnumHelper<bool>(asz[0]), out a_twuserinterface.ShowUI);
+                ushort.TryParse(CvtCapValueFromEnumHelper<bool>(asz[1]), out a_twuserinterface.ModalUI);
 
                 // Really shouldn't have this test, but I'll probably break things if I remove it...
                 if (asz.Length >= 3)
@@ -2413,6 +3518,834 @@ namespace TWAINWorkingGroup
 
             // All done...
             return (true);
+        }
+
+        /// <summary>
+        /// Convert the contents of a transfer group to a string that we can show in
+        /// our simple GUI...
+        /// </summary>
+        /// <param name="a_u32Xfergroup">A TWAIN structure</param>
+        /// <returns>A CSV string of the TWAIN structure</returns>
+        public static string XfergroupToCsv(UInt32 a_u32Xfergroup)
+        {
+            try
+            {
+                CSV csv = new CSV();
+                csv.Add("0x" + a_u32Xfergroup.ToString("X"));
+                return (csv.Get());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return ("***error***");
+            }
+        }
+
+        /// <summary>
+        /// Convert the contents of a string to a transfer group...
+        /// </summary>
+        /// <param name="a_twcustomdsdata">A TWAIN structure</param>
+        /// <param name="a_szCustomdsdata">A CSV string of the TWAIN structure</param>
+        /// <returns>True if the conversion is successful</returns>
+        public static bool CsvToXfergroup(ref UInt32 a_u32Xfergroup, string a_szXfergroup)
+        {
+            // Init stuff...
+            a_u32Xfergroup = 0;
+
+            // Build the string...
+            try
+            {
+                string[] asz = CSV.Parse(a_szXfergroup);
+
+                // Grab the values...
+                a_u32Xfergroup = asz[0].ToLower().StartsWith("0x") ? Convert.ToUInt32(asz[0].Remove(0, 2), 16) : Convert.ToUInt32(asz[0], 16);
+            }
+            catch (Exception exception)
+            {
+                Log.Error("***error*** - " + exception.Message);
+                return (false);
+            }
+
+            // All done...
+            return (true);
+        }
+
+        /// <summary>
+        /// This mess is what tries to turn numeric constants into something
+        /// a bit more readable...
+        /// </summary>
+        /// <typeparam name="T">type for the conversion</typeparam>
+        /// <param name="a_szValue">value to convert</param>
+        /// <returns></returns>
+        private static string CvtCapValueToEnumHelper<T>(string a_szValue)
+        {
+            T t;
+            Int32 i32 = 0;
+            UInt32 u32 = 0;
+            string szCvt = "";
+
+            // Adjust our value, as needed...
+            if (a_szValue.StartsWith(typeof(T).Name + "_"))
+            {
+                a_szValue = a_szValue.Substring((typeof(T).Name + "_").Length);
+            }
+
+            // Handle enums with negative numbers...
+            if (a_szValue.StartsWith("-"))
+            {
+                if (Int32.TryParse(a_szValue, out i32))
+                {
+                    t = (T)Enum.Parse(typeof(T), a_szValue, true);
+                    szCvt = t.ToString();
+                    if (szCvt != i32.ToString())
+                    {
+                        return (typeof(T).ToString().Replace("TWAINWorkingGroup.TWAIN+", "") + "_" + szCvt);
+                    }
+                }
+            }
+
+            // Everybody else...
+            else if (UInt32.TryParse(a_szValue, out u32))
+            {
+                // Handle bool...
+                if (typeof(T) == typeof(bool))
+                {
+                    if ((a_szValue == "1") || (a_szValue.ToLowerInvariant() == "true"))
+                    {
+                        return ("TRUE");
+                    }
+                    return ("FALSE");
+                }
+
+                // Handle DAT (which is a weird one)..
+                else if (typeof(T) == typeof(DAT))
+                {
+                    UInt32 u32Dg = u32 >> 16;
+                    UInt32 u32Dat = u32 & 0xFFFF;
+                    string szDg = ((DG)u32Dg).ToString();
+                    string szDat = ((DAT)u32Dat).ToString();
+                    szDg = (szDg != u32Dg.ToString()) ? ("DG_" + szDg) : string.Format("0x{0:X}", u32Dg);
+                    szDat = (szDat != u32Dat.ToString()) ? ("DAT_" + szDat) : string.Format("0x{0:X}", u32Dat);
+                    return (szDg + "|" + szDat);
+                }
+
+                // Everybody else is on their own...
+                else
+                {
+                    // mono hurls on this, .net doesn't, so gonna help...
+                    switch (a_szValue)
+                    {
+                        default: break;
+                        case "65535": a_szValue = "-1"; break;
+                        case "65534": a_szValue = "-2"; break;
+                        case "65533": a_szValue = "-3"; break;
+                        case "65532": a_szValue = "-4"; break;
+                    }
+                    t = (T)Enum.Parse(typeof(T), a_szValue, true);
+                }
+
+                // Check to see if we changed anything...
+                szCvt = t.ToString();
+                if (szCvt != u32.ToString())
+                {
+                    // CAP is in its final form...
+                    if (typeof(T) == typeof(CAP))
+                    {
+                        return (szCvt);
+                    }
+                    // Everybody else needs the name decoration removed...
+                    else
+                    {
+                        return (typeof(T).ToString().Replace("TWAINWorkingGroup.TWAIN+", "") + "_" + szCvt);
+                    }
+                }
+
+                // We're probably a custom value...
+                else
+                {
+                    return (string.Format("0x{0:X}", u32));
+                }
+            }
+
+            // We're a string...
+            return (a_szValue);
+        }
+
+        /// <summary>
+        /// This mess is what tries to turn readable stuff into numeric constants...
+        /// </summary>
+        /// <typeparam name="T">type for the conversion</typeparam>
+        /// <param name="a_szValue">value to convert</param>
+        /// <returns></returns>
+        private static string CvtCapValueFromEnumHelper<T>(string a_szValue)
+        {
+            // We can figure this one out on our own...
+            if ((typeof(T).Name == "bool") || (typeof(T).Name == "Boolean"))
+            {
+                return (((a_szValue.ToLowerInvariant() == "true") || (a_szValue == "1")) ? "1" : "0");
+            }
+
+            // Look for the enum prefix...
+            if (a_szValue.ToLowerInvariant().StartsWith(typeof(T).Name.ToLowerInvariant() + "_"))
+            {
+                return (a_szValue.Substring((typeof(T).Name + "_").Length));
+            }
+
+            // Er...
+            return (a_szValue);
+        }
+
+        /// <summary>
+        /// This mess is what tries to turn readable stuff into numeric constants...
+        /// </summary>
+        /// <typeparam name="T">type for the conversion</typeparam>
+        /// <param name="a_szValue">value to convert</param>
+        /// <returns></returns>
+        private static string CvtCapValueFromTwlg(string a_szValue)
+        {
+            // mono goes "hork", probably because the enum is wackadoodle, this
+            // does work on .net, but what'cha gonna do?
+            if (a_szValue.ToUpperInvariant().StartsWith("TWLG_"))
+            {
+                switch (a_szValue.ToUpperInvariant().Substring(5))
+                {
+                    default: break;
+                    case "USERLOCALE": return ("65535"); // -1, kinda...
+                    case "DAN": return ("0");
+                    case "DUT": return ("1");
+                    case "ENG": return ("2");
+                    case "FCF": return ("3");
+                    case "FIN": return ("4");
+                    case "FRN": return ("5");
+                    case "GER": return ("6");
+                    case "ICE": return ("7");
+                    case "ITN": return ("8");
+                    case "NOR": return ("9");
+                    case "POR": return ("10");
+                    case "SPA": return ("11");
+                    case "SWE": return ("12");
+                    case "USA": return ("13");
+                    case "AFRIKAANS": return ("14");
+                    case "ALBANIA": return ("15");
+                    case "ARABIC": return ("16");
+                    case "ARABIC_ALGERIA": return ("17");
+                    case "ARABIC_BAHRAIN": return ("18");
+                    case "ARABIC_EGYPT": return ("19");
+                    case "ARABIC_IRAQ": return ("20");
+                    case "ARABIC_JORDAN": return ("21");
+                    case "ARABIC_KUWAIT": return ("22");
+                    case "ARABIC_LEBANON": return ("23");
+                    case "ARABIC_LIBYA": return ("24");
+                    case "ARABIC_MOROCCO": return ("25");
+                    case "ARABIC_OMAN": return ("26");
+                    case "ARABIC_QATAR": return ("27");
+                    case "ARABIC_SAUDIARABIA": return ("28");
+                    case "ARABIC_SYRIA": return ("29");
+                    case "ARABIC_TUNISIA": return ("30");
+                    case "ARABIC_UAE": return ("31");
+                    case "ARABIC_YEMEN": return ("32");
+                    case "BASQUE": return ("33");
+                    case "BYELORUSSIAN": return ("34");
+                    case "BULGARIAN": return ("35");
+                    case "CATALAN": return ("36");
+                    case "CHINESE": return ("37");
+                    case "CHINESE_HONGKONG": return ("38");
+                    case "CHINESE_PRC": return ("39");
+                    case "CHINESE_SINGAPORE": return ("40");
+                    case "CHINESE_SIMPLIFIED": return ("41");
+                    case "CHINESE_TAIWAN": return ("42");
+                    case "CHINESE_TRADITIONAL": return ("43");
+                    case "CROATIA": return ("44");
+                    case "CZECH": return ("45");
+                    case "DANISH": return (((int)TWLG.DAN).ToString());
+                    case "DUTCH": return (((int)TWLG.DUT).ToString());
+                    case "DUTCH_BELGIAN": return ("46");
+                    case "ENGLISH": return (((int)TWLG.ENG).ToString());
+                    case "ENGLISH_AUSTRALIAN": return ("47");
+                    case "ENGLISH_CANADIAN": return ("48");
+                    case "ENGLISH_IRELAND": return ("49");
+                    case "ENGLISH_NEWZEALAND": return ("50");
+                    case "ENGLISH_SOUTHAFRICA": return ("51");
+                    case "ENGLISH_UK": return ("52");
+                    case "ENGLISH_USA": return (((int)TWLG.USA).ToString());
+                    case "ESTONIAN": return ("53");
+                    case "FAEROESE": return ("54");
+                    case "FARSI": return ("55");
+                    case "FINNISH": return (((int)TWLG.FIN).ToString());
+                    case "FRENCH": return (((int)TWLG.FRN).ToString());
+                    case "FRENCH_BELGIAN": return ("56");
+                    case "FRENCH_CANADIAN": return (((int)TWLG.FCF).ToString());
+                    case "FRENCH_LUXEMBOURG": return ("57");
+                    case "FRENCH_SWISS": return ("58");
+                    case "GERMAN": return (((int)TWLG.GER).ToString());
+                    case "GERMAN_AUSTRIAN": return ("59");
+                    case "GERMAN_LUXEMBOURG": return ("60");
+                    case "GERMAN_LIECHTENSTEIN": return ("61");
+                    case "GERMAN_SWISS": return ("62");
+                    case "GREEK": return ("63");
+                    case "HEBREW": return ("64");
+                    case "HUNGARIAN": return ("65");
+                    case "ICELANDIC": return (((int)TWLG.ICE).ToString());
+                    case "INDONESIAN": return ("66");
+                    case "ITALIAN": return (((int)TWLG.ITN).ToString());
+                    case "ITALIAN_SWISS": return ("67");
+                    case "JAPANESE": return ("68");
+                    case "KOREAN": return ("69");
+                    case "KOREAN_JOHAB": return ("70");
+                    case "LATVIAN": return ("71");
+                    case "LITHUANIAN": return ("72");
+                    case "NORWEGIAN": return (((int)TWLG.NOR).ToString());
+                    case "NORWEGIAN_BOKMAL": return ("73");
+                    case "NORWEGIAN_NYNORSK": return ("74");
+                    case "POLISH": return ("75");
+                    case "PORTUGUESE": return (((int)TWLG.POR).ToString());
+                    case "PORTUGUESE_BRAZIL": return ("76");
+                    case "ROMANIAN": return ("77");
+                    case "RUSSIAN": return ("78");
+                    case "SERBIAN_LATIN": return ("79");
+                    case "SLOVAK": return ("80");
+                    case "SLOVENIAN": return ("81");
+                    case "SPANISH": return (((int)TWLG.SPA).ToString());
+                    case "SPANISH_MEXICAN": return ("82");
+                    case "SPANISH_MODERN": return ("83");
+                    case "SWEDISH": return (((int)TWLG.SWE).ToString());
+                    case "THAI": return ("84");
+                    case "TURKISH": return ("85");
+                    case "UKRANIAN": return ("86");
+                    case "ASSAMESE": return ("87");
+                    case "BENGALI": return ("88");
+                    case "BIHARI": return ("89");
+                    case "BODO": return ("90");
+                    case "DOGRI": return ("91");
+                    case "GUJARATI": return ("92");
+                    case "HARYANVI": return ("93");
+                    case "HINDI": return ("94");
+                    case "KANNADA": return ("95");
+                    case "KASHMIRI": return ("96");
+                    case "MALAYALAM": return ("97");
+                    case "MARATHI": return ("98");
+                    case "MARWARI": return ("99");
+                    case "MEGHALAYAN": return ("100");
+                    case "MIZO": return ("101");
+                    case "NAGA": return ("102");
+                    case "ORISSI": return ("103");
+                    case "PUNJABI": return ("104");
+                    case "PUSHTU": return ("105");
+                    case "SERBIAN_CYRILLIC": return ("106");
+                    case "SIKKIMI": return ("107");
+                    case "SWEDISH_FINLAND": return ("108");
+                    case "TAMIL": return ("109");
+                    case "TELUGU": return ("110");
+                    case "TRIPURI": return ("111");
+                    case "URDU": return ("112");
+                    case "VIETNAMESE": return ("113");
+                }
+            }
+
+            // Er...
+            return (a_szValue);
+        }
+
+        /// <summary>
+        /// Convert a value to the 'friendly' name, based on the capability...
+        /// </summary>
+        /// <param name="a_cap">capability driving the conversion</param>
+        /// <param name="szValue">value to convert</param>
+        /// <returns></returns>
+        public static string CvtCapValueToEnum(CAP a_cap, string a_szValue)
+        {
+            switch (a_cap)
+            {
+                default: return (a_szValue);
+                case CAP.ACAP_XFERMECH: return (CvtCapValueToEnumHelper<TWSX>(a_szValue));
+                case CAP.CAP_ALARMS: return (CvtCapValueToEnumHelper<TWAL>(a_szValue));
+                case CAP.CAP_ALARMVOLUME: return (a_szValue);
+                case CAP.CAP_AUTHOR: return (a_szValue);
+                case CAP.CAP_AUTOFEED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_AUTOMATICCAPTURE: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_AUTOMATICSENSEMEDIUM: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_AUTOSCAN: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_BATTERYMINUTES: return (a_szValue);
+                case CAP.CAP_BATTERYPERCENTAGE: return (a_szValue);
+                case CAP.CAP_CAMERAENABLED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_CAMERAORDER: return (CvtCapValueToEnumHelper<TWPT>(a_szValue));
+                case CAP.CAP_CAMERAPREVIEWUI: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_CAMERASIDE: return (CvtCapValueToEnumHelper<TWCS>(a_szValue));
+                case CAP.CAP_CAPTION: return (a_szValue);
+                case CAP.CAP_CLEARPAGE: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_CUSTOMDSDATA: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_CUSTOMINTERFACEGUID: return (a_szValue);
+                case CAP.CAP_DEVICEEVENT: return (CvtCapValueToEnumHelper<TWDE>(a_szValue));
+                case CAP.CAP_DEVICEONLINE: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_DEVICETIMEDATE: return (a_szValue);
+                case CAP.CAP_DOUBLEFEEDDETECTION: return (CvtCapValueToEnumHelper<TWDF>(a_szValue));
+                case CAP.CAP_DOUBLEFEEDDETECTIONLENGTH: return (a_szValue);
+                case CAP.CAP_DOUBLEFEEDDETECTIONRESPONSE: return (CvtCapValueToEnumHelper<TWDP>(a_szValue));
+                case CAP.CAP_DOUBLEFEEDDETECTIONSENSITIVITY: return (CvtCapValueToEnumHelper<TWUS>(a_szValue));
+                case CAP.CAP_DUPLEX: return (CvtCapValueToEnumHelper<TWDX>(a_szValue));
+                case CAP.CAP_DUPLEXENABLED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_ENABLEDSUIONLY: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_ENDORSER: return (a_szValue);
+                case CAP.CAP_EXTENDEDCAPS: return (CvtCapValueToEnumHelper<CAP>(a_szValue));
+                case CAP.CAP_FEEDERALIGNMENT: return (CvtCapValueToEnumHelper<TWFA>(a_szValue));
+                case CAP.CAP_FEEDERENABLED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_FEEDERLOADED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_FEEDERORDER: return (CvtCapValueToEnumHelper<TWFO>(a_szValue));
+                case CAP.CAP_FEEDERPOCKET: return (CvtCapValueToEnumHelper<TWFP>(a_szValue));
+                case CAP.CAP_FEEDERPREP: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_FEEDPAGE: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_IAFIELDA_LASTPAGE: return (a_szValue);
+                case CAP.CAP_IAFIELDB_LASTPAGE: return (a_szValue);
+                case CAP.CAP_IAFIELDC_LASTPAGE: return (a_szValue);
+                case CAP.CAP_IAFIELDD_LASTPAGE: return (a_szValue);
+                case CAP.CAP_IAFIELDA_LEVEL: return (CvtCapValueToEnumHelper<TWIA>(a_szValue));
+                case CAP.CAP_IAFIELDB_LEVEL: return (CvtCapValueToEnumHelper<TWIA>(a_szValue));
+                case CAP.CAP_IAFIELDC_LEVEL: return (CvtCapValueToEnumHelper<TWIA>(a_szValue));
+                case CAP.CAP_IAFIELDD_LEVEL: return (CvtCapValueToEnumHelper<TWIA>(a_szValue));
+                case CAP.CAP_IAFIELDA_PRINTFORMAT: return (a_szValue);
+                case CAP.CAP_IAFIELDB_PRINTFORMAT: return (a_szValue);
+                case CAP.CAP_IAFIELDC_PRINTFORMAT: return (a_szValue);
+                case CAP.CAP_IAFIELDD_PRINTFORMAT: return (a_szValue);
+                case CAP.CAP_IAFIELDA_VALUE: return (a_szValue);
+                case CAP.CAP_IAFIELDB_VALUE: return (a_szValue);
+                case CAP.CAP_IAFIELDC_VALUE: return (a_szValue);
+                case CAP.CAP_IAFIELDD_VALUE: return (a_szValue);
+                case CAP.CAP_IMAGEADDRESSENABLED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_INDICATORS: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_INDICATORSMODE: return (CvtCapValueToEnumHelper<TWCI>(a_szValue));
+                case CAP.CAP_JOBCONTROL: return (CvtCapValueToEnumHelper<TWJC>(a_szValue));
+                case CAP.CAP_LANGUAGE: return (CvtCapValueToEnumHelper<TWLG>(a_szValue));
+                case CAP.CAP_MAXBATCHBUFFERS: return (a_szValue);
+                case CAP.CAP_MICRENABLED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_PAPERDETECTABLE: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_PAPERHANDLING: return (CvtCapValueToEnumHelper<TWPH>(a_szValue));
+                case CAP.CAP_POWERSAVETIME: return (a_szValue);
+                case CAP.CAP_POWERSUPPLY: return (CvtCapValueToEnumHelper<TWPS>(a_szValue));
+                case CAP.CAP_PRINTER: return (CvtCapValueToEnumHelper<TWPR>(a_szValue));
+                case CAP.CAP_PRINTERCHARROTATION: return (a_szValue);
+                case CAP.CAP_PRINTERENABLED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_PRINTERFONTSTYLE: return (CvtCapValueToEnumHelper<TWPF>(a_szValue));
+                case CAP.CAP_PRINTERINDEX: return (a_szValue);
+                case CAP.CAP_PRINTERINDEXLEADCHAR: return (a_szValue);
+                case CAP.CAP_PRINTERINDEXMAXVALUE: return (a_szValue);
+                case CAP.CAP_PRINTERINDEXNUMDIGITS: return (a_szValue);
+                case CAP.CAP_PRINTERINDEXSTEP: return (a_szValue);
+                case CAP.CAP_PRINTERINDEXTRIGGER: return (CvtCapValueToEnumHelper<TWCT>(a_szValue));
+                case CAP.CAP_PRINTERMODE: return (CvtCapValueToEnumHelper<TWPM>(a_szValue));
+                case CAP.CAP_PRINTERSTRING: return (a_szValue);
+                case CAP.CAP_PRINTERSTRINGPREVIEW: return (a_szValue);
+                case CAP.CAP_PRINTERSUFFIX: return (a_szValue);
+                case CAP.CAP_PRINTERVERTICALOFFSET: return (a_szValue);
+                case CAP.CAP_REACQUIREALLOWED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_REWINDPAGE: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_SEGMENTED: return (CvtCapValueToEnumHelper<TWSG>(a_szValue));
+                case CAP.CAP_SERIALNUMBER: return (a_szValue);
+                case CAP.CAP_SHEETCOUNT: return (a_szValue);
+                case CAP.CAP_SUPPORTEDCAPS: return (CvtCapValueToEnumHelper<CAP>(a_szValue));
+                case CAP.CAP_SUPPORTEDCAPSSEGMENTUNIQUE: return (CvtCapValueToEnumHelper<CAP>(a_szValue));
+                case CAP.CAP_SUPPORTEDDATS: return (CvtCapValueToEnumHelper<DAT>(a_szValue));
+                case CAP.CAP_THUMBNAILSENABLED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_TIMEBEFOREFIRSTCAPTURE: return (a_szValue);
+                case CAP.CAP_TIMEBETWEENCAPTURES: return (a_szValue);
+                case CAP.CAP_TIMEDATE: return (a_szValue);
+                case CAP.CAP_UICONTROLLABLE: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.CAP_XFERCOUNT: return (a_szValue);
+                case CAP.ICAP_AUTOBRIGHT: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTODISCARDBLANKPAGES: return (a_szValue);
+                case CAP.ICAP_AUTOMATICBORDERDETECTION: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOMATICCOLORENABLED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOMATICCOLORNONCOLORPIXELTYPE: return (CvtCapValueToEnumHelper<TWPT>(a_szValue));
+                case CAP.ICAP_AUTOMATICCROPUSESFRAME: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOMATICDESKEW: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOMATICLENGTHDETECTION: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOMATICROTATE: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOSIZE: return (CvtCapValueToEnumHelper<TWAS>(a_szValue));
+                case CAP.ICAP_BARCODEDETECTIONENABLED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_BARCODEMAXRETRIES: return (a_szValue);
+                case CAP.ICAP_BARCODEMAXSEARCHPRIORITIES: return (a_szValue);
+                case CAP.ICAP_BARCODESEARCHMODE: return (CvtCapValueToEnumHelper<TWBD>(a_szValue));
+                case CAP.ICAP_BARCODESEARCHPRIORITIES: return (CvtCapValueToEnumHelper<TWBT>(a_szValue));
+                case CAP.ICAP_BARCODETIMEOUT: return (a_szValue);
+                case CAP.ICAP_BITDEPTH: return (a_szValue);
+                case CAP.ICAP_BITDEPTHREDUCTION: return (CvtCapValueToEnumHelper<TWBR>(a_szValue));
+                case CAP.ICAP_BITORDER: return (CvtCapValueToEnumHelper<TWBO>(a_szValue));
+                case CAP.ICAP_BITORDERCODES: return (CvtCapValueToEnumHelper<TWBO>(a_szValue));
+                case CAP.ICAP_BRIGHTNESS: return (a_szValue);
+                case CAP.ICAP_CCITTKFACTOR: return (a_szValue);
+                case CAP.ICAP_COLORMANAGEMENTENABLED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_COMPRESSION: return (CvtCapValueToEnumHelper<TWCP>(a_szValue));
+                case CAP.ICAP_CONTRAST: return (a_szValue);
+                case CAP.ICAP_CUSTHALFTONE: return (a_szValue);
+                case CAP.ICAP_EXPOSURETIME: return (a_szValue);
+                case CAP.ICAP_EXTIMAGEINFO: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_FEEDERTYPE: return (CvtCapValueToEnumHelper<TWFE>(a_szValue));
+                case CAP.ICAP_FILMTYPE: return (CvtCapValueToEnumHelper<TWFM>(a_szValue));
+                case CAP.ICAP_FILTER: return (CvtCapValueToEnumHelper<TWFT>(a_szValue));
+                case CAP.ICAP_FLASHUSED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_FLASHUSED2: return (CvtCapValueToEnumHelper<TWFL>(a_szValue));
+                case CAP.ICAP_FLIPROTATION: return (CvtCapValueToEnumHelper<TWFR>(a_szValue));
+                case CAP.ICAP_FRAMES: return (a_szValue);
+                case CAP.ICAP_GAMMA: return (a_szValue);
+                case CAP.ICAP_HALFTONES: return (a_szValue);
+                case CAP.ICAP_HIGHLIGHT: return (a_szValue);
+                case CAP.ICAP_ICCPROFILE: return (CvtCapValueToEnumHelper<TWIC>(a_szValue));
+                case CAP.ICAP_IMAGEDATASET: return (a_szValue);
+                case CAP.ICAP_IMAGEFILEFORMAT: return (CvtCapValueToEnumHelper<TWFF>(a_szValue));
+                case CAP.ICAP_IMAGEFILTER: return (CvtCapValueToEnumHelper<TWIF>(a_szValue));
+                case CAP.ICAP_IMAGEMERGE: return (CvtCapValueToEnumHelper<TWIM>(a_szValue));
+                case CAP.ICAP_IMAGEMERGEHEIGHTTHRESHOLD: return (a_szValue);
+                case CAP.ICAP_JPEGPIXELTYPE: return (CvtCapValueToEnumHelper<TWPT>(a_szValue));
+                case CAP.ICAP_JPEGQUALITY: return (CvtCapValueToEnumHelper<TWJQ>(a_szValue));
+                case CAP.ICAP_JPEGSUBSAMPLING: return (CvtCapValueToEnumHelper<TWJS>(a_szValue));
+                case CAP.ICAP_LAMPSTATE: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_LIGHTPATH: return (CvtCapValueToEnumHelper<TWLP>(a_szValue));
+                case CAP.ICAP_LIGHTSOURCE: return (CvtCapValueToEnumHelper<TWLS>(a_szValue));
+                case CAP.ICAP_MAXFRAMES: return (a_szValue);
+                case CAP.ICAP_MINIMUMHEIGHT: return (a_szValue);
+                case CAP.ICAP_MINIMUMWIDTH: return (a_szValue);
+                case CAP.ICAP_MIRROR: return (CvtCapValueToEnumHelper<TWMR>(a_szValue));
+                case CAP.ICAP_NOISEFILTER: return (CvtCapValueToEnumHelper<TWNF>(a_szValue));
+                case CAP.ICAP_ORIENTATION: return (CvtCapValueToEnumHelper<TWOR>(a_szValue));
+                case CAP.ICAP_OVERSCAN: return (CvtCapValueToEnumHelper<TWOV>(a_szValue));
+                case CAP.ICAP_PATCHCODEDETECTIONENABLED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_PATCHCODEMAXRETRIES: return (a_szValue);
+                case CAP.ICAP_PATCHCODEMAXSEARCHPRIORITIES: return (a_szValue);
+                case CAP.ICAP_PATCHCODESEARCHMODE: return (CvtCapValueToEnumHelper<TWBD>(a_szValue));
+                case CAP.ICAP_PATCHCODESEARCHPRIORITIES: return (CvtCapValueToEnumHelper<TWPCH>(a_szValue));
+                case CAP.ICAP_PATCHCODETIMEOUT: return (a_szValue);
+                case CAP.ICAP_PHYSICALHEIGHT: return (a_szValue);
+                case CAP.ICAP_PHYSICALWIDTH: return (a_szValue);
+                case CAP.ICAP_PIXELFLAVOR: return (CvtCapValueToEnumHelper<TWPF>(a_szValue));
+                case CAP.ICAP_PIXELFLAVORCODES: return (CvtCapValueToEnumHelper<TWPF>(a_szValue));
+                case CAP.ICAP_PIXELTYPE: return (CvtCapValueToEnumHelper<TWPT>(a_szValue));
+                case CAP.ICAP_PLANARCHUNKY: return (CvtCapValueToEnumHelper<TWPC>(a_szValue));
+                case CAP.ICAP_ROTATION: return (a_szValue);
+                case CAP.ICAP_SHADOW: return (a_szValue);
+                case CAP.ICAP_SUPPORTEDBARCODETYPES: return (CvtCapValueToEnumHelper<TWBT>(a_szValue));
+                case CAP.ICAP_SUPPORTEDEXTIMAGEINFO: return (CvtCapValueToEnumHelper<TWEI>(a_szValue));
+                case CAP.ICAP_SUPPORTEDPATCHCODETYPES: return (CvtCapValueToEnumHelper<TWPCH>(a_szValue));
+                case CAP.ICAP_SUPPORTEDSIZES: return (CvtCapValueToEnumHelper<TWSS>(a_szValue));
+                case CAP.ICAP_THRESHOLD: return (a_szValue);
+                case CAP.ICAP_TILES: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_TIMEFILL: return (a_szValue);
+                case CAP.ICAP_UNDEFINEDIMAGESIZE: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_UNITS: return (CvtCapValueToEnumHelper<TWUN>(a_szValue));
+                case CAP.ICAP_XFERMECH: return (CvtCapValueToEnumHelper<TWSX>(a_szValue));
+                case CAP.ICAP_XNATIVERESOLUTION: return (a_szValue);
+                case CAP.ICAP_XRESOLUTION: return (a_szValue);
+                case CAP.ICAP_XSCALING: return (a_szValue);
+                case CAP.ICAP_YNATIVERESOLUTION: return (a_szValue);
+                case CAP.ICAP_YRESOLUTION: return (a_szValue);
+                case CAP.ICAP_YSCALING: return (a_szValue);
+                case CAP.ICAP_ZOOMFACTOR: return (a_szValue);
+            }
+        }
+
+        /// <summary>
+        /// Convert a 'friendly' name to a numeric value...
+        /// </summary>
+        /// <param name="a_cap">capability driving the conversion</param>
+        /// <param name="szValue">value to convert</param>
+        /// <returns></returns>
+        public static string CvtCapValueFromEnum(CAP a_cap, string a_szValue)
+        {
+            int ii;
+
+            // Turn hex into a decimal...
+            if (a_szValue.ToLowerInvariant().StartsWith("0x"))
+            {
+                return (int.Parse(a_szValue.Substring(2), NumberStyles.HexNumber).ToString());
+            }
+
+            // Skip numbers...
+            if (int.TryParse(a_szValue, out ii))
+            {
+                return (a_szValue);
+            }
+
+            // Process text...
+            switch (a_cap)
+            {
+                default: return (a_szValue);
+                case CAP.ACAP_XFERMECH: { TWSX twsx; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWSX>(a_szValue), out twsx) ? ((int)twsx).ToString() : a_szValue); };
+                case CAP.CAP_ALARMS: { TWAL twal; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWAL>(a_szValue), out twal) ? ((int)twal).ToString() : a_szValue); };
+                case CAP.CAP_ALARMVOLUME: return (a_szValue);
+                case CAP.CAP_AUTHOR: return (a_szValue);
+                case CAP.CAP_AUTOFEED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_AUTOMATICCAPTURE: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_AUTOMATICSENSEMEDIUM: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_AUTOSCAN: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_BATTERYMINUTES: return (a_szValue);
+                case CAP.CAP_BATTERYPERCENTAGE: return (a_szValue);
+                case CAP.CAP_CAMERAENABLED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_CAMERAORDER: { TWPT twpt; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPT>(a_szValue), out twpt) ? ((int)twpt).ToString() : a_szValue); };
+                case CAP.CAP_CAMERAPREVIEWUI: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_CAMERASIDE: { TWCS twcs; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWCS>(a_szValue), out twcs) ? ((int)twcs).ToString() : a_szValue); };
+                case CAP.CAP_CAPTION: return (a_szValue);
+                case CAP.CAP_CLEARPAGE: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_CUSTOMDSDATA: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_CUSTOMINTERFACEGUID: return (a_szValue);
+                case CAP.CAP_DEVICEEVENT: { TWDE twde; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWDE>(a_szValue), out twde) ? ((int)twde).ToString() : a_szValue); };
+                case CAP.CAP_DEVICEONLINE: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_DEVICETIMEDATE: return (a_szValue);
+                case CAP.CAP_DOUBLEFEEDDETECTION: { TWDF twdf; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWDF>(a_szValue), out twdf) ? ((int)twdf).ToString() : a_szValue); };
+                case CAP.CAP_DOUBLEFEEDDETECTIONLENGTH: return (a_szValue);
+                case CAP.CAP_DOUBLEFEEDDETECTIONRESPONSE: { TWDP twdp; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWDP>(a_szValue), out twdp) ? ((int)twdp).ToString() : a_szValue); };
+                case CAP.CAP_DOUBLEFEEDDETECTIONSENSITIVITY: { TWUS twus; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWUS>(a_szValue), out twus) ? ((int)twus).ToString() : a_szValue); };
+                case CAP.CAP_DUPLEX: { TWDX twdx; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWDX>(a_szValue), out twdx) ? ((int)twdx).ToString() : a_szValue); };
+                case CAP.CAP_DUPLEXENABLED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_ENABLEDSUIONLY: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_ENDORSER: return (a_szValue);
+                case CAP.CAP_EXTENDEDCAPS: { CAP cap; return (Enum.TryParse(CvtCapValueFromEnumHelper<CAP>(a_szValue), out cap) ? ((int)cap).ToString() : a_szValue); };
+                case CAP.CAP_FEEDERALIGNMENT: { TWFA twfa; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWFA>(a_szValue), out twfa) ? ((int)twfa).ToString() : a_szValue); };
+                case CAP.CAP_FEEDERENABLED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_FEEDERLOADED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_FEEDERORDER: { TWFO twfo; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWFO>(a_szValue), out twfo) ? ((int)twfo).ToString() : a_szValue); };
+                case CAP.CAP_FEEDERPOCKET: { TWFP twfp; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWFP>(a_szValue), out twfp) ? ((int)twfp).ToString() : a_szValue); };
+                case CAP.CAP_FEEDERPREP: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_FEEDPAGE: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_IAFIELDA_LASTPAGE: return (a_szValue);
+                case CAP.CAP_IAFIELDB_LASTPAGE: return (a_szValue);
+                case CAP.CAP_IAFIELDC_LASTPAGE: return (a_szValue);
+                case CAP.CAP_IAFIELDD_LASTPAGE: return (a_szValue);
+                case CAP.CAP_IAFIELDA_LEVEL: { TWIA twia; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWIA>(a_szValue), out twia) ? ((int)twia).ToString() : a_szValue); };
+                case CAP.CAP_IAFIELDB_LEVEL: { TWIA twia; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWIA>(a_szValue), out twia) ? ((int)twia).ToString() : a_szValue); };
+                case CAP.CAP_IAFIELDC_LEVEL: { TWIA twia; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWIA>(a_szValue), out twia) ? ((int)twia).ToString() : a_szValue); };
+                case CAP.CAP_IAFIELDD_LEVEL: { TWIA twia; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWIA>(a_szValue), out twia) ? ((int)twia).ToString() : a_szValue); };
+                case CAP.CAP_IAFIELDA_PRINTFORMAT: return (a_szValue);
+                case CAP.CAP_IAFIELDB_PRINTFORMAT: return (a_szValue);
+                case CAP.CAP_IAFIELDC_PRINTFORMAT: return (a_szValue);
+                case CAP.CAP_IAFIELDD_PRINTFORMAT: return (a_szValue);
+                case CAP.CAP_IAFIELDA_VALUE: return (a_szValue);
+                case CAP.CAP_IAFIELDB_VALUE: return (a_szValue);
+                case CAP.CAP_IAFIELDC_VALUE: return (a_szValue);
+                case CAP.CAP_IAFIELDD_VALUE: return (a_szValue);
+                case CAP.CAP_IMAGEADDRESSENABLED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_INDICATORS: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_INDICATORSMODE: { TWCI twci; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWCI>(a_szValue), out twci) ? ((int)twci).ToString() : a_szValue); };
+                case CAP.CAP_JOBCONTROL: { TWJC twjc; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWJC>(a_szValue), out twjc) ? ((int)twjc).ToString() : a_szValue); };
+                case CAP.CAP_LANGUAGE: return(CvtCapValueFromTwlg(a_szValue));
+                case CAP.CAP_MAXBATCHBUFFERS: return (a_szValue);
+                case CAP.CAP_MICRENABLED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_PAPERDETECTABLE: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_PAPERHANDLING: { TWPH twph; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPH>(a_szValue), out twph) ? ((int)twph).ToString() : a_szValue); };
+                case CAP.CAP_POWERSAVETIME: return (a_szValue);
+                case CAP.CAP_POWERSUPPLY: { TWPS twps; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPS>(a_szValue), out twps) ? ((int)twps).ToString() : a_szValue); };
+                case CAP.CAP_PRINTER: { TWPR twpr; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPR>(a_szValue), out twpr) ? ((int)twpr).ToString() : a_szValue); };
+                case CAP.CAP_PRINTERCHARROTATION: return (a_szValue);
+                case CAP.CAP_PRINTERENABLED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_PRINTERFONTSTYLE: { TWPF twpf; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPF>(a_szValue), out twpf) ? ((int)twpf).ToString() : a_szValue); };
+                case CAP.CAP_PRINTERINDEX: return (a_szValue);
+                case CAP.CAP_PRINTERINDEXLEADCHAR: return (a_szValue);
+                case CAP.CAP_PRINTERINDEXMAXVALUE: return (a_szValue);
+                case CAP.CAP_PRINTERINDEXNUMDIGITS: return (a_szValue);
+                case CAP.CAP_PRINTERINDEXSTEP: return (a_szValue);
+                case CAP.CAP_PRINTERINDEXTRIGGER: { TWCT twct; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWCT>(a_szValue), out twct) ? ((int)twct).ToString() : a_szValue); };
+                case CAP.CAP_PRINTERMODE: { TWPM twpm; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPM>(a_szValue), out twpm) ? ((int)twpm).ToString() : a_szValue); };
+                case CAP.CAP_PRINTERSTRING: return (a_szValue);
+                case CAP.CAP_PRINTERSTRINGPREVIEW: return (a_szValue);
+                case CAP.CAP_PRINTERSUFFIX: return (a_szValue);
+                case CAP.CAP_PRINTERVERTICALOFFSET: return (a_szValue);
+                case CAP.CAP_REACQUIREALLOWED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_REWINDPAGE: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_SEGMENTED: { TWSG twsg; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWSG>(a_szValue), out twsg) ? ((int)twsg).ToString() : a_szValue); };
+                case CAP.CAP_SERIALNUMBER: return (a_szValue);
+                case CAP.CAP_SHEETCOUNT: return (a_szValue);
+                case CAP.CAP_SUPPORTEDCAPS: { CAP cap; return (Enum.TryParse(CvtCapValueFromEnumHelper<CAP>(a_szValue), out cap) ? ((int)cap).ToString() : a_szValue); };
+                case CAP.CAP_SUPPORTEDCAPSSEGMENTUNIQUE: { CAP cap; return (Enum.TryParse(CvtCapValueFromEnumHelper<CAP>(a_szValue), out cap) ? ((int)cap).ToString() : a_szValue); };
+                case CAP.CAP_SUPPORTEDDATS: { DAT dat; return (Enum.TryParse(CvtCapValueFromEnumHelper<DAT>(a_szValue), out dat) ? ((int)dat).ToString() : a_szValue); };
+                case CAP.CAP_THUMBNAILSENABLED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_TIMEBEFOREFIRSTCAPTURE: return (a_szValue);
+                case CAP.CAP_TIMEBETWEENCAPTURES: return (a_szValue);
+                case CAP.CAP_TIMEDATE: return (a_szValue);
+                case CAP.CAP_UICONTROLLABLE: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.CAP_XFERCOUNT: return (a_szValue);
+                case CAP.ICAP_AUTOBRIGHT: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTODISCARDBLANKPAGES: { TWBP twbp; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWBP>(a_szValue), out twbp) ? ((int)twbp).ToString() : a_szValue); };
+                case CAP.ICAP_AUTOMATICBORDERDETECTION: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOMATICCOLORENABLED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOMATICCOLORNONCOLORPIXELTYPE: { TWPT twpt; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPT>(a_szValue), out twpt) ? ((int)twpt).ToString() : a_szValue); };
+                case CAP.ICAP_AUTOMATICCROPUSESFRAME: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOMATICDESKEW: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOMATICLENGTHDETECTION: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOMATICROTATE: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_AUTOSIZE: { TWAS twas; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWAS>(a_szValue), out twas) ? ((int)twas).ToString() : a_szValue); };
+                case CAP.ICAP_BARCODEDETECTIONENABLED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_BARCODEMAXRETRIES: return (a_szValue);
+                case CAP.ICAP_BARCODEMAXSEARCHPRIORITIES: return (a_szValue);
+                case CAP.ICAP_BARCODESEARCHMODE: { TWBD twbd; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWBD>(a_szValue), out twbd) ? ((int)twbd).ToString() : a_szValue); };
+                case CAP.ICAP_BARCODESEARCHPRIORITIES: { TWBT twbt; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWBT>(a_szValue), out twbt) ? ((int)twbt).ToString() : a_szValue); };
+                case CAP.ICAP_BARCODETIMEOUT: return (a_szValue);
+                case CAP.ICAP_BITDEPTH: return (a_szValue);
+                case CAP.ICAP_BITDEPTHREDUCTION: { TWBR twbr; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWBR>(a_szValue), out twbr) ? ((int)twbr).ToString() : a_szValue); };
+                case CAP.ICAP_BITORDER: { TWBO twbo; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWBO>(a_szValue), out twbo) ? ((int)twbo).ToString() : a_szValue); };
+                case CAP.ICAP_BITORDERCODES: { TWBO twbo; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWBO>(a_szValue), out twbo) ? ((int)twbo).ToString() : a_szValue); };
+                case CAP.ICAP_BRIGHTNESS: return (a_szValue);
+                case CAP.ICAP_CCITTKFACTOR: return (a_szValue);
+                case CAP.ICAP_COLORMANAGEMENTENABLED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_COMPRESSION: { TWCP twcp; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWCP>(a_szValue), out twcp) ? ((int)twcp).ToString() : a_szValue); };
+                case CAP.ICAP_CONTRAST: return (a_szValue);
+                case CAP.ICAP_CUSTHALFTONE: return (a_szValue);
+                case CAP.ICAP_EXPOSURETIME: return (a_szValue);
+                case CAP.ICAP_EXTIMAGEINFO: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_FEEDERTYPE: { TWFE twfe; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWFE>(a_szValue), out twfe) ? ((int)twfe).ToString() : a_szValue); };
+                case CAP.ICAP_FILMTYPE: { TWFM twfm; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWFM>(a_szValue), out twfm) ? ((int)twfm).ToString() : a_szValue); };
+                case CAP.ICAP_FILTER: { TWFT twft; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWFT>(a_szValue), out twft) ? ((int)twft).ToString() : a_szValue); };
+                case CAP.ICAP_FLASHUSED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_FLASHUSED2: { TWFL twfl; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWFL>(a_szValue), out twfl) ? ((int)twfl).ToString() : a_szValue); };
+                case CAP.ICAP_FLIPROTATION: { TWFR twfr; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWFR>(a_szValue), out twfr) ? ((int)twfr).ToString() : a_szValue); };
+                case CAP.ICAP_FRAMES: return (a_szValue);
+                case CAP.ICAP_GAMMA: return (a_szValue);
+                case CAP.ICAP_HALFTONES: return (a_szValue);
+                case CAP.ICAP_HIGHLIGHT: return (a_szValue);
+                case CAP.ICAP_ICCPROFILE: { TWIC twic; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWIC>(a_szValue), out twic) ? ((int)twic).ToString() : a_szValue); };
+                case CAP.ICAP_IMAGEDATASET: return (a_szValue);
+                case CAP.ICAP_IMAGEFILEFORMAT: { TWFF twff; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWFF>(a_szValue), out twff) ? ((int)twff).ToString() : a_szValue); };
+                case CAP.ICAP_IMAGEFILTER: { TWIF twif; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWIF>(a_szValue), out twif) ? ((int)twif).ToString() : a_szValue); };
+                case CAP.ICAP_IMAGEMERGE: { TWIM twim; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWIM>(a_szValue), out twim) ? ((int)twim).ToString() : a_szValue); };
+                case CAP.ICAP_IMAGEMERGEHEIGHTTHRESHOLD: return (a_szValue);
+                case CAP.ICAP_JPEGPIXELTYPE: { TWPT twpt; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPT>(a_szValue), out twpt) ? ((int)twpt).ToString() : a_szValue); };
+                case CAP.ICAP_JPEGQUALITY: { TWJQ twjq; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWJQ>(a_szValue), out twjq) ? ((int)twjq).ToString() : a_szValue); };
+                case CAP.ICAP_JPEGSUBSAMPLING: { TWJS twjs; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWJS>(a_szValue), out twjs) ? ((int)twjs).ToString() : a_szValue); };
+                case CAP.ICAP_LAMPSTATE: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_LIGHTPATH: { TWLP twlp; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWLP>(a_szValue), out twlp) ? ((int)twlp).ToString() : a_szValue); };
+                case CAP.ICAP_LIGHTSOURCE: { TWLS twls; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWLS>(a_szValue), out twls) ? ((int)twls).ToString() : a_szValue); };
+                case CAP.ICAP_MAXFRAMES: return (a_szValue);
+                case CAP.ICAP_MINIMUMHEIGHT: return (a_szValue);
+                case CAP.ICAP_MINIMUMWIDTH: return (a_szValue);
+                case CAP.ICAP_MIRROR: { TWMR twmr; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWMR>(a_szValue), out twmr) ? ((int)twmr).ToString() : a_szValue); };
+                case CAP.ICAP_NOISEFILTER: { TWNF twnf; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWNF>(a_szValue), out twnf) ? ((int)twnf).ToString() : a_szValue); };
+                case CAP.ICAP_ORIENTATION: { TWOR twor; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWOR>(a_szValue), out twor) ? ((int)twor).ToString() : a_szValue); };
+                case CAP.ICAP_OVERSCAN: { TWOV twov; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWOV>(a_szValue), out twov) ? ((int)twov).ToString() : a_szValue); };
+                case CAP.ICAP_PATCHCODEDETECTIONENABLED: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_PATCHCODEMAXRETRIES: return (a_szValue);
+                case CAP.ICAP_PATCHCODEMAXSEARCHPRIORITIES: return (a_szValue);
+                case CAP.ICAP_PATCHCODESEARCHMODE: { TWBD twbd; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWBD>(a_szValue), out twbd) ? ((int)twbd).ToString() : a_szValue); };
+                case CAP.ICAP_PATCHCODESEARCHPRIORITIES: { TWPCH twpch; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPCH>(a_szValue), out twpch) ? ((int)twpch).ToString() : a_szValue); };
+                case CAP.ICAP_PATCHCODETIMEOUT: return (a_szValue);
+                case CAP.ICAP_PHYSICALHEIGHT: return (a_szValue);
+                case CAP.ICAP_PHYSICALWIDTH: return (a_szValue);
+                case CAP.ICAP_PIXELFLAVOR: { TWPF twpf; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPF>(a_szValue), out twpf) ? ((int)twpf).ToString() : a_szValue); };
+                case CAP.ICAP_PIXELFLAVORCODES: { TWPF twpf; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPF>(a_szValue), out twpf) ? ((int)twpf).ToString() : a_szValue); };
+                case CAP.ICAP_PIXELTYPE: { TWPT twpt; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPT>(a_szValue), out twpt) ? ((int)twpt).ToString() : a_szValue); };
+                case CAP.ICAP_PLANARCHUNKY: { TWPC twpc; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPC>(a_szValue), out twpc) ? ((int)twpc).ToString() : a_szValue); };
+                case CAP.ICAP_ROTATION: return (a_szValue);
+                case CAP.ICAP_SHADOW: return (a_szValue);
+                case CAP.ICAP_SUPPORTEDBARCODETYPES: { TWBT twbt; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWBT>(a_szValue), out twbt) ? ((int)twbt).ToString() : a_szValue); };
+                case CAP.ICAP_SUPPORTEDEXTIMAGEINFO: { TWEI twei; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWEI>(a_szValue), out twei) ? ((int)twei).ToString() : a_szValue); };
+                case CAP.ICAP_SUPPORTEDPATCHCODETYPES: { TWPCH twpch; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWPCH>(a_szValue), out twpch) ? ((int)twpch).ToString() : a_szValue); };
+                case CAP.ICAP_SUPPORTEDSIZES: { TWSS twss; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWSS>(a_szValue), out twss) ? ((int)twss).ToString() : a_szValue); };
+                case CAP.ICAP_THRESHOLD: return (a_szValue);
+                case CAP.ICAP_TILES: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_TIMEFILL: return (a_szValue);
+                case CAP.ICAP_UNDEFINEDIMAGESIZE: return (CvtCapValueFromEnumHelper<bool>(a_szValue));
+                case CAP.ICAP_UNITS: { TWUN twun; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWUN>(a_szValue), out twun) ? ((int)twun).ToString() : a_szValue); };
+                case CAP.ICAP_XFERMECH: { TWSX twsx; return (Enum.TryParse(CvtCapValueFromEnumHelper<TWSX>(a_szValue), out twsx) ? ((int)twsx).ToString() : a_szValue); };
+                case CAP.ICAP_XNATIVERESOLUTION: return (a_szValue);
+                case CAP.ICAP_XRESOLUTION: return (a_szValue);
+                case CAP.ICAP_XSCALING: return (a_szValue);
+                case CAP.ICAP_YNATIVERESOLUTION: return (a_szValue);
+                case CAP.ICAP_YRESOLUTION: return (a_szValue);
+                case CAP.ICAP_YSCALING: return (a_szValue);
+                case CAP.ICAP_ZOOMFACTOR: return (a_szValue);
+            }
+        }
+
+        /// <summary>
+        /// Convert a value to the 'friendly' name, based on the TWEI...
+        /// </summary>
+        /// <param name="a_twei">TWEI driving the conversion</param>
+        /// <param name="szValue">value to convert</param>
+        /// <returns></returns>
+        public static string CvtTweiValueToEnum(TWEI a_twei, string a_szValue)
+        {
+            switch (a_twei)
+            {
+                default: return (a_szValue);
+                case TWEI.BARCODECONFIDENCE: return (a_szValue);
+                case TWEI.BARCODECOUNT: return (a_szValue);
+                case TWEI.BARCODEROTATION: return (CvtCapValueToEnumHelper<TWBCOR>(a_szValue));
+                case TWEI.BARCODETEXT: return (a_szValue);
+                case TWEI.BARCODETEXT2: return (a_szValue);
+                case TWEI.BARCODETEXTLENGTH: return (a_szValue);
+                case TWEI.BARCODETYPE: return (CvtCapValueToEnumHelper<TWBT>(a_szValue));
+                case TWEI.BARCODEX: return (a_szValue);
+                case TWEI.BARCODEY: return (a_szValue);
+                case TWEI.BLACKSPECKLESREMOVED: return (a_szValue);
+                case TWEI.BOOKNAME: return (a_szValue);
+                case TWEI.CAMERA: return (a_szValue);
+                case TWEI.CHAPTERNUMBER: return (a_szValue);
+                case TWEI.DESHADEBLACKCOUNTNEW: return (a_szValue);
+                case TWEI.DESHADEBLACKCOUNTOLD: return (a_szValue);
+                case TWEI.DESHADEBLACKRLMAX: return (a_szValue);
+                case TWEI.DESHADEBLACKRLMIN: return (a_szValue);
+                case TWEI.DESHADECOUNT: return (a_szValue);
+                case TWEI.DESHADEHEIGHT: return (a_szValue);
+                case TWEI.DESHADELEFT: return (a_szValue);
+                case TWEI.DESHADESIZE: return (a_szValue);
+                case TWEI.DESHADETOP: return (a_szValue);
+                case TWEI.DESHADEWHITECOUNTNEW: return (a_szValue);
+                case TWEI.DESHADEWHITECOUNTOLD: return (a_szValue);
+                case TWEI.DESHADEWHITERLAVE: return (a_szValue);
+                case TWEI.DESHADEWHITERLMAX: return (a_szValue);
+                case TWEI.DESHADEWHITERLMIN: return (a_szValue);
+                case TWEI.DESHADEWIDTH: return (a_szValue);
+                case TWEI.DESKEWSTATUS: return (CvtCapValueToEnumHelper<TWDSK>(a_szValue));
+                case TWEI.DOCUMENTNUMBER: return (a_szValue);
+                case TWEI.ENDORSEDTEXT: return (a_szValue);
+                case TWEI.FILESYSTEMSOURCE: return (a_szValue);
+                case TWEI.FORMCONFIDENCE: return (a_szValue);
+                case TWEI.FORMHORZDOCOFFSET: return (a_szValue);
+                case TWEI.FORMTEMPLATEMATCH: return (a_szValue);
+                case TWEI.FORMTEMPLATEPAGEMATCH: return (a_szValue);
+                case TWEI.FORMVERTDOCOFFSET: return (a_szValue);
+                case TWEI.FRAME: return (a_szValue);
+                case TWEI.FRAMENUMBER: return (a_szValue);
+                case TWEI.HORZLINECOUNT: return (a_szValue);
+                case TWEI.HORZLINELENGTH: return (a_szValue);
+                case TWEI.HORZLINETHICKNESS: return (a_szValue);
+                case TWEI.HORZLINEXCOORD: return (a_szValue);
+                case TWEI.HORZLINEYCOORD: return (a_szValue);
+                case TWEI.IAFIELDA_VALUE: return (a_szValue);
+                case TWEI.IAFIELDB_VALUE: return (a_szValue);
+                case TWEI.IAFIELDC_VALUE: return (a_szValue);
+                case TWEI.IAFIELDD_VALUE: return (a_szValue);
+                case TWEI.IAFIELDE_VALUE: return (a_szValue);
+                case TWEI.IALEVEL: return (CvtCapValueToEnumHelper<TWIA>(a_szValue));
+                case TWEI.ICCPROFILE: return (a_szValue);
+                case TWEI.IMAGEMERGED: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case TWEI.LASTSEGMENT: return (CvtCapValueToEnumHelper<bool>(a_szValue));
+                case TWEI.MAGDATA: return (a_szValue);
+                case TWEI.MAGDATALENGTH: return (a_szValue);
+                case TWEI.MAGTYPE: return (CvtCapValueToEnumHelper<TWMD>(a_szValue));
+                case TWEI.PAGENUMBER: return (a_szValue);
+                case TWEI.PAGESIDE: return (a_szValue);
+                case TWEI.PAPERCOUNT: return (a_szValue);
+                case TWEI.PATCHCODE: return (CvtCapValueToEnumHelper<TWPCH>(a_szValue));
+                case TWEI.PIXELFLAVOR: return (CvtCapValueToEnumHelper<TWPF>(a_szValue));
+                case TWEI.PRINTER: return (CvtCapValueToEnumHelper<TWPR>(a_szValue));
+                case TWEI.PRINTERTEXT: return (a_szValue);
+                case TWEI.SEGMENTNUMBER: return (a_szValue);
+                case TWEI.SKEWCONFIDENCE: return (a_szValue);
+                case TWEI.SKEWFINALANGLE: return (a_szValue);
+                case TWEI.SKEWORIGINALANGLE: return (a_szValue);
+                case TWEI.SKEWWINDOWX1: return (a_szValue);
+                case TWEI.SKEWWINDOWX2: return (a_szValue);
+                case TWEI.SKEWWINDOWX3: return (a_szValue);
+                case TWEI.SKEWWINDOWX4: return (a_szValue);
+                case TWEI.SKEWWINDOWY1: return (a_szValue);
+                case TWEI.SKEWWINDOWY2: return (a_szValue);
+                case TWEI.SKEWWINDOWY3: return (a_szValue);
+                case TWEI.SKEWWINDOWY4: return (a_szValue);
+                case TWEI.SPECKLESREMOVED: return (a_szValue);
+                case TWEI.TWAINDIRECTMETADATA: return (a_szValue);
+                case TWEI.VERTLINECOUNT: return (a_szValue);
+                case TWEI.VERTLINELENGTH: return (a_szValue);
+                case TWEI.VERTLINETHICKNESS: return (a_szValue);
+                case TWEI.VERTLINEXCOORD: return (a_szValue);
+                case TWEI.VERTLINEYCOORD: return (a_szValue);
+                case TWEI.WHITESPECKLESREMOVED: return (a_szValue);
+            }
         }
 
         #endregion
@@ -2443,7 +4376,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twmemref = a_twmemref;
                     threaddata.msg = a_msg;
                     threaddata.dg = a_dg;
@@ -2471,7 +4404,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -2495,7 +4428,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -2528,7 +4461,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -2554,12 +4487,12 @@ namespace TWAINWorkingGroup
             // Uh-oh...
             else
             {
-                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
+                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
                 return (STS.BUMMER);
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -2589,7 +4522,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twmemref = a_twmemref;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -2617,7 +4550,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -2641,7 +4574,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -2674,7 +4607,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -2705,7 +4638,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -2720,6 +4653,9 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue file audio transfer commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <returns>TWAIN status</returns>
         private void DatAudiofilexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -2760,7 +4696,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
                         threaddata.dat = DAT.AUDIOFILEXFER;
@@ -2787,7 +4723,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -2809,28 +4745,28 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatAudiofilexfer = default;
+                                m_threaddataDatAudiofilexfer = default(ThreadData);
                                 m_threaddataDatAudiofilexfer.blIsInuse = true;
                                 m_threaddataDatAudiofilexfer.dg = a_dg;
                                 m_threaddataDatAudiofilexfer.msg = a_msg;
                                 m_threaddataDatAudiofilexfer.dat = DAT.AUDIOFILEXFER;
                                 RunInUiThread(DatAudiofilexferWindowsTwain32);
                                 sts = m_threaddataDatAudiofilexfer.sts;
-                                m_threaddataDatAudiofilexfer = default;
+                                m_threaddataDatAudiofilexfer = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatAudiofilexfer = default;
+                                m_threaddataDatAudiofilexfer = default(ThreadData);
                                 m_threaddataDatAudiofilexfer.blIsInuse = true;
                                 m_threaddataDatAudiofilexfer.dg = a_dg;
                                 m_threaddataDatAudiofilexfer.msg = a_msg;
                                 m_threaddataDatAudiofilexfer.dat = DAT.AUDIOFILEXFER;
                                 RunInUiThread(DatAudiofilexferWindowsTwainDsm);
                                 sts = m_threaddataDatAudiofilexfer.sts;
-                                m_threaddataDatAudiofilexfer = default;
+                                m_threaddataDatAudiofilexfer = default(ThreadData);
                             }
                         }
                     }
@@ -2845,7 +4781,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -2878,7 +4814,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -2909,7 +4845,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -2944,7 +4880,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twaudioinfo = a_twaudioinfo;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -2972,7 +4908,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -2996,7 +4932,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -3029,7 +4965,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -3060,7 +4996,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -3075,6 +5011,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue native audio transfer commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_intptr">handle</param>
+        /// <returns>TWAIN status</returns>
         private void DatAudionativexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -3103,6 +5043,7 @@ namespace TWAINWorkingGroup
                 ref m_threaddataDatAudionativexfer.intptrAudio
             );
         }
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public STS DatAudionativexfer(DG a_dg, MSG a_msg, ref IntPtr a_intptrAudio)
         {
             STS sts;
@@ -3115,7 +5056,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.intptrAudio = a_intptrAudio;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -3144,7 +5085,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -3166,7 +5107,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatAudionativexfer = default;
+                                m_threaddataDatAudionativexfer = default(ThreadData);
                                 m_threaddataDatAudionativexfer.blIsInuse = true;
                                 m_threaddataDatAudionativexfer.dg = a_dg;
                                 m_threaddataDatAudionativexfer.msg = a_msg;
@@ -3174,14 +5115,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatAudionativexferWindowsTwain32);
                                 a_intptrAudio = m_threaddataDatAudionativexfer.intptrAudio;
                                 sts = m_threaddataDatAudionativexfer.sts;
-                                m_threaddataDatAudionativexfer = default;
+                                m_threaddataDatAudionativexfer = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatAudionativexfer = default;
+                                m_threaddataDatAudionativexfer = default(ThreadData);
                                 m_threaddataDatAudionativexfer.blIsInuse = true;
                                 m_threaddataDatAudionativexfer.dg = a_dg;
                                 m_threaddataDatAudionativexfer.msg = a_msg;
@@ -3189,7 +5130,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatAudionativexferWindowsTwainDsm);
                                 a_intptrAudio = m_threaddataDatAudionativexfer.intptrAudio;
                                 sts = m_threaddataDatAudionativexfer.sts;
-                                m_threaddataDatAudionativexfer = default;
+                                m_threaddataDatAudionativexfer = default(ThreadData);
                             }
                         }
                     }
@@ -3204,7 +5145,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -3238,7 +5179,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -3270,7 +5211,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -3306,7 +5247,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twcallback = a_twcallback;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -3330,11 +5271,11 @@ namespace TWAINWorkingGroup
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendBefore(a_dg.ToString(), DAT.CALLBACK.ToString(), a_msg.ToString(), CsvSerializer.CallbackToCsv(a_twcallback));
+                Log.LogSendBefore(a_dg.ToString(), DAT.CALLBACK.ToString(), a_msg.ToString(), CallbackToCsv(a_twcallback));
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -3358,7 +5299,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -3391,7 +5332,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -3422,12 +5363,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.CallbackToCsv(a_twcallback));
+                Log.LogSendAfter(stsRcOrCc, CallbackToCsv(a_twcallback));
             }
 
             // All done...
@@ -3451,7 +5392,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twcallback2 = a_twcallback2;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -3475,11 +5416,11 @@ namespace TWAINWorkingGroup
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendBefore(a_dg.ToString(), DAT.CALLBACK2.ToString(), a_msg.ToString(), CsvSerializer.Callback2ToCsv(a_twcallback2));
+                Log.LogSendBefore(a_dg.ToString(), DAT.CALLBACK2.ToString(), a_msg.ToString(), Callback2ToCsv(a_twcallback2));
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -3503,7 +5444,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -3536,7 +5477,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -3567,12 +5508,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.Callback2ToCsv(a_twcallback2));
+                Log.LogSendAfter(stsRcOrCc, Callback2ToCsv(a_twcallback2));
             }
 
             // All done...
@@ -3582,6 +5523,11 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue capabilities commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twcapability">CAPABILITY structure</param>
+        /// <returns>TWAIN status</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         private void DatCapabilityWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -3621,7 +5567,7 @@ namespace TWAINWorkingGroup
                 {
                     lock (m_lockTwain)
                     {
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         long lIndex = 0;
 
                         // TBD: sometimes this doesn't work!  Not sure why
@@ -3629,7 +5575,7 @@ namespace TWAINWorkingGroup
                         for (int ii = 0; ii < 5; ii++)
                         {
                             // Set our command variables...
-                            threaddata = default;
+                            threaddata = default(ThreadData);
                             threaddata.twcapability = a_twcapability;
                             threaddata.dg = a_dg;
                             threaddata.msg = a_msg;
@@ -3641,7 +5587,7 @@ namespace TWAINWorkingGroup
                             ThreadToCallerWaitOne();
 
                             // Hmmm...
-                            if ((a_msg == MSG.GETCURRENT)
+                            if (   (a_msg == MSG.GETCURRENT)
                                 && (m_twaincommand.Get(lIndex).sts == STS.SUCCESS)
                                 && (m_twaincommand.Get(lIndex).twcapability.ConType == (TWON)0)
                                 && (m_twaincommand.Get(lIndex).twcapability.hContainer == IntPtr.Zero))
@@ -3670,7 +5616,7 @@ namespace TWAINWorkingGroup
             {
                 if ((a_msg == MSG.SET) || (a_msg == MSG.SETCONSTRAINT))
                 {
-                    Log.LogSendBefore(a_dg.ToString(), DAT.CAPABILITY.ToString(), a_msg.ToString(), CapabilityToCsv(a_twcapability, (a_msg != MSG.QUERYSUPPORT)));
+                    Log.LogSendBefore(a_dg.ToString(), DAT.CAPABILITY.ToString(), a_msg.ToString(), CapabilityToCsv(a_twcapability, (a_msg != TWAIN.MSG.QUERYSUPPORT)));
                 }
                 else
                 {
@@ -3684,7 +5630,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -3706,7 +5652,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatCapability = default;
+                                m_threaddataDatCapability = default(ThreadData);
                                 m_threaddataDatCapability.blIsInuse = true;
                                 m_threaddataDatCapability.dg = a_dg;
                                 m_threaddataDatCapability.msg = a_msg;
@@ -3715,14 +5661,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatCapabilityWindowsTwain32);
                                 a_twcapability = m_threaddataDatCapability.twcapability;
                                 sts = m_threaddataDatCapability.sts;
-                                m_threaddataDatCapability = default;
+                                m_threaddataDatCapability = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatCapability = default;
+                                m_threaddataDatCapability = default(ThreadData);
                                 m_threaddataDatCapability.blIsInuse = true;
                                 m_threaddataDatCapability.dg = a_dg;
                                 m_threaddataDatCapability.msg = a_msg;
@@ -3731,7 +5677,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatCapabilityWindowsTwainDsm);
                                 a_twcapability = m_threaddataDatCapability.twcapability;
                                 sts = m_threaddataDatCapability.sts;
-                                m_threaddataDatCapability = default;
+                                m_threaddataDatCapability = default(ThreadData);
                             }
                         }
                     }
@@ -3746,7 +5692,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -3779,7 +5725,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -3810,7 +5756,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -3821,7 +5767,7 @@ namespace TWAINWorkingGroup
                 }
                 else
                 {
-                    Log.LogSendAfter(stsRcOrCc, CapabilityToCsv(a_twcapability, (a_msg != MSG.QUERYSUPPORT)));
+                    Log.LogSendAfter(stsRcOrCc, CapabilityToCsv(a_twcapability, (a_msg != TWAIN.MSG.QUERYSUPPORT)));
                 }
             }
 
@@ -3834,7 +5780,7 @@ namespace TWAINWorkingGroup
                 // otherwise ask the DS what it is currently set to
                 if (sts == STS.SUCCESS)
                 {
-                    str = CapabilityToCsv(a_twcapability, (a_msg != MSG.QUERYSUPPORT));
+                    str = CapabilityToCsv(a_twcapability, (a_msg != TWAIN.MSG.QUERYSUPPORT));
                 }
                 else
                 {
@@ -3844,7 +5790,7 @@ namespace TWAINWorkingGroup
                     sts = DatCapability(a_dg, MSG.GETCURRENT, ref twcapability);
                     if (sts == STS.SUCCESS)
                     {
-                        str = CapabilityToCsv(twcapability, (a_msg != MSG.QUERYSUPPORT));
+                        str = CapabilityToCsv(twcapability, (a_msg != TWAIN.MSG.QUERYSUPPORT));
                     }
                     else
                     {
@@ -3861,7 +5807,7 @@ namespace TWAINWorkingGroup
                     int result;
                     if (int.TryParse(astr[astr.Length - 1], out result))
                     {
-                        twlg = (TWLG)result;
+                       twlg = (TWLG)result;
                     }
                 }
                 catch
@@ -3880,7 +5826,7 @@ namespace TWAINWorkingGroup
         /// </summary>
         /// <param name="a_dg">Data group</param>
         /// <param name="a_msg">Operation</param>
-        /// <param name="a_twciecolor">CIECOLOR structure</param>
+        /// <param name="a_twceicolor">CIECOLOR structure</param>
         /// <returns>TWAIN status</returns>
         public STS DatCiecolor(DG a_dg, MSG a_msg, ref TW_CIECOLOR a_twciecolor)
         {
@@ -3892,7 +5838,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twciecolor = a_twciecolor;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -3920,7 +5866,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -3944,7 +5890,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -3977,7 +5923,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -4008,7 +5954,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -4027,6 +5973,7 @@ namespace TWAINWorkingGroup
         /// <param name="a_msg">Operation</param>
         /// <param name="a_twcustomdsdata">CUSTOMDSDATA structure</param>
         /// <returns>TWAIN status</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public STS DatCustomdsdata(DG a_dg, MSG a_msg, ref TW_CUSTOMDSDATA a_twcustomdsdata)
         {
             STS sts;
@@ -4037,7 +5984,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twcustomdsdata = a_twcustomdsdata;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -4065,7 +6012,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -4089,7 +6036,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -4122,7 +6069,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -4153,7 +6100,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -4182,7 +6129,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twdeviceevent = a_twdeviceevent;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -4210,7 +6157,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -4234,7 +6181,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -4267,7 +6214,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -4298,12 +6245,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.DeviceeventToCsv(a_twdeviceevent));
+                Log.LogSendAfter(stsRcOrCc, DeviceeventToCsv(a_twdeviceevent));
             }
 
             // All done...
@@ -4317,6 +6264,7 @@ namespace TWAINWorkingGroup
         /// <param name="a_msg">Operation</param>
         /// <param name="a_twentrypoint">ENTRYPOINT structure</param>
         /// <returns>TWAIN status</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public STS DatEntrypoint(DG a_dg, MSG a_msg, ref TW_ENTRYPOINT a_twentrypoint)
         {
             STS sts;
@@ -4327,7 +6275,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twentrypoint = a_twentrypoint;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -4351,11 +6299,11 @@ namespace TWAINWorkingGroup
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendBefore(a_dg.ToString(), DAT.ENTRYPOINT.ToString(), a_msg.ToString(), CsvSerializer.EntrypointToCsv(a_twentrypoint));
+                Log.LogSendBefore(a_dg.ToString(), DAT.ENTRYPOINT.ToString(), a_msg.ToString(), EntrypointToCsv(a_twentrypoint));
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -4379,7 +6327,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -4404,14 +6352,14 @@ namespace TWAINWorkingGroup
                     }
                     else if (m_blFound020302Dsm64bit)
                     {
-                        TW_ENTRYPOINT_LINUX64 twentrypointlinux64 = default;
+                        TW_ENTRYPOINT_LINUX64 twentrypointlinux64 = default(TW_ENTRYPOINT_LINUX64);
                         twentrypointlinux64.Size = a_twentrypoint.Size;
                         twentrypointlinux64.DSM_MemAllocate = a_twentrypoint.DSM_MemAllocate;
                         twentrypointlinux64.DSM_MemFree = a_twentrypoint.DSM_MemFree;
                         twentrypointlinux64.DSM_MemLock = a_twentrypoint.DSM_MemLock;
                         twentrypointlinux64.DSM_MemUnlock = a_twentrypoint.DSM_MemUnlock;
                         sts = (STS)NativeMethods.Linux020302Dsm64bitEntryEntrypoint(ref m_twidentityApp, ref m_twidentityDs, a_dg, DAT.ENTRYPOINT, a_msg, ref twentrypointlinux64);
-                        a_twentrypoint = default;
+                        a_twentrypoint = default(TW_ENTRYPOINT);
                         a_twentrypoint.Size = (uint)(twentrypointlinux64.Size & 0xFFFFFFFF);
                         a_twentrypoint.DSM_MemAllocate = twentrypointlinux64.DSM_MemAllocate;
                         a_twentrypoint.DSM_MemFree = twentrypointlinux64.DSM_MemFree;
@@ -4434,7 +6382,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -4465,36 +6413,36 @@ namespace TWAINWorkingGroup
             }
 
             // If we were successful, then squirrel away the data...
-            if (sts == STS.SUCCESS)
+            if (sts == TWAIN.STS.SUCCESS)
             {
-                m_twentrypointdelegates = default;
+                m_twentrypointdelegates = default(TWAIN.TW_ENTRYPOINT_DELEGATES);
                 m_twentrypointdelegates.Size = a_twentrypoint.Size;
                 m_twentrypointdelegates.DSM_Entry = a_twentrypoint.DSM_Entry;
-                if (a_twentrypoint.DSM_MemAllocate != IntPtr.Zero)
+                if (a_twentrypoint.DSM_MemAllocate != null)
                 {
-                    m_twentrypointdelegates.DSM_MemAllocate = (DSM_MEMALLOC)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemAllocate, typeof(DSM_MEMALLOC));
+                    m_twentrypointdelegates.DSM_MemAllocate = (TWAIN.DSM_MEMALLOC)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemAllocate,typeof(TWAIN.DSM_MEMALLOC));
                 }
-                if (a_twentrypoint.DSM_MemFree != IntPtr.Zero)
+                if (a_twentrypoint.DSM_MemFree != null)
                 {
-                    m_twentrypointdelegates.DSM_MemFree = (DSM_MEMFREE)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemFree, typeof(DSM_MEMFREE));
+                    m_twentrypointdelegates.DSM_MemFree = (TWAIN.DSM_MEMFREE)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemFree, typeof(TWAIN.DSM_MEMFREE));
                 }
-                if (a_twentrypoint.DSM_MemLock != IntPtr.Zero)
+                if (a_twentrypoint.DSM_MemLock != null)
                 {
-                    m_twentrypointdelegates.DSM_MemLock = (DSM_MEMLOCK)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemLock, typeof(DSM_MEMLOCK));
+                    m_twentrypointdelegates.DSM_MemLock = (TWAIN.DSM_MEMLOCK)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemLock, typeof(TWAIN.DSM_MEMLOCK));
                 }
-                if (a_twentrypoint.DSM_MemUnlock != IntPtr.Zero)
+                if (a_twentrypoint.DSM_MemUnlock != null)
                 {
-                    m_twentrypointdelegates.DSM_MemUnlock = (DSM_MEMUNLOCK)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemUnlock, typeof(DSM_MEMUNLOCK));
+                    m_twentrypointdelegates.DSM_MemUnlock = (TWAIN.DSM_MEMUNLOCK)Marshal.GetDelegateForFunctionPointer(a_twentrypoint.DSM_MemUnlock, typeof(TWAIN.DSM_MEMUNLOCK));
                 }
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.EntrypointToCsv(a_twentrypoint));
+                Log.LogSendAfter(stsRcOrCc, EntrypointToCsv(a_twentrypoint));
             }
 
             // All done...
@@ -4504,6 +6452,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue event commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twevent">EVENT structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatEventWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -4543,7 +6495,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -4565,7 +6517,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatEvent = default;
+                                m_threaddataDatEvent = default(ThreadData);
                                 m_threaddataDatEvent.blIsInuse = true;
                                 m_threaddataDatEvent.dg = a_dg;
                                 m_threaddataDatEvent.msg = a_msg;
@@ -4574,14 +6526,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatEventWindowsTwain32);
                                 a_twevent = m_threaddataDatEvent.twevent;
                                 sts = m_threaddataDatEvent.sts;
-                                m_threaddataDatEvent = default;
+                                m_threaddataDatEvent = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatEvent = default;
+                                m_threaddataDatEvent = default(ThreadData);
                                 m_threaddataDatEvent.blIsInuse = true;
                                 m_threaddataDatEvent.dg = a_dg;
                                 m_threaddataDatEvent.msg = a_msg;
@@ -4590,7 +6542,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatEventWindowsTwainDsm);
                                 a_twevent = m_threaddataDatEvent.twevent;
                                 sts = m_threaddataDatEvent.sts;
-                                m_threaddataDatEvent = default;
+                                m_threaddataDatEvent = default(ThreadData);
                             }
                         }
                     }
@@ -4605,7 +6557,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -4638,7 +6590,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -4669,7 +6621,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 1)
@@ -4690,6 +6642,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Get/Set extended image info information...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twextimageinfo">EXTIMAGEINFO structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatExtimageinfoWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -4730,7 +6686,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.twextimageinfo = a_twextimageinfo;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -4759,7 +6715,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -4781,7 +6737,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatExtimageinfo = default;
+                                m_threaddataDatExtimageinfo = default(ThreadData);
                                 m_threaddataDatExtimageinfo.blIsInuse = true;
                                 m_threaddataDatExtimageinfo.dg = a_dg;
                                 m_threaddataDatExtimageinfo.msg = a_msg;
@@ -4790,14 +6746,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatExtimageinfoWindowsTwain32);
                                 a_twextimageinfo = m_threaddataDatExtimageinfo.twextimageinfo;
                                 sts = m_threaddataDatExtimageinfo.sts;
-                                m_threaddataDatExtimageinfo = default;
+                                m_threaddataDatExtimageinfo = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatExtimageinfo = default;
+                                m_threaddataDatExtimageinfo = default(ThreadData);
                                 m_threaddataDatExtimageinfo.blIsInuse = true;
                                 m_threaddataDatExtimageinfo.dg = a_dg;
                                 m_threaddataDatExtimageinfo.msg = a_msg;
@@ -4806,7 +6762,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatExtimageinfoWindowsTwainDsm);
                                 a_twextimageinfo = m_threaddataDatExtimageinfo.twextimageinfo;
                                 sts = m_threaddataDatExtimageinfo.sts;
-                                m_threaddataDatExtimageinfo = default;
+                                m_threaddataDatExtimageinfo = default(ThreadData);
                             }
                         }
                     }
@@ -4821,7 +6777,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -4854,7 +6810,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -4885,7 +6841,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -4914,7 +6870,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twfilesystem = a_twfilesystem;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -4938,11 +6894,11 @@ namespace TWAINWorkingGroup
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendBefore(a_dg.ToString(), DAT.FILESYSTEM.ToString(), a_msg.ToString(), CsvSerializer.FilesystemToCsv(a_twfilesystem));
+                Log.LogSendBefore(a_dg.ToString(), DAT.FILESYSTEM.ToString(), a_msg.ToString(), FilesystemToCsv(a_twfilesystem));
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -4966,7 +6922,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -4999,7 +6955,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -5030,12 +6986,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.FilesystemToCsv(a_twfilesystem));
+                Log.LogSendAfter(stsRcOrCc, FilesystemToCsv(a_twfilesystem));
             }
 
             // All done...
@@ -5059,7 +7015,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twfilter = a_twfilter;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -5087,7 +7043,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -5111,7 +7067,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -5144,7 +7100,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -5175,7 +7131,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -5204,7 +7160,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twgrayresponse = a_twgrayresponse;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -5232,7 +7188,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -5256,7 +7212,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -5289,7 +7245,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -5320,7 +7276,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -5349,7 +7305,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twmemory = a_twmemory;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -5377,7 +7333,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -5401,7 +7357,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -5434,7 +7390,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -5465,7 +7421,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -5480,6 +7436,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue identity commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twidentity">IDENTITY structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatIdentityWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -5525,6 +7485,7 @@ namespace TWAINWorkingGroup
                 ref m_threaddataDatIdentity.twidentitylegacy
             );
         }
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public STS DatIdentity(DG a_dg, MSG a_msg, ref TW_IDENTITY a_twidentity)
         {
             STS sts;
@@ -5537,7 +7498,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.twidentity = a_twidentity;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -5562,11 +7523,11 @@ namespace TWAINWorkingGroup
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendBefore(a_dg.ToString(), DAT.IDENTITY.ToString(), a_msg.ToString(), ((a_msg == MSG.OPENDS) ? CsvSerializer.IdentityToCsv(a_twidentity) : ""));
+                Log.LogSendBefore(a_dg.ToString(), DAT.IDENTITY.ToString(), a_msg.ToString(), ((a_msg == MSG.OPENDS) ? IdentityToCsv(a_twidentity) : ""));
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Convert the identity structure...
                 TW_IDENTITY_LEGACY twidentitylegacy = TwidentityToTwidentitylegacy(a_twidentity);
@@ -5598,7 +7559,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatIdentity = default;
+                                m_threaddataDatIdentity = default(ThreadData);
                                 m_threaddataDatIdentity.blIsInuse = true;
                                 m_threaddataDatIdentity.dg = a_dg;
                                 m_threaddataDatIdentity.msg = a_msg;
@@ -5607,14 +7568,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatIdentityWindowsTwain32);
                                 twidentitylegacy = m_threaddataDatIdentity.twidentitylegacy;
                                 sts = m_threaddataDatIdentity.sts;
-                                m_threaddataDatIdentity = default;
+                                m_threaddataDatIdentity = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatIdentity = default;
+                                m_threaddataDatIdentity = default(ThreadData);
                                 m_threaddataDatIdentity.blIsInuse = true;
                                 m_threaddataDatIdentity.dg = a_dg;
                                 m_threaddataDatIdentity.msg = a_msg;
@@ -5623,7 +7584,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatIdentityWindowsTwainDsm);
                                 twidentitylegacy = m_threaddataDatIdentity.twidentitylegacy;
                                 sts = m_threaddataDatIdentity.sts;
-                                m_threaddataDatIdentity = default;
+                                m_threaddataDatIdentity = default(ThreadData);
                             }
                         }
                     }
@@ -5639,7 +7600,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command, we have a serious problem with 64-bit stuff
                 // because TW_INT32 and TW_UINT32 were defined using long, which
@@ -5790,7 +7751,7 @@ namespace TWAINWorkingGroup
                     // Open always tries the current DSM, and then the older one, if needed...
                     else if (a_msg == MSG.OPENDS)
                     {
-                        TW_IDENTITY_LEGACY twidentitylegacy = default;
+                        TW_IDENTITY_LEGACY twidentitylegacy = default(TW_IDENTITY_LEGACY);
 
                         // Prime the pump by assuming we didn't find anything...
                         sts = STS.NODS;
@@ -5872,7 +7833,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 TW_IDENTITY_MACOSX twidentitymacosx = TwidentityToTwidentitymacosx(a_twidentity);
                 // Issue the command...
@@ -5905,12 +7866,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.IdentityToCsv(a_twidentity));
+                Log.LogSendAfter(stsRcOrCc, IdentityToCsv(a_twidentity));
             }
 
             // If we opened, go to state 4...
@@ -5930,7 +7891,7 @@ namespace TWAINWorkingGroup
                     // Register for callbacks...
 
                     // Windows...
-                    if (PlatformInfo.IsWindows)
+                    if (ms_platform == Platform.WINDOWS)
                     {
                         if (m_blUseCallbacks)
                         {
@@ -5939,7 +7900,7 @@ namespace TWAINWorkingGroup
                             // Log it...
                             if (Log.GetLevel() > 0)
                             {
-                                Log.LogSendBefore(a_dg.ToString(), DAT.CALLBACK.ToString(), a_msg.ToString(), CsvSerializer.CallbackToCsv(twcallback));
+                                Log.LogSendBefore(a_dg.ToString(), DAT.CALLBACK.ToString(), a_msg.ToString(), CallbackToCsv(twcallback));
                             }
                             // Issue the command...
                             try
@@ -5969,14 +7930,14 @@ namespace TWAINWorkingGroup
                     }
 
                     // Linux...
-                    else if (PlatformInfo.IsLinux)
+                    else if (ms_platform == Platform.LINUX)
                     {
                         TW_CALLBACK twcallback = new TW_CALLBACK();
                         twcallback.CallBackProc = Marshal.GetFunctionPointerForDelegate(m_linuxdsmentrycontrolcallbackdelegate);
                         // Log it...
                         if (Log.GetLevel() > 0)
                         {
-                            Log.LogSendBefore(a_dg.ToString(), DAT.CALLBACK.ToString(), MSG.REGISTER_CALLBACK.ToString(), CsvSerializer.CallbackToCsv(twcallback));
+                            Log.LogSendBefore(a_dg.ToString(), DAT.CALLBACK.ToString(), MSG.REGISTER_CALLBACK.ToString(), CallbackToCsv(twcallback));
                         }
                         // Issue the command...
                         try
@@ -6014,7 +7975,7 @@ namespace TWAINWorkingGroup
                     }
 
                     // Mac OS X, which has to be different...
-                    else if (PlatformInfo.IsMacOSX)
+                    else if (ms_platform == Platform.MACOSX)
                     {
                         IntPtr intptr = IntPtr.Zero;
                         TW_CALLBACK twcallback = new TW_CALLBACK();
@@ -6022,7 +7983,7 @@ namespace TWAINWorkingGroup
                         // Log it...
                         if (Log.GetLevel() > 0)
                         {
-                            Log.LogSendBefore(a_dg.ToString(), DAT.CALLBACK.ToString(), a_msg.ToString(), CsvSerializer.CallbackToCsv(twcallback));
+                            Log.LogSendBefore(a_dg.ToString(), DAT.CALLBACK.ToString(), a_msg.ToString(), CallbackToCsv(twcallback));
                         }
                         // Issue the command...
                         try
@@ -6068,6 +8029,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Get/Set image info information...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twimageinfo">IMAGEINFO structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatImageinfoWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -6108,7 +8073,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.twimageinfo = a_twimageinfo;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -6137,7 +8102,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -6159,7 +8124,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImageinfo = default;
+                                m_threaddataDatImageinfo = default(ThreadData);
                                 m_threaddataDatImageinfo.blIsInuse = true;
                                 m_threaddataDatImageinfo.dg = a_dg;
                                 m_threaddataDatImageinfo.msg = a_msg;
@@ -6168,14 +8133,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImageinfoWindowsTwain32);
                                 a_twimageinfo = m_threaddataDatImageinfo.twimageinfo;
                                 sts = m_threaddataDatImageinfo.sts;
-                                m_threaddataDatImageinfo = default;
+                                m_threaddataDatImageinfo = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImageinfo = default;
+                                m_threaddataDatImageinfo = default(ThreadData);
                                 m_threaddataDatImageinfo.blIsInuse = true;
                                 m_threaddataDatImageinfo.dg = a_dg;
                                 m_threaddataDatImageinfo.msg = a_msg;
@@ -6184,7 +8149,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImageinfoWindowsTwainDsm);
                                 a_twimageinfo = m_threaddataDatImageinfo.twimageinfo;
                                 sts = m_threaddataDatImageinfo.sts;
-                                m_threaddataDatImageinfo = default;
+                                m_threaddataDatImageinfo = default(ThreadData);
                             }
                         }
                     }
@@ -6199,7 +8164,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -6214,7 +8179,7 @@ namespace TWAINWorkingGroup
                     }
                     else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
                     {
-                        TW_IMAGEINFO_LINUX64 twimageinfolinux64 = default;
+                        TW_IMAGEINFO_LINUX64 twimageinfolinux64 = default(TW_IMAGEINFO_LINUX64);
                         sts = (STS)NativeMethods.Linux020302Dsm64bitEntryImageinfo(ref m_twidentityApp, ref m_twidentityDs, a_dg, DAT.IMAGEINFO, a_msg, ref twimageinfolinux64);
                         a_twimageinfo.XResolution = twimageinfolinux64.XResolution;
                         a_twimageinfo.YResolution = twimageinfolinux64.YResolution;
@@ -6250,7 +8215,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -6281,12 +8246,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.ImageinfoToCsv(a_twimageinfo));
+                Log.LogSendAfter(stsRcOrCc, ImageinfoToCsv(a_twimageinfo));
             }
 
             // All done...
@@ -6296,6 +8261,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Get/Set layout information...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twimagelayout">IMAGELAYOUT structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatImagelayoutWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -6336,7 +8305,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.twimagelayout = a_twimagelayout;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -6361,11 +8330,11 @@ namespace TWAINWorkingGroup
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendBefore(a_dg.ToString(), DAT.IMAGELAYOUT.ToString(), a_msg.ToString(), CsvSerializer.ImagelayoutToCsv(a_twimagelayout));
+                Log.LogSendBefore(a_dg.ToString(), DAT.IMAGELAYOUT.ToString(), a_msg.ToString(), ImagelayoutToCsv(a_twimagelayout));
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -6387,7 +8356,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagelayout = default;
+                                m_threaddataDatImagelayout = default(ThreadData);
                                 m_threaddataDatImagelayout.blIsInuse = true;
                                 m_threaddataDatImagelayout.dg = a_dg;
                                 m_threaddataDatImagelayout.msg = a_msg;
@@ -6396,14 +8365,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagelayoutWindowsTwain32);
                                 a_twimagelayout = m_threaddataDatImagelayout.twimagelayout;
                                 sts = m_threaddataDatImagelayout.sts;
-                                m_threaddataDatImagelayout = default;
+                                m_threaddataDatImagelayout = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagelayout = default;
+                                m_threaddataDatImagelayout = default(ThreadData);
                                 m_threaddataDatImagelayout.blIsInuse = true;
                                 m_threaddataDatImagelayout.dg = a_dg;
                                 m_threaddataDatImagelayout.msg = a_msg;
@@ -6412,7 +8381,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagelayoutWindowsTwainDsm);
                                 a_twimagelayout = m_threaddataDatImagelayout.twimagelayout;
                                 sts = m_threaddataDatImagelayout.sts;
-                                m_threaddataDatImagelayout = default;
+                                m_threaddataDatImagelayout = default(ThreadData);
                             }
                         }
                     }
@@ -6427,7 +8396,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -6460,7 +8429,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -6491,12 +8460,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.ImagelayoutToCsv(a_twimagelayout));
+                Log.LogSendAfter(stsRcOrCc, ImagelayoutToCsv(a_twimagelayout));
             }
 
             // All done...
@@ -6506,6 +8475,9 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue file image transfer commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <returns>TWAIN status</returns>
         private void DatImagefilexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -6546,7 +8518,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
                         threaddata.dat = DAT.IMAGEFILEXFER;
@@ -6573,7 +8545,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -6595,28 +8567,28 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagefilexfer = default;
+                                m_threaddataDatImagefilexfer = default(ThreadData);
                                 m_threaddataDatImagefilexfer.blIsInuse = true;
                                 m_threaddataDatImagefilexfer.dg = a_dg;
                                 m_threaddataDatImagefilexfer.msg = a_msg;
                                 m_threaddataDatImagefilexfer.dat = DAT.IMAGEFILEXFER;
                                 RunInUiThread(DatImagefilexferWindowsTwain32);
                                 sts = m_threaddataDatImagefilexfer.sts;
-                                m_threaddataDatImagefilexfer = default;
+                                m_threaddataDatImagefilexfer = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagefilexfer = default;
+                                m_threaddataDatImagefilexfer = default(ThreadData);
                                 m_threaddataDatImagefilexfer.blIsInuse = true;
                                 m_threaddataDatImagefilexfer.dg = a_dg;
                                 m_threaddataDatImagefilexfer.msg = a_msg;
                                 m_threaddataDatImagefilexfer.dat = DAT.IMAGEFILEXFER;
                                 RunInUiThread(DatImagefilexferWindowsTwainDsm);
                                 sts = m_threaddataDatImagefilexfer.sts;
-                                m_threaddataDatImagefilexfer = default;
+                                m_threaddataDatImagefilexfer = default(ThreadData);
                             }
                         }
                     }
@@ -6631,7 +8603,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -6664,7 +8636,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -6695,7 +8667,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -6716,6 +8688,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue memory file image transfer commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twimagememxfer">IMAGEMEMXFER structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatImagememfilexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -6756,7 +8732,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.twimagememxfer = a_twimagememxfer;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -6781,11 +8757,11 @@ namespace TWAINWorkingGroup
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendBefore(a_dg.ToString(), DAT.IMAGEMEMFILEXFER.ToString(), a_msg.ToString(), CsvSerializer.ImagememxferToCsv(a_twimagememxfer));
+                Log.LogSendBefore(a_dg.ToString(), DAT.IMAGEMEMFILEXFER.ToString(), a_msg.ToString(), ImagememxferToCsv(a_twimagememxfer));
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -6807,7 +8783,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagememfilexfer = default;
+                                m_threaddataDatImagememfilexfer = default(ThreadData);
                                 m_threaddataDatImagememfilexfer.blIsInuse = true;
                                 m_threaddataDatImagememfilexfer.dg = a_dg;
                                 m_threaddataDatImagememfilexfer.msg = a_msg;
@@ -6816,14 +8792,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagememfilexferWindowsTwain32);
                                 a_twimagememxfer = m_threaddataDatImagememfilexfer.twimagememxfer;
                                 sts = m_threaddataDatImagememfilexfer.sts;
-                                m_threaddataDatImagememfilexfer = default;
+                                m_threaddataDatImagememfilexfer = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagememfilexfer = default;
+                                m_threaddataDatImagememfilexfer = default(ThreadData);
                                 m_threaddataDatImagememfilexfer.blIsInuse = true;
                                 m_threaddataDatImagememfilexfer.dg = a_dg;
                                 m_threaddataDatImagememfilexfer.msg = a_msg;
@@ -6832,7 +8808,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagememfilexferWindowsTwainDsm);
                                 a_twimagememxfer = m_threaddataDatImagememfilexfer.twimagememxfer;
                                 sts = m_threaddataDatImagememfilexfer.sts;
-                                m_threaddataDatImagememfilexfer = default;
+                                m_threaddataDatImagememfilexfer = default(ThreadData);
                             }
                         }
                     }
@@ -6847,7 +8823,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -6862,7 +8838,7 @@ namespace TWAINWorkingGroup
                     }
                     else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
                     {
-                        TW_IMAGEMEMXFER_LINUX64 twimagememxferlinux64 = default;
+                        TW_IMAGEMEMXFER_LINUX64 twimagememxferlinux64 = default(TW_IMAGEMEMXFER_LINUX64);
                         twimagememxferlinux64.BytesPerRow = a_twimagememxfer.BytesPerRow;
                         twimagememxferlinux64.BytesWritten = a_twimagememxfer.BytesWritten;
                         twimagememxferlinux64.Columns = a_twimagememxfer.Columns;
@@ -6901,12 +8877,12 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
                 {
-                    TW_IMAGEMEMXFER_MACOSX twimagememxfermacosx = default;
+                    TW_IMAGEMEMXFER_MACOSX twimagememxfermacosx = default(TW_IMAGEMEMXFER_MACOSX);
                     twimagememxfermacosx.BytesPerRow = a_twimagememxfer.BytesPerRow;
                     twimagememxfermacosx.BytesWritten = a_twimagememxfer.BytesWritten;
                     twimagememxfermacosx.Columns = a_twimagememxfer.Columns;
@@ -6953,12 +8929,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.ImagememxferToCsv(a_twimagememxfer));
+                Log.LogSendAfter(stsRcOrCc, ImagememxferToCsv(a_twimagememxfer));
             }
 
             // If we had a successful transfer, then change state...
@@ -6974,6 +8950,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue memory image transfer commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twimagememxfer">IMAGEMEMXFER structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatImagememxferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -7014,7 +8994,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.twimagememxfer = a_twimagememxfer;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -7039,11 +9019,11 @@ namespace TWAINWorkingGroup
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendBefore(a_dg.ToString(), DAT.IMAGEMEMXFER.ToString(), a_msg.ToString(), CsvSerializer.ImagememxferToCsv(a_twimagememxfer));
+                Log.LogSendBefore(a_dg.ToString(), DAT.IMAGEMEMXFER.ToString(), a_msg.ToString(), ImagememxferToCsv(a_twimagememxfer));
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -7065,7 +9045,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagememxfer = default;
+                                m_threaddataDatImagememxfer = default(ThreadData);
                                 m_threaddataDatImagememxfer.blIsInuse = true;
                                 m_threaddataDatImagememxfer.dg = a_dg;
                                 m_threaddataDatImagememxfer.msg = a_msg;
@@ -7074,14 +9054,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagememxferWindowsTwain32);
                                 a_twimagememxfer = m_threaddataDatImagememxfer.twimagememxfer;
                                 sts = m_threaddataDatImagememxfer.sts;
-                                m_threaddataDatImagememxfer = default;
+                                m_threaddataDatImagememxfer = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatImagememxfer = default;
+                                m_threaddataDatImagememxfer = default(ThreadData);
                                 m_threaddataDatImagememxfer.blIsInuse = true;
                                 m_threaddataDatImagememxfer.dg = a_dg;
                                 m_threaddataDatImagememxfer.msg = a_msg;
@@ -7090,7 +9070,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatImagememxferWindowsTwainDsm);
                                 a_twimagememxfer = m_threaddataDatImagememxfer.twimagememxfer;
                                 sts = m_threaddataDatImagememxfer.sts;
-                                m_threaddataDatImagememxfer = default;
+                                m_threaddataDatImagememxfer = default(ThreadData);
                             }
                         }
                     }
@@ -7105,7 +9085,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -7120,7 +9100,7 @@ namespace TWAINWorkingGroup
                     }
                     else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
                     {
-                        TW_IMAGEMEMXFER_LINUX64 twimagememxferlinux64 = default;
+                        TW_IMAGEMEMXFER_LINUX64 twimagememxferlinux64 = default(TW_IMAGEMEMXFER_LINUX64);
                         twimagememxferlinux64.BytesPerRow = a_twimagememxfer.BytesPerRow;
                         twimagememxferlinux64.BytesWritten = a_twimagememxfer.BytesWritten;
                         twimagememxferlinux64.Columns = a_twimagememxfer.Columns;
@@ -7159,12 +9139,12 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
                 {
-                    TW_IMAGEMEMXFER_MACOSX twimagememxfermacosx = default;
+                    TW_IMAGEMEMXFER_MACOSX twimagememxfermacosx = default(TW_IMAGEMEMXFER_MACOSX);
                     twimagememxfermacosx.BytesPerRow = a_twimagememxfer.BytesPerRow;
                     twimagememxfermacosx.BytesWritten = a_twimagememxfer.BytesWritten;
                     twimagememxfermacosx.Columns = a_twimagememxfer.Columns;
@@ -7211,12 +9191,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.ImagememxferToCsv(a_twimagememxfer));
+                Log.LogSendAfter(stsRcOrCc, ImagememxferToCsv(a_twimagememxfer));
             }
 
             // If we had a successful transfer, then change state...
@@ -7232,6 +9212,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue native image transfer commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_bitmap">BITMAP structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatImagenativexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -7260,218 +9244,220 @@ namespace TWAINWorkingGroup
                 ref m_threaddataDatImagenativexfer.intptrBitmap
             );
         }
-        // TODO: Recode later
-        //public STS DatImagenativexfer(DG a_dg, MSG a_msg, ref Bitmap a_bitmap)
-        //{
-        //    IntPtr intptrBitmapHandle = IntPtr.Zero;
-        //    return (DatImagenativexferBitmap(a_dg, a_msg, ref a_bitmap, ref intptrBitmapHandle, false));
-        //}
-        //public STS DatImagenativexferHandle(DG a_dg, MSG a_msg, ref IntPtr a_intptrBitmapHandle)
-        //{
-        //    Bitmap bitmap = null;
-        //    return (DatImagenativexferBitmap(a_dg, a_msg, ref bitmap, ref a_intptrBitmapHandle, true));
-        //}
-        //public STS DatImagenativexferBitmap(DG a_dg, MSG a_msg, ref Bitmap a_bitmap, ref IntPtr a_intptrBitmapHandle, bool a_blUseBitmapHandle)
-        //{
-        //    STS sts;
-        //    IntPtr intptrBitmap = IntPtr.Zero;
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
+        public STS DatImagenativexfer(DG a_dg, MSG a_msg, ref Bitmap a_bitmap)
+        {
+            IntPtr intptrBitmapHandle = IntPtr.Zero;
+            return (DatImagenativexferBitmap(a_dg, a_msg, ref a_bitmap, ref intptrBitmapHandle, false));
+        }
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
+        public STS DatImagenativexferHandle(DG a_dg, MSG a_msg, ref IntPtr a_intptrBitmapHandle)
+        {
+            Bitmap bitmap = null;
+            return (DatImagenativexferBitmap(a_dg, a_msg, ref bitmap, ref a_intptrBitmapHandle, true));
+        }
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
+        public STS DatImagenativexferBitmap(DG a_dg, MSG a_msg, ref Bitmap a_bitmap, ref IntPtr a_intptrBitmapHandle, bool a_blUseBitmapHandle)
+        {
+            STS sts;
+            IntPtr intptrBitmap = IntPtr.Zero;
 
-        //    // Submit the work to the TWAIN thread...
-        //    if (this.m_runinuithreaddelegate == null)
-        //    {
-        //        if ((m_threadTwain != null) && (m_threadTwain.ManagedThreadId != Thread.CurrentThread.ManagedThreadId))
-        //        {
-        //            lock (m_lockTwain)
-        //            {
-        //                // Set our command variables...
-        //                ThreadData threaddata = default;
-        //                threaddata.bitmap = a_bitmap;
-        //                threaddata.blUseBitmapHandle = a_blUseBitmapHandle;
-        //                threaddata.dg = a_dg;
-        //                threaddata.msg = a_msg;
-        //                threaddata.dat = DAT.IMAGENATIVEXFER;
-        //                long lIndex = m_twaincommand.Submit(threaddata);
+            // Submit the work to the TWAIN thread...
+            if (this.m_runinuithreaddelegate == null)
+            {
+                if ((m_threadTwain != null) && (m_threadTwain.ManagedThreadId != Thread.CurrentThread.ManagedThreadId))
+                {
+                    lock (m_lockTwain)
+                    {
+                        // Set our command variables...
+                        ThreadData threaddata = default(ThreadData);
+                        threaddata.bitmap = a_bitmap;
+                        threaddata.blUseBitmapHandle = a_blUseBitmapHandle;
+                        threaddata.dg = a_dg;
+                        threaddata.msg = a_msg;
+                        threaddata.dat = DAT.IMAGENATIVEXFER;
+                        long lIndex = m_twaincommand.Submit(threaddata);
 
-        //                // Submit the command and wait for the reply...
-        //                CallerToThreadSet();
-        //                ThreadToCallerWaitOne();
+                        // Submit the command and wait for the reply...
+                        CallerToThreadSet();
+                        ThreadToCallerWaitOne();
 
-        //                // Return the result...
-        //                a_bitmap = m_twaincommand.Get(lIndex).bitmap;
-        //                a_intptrBitmapHandle = m_twaincommand.Get(lIndex).intptrBitmap;
-        //                sts = m_twaincommand.Get(lIndex).sts;
+                        // Return the result...
+                        a_bitmap = m_twaincommand.Get(lIndex).bitmap;
+                        a_intptrBitmapHandle = m_twaincommand.Get(lIndex).intptrBitmap;
+                        sts = m_twaincommand.Get(lIndex).sts;
 
-        //                // Clear the command variables...
-        //                m_twaincommand.Delete(lIndex);
-        //            }
-        //            return (sts);
-        //        }
-        //    }
+                        // Clear the command variables...
+                        m_twaincommand.Delete(lIndex);
+                    }
+                    return (sts);
+                }
+            }
 
-        //    // Log it...
-        //    if (Log.GetLevel() > 0)
-        //    {
-        //        Log.LogSendBefore(a_dg.ToString(), DAT.IMAGENATIVEXFER.ToString(), a_msg.ToString(), "");
-        //    }
+            // Log it...
+            if (Log.GetLevel() > 0)
+            {
+                Log.LogSendBefore(a_dg.ToString(), DAT.IMAGENATIVEXFER.ToString(), a_msg.ToString(), "");
+            }
 
-        //    // Windows...
-        //    if (PlatformInfo.IsWindows)
-        //    {
-        //        // Issue the command...
-        //        try
-        //        {
-        //            if (m_threaddataDatImagenativexfer.blIsInuse || (this.m_runinuithreaddelegate == null))
-        //            {
-        //                if (m_blUseLegacyDSM)
-        //                {
-        //                    sts = (STS)NativeMethods.WindowsTwain32DsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-        //                }
-        //                else
-        //                {
-        //                    sts = (STS)NativeMethods.WindowsTwaindsmDsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (m_blUseLegacyDSM)
-        //                {
-        //                    lock (m_lockTwain)
-        //                    {
-        //                        m_threaddataDatImagenativexfer = default;
-        //                        m_threaddataDatImagenativexfer.blIsInuse = true;
-        //                        m_threaddataDatImagenativexfer.dg = a_dg;
-        //                        m_threaddataDatImagenativexfer.msg = a_msg;
-        //                        m_threaddataDatImagenativexfer.dat = DAT.IMAGENATIVEXFER;
-        //                        RunInUiThread(DatImagenativexferWindowsTwain32);
-        //                        intptrBitmap = a_intptrBitmapHandle = m_threaddataDatImagenativexfer.intptrBitmap;
-        //                        sts = m_threaddataDatImagenativexfer.sts;
-        //                        m_threaddataDatImagenativexfer = default;
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    lock (m_lockTwain)
-        //                    {
-        //                        m_threaddataDatImagenativexfer = default;
-        //                        m_threaddataDatImagenativexfer.blIsInuse = true;
-        //                        m_threaddataDatImagenativexfer.dg = a_dg;
-        //                        m_threaddataDatImagenativexfer.msg = a_msg;
-        //                        m_threaddataDatImagenativexfer.dat = DAT.IMAGENATIVEXFER;
-        //                        RunInUiThread(DatImagenativexferWindowsTwainDsm);
-        //                        intptrBitmap = a_intptrBitmapHandle = m_threaddataDatImagenativexfer.intptrBitmap;
-        //                        sts = m_threaddataDatImagenativexfer.sts;
-        //                        m_threaddataDatImagenativexfer = default;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        catch (Exception exception)
-        //        {
-        //            // The driver crashed...
-        //            Log.Error("crash - " + exception.Message);
-        //            Log.LogSendAfter(STS.BUMMER, "");
-        //            return (STS.BUMMER);
-        //        }
-        //    }
+            // Windows...
+            if (ms_platform == Platform.WINDOWS)
+            {
+                // Issue the command...
+                try
+                {
+                    if (m_threaddataDatImagenativexfer.blIsInuse || (this.m_runinuithreaddelegate == null))
+                    {
+                        if (m_blUseLegacyDSM)
+                        {
+                            sts = (STS)NativeMethods.WindowsTwain32DsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+                        }
+                        else
+                        {
+                            sts = (STS)NativeMethods.WindowsTwaindsmDsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+                        }
+                    }
+                    else
+                    {
+                        if (m_blUseLegacyDSM)
+                        {
+                            lock (m_lockTwain)
+                            {
+                                m_threaddataDatImagenativexfer = default(ThreadData);
+                                m_threaddataDatImagenativexfer.blIsInuse = true;
+                                m_threaddataDatImagenativexfer.dg = a_dg;
+                                m_threaddataDatImagenativexfer.msg = a_msg;
+                                m_threaddataDatImagenativexfer.dat = DAT.IMAGENATIVEXFER;
+                                RunInUiThread(DatImagenativexferWindowsTwain32);
+                                intptrBitmap = a_intptrBitmapHandle = m_threaddataDatImagenativexfer.intptrBitmap;
+                                sts = m_threaddataDatImagenativexfer.sts;
+                                m_threaddataDatImagenativexfer = default(ThreadData);
+                            }
+                        }
+                        else
+                        {
+                            lock (m_lockTwain)
+                            {
+                                m_threaddataDatImagenativexfer = default(ThreadData);
+                                m_threaddataDatImagenativexfer.blIsInuse = true;
+                                m_threaddataDatImagenativexfer.dg = a_dg;
+                                m_threaddataDatImagenativexfer.msg = a_msg;
+                                m_threaddataDatImagenativexfer.dat = DAT.IMAGENATIVEXFER;
+                                RunInUiThread(DatImagenativexferWindowsTwainDsm);
+                                intptrBitmap = a_intptrBitmapHandle = m_threaddataDatImagenativexfer.intptrBitmap;
+                                sts = m_threaddataDatImagenativexfer.sts;
+                                m_threaddataDatImagenativexfer = default(ThreadData);
+                            }
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    // The driver crashed...
+                    Log.Error("crash - " + exception.Message);
+                    Log.LogSendAfter(STS.BUMMER, "");
+                    return (STS.BUMMER);
+                }
+            }
 
-        //    // Linux...
-        //    else if (PlatformInfo.IsLinux)
-        //    {
-        //        // Issue the command...
-        //        try
-        //        {
-        //            if (m_blFoundLatestDsm64 && (m_linuxdsm == LinuxDsm.IsLatestDsm))
-        //            {
-        //                sts = (STS)NativeMethods.Linux64DsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-        //            }
-        //            else if (m_blFoundLatestDsm && (m_linuxdsm == LinuxDsm.IsLatestDsm))
-        //            {
-        //                sts = (STS)NativeMethods.LinuxDsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-        //            }
-        //            else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
-        //            {
-        //                sts = (STS)NativeMethods.Linux020302Dsm64bitEntryImagenativexfer(ref m_twidentityApp, ref m_twidentityDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-        //            }
-        //            else
-        //            {
-        //                Log.Error("apparently we don't have a DSM...");
-        //                sts = STS.BUMMER;
-        //            }
-        //        }
-        //        catch (Exception exception)
-        //        {
-        //            // The driver crashed...
-        //            Log.Error("crash - " + exception.Message);
-        //            Log.LogSendAfter(STS.BUMMER, "");
-        //            return (STS.BUMMER);
-        //        }
-        //    }
+            // Linux...
+            else if (ms_platform == Platform.LINUX)
+            {
+                // Issue the command...
+                try
+                {
+                    if (m_blFoundLatestDsm64 && (m_linuxdsm == LinuxDsm.IsLatestDsm))
+                    {
+                        sts = (STS)NativeMethods.Linux64DsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+                    }
+                    else if (m_blFoundLatestDsm && (m_linuxdsm == LinuxDsm.IsLatestDsm))
+                    {
+                        sts = (STS)NativeMethods.LinuxDsmEntryImagenativexfer(ref m_twidentitylegacyApp, ref m_twidentitylegacyDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+                    }
+                    else if (m_blFound020302Dsm64bit && (m_linuxdsm == LinuxDsm.Is020302Dsm64bit))
+                    {
+                        sts = (STS)NativeMethods.Linux020302Dsm64bitEntryImagenativexfer(ref m_twidentityApp, ref m_twidentityDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+                    }
+                    else
+                    {
+                        Log.Error("apparently we don't have a DSM...");
+                        sts = STS.BUMMER;
+                    }
+                }
+                catch (Exception exception)
+                {
+                    // The driver crashed...
+                    Log.Error("crash - " + exception.Message);
+                    Log.LogSendAfter(STS.BUMMER, "");
+                    return (STS.BUMMER);
+                }
+            }
 
-        //    // Mac OS X, which has to be different...
-        //    else if (PlatformInfo.IsMacOSX)
-        //    {
-        //        // Issue the command...
-        //        try
-        //        {
-        //            intptrBitmap = IntPtr.Zero;
-        //            if (m_blUseLegacyDSM)
-        //            {
-        //                sts = (STS)NativeMethods.MacosxTwainDsmEntryImagenativexfer(ref m_twidentitymacosxApp, ref m_twidentitymacosxDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-        //            }
-        //            else
-        //            {
-        //                sts = (STS)NativeMethods.MacosxTwaindsmDsmEntryImagenativexfer(ref m_twidentitymacosxApp, ref m_twidentitymacosxDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
-        //            }
-        //        }
-        //        catch (Exception exception)
-        //        {
-        //            // The driver crashed...
-        //            Log.Error("crash - " + exception.Message);
-        //            Log.LogSendAfter(STS.BUMMER, "");
-        //            return (STS.BUMMER);
-        //        }
-        //    }
+            // Mac OS X, which has to be different...
+            else if (ms_platform == Platform.MACOSX)
+            {
+                // Issue the command...
+                try
+                {
+                    intptrBitmap = IntPtr.Zero;
+                    if (m_blUseLegacyDSM)
+                    {
+                        sts = (STS)NativeMethods.MacosxTwainDsmEntryImagenativexfer(ref m_twidentitymacosxApp, ref m_twidentitymacosxDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+                    }
+                    else
+                    {
+                        sts = (STS)NativeMethods.MacosxTwaindsmDsmEntryImagenativexfer(ref m_twidentitymacosxApp, ref m_twidentitymacosxDs, a_dg, DAT.IMAGENATIVEXFER, a_msg, ref intptrBitmap);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    // The driver crashed...
+                    Log.Error("crash - " + exception.Message);
+                    Log.LogSendAfter(STS.BUMMER, "");
+                    return (STS.BUMMER);
+                }
+            }
 
-        //    // Uh-oh...
-        //    else
-        //    {
-        //        Log.LogSendAfter(STS.BUMMER, "");
-        //        return (STS.BUMMER);
-        //    }
+            // Uh-oh...
+            else
+            {
+                Log.LogSendAfter(STS.BUMMER, "");
+                return (STS.BUMMER);
+            }
 
-        //    // Get DAT_STATUS, if needed...
-        //    STS stsRcOrCc = AutoDatStatus(sts);
+            // Get DAT_STATUS, if needed...
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
-        //    // Log it...
-        //    if (Log.GetLevel() > 0)
-        //    {
-        //        Log.LogSendAfter(stsRcOrCc, "");
-        //    }
+            // Log it...
+            if (Log.GetLevel() > 0)
+            {
+                Log.LogSendAfter(stsRcOrCc, "");
+            }
 
-        //    // If we had a successful transfer, then convert the data...
-        //    if (sts == STS.XFERDONE)
-        //    {
-        //        if (a_blUseBitmapHandle)
-        //        {
-        //            a_intptrBitmapHandle = intptrBitmap;
-        //        }
-        //        else
-        //        {
-        //            // Bump our state...
-        //            m_state = STATE.S7;
+            // If we had a successful transfer, then convert the data...
+            if (sts == STS.XFERDONE)
+            {
+                if (a_blUseBitmapHandle)
+                {
+                    a_intptrBitmapHandle = intptrBitmap;
+                }
+                else
+                {
+                    // Bump our state...
+                    m_state = STATE.S7;
 
-        //            // Turn the DIB into a Bitmap object...
-        //            a_bitmap = NativeToBitmap(ms_platform, intptrBitmap);
+                    // Turn the DIB into a Bitmap object...
+                    a_bitmap = NativeToBitmap(ms_platform, intptrBitmap);
 
-        //            // We're done with the data we got from the driver...
-        //            Marshal.FreeHGlobal(intptrBitmap);
-        //            intptrBitmap = IntPtr.Zero;
-        //        }
-        //    }
+                    // We're done with the data we got from the driver...
+                    Marshal.FreeHGlobal(intptrBitmap);
+                    intptrBitmap = IntPtr.Zero;
+                }
+            }
 
-        //    // All done...
-        //    return (stsRcOrCc);
-        //}
+            // All done...
+            return (stsRcOrCc);
+        }
 
         /// <summary>
         /// Get/Set JPEG compression tables...
@@ -7490,7 +9476,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twjpegcompression = a_twjpegcompression;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -7518,7 +9504,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -7542,7 +9528,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -7575,7 +9561,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -7606,7 +9592,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -7635,7 +9621,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twmetrics = a_twmetrics;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -7663,7 +9649,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -7687,7 +9673,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -7720,7 +9706,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -7751,7 +9737,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -7780,7 +9766,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twpalette8 = a_twpalette8;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -7808,7 +9794,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -7832,7 +9818,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -7865,7 +9851,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -7896,7 +9882,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -7911,6 +9897,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue DSM commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_intptrHwnd">PARENT structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatParentWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -7939,6 +9929,7 @@ namespace TWAINWorkingGroup
                 ref m_threaddataDatParent.intptrHwnd
             );
         }
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public STS DatParent(DG a_dg, MSG a_msg, ref IntPtr a_intptrHwnd)
         {
             STS sts;
@@ -7951,7 +9942,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.intptrHwnd = a_intptrHwnd;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -7980,7 +9971,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -8002,7 +9993,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatParent = default;
+                                m_threaddataDatParent = default(ThreadData);
                                 m_threaddataDatParent.blIsInuse = true;
                                 m_threaddataDatParent.dg = a_dg;
                                 m_threaddataDatParent.msg = a_msg;
@@ -8010,14 +10001,14 @@ namespace TWAINWorkingGroup
                                 m_threaddataDatParent.intptrHwnd = a_intptrHwnd;
                                 RunInUiThread(DatParentWindowsTwain32);
                                 sts = m_threaddataDatParent.sts;
-                                m_threaddataDatParent = default;
+                                m_threaddataDatParent = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatParent = default;
+                                m_threaddataDatParent = default(ThreadData);
                                 m_threaddataDatParent.blIsInuse = true;
                                 m_threaddataDatParent.dg = a_dg;
                                 m_threaddataDatParent.msg = a_msg;
@@ -8025,7 +10016,7 @@ namespace TWAINWorkingGroup
                                 m_threaddataDatParent.intptrHwnd = a_intptrHwnd;
                                 RunInUiThread(DatParentWindowsTwainDsm);
                                 sts = m_threaddataDatParent.sts;
-                                m_threaddataDatParent = default;
+                                m_threaddataDatParent = default(ThreadData);
                             }
                         }
                     }
@@ -8042,7 +10033,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 STS stsLatest = STS.BUMMER;
                 STS sts020302Dsm64bit = STS.BUMMER;
@@ -8105,7 +10096,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -8138,7 +10129,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -8189,7 +10180,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twpassthru = a_twpassthru;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -8217,7 +10208,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -8241,7 +10232,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -8274,7 +10265,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -8305,7 +10296,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -8320,6 +10311,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue pendingxfers commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twpendingxfers">PENDINGXFERS structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatPendingxfersWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -8360,7 +10355,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.twpendingxfers = a_twpendingxfers;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -8389,7 +10384,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -8411,7 +10406,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatPendingxfers = default;
+                                m_threaddataDatPendingxfers = default(ThreadData);
                                 m_threaddataDatPendingxfers.blIsInuse = true;
                                 m_threaddataDatPendingxfers.dg = a_dg;
                                 m_threaddataDatPendingxfers.msg = a_msg;
@@ -8420,14 +10415,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatPendingxfersWindowsTwain32);
                                 a_twpendingxfers = m_threaddataDatPendingxfers.twpendingxfers;
                                 sts = m_threaddataDatPendingxfers.sts;
-                                m_threaddataDatPendingxfers = default;
+                                m_threaddataDatPendingxfers = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatPendingxfers = default;
+                                m_threaddataDatPendingxfers = default(ThreadData);
                                 m_threaddataDatPendingxfers.blIsInuse = true;
                                 m_threaddataDatPendingxfers.dg = a_dg;
                                 m_threaddataDatPendingxfers.msg = a_msg;
@@ -8436,7 +10431,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatPendingxfersWindowsTwainDsm);
                                 a_twpendingxfers = m_threaddataDatPendingxfers.twpendingxfers;
                                 sts = m_threaddataDatPendingxfers.sts;
-                                m_threaddataDatPendingxfers = default;
+                                m_threaddataDatPendingxfers = default(ThreadData);
                             }
                         }
                     }
@@ -8451,7 +10446,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -8484,7 +10479,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -8515,12 +10510,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.PendingxfersToCsv(a_twpendingxfers));
+                Log.LogSendAfter(stsRcOrCc, PendingxfersToCsv(a_twpendingxfers));
             }
 
             // If we endxfer, go to state 5 or 6...
@@ -8573,7 +10568,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twrgbresponse = a_twrgbresponse;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -8601,7 +10596,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -8625,7 +10620,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -8658,7 +10653,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -8689,7 +10684,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -8704,6 +10699,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Get/Set for a file xfer...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twsetupfilexfer">SETUPFILEXFER structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatSetupfilexferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -8744,7 +10743,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.twsetupfilexfer = a_twsetupfilexfer;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -8769,11 +10768,11 @@ namespace TWAINWorkingGroup
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendBefore(a_dg.ToString(), DAT.SETUPFILEXFER.ToString(), a_msg.ToString(), CsvSerializer.SetupfilexferToCsv(a_twsetupfilexfer));
+                Log.LogSendBefore(a_dg.ToString(), DAT.SETUPFILEXFER.ToString(), a_msg.ToString(), SetupfilexferToCsv(a_twsetupfilexfer));
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -8795,7 +10794,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatSetupfilexfer = default;
+                                m_threaddataDatSetupfilexfer = default(ThreadData);
                                 m_threaddataDatSetupfilexfer.blIsInuse = true;
                                 m_threaddataDatSetupfilexfer.dg = a_dg;
                                 m_threaddataDatSetupfilexfer.msg = a_msg;
@@ -8804,14 +10803,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatSetupfilexferWindowsTwain32);
                                 a_twsetupfilexfer = m_threaddataDatSetupfilexfer.twsetupfilexfer;
                                 sts = m_threaddataDatSetupfilexfer.sts;
-                                m_threaddataDatSetupfilexfer = default;
+                                m_threaddataDatSetupfilexfer = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatSetupfilexfer = default;
+                                m_threaddataDatSetupfilexfer = default(ThreadData);
                                 m_threaddataDatSetupfilexfer.blIsInuse = true;
                                 m_threaddataDatSetupfilexfer.dg = a_dg;
                                 m_threaddataDatSetupfilexfer.msg = a_msg;
@@ -8820,7 +10819,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatSetupfilexferWindowsTwainDsm);
                                 a_twsetupfilexfer = m_threaddataDatSetupfilexfer.twsetupfilexfer;
                                 sts = m_threaddataDatSetupfilexfer.sts;
-                                m_threaddataDatSetupfilexfer = default;
+                                m_threaddataDatSetupfilexfer = default(ThreadData);
                             }
                         }
                     }
@@ -8835,7 +10834,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -8868,7 +10867,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -8899,18 +10898,25 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.SetupfilexferToCsv(a_twsetupfilexfer));
+                Log.LogSendAfter(stsRcOrCc, SetupfilexferToCsv(a_twsetupfilexfer));
             }
 
             // All done...
             return (stsRcOrCc);
         }
 
+        /// <summary>
+        /// Get info about the memory xfer...
+        /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twsetupmemxfer">SETUPMEMXFER structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatSetupmemxferWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -8951,7 +10957,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.twsetupmemxfer = a_twsetupmemxfer;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -8980,7 +10986,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -9002,7 +11008,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatSetupmemxfer = default;
+                                m_threaddataDatSetupmemxfer = default(ThreadData);
                                 m_threaddataDatSetupmemxfer.blIsInuse = true;
                                 m_threaddataDatSetupmemxfer.dg = a_dg;
                                 m_threaddataDatSetupmemxfer.msg = a_msg;
@@ -9011,14 +11017,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatSetupmemxferWindowsTwain32);
                                 a_twsetupmemxfer = m_threaddataDatSetupmemxfer.twsetupmemxfer;
                                 sts = m_threaddataDatSetupmemxfer.sts;
-                                m_threaddataDatSetupmemxfer = default;
+                                m_threaddataDatSetupmemxfer = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatSetupmemxfer = default;
+                                m_threaddataDatSetupmemxfer = default(ThreadData);
                                 m_threaddataDatSetupmemxfer.blIsInuse = true;
                                 m_threaddataDatSetupmemxfer.dg = a_dg;
                                 m_threaddataDatSetupmemxfer.msg = a_msg;
@@ -9027,7 +11033,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatSetupmemxferWindowsTwainDsm);
                                 a_twsetupmemxfer = m_threaddataDatSetupmemxfer.twsetupmemxfer;
                                 sts = m_threaddataDatSetupmemxfer.sts;
-                                m_threaddataDatSetupmemxfer = default;
+                                m_threaddataDatSetupmemxfer = default(ThreadData);
                             }
                         }
                     }
@@ -9042,7 +11048,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -9075,7 +11081,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -9106,12 +11112,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.SetupmemxferToCsv(a_twsetupmemxfer));
+                Log.LogSendAfter(stsRcOrCc, SetupmemxferToCsv(a_twsetupmemxfer));
             }
 
             // All done...
@@ -9121,6 +11127,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Get some text for an error...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twstatus">STATUS structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatStatusWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -9161,7 +11171,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.twstatus = a_twstatus;
                         threaddata.dg = a_dg;
                         threaddata.msg = a_msg;
@@ -9190,7 +11200,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -9212,7 +11222,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatStatus = default;
+                                m_threaddataDatStatus = default(ThreadData);
                                 m_threaddataDatStatus.blIsInuse = true;
                                 m_threaddataDatStatus.dg = a_dg;
                                 m_threaddataDatStatus.msg = a_msg;
@@ -9221,14 +11231,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatStatusWindowsTwain32);
                                 a_twstatus = m_threaddataDatStatus.twstatus;
                                 sts = m_threaddataDatStatus.sts;
-                                m_threaddataDatStatus = default;
+                                m_threaddataDatStatus = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatStatus = default;
+                                m_threaddataDatStatus = default(ThreadData);
                                 m_threaddataDatStatus.blIsInuse = true;
                                 m_threaddataDatStatus.dg = a_dg;
                                 m_threaddataDatStatus.msg = a_msg;
@@ -9237,7 +11247,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatStatusWindowsTwainDsm);
                                 a_twstatus = m_threaddataDatStatus.twstatus;
                                 sts = m_threaddataDatStatus.sts;
-                                m_threaddataDatStatus = default;
+                                m_threaddataDatStatus = default(ThreadData);
                             }
                         }
                     }
@@ -9252,7 +11262,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -9285,7 +11295,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -9316,7 +11326,7 @@ namespace TWAINWorkingGroup
             }
 
             // Skip getting the status...  :)
-            STS stsRcOrCc = sts;
+            TWAIN.STS stsRcOrCc = sts;
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -9345,7 +11355,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twstatusutf8 = a_twstatusutf8;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -9373,7 +11383,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -9397,7 +11407,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -9430,7 +11440,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -9461,7 +11471,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -9490,7 +11500,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twtwaindirect = a_twtwaindirect;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -9518,7 +11528,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -9542,7 +11552,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -9575,7 +11585,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -9606,7 +11616,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -9621,6 +11631,10 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Issue capabilities commands...
         /// </summary>
+        /// <param name="a_dg">Data group</param>
+        /// <param name="a_msg">Operation</param>
+        /// <param name="a_twuserinterface">USERINTERFACE structure</param>
+        /// <returns>TWAIN status</returns>
         private void DatUserinterfaceWindowsTwain32()
         {
             // If you get a first chance exception, be aware that some drivers
@@ -9661,7 +11675,7 @@ namespace TWAINWorkingGroup
                     lock (m_lockTwain)
                     {
                         // Set our command variables...
-                        ThreadData threaddata = default;
+                        ThreadData threaddata = default(ThreadData);
                         threaddata.twuserinterface = a_twuserinterface;
                         threaddata.twuserinterface.hParent = m_intptrHwnd;
                         threaddata.dg = a_dg;
@@ -9687,7 +11701,7 @@ namespace TWAINWorkingGroup
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendBefore(a_dg.ToString(), DAT.USERINTERFACE.ToString(), a_msg.ToString(), CsvSerializer.UserinterfaceToCsv(a_twuserinterface));
+                Log.LogSendBefore(a_dg.ToString(), DAT.USERINTERFACE.ToString(), a_msg.ToString(), UserinterfaceToCsv(a_twuserinterface));
             }
 
             // We need this to handle data sources that return MSG_XFERREADY in
@@ -9696,7 +11710,7 @@ namespace TWAINWorkingGroup
             m_blRunningDatUserinterface = (a_msg == MSG.ENABLEDS);
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -9718,7 +11732,7 @@ namespace TWAINWorkingGroup
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatUserinterface = default;
+                                m_threaddataDatUserinterface = default(ThreadData);
                                 m_threaddataDatUserinterface.blIsInuse = true;
                                 m_threaddataDatUserinterface.dg = a_dg;
                                 m_threaddataDatUserinterface.msg = a_msg;
@@ -9727,14 +11741,14 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatUserinterfaceWindowsTwain32);
                                 a_twuserinterface = m_threaddataDatUserinterface.twuserinterface;
                                 sts = m_threaddataDatUserinterface.sts;
-                                m_threaddataDatUserinterface = default;
+                                m_threaddataDatUserinterface = default(ThreadData);
                             }
                         }
                         else
                         {
                             lock (m_lockTwain)
                             {
-                                m_threaddataDatUserinterface = default;
+                                m_threaddataDatUserinterface = default(ThreadData);
                                 m_threaddataDatUserinterface.blIsInuse = true;
                                 m_threaddataDatUserinterface.dg = a_dg;
                                 m_threaddataDatUserinterface.msg = a_msg;
@@ -9743,7 +11757,7 @@ namespace TWAINWorkingGroup
                                 RunInUiThread(DatUserinterfaceWindowsTwainDsm);
                                 a_twuserinterface = m_threaddataDatUserinterface.twuserinterface;
                                 sts = m_threaddataDatUserinterface.sts;
-                                m_threaddataDatUserinterface = default;
+                                m_threaddataDatUserinterface = default(ThreadData);
                             }
                         }
                     }
@@ -9759,7 +11773,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -9793,7 +11807,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -9826,7 +11840,7 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
@@ -9880,7 +11894,7 @@ namespace TWAINWorkingGroup
                 lock (m_lockTwain)
                 {
                     // Set our command variables...
-                    ThreadData threaddata = default;
+                    ThreadData threaddata = default(ThreadData);
                     threaddata.twuint32 = a_twuint32;
                     threaddata.dg = a_dg;
                     threaddata.msg = a_msg;
@@ -9904,11 +11918,11 @@ namespace TWAINWorkingGroup
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendBefore(a_dg.ToString(), DAT.XFERGROUP.ToString(), a_msg.ToString(), CsvSerializer.XfergroupToCsv(a_twuint32));
+                Log.LogSendBefore(a_dg.ToString(), DAT.XFERGROUP.ToString(), a_msg.ToString(), XfergroupToCsv(a_twuint32));
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -9932,7 +11946,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -9965,7 +11979,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -9996,12 +12010,12 @@ namespace TWAINWorkingGroup
             }
 
             // Get DAT_STATUS, if needed...
-            STS stsRcOrCc = AutoDatStatus(sts);
+            TWAIN.STS stsRcOrCc = AutoDatStatus(sts);
 
             // Log it...
             if (Log.GetLevel() > 0)
             {
-                Log.LogSendAfter(stsRcOrCc, CsvSerializer.XfergroupToCsv(a_twuint32));
+                Log.LogSendAfter(stsRcOrCc, XfergroupToCsv(a_twuint32));
             }
 
             // All done...
@@ -10055,6 +12069,314 @@ namespace TWAINWorkingGroup
         #endregion
 
 
+        ///////////////////////////////////////////////////////////////////////////////
+        // Private Definitions (TIFF): this stuff should have been here all along to
+        // make it easier to share.  It's only needed when writing out files from
+        // DAT_IMAGEMEMXFER data.
+        ///////////////////////////////////////////////////////////////////////////////
+        #region Private Definitions (TIFF)...
+
+        // A TIFF header is composed of tags...
+        [StructLayout(LayoutKind.Sequential, Pack = 2)]
+        public struct TiffTag
+        {
+            public TiffTag(ushort a_u16Tag, ushort a_u16Type, uint a_u32Count, uint a_u32Value)
+            {
+                u16Tag = a_u16Tag;
+                u16Type = a_u16Type;
+                u32Count = a_u32Count;
+                u32Value = a_u32Value;
+            }
+
+            public ushort u16Tag;
+            public ushort u16Type;
+            public uint u32Count;
+            public uint u32Value;
+        }
+
+        // TIFF header for Uncompressed BITONAL images...
+        [StructLayout(LayoutKind.Sequential, Pack = 2)]
+        public struct TiffBitonalUncompressed
+        {
+            // Constructor...
+            public TiffBitonalUncompressed(uint a_u32Width, uint a_u32Height, uint a_u32Resolution, uint a_u32Size)
+            {
+                // Header...
+                u16ByteOrder = 0x4949;
+                u16Version = 42;
+                u32OffsetFirstIFD = 8;
+
+                // First IFD...
+                u16IFD = 16;
+
+                // Tags...
+                tifftagNewSubFileType = new TiffTag(254, 4, 1, 0);
+                tifftagSubFileType = new TiffTag(255, 3, 1, 1);
+                tifftagImageWidth = new TiffTag(256, 4, 1, a_u32Width);
+                tifftagImageLength = new TiffTag(257, 4, 1, a_u32Height);
+                tifftagBitsPerSample = new TiffTag(258, 3, 1, 1);
+                tifftagCompression = new TiffTag(259, 3, 1, 1);
+                tifftagPhotometricInterpretation = new TiffTag(262, 3, 1, 1);
+                tifftagFillOrder = new TiffTag(266, 3, 1, 1);
+                tifftagStripOffsets = new TiffTag(273, 4, 1, 222);
+                tifftagSamplesPerPixel = new TiffTag(277, 3, 1, 1);
+                tifftagRowsPerStrip = new TiffTag(278, 4, 1, a_u32Height);
+                tifftagStripByteCounts = new TiffTag(279, 4, 1, a_u32Size);
+                tifftagXResolution = new TiffTag(282, 5, 1, 206);
+                tifftagYResolution = new TiffTag(283, 5, 1, 214);
+                tifftagT4T6Options = new TiffTag(292, 4, 1, 0);
+                tifftagResolutionUnit = new TiffTag(296, 3, 1, 2);
+
+                // Footer...
+                u32NextIFD = 0;
+                u64XResolution = (ulong)0x100000000 + (ulong)a_u32Resolution;
+                u64YResolution = (ulong)0x100000000 + (ulong)a_u32Resolution;
+            }
+
+            // Header...
+            public ushort u16ByteOrder;
+            public ushort u16Version;
+            public uint u32OffsetFirstIFD;
+
+            // First IFD...
+            public ushort u16IFD;
+
+            // Tags...
+            public TiffTag tifftagNewSubFileType;
+            public TiffTag tifftagSubFileType;
+            public TiffTag tifftagImageWidth;
+            public TiffTag tifftagImageLength;
+            public TiffTag tifftagBitsPerSample;
+            public TiffTag tifftagCompression;
+            public TiffTag tifftagPhotometricInterpretation;
+            public TiffTag tifftagFillOrder;
+            public TiffTag tifftagStripOffsets;
+            public TiffTag tifftagSamplesPerPixel;
+            public TiffTag tifftagRowsPerStrip;
+            public TiffTag tifftagStripByteCounts;
+            public TiffTag tifftagXResolution;
+            public TiffTag tifftagYResolution;
+            public TiffTag tifftagT4T6Options;
+            public TiffTag tifftagResolutionUnit;
+
+            // Footer...
+            public uint u32NextIFD;
+            public ulong u64XResolution;
+            public ulong u64YResolution;
+        }
+
+        // TIFF header for Group4 BITONAL images...
+        [StructLayout(LayoutKind.Sequential, Pack = 2)]
+        public struct TiffBitonalG4
+        {
+            // Constructor...
+            public TiffBitonalG4(uint a_u32Width, uint a_u32Height, uint a_u32Resolution, uint a_u32Size)
+            {
+                // Header...
+                u16ByteOrder = 0x4949;
+                u16Version = 42;
+                u32OffsetFirstIFD = 8;
+
+                // First IFD...
+                u16IFD = 16;
+
+                // Tags...
+                tifftagNewSubFileType = new TiffTag(254, 4, 1, 0);
+                tifftagSubFileType = new TiffTag(255, 3, 1, 1);
+                tifftagImageWidth = new TiffTag(256, 4, 1, a_u32Width);
+                tifftagImageLength = new TiffTag(257, 4, 1, a_u32Height);
+                tifftagBitsPerSample = new TiffTag(258, 3, 1, 1);
+                tifftagCompression = new TiffTag(259, 3, 1, 4);
+                tifftagPhotometricInterpretation = new TiffTag(262, 3, 1, 0);
+                tifftagFillOrder = new TiffTag(266, 3, 1, 1);
+                tifftagStripOffsets = new TiffTag(273, 4, 1, 222);
+                tifftagSamplesPerPixel = new TiffTag(277, 3, 1, 1);
+                tifftagRowsPerStrip = new TiffTag(278, 4, 1, a_u32Height);
+                tifftagStripByteCounts = new TiffTag(279, 4, 1, a_u32Size);
+                tifftagXResolution = new TiffTag(282, 5, 1, 206);
+                tifftagYResolution = new TiffTag(283, 5, 1, 214);
+                tifftagT4T6Options = new TiffTag(293, 4, 1, 0);
+                tifftagResolutionUnit = new TiffTag(296, 3, 1, 2);
+
+                // Footer...
+                u32NextIFD = 0;
+                u64XResolution = (ulong)0x100000000 + (ulong)a_u32Resolution;
+                u64YResolution = (ulong)0x100000000 + (ulong)a_u32Resolution;
+            }
+
+            // Header...
+            public ushort u16ByteOrder;
+            public ushort u16Version;
+            public uint u32OffsetFirstIFD;
+
+            // First IFD...
+            public ushort u16IFD;
+
+            // Tags...
+            public TiffTag tifftagNewSubFileType;
+            public TiffTag tifftagSubFileType;
+            public TiffTag tifftagImageWidth;
+            public TiffTag tifftagImageLength;
+            public TiffTag tifftagBitsPerSample;
+            public TiffTag tifftagCompression;
+            public TiffTag tifftagPhotometricInterpretation;
+            public TiffTag tifftagFillOrder;
+            public TiffTag tifftagStripOffsets;
+            public TiffTag tifftagSamplesPerPixel;
+            public TiffTag tifftagRowsPerStrip;
+            public TiffTag tifftagStripByteCounts;
+            public TiffTag tifftagXResolution;
+            public TiffTag tifftagYResolution;
+            public TiffTag tifftagT4T6Options;
+            public TiffTag tifftagResolutionUnit;
+
+            // Footer...
+            public uint u32NextIFD;
+            public ulong u64XResolution;
+            public ulong u64YResolution;
+        }
+
+        // TIFF header for Uncompressed GRAYSCALE images...
+        [StructLayout(LayoutKind.Sequential, Pack = 2)]
+        public struct TiffGrayscaleUncompressed
+        {
+            // Constructor...
+            public TiffGrayscaleUncompressed(uint a_u32Width, uint a_u32Height, uint a_u32Resolution, uint a_u32Size)
+            {
+                // Header...
+                u16ByteOrder = 0x4949;
+                u16Version = 42;
+                u32OffsetFirstIFD = 8;
+
+                // First IFD...
+                u16IFD = 14;
+
+                // Tags...
+                tifftagNewSubFileType = new TiffTag(254, 4, 1, 0);
+                tifftagSubFileType = new TiffTag(255, 3, 1, 1);
+                tifftagImageWidth = new TiffTag(256, 4, 1, a_u32Width);
+                tifftagImageLength = new TiffTag(257, 4, 1, a_u32Height);
+                tifftagBitsPerSample = new TiffTag(258, 3, 1, 8);
+                tifftagCompression = new TiffTag(259, 3, 1, 1);
+                tifftagPhotometricInterpretation = new TiffTag(262, 3, 1, 1);
+                tifftagStripOffsets = new TiffTag(273, 4, 1, 198);
+                tifftagSamplesPerPixel = new TiffTag(277, 3, 1, 1);
+                tifftagRowsPerStrip = new TiffTag(278, 4, 1, a_u32Height);
+                tifftagStripByteCounts = new TiffTag(279, 4, 1, a_u32Size);
+                tifftagXResolution = new TiffTag(282, 5, 1, 182);
+                tifftagYResolution = new TiffTag(283, 5, 1, 190);
+                tifftagResolutionUnit = new TiffTag(296, 3, 1, 2);
+
+                // Footer...
+                u32NextIFD = 0;
+                u64XResolution = (ulong)0x100000000 + (ulong)a_u32Resolution;
+                u64YResolution = (ulong)0x100000000 + (ulong)a_u32Resolution;
+            }
+
+            // Header...
+            public ushort u16ByteOrder;
+            public ushort u16Version;
+            public uint u32OffsetFirstIFD;
+
+            // First IFD...
+            public ushort u16IFD;
+
+            // Tags...
+            public TiffTag tifftagNewSubFileType;
+            public TiffTag tifftagSubFileType;
+            public TiffTag tifftagImageWidth;
+            public TiffTag tifftagImageLength;
+            public TiffTag tifftagBitsPerSample;
+            public TiffTag tifftagCompression;
+            public TiffTag tifftagPhotometricInterpretation;
+            public TiffTag tifftagStripOffsets;
+            public TiffTag tifftagSamplesPerPixel;
+            public TiffTag tifftagRowsPerStrip;
+            public TiffTag tifftagStripByteCounts;
+            public TiffTag tifftagXResolution;
+            public TiffTag tifftagYResolution;
+            public TiffTag tifftagResolutionUnit;
+
+            // Footer...
+            public uint u32NextIFD;
+            public ulong u64XResolution;
+            public ulong u64YResolution;
+        }
+
+        // TIFF header for Uncompressed COLOR images...
+        [StructLayout(LayoutKind.Sequential, Pack = 2)]
+        public struct TiffColorUncompressed
+        {
+            // Constructor...
+            public TiffColorUncompressed(uint a_u32Width, uint a_u32Height, uint a_u32Resolution, uint a_u32Size)
+            {
+                // Header...
+                u16ByteOrder = 0x4949;
+                u16Version = 42;
+                u32OffsetFirstIFD = 8;
+
+                // First IFD...
+                u16IFD = 14;
+
+                // Tags...
+                tifftagNewSubFileType = new TiffTag(254, 4, 1, 0);
+                tifftagSubFileType = new TiffTag(255, 3, 1, 1);
+                tifftagImageWidth = new TiffTag(256, 4, 1, a_u32Width);
+                tifftagImageLength = new TiffTag(257, 4, 1, a_u32Height);
+                tifftagBitsPerSample = new TiffTag(258, 3, 3, 182);
+                tifftagCompression = new TiffTag(259, 3, 1, 1);
+                tifftagPhotometricInterpretation = new TiffTag(262, 3, 1, 2);
+                tifftagStripOffsets = new TiffTag(273, 4, 1, 204);
+                tifftagSamplesPerPixel = new TiffTag(277, 3, 1, 3);
+                tifftagRowsPerStrip = new TiffTag(278, 4, 1, a_u32Height);
+                tifftagStripByteCounts = new TiffTag(279, 4, 1, a_u32Size);
+                tifftagXResolution = new TiffTag(282, 5, 1, 188);
+                tifftagYResolution = new TiffTag(283, 5, 1, 196);
+                tifftagResolutionUnit = new TiffTag(296, 3, 1, 2);
+
+                // Footer...
+                u32NextIFD = 0;
+                u16XBitsPerSample1 = 8;
+                u16XBitsPerSample2 = 8;
+                u16XBitsPerSample3 = 8;
+                u64XResolution = (ulong)0x100000000 + (ulong)a_u32Resolution;
+                u64YResolution = (ulong)0x100000000 + (ulong)a_u32Resolution;
+            }
+
+            // Header...
+            public ushort u16ByteOrder;
+            public ushort u16Version;
+            public uint u32OffsetFirstIFD;
+
+            // First IFD...
+            public ushort u16IFD;
+
+            // Tags...
+            public TiffTag tifftagNewSubFileType;
+            public TiffTag tifftagSubFileType;
+            public TiffTag tifftagImageWidth;
+            public TiffTag tifftagImageLength;
+            public TiffTag tifftagBitsPerSample;
+            public TiffTag tifftagCompression;
+            public TiffTag tifftagPhotometricInterpretation;
+            public TiffTag tifftagStripOffsets;
+            public TiffTag tifftagSamplesPerPixel;
+            public TiffTag tifftagRowsPerStrip;
+            public TiffTag tifftagStripByteCounts;
+            public TiffTag tifftagXResolution;
+            public TiffTag tifftagYResolution;
+            public TiffTag tifftagResolutionUnit;
+
+            // Footer...
+            public uint u32NextIFD;
+            public ushort u16XBitsPerSample1;
+            public ushort u16XBitsPerSample2;
+            public ushort u16XBitsPerSample3;
+            public ulong u64XResolution;
+            public ulong u64YResolution;
+        }
+
+        #endregion
 
 
         ///////////////////////////////////////////////////////////////////////////////
@@ -10066,13 +12388,14 @@ namespace TWAINWorkingGroup
         /// Cleanup...
         /// </summary>
         /// <param name="a_blDisposing">true if we need to clean up managed resources</param>
+        [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         internal void Dispose(bool a_blDisposing)
         {
             // Free managed resources...
             if (a_blDisposing)
             {
                 // Make sure we've closed any drivers...
-                Rollback(STATE.S2);
+                Rollback(TWAIN.STATE.S2);
 
                 // Make sure that our thread is gone...
                 if (m_threadTwain != null)
@@ -10328,17 +12651,16 @@ namespace TWAINWorkingGroup
                         break;
 
                     // Native transfer...
-                    // TODO: Recode later
-                    //case DAT.IMAGENATIVEXFER:
-                    //    if (threaddata.blUseBitmapHandle)
-                    //    {
-                    //        threaddata.sts = DatImagenativexferHandle(threaddata.dg, threaddata.msg, ref threaddata.intptrBitmap);
-                    //    }
-                    //    else
-                    //    {
-                    //        threaddata.sts = DatImagenativexfer(threaddata.dg, threaddata.msg, ref threaddata.bitmap);
-                    //    }
-                    //    break;
+                    case DAT.IMAGENATIVEXFER:
+                        if (threaddata.blUseBitmapHandle)
+                        {
+                            threaddata.sts = DatImagenativexferHandle(threaddata.dg, threaddata.msg, ref threaddata.intptrBitmap);
+                        }
+                        else
+                        {
+                            threaddata.sts = DatImagenativexfer(threaddata.dg, threaddata.msg, ref threaddata.bitmap);
+                        }
+                        break;
 
                     // JPEG compression...
                     case DAT.JPEGCOMPRESSION:
@@ -10540,7 +12862,7 @@ namespace TWAINWorkingGroup
         /// TWAIN needs help, if we want it to run stuff in our main
         /// UI thread...
         /// </summary>
-        /// <param name="a_action">the code to run</param>
+        /// <param name="code">the code to run</param>
         private void RunInUiThread(Action a_action)
         {
             m_runinuithreaddelegate(a_action);
@@ -10644,6 +12966,7 @@ namespace TWAINWorkingGroup
         /// Automatically collect the condition code for TWRC_FAILURE's...
         /// </summary>
         /// <param name="a_sts">The return code from the last operation</param>
+        /// <param name="a_sts">The return code from the last operation</param>
         /// <returns>The final statue return</returns>
         private STS AutoDatStatus(STS a_sts)
         {
@@ -10657,7 +12980,7 @@ namespace TWAINWorkingGroup
             }
 
             // Windows...
-            if (PlatformInfo.IsWindows)
+            if (ms_platform == Platform.WINDOWS)
             {
                 // Issue the command...
                 try
@@ -10695,7 +13018,7 @@ namespace TWAINWorkingGroup
             }
 
             // Linux...
-            else if (PlatformInfo.IsLinux)
+            else if (ms_platform == Platform.LINUX)
             {
                 // Issue the command...
                 try
@@ -10749,7 +13072,7 @@ namespace TWAINWorkingGroup
             }
 
             // Mac OS X, which has to be different...
-            else if (PlatformInfo.IsMacOSX)
+            else if (ms_platform == Platform.MACOSX)
             {
                 // Issue the command...
                 try
@@ -10775,7 +13098,7 @@ namespace TWAINWorkingGroup
             // Uh-oh...
             else
             {
-                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + Environment.OSVersion.Platform);
+                TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
                 return (STS.BUMMER);
             }
 
@@ -10786,18 +13109,119 @@ namespace TWAINWorkingGroup
             }
 
             // All done...
-            return ((STS)(Consts.STSCC + twstatus.ConditionCode));
+            return ((STS)(STSCC + twstatus.ConditionCode));
+        }
+
+        /// <summary>
+        /// 32-bit or 64-bit...
+        /// </summary>
+        /// <returns>Number of bits in the machine word for this process</returns>
+        public static int GetMachineWordBitSize()
+        {
+            return ((IntPtr.Size == 4) ? 32 : 64);
+        }
+
+        /// <summary>
+        /// Quick access to our platform id...
+        /// </summary>
+        /// <returns></returns>
+        public static Platform GetPlatform()
+        {
+            // First pass...
+            if (ms_blFirstPassGetPlatform)
+            {
+                // Dont'c come in here again...
+                ms_blFirstPassGetPlatform = false;
+
+                // We're Windows...
+                if (Environment.OSVersion.ToString().Contains("Microsoft Windows"))
+                {
+                    ms_platform = Platform.WINDOWS;
+                    ms_processor = (GetMachineWordBitSize() == 64) ? Processor.X86_64 : Processor.X86;
+                }
+
+                // We're Mac OS X (this has to come before LINUX!!!)...
+                else if (Directory.Exists("/Library/Application Support"))
+                {
+                    ms_platform = Platform.MACOSX;
+                    ms_processor = (GetMachineWordBitSize() == 64) ? Processor.X86_64 : Processor.X86;
+                }
+
+                // We're Linux...
+                else if (Environment.OSVersion.ToString().Contains("Unix"))
+                {
+                    string szProcessor = "";
+                    ms_platform = Platform.LINUX;
+                    try
+                    {
+                        Process process = new Process()
+                        {
+                            StartInfo = new ProcessStartInfo()
+                            {
+                                FileName = "uname",
+                                Arguments = "-m",
+                                UseShellExecute = false,
+                                RedirectStandardOutput = true,
+                                CreateNoWindow = true
+                            }
+                        };
+                        process.Start();
+                        process.WaitForExit();
+                        szProcessor = process.StandardOutput.ReadToEnd();
+                        process.Close();
+                    }
+                    catch
+                    {
+                        Console.Out.WriteLine("Oh dear, this isn't good...where's uname?");
+                    }
+                    if (szProcessor.Contains("mips64"))
+                    {
+                        ms_processor = Processor.MIPS64EL;
+                    }
+                    else
+                    {
+                        ms_processor = (GetMachineWordBitSize() == 64) ? Processor.X86_64 : Processor.X86;
+                    }
+                }
+
+                // We have a problem, Log will throw for us...
+                else
+                {
+                    ms_platform = Platform.UNKNOWN;
+                    ms_processor = Processor.UNKNOWN;
+                    TWAINWorkingGroup.Log.Assert("Unsupported platform..." + ms_platform);
+                }
+            }
+
+            // All done...
+            return (ms_platform);
+        }
+
+        /// <summary>
+        /// Quick access to our processor id...
+        /// </summary>
+        /// <returns></returns>
+        public static Processor GetProcessor()
+        {
+            // First pass...
+            if (ms_blFirstPassGetPlatform)
+            {
+                GetPlatform();
+            }
+
+            // All done...
+            return (ms_processor);
         }
 
         /// <summary>
         /// Convert the contents of a capability to a string that we can show in
         /// our simple GUI...
         /// </summary>
-        /// <param name="a_twcapability"></param>
         /// <param name="a_twty">Data type</param>
         /// <param name="a_intptr">Pointer to the data</param>
         /// <param name="a_iIndex">Index of the item in the data</param>
         /// <returns>Data in CSV form</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public string GetIndexedItem(TW_CAPABILITY a_twcapability, TWTY a_twty, IntPtr a_intptr, int a_iIndex)
         {
             IntPtr intptr;
@@ -10909,6 +13333,7 @@ namespace TWAINWorkingGroup
         /// <param name="a_iIndex">Index for item in the data</param>
         /// <param name="a_szValue">CSV value to be used to set the data</param>
         /// <returns>Empty string or an error string</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public string SetIndexedItem(TW_CAPABILITY a_twcapability, TWTY a_twty, IntPtr a_intptr, int a_iIndex, string a_szValue)
         {
             IntPtr intptr;
@@ -10924,14 +13349,14 @@ namespace TWAINWorkingGroup
                         // We do this to make sure the entire Item value is overwritten...
                         if (a_twcapability.ConType == TWON.ONEVALUE)
                         {
-                            int i32Value = sbyte.Parse(CsvSerializer.CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
+                            int i32Value = sbyte.Parse(CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
                             Marshal.StructureToPtr(i32Value, a_intptr, true);
                             return ("");
                         }
                         // These items have to be packed on the type sizes...
                         else
                         {
-                            sbyte i8Value = sbyte.Parse(CsvSerializer.CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
+                            sbyte i8Value = sbyte.Parse(CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
                             intptr = (IntPtr)((ulong)a_intptr + (ulong)(1 * a_iIndex));
                             Marshal.StructureToPtr(i8Value, intptr, true);
                             return ("");
@@ -10943,14 +13368,14 @@ namespace TWAINWorkingGroup
                         // We use i32Value to make sure the entire Item value is overwritten...
                         if (a_twcapability.ConType == TWON.ONEVALUE)
                         {
-                            int i32Value = short.Parse(CsvSerializer.CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
+                            int i32Value = short.Parse(CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
                             Marshal.StructureToPtr(i32Value, a_intptr, true);
                             return ("");
                         }
                         // These items have to be packed on the type sizes...
                         else
                         {
-                            short i16Value = short.Parse(CsvSerializer.CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
+                            short i16Value = short.Parse(CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
                             intptr = (IntPtr)((ulong)a_intptr + (ulong)(2 * a_iIndex));
                             Marshal.StructureToPtr(i16Value, intptr, true);
                             return ("");
@@ -10960,7 +13385,7 @@ namespace TWAINWorkingGroup
                 case TWTY.INT32:
                     {
                         // Entire value will always be overwritten, so we don't have to get fancy...
-                        int i32Value = int.Parse(CsvSerializer.CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
+                        int i32Value = int.Parse(CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(4 * a_iIndex));
                         Marshal.StructureToPtr(i32Value, intptr, true);
                         return ("");
@@ -10971,14 +13396,14 @@ namespace TWAINWorkingGroup
                         // We use u32Value to make sure the entire Item value is overwritten...
                         if (a_twcapability.ConType == TWON.ONEVALUE)
                         {
-                            uint u32Value = byte.Parse(CsvSerializer.CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
+                            uint u32Value = byte.Parse(CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
                             Marshal.StructureToPtr(u32Value, a_intptr, true);
                             return ("");
                         }
                         // These items have to be packed on the type sizes...
                         else
                         {
-                            byte u8Value = byte.Parse(CsvSerializer.CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
+                            byte u8Value = byte.Parse(CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
                             intptr = (IntPtr)((ulong)a_intptr + (ulong)(1 * a_iIndex));
                             Marshal.StructureToPtr(u8Value, intptr, true);
                             return ("");
@@ -10991,13 +13416,13 @@ namespace TWAINWorkingGroup
                         // We use u32Value to make sure the entire Item value is overwritten...
                         if (a_twcapability.ConType == TWON.ONEVALUE)
                         {
-                            uint u32Value = ushort.Parse(CsvSerializer.CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
+                            uint u32Value = ushort.Parse(CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
                             Marshal.StructureToPtr(u32Value, a_intptr, true);
                             return ("");
                         }
                         else
                         {
-                            ushort u16Value = ushort.Parse(CsvSerializer.CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
+                            ushort u16Value = ushort.Parse(CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
                             intptr = (IntPtr)((ulong)a_intptr + (ulong)(2 * a_iIndex));
                             Marshal.StructureToPtr(u16Value, intptr, true);
                             return ("");
@@ -11007,7 +13432,7 @@ namespace TWAINWorkingGroup
                 case TWTY.UINT32:
                     {
                         // Entire value will always be overwritten, so we don't have to get fancy...
-                        uint u32Value = uint.Parse(CsvSerializer.CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
+                        uint u32Value = uint.Parse(CvtCapValueFromEnum(a_twcapability.Cap, a_szValue));
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(4 * a_iIndex));
                         Marshal.StructureToPtr(u32Value, intptr, true);
                         return ("");
@@ -11016,7 +13441,7 @@ namespace TWAINWorkingGroup
                 case TWTY.FIX32:
                     {
                         // Entire value will always be overwritten, so we don't have to get fancy...
-                        TW_FIX32 twfix32 = default;
+                        TW_FIX32 twfix32 = default(TW_FIX32);
                         twfix32.Whole = (short)Convert.ToDouble(a_szValue);
                         twfix32.Frac = (ushort)((Convert.ToDouble(a_szValue) - (double)twfix32.Whole) * 65536.0);
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(4 * a_iIndex));
@@ -11026,7 +13451,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.FRAME:
                     {
-                        TW_FRAME twframe = default;
+                        TW_FRAME twframe = default(TW_FRAME);
                         string[] asz = CSV.Parse(a_szValue);
                         twframe.Left.Whole = (short)Convert.ToDouble(asz[0]);
                         twframe.Left.Frac = (ushort)((Convert.ToDouble(asz[0]) - (double)twframe.Left.Whole) * 65536.0);
@@ -11043,7 +13468,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.STR32:
                     {
-                        TW_STR32 twstr32 = default;
+                        TW_STR32 twstr32 = default(TW_STR32);
                         twstr32.Set(a_szValue);
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(34 * a_iIndex));
                         Marshal.StructureToPtr(twstr32, intptr, true);
@@ -11052,7 +13477,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.STR64:
                     {
-                        TW_STR64 twstr64 = default;
+                        TW_STR64 twstr64 = default(TW_STR64);
                         twstr64.Set(a_szValue);
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(66 * a_iIndex));
                         Marshal.StructureToPtr(twstr64, intptr, true);
@@ -11061,7 +13486,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.STR128:
                     {
-                        TW_STR128 twstr128 = default;
+                        TW_STR128 twstr128 = default(TW_STR128);
                         twstr128.Set(a_szValue);
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(130 * a_iIndex));
                         Marshal.StructureToPtr(twstr128, intptr, true);
@@ -11070,7 +13495,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.STR255:
                     {
-                        TW_STR255 twstr255 = default;
+                        TW_STR255 twstr255 = default(TW_STR255);
                         twstr255.Set(a_szValue);
                         intptr = (IntPtr)((ulong)a_intptr + (ulong)(256 * a_iIndex));
                         Marshal.StructureToPtr(twstr255, intptr, true);
@@ -11086,13 +13511,14 @@ namespace TWAINWorkingGroup
         /// <param name="a_intptr">Pointer to the data</param>
         /// <param name="a_asz">List of strings</param>
         /// <returns>Empty string or an error string</returns>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
         public string SetRangeItem(TWTY a_twty, IntPtr a_intptr, string[] a_asz)
         {
-            TW_RANGE twrange = default;
-            TW_RANGE_MACOSX twrangemacosx = default;
-            TW_RANGE_LINUX64 twrangelinux64 = default;
-            TW_RANGE_FIX32 twrangefix32 = default;
-            TW_RANGE_FIX32_MACOSX twrangefix32macosx = default;
+            TW_RANGE twrange = default(TW_RANGE);
+            TW_RANGE_MACOSX twrangemacosx = default(TW_RANGE_MACOSX);
+            TW_RANGE_LINUX64 twrangelinux64 = default(TW_RANGE_LINUX64);
+            TW_RANGE_FIX32 twrangefix32 = default(TW_RANGE_FIX32);
+            TW_RANGE_FIX32_MACOSX twrangefix32macosx = default(TW_RANGE_FIX32_MACOSX);
 
             // Index by type...
             switch (a_twty)
@@ -11102,7 +13528,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.INT8:
                     {
-                        if (PlatformInfo.IsMacOSX)
+                        if (ms_platform == Platform.MACOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = (uint)sbyte.Parse(a_asz[3]);
@@ -11137,7 +13563,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.INT16:
                     {
-                        if (PlatformInfo.IsMacOSX)
+                        if (ms_platform == Platform.MACOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = (uint)short.Parse(a_asz[3]);
@@ -11172,7 +13598,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.INT32:
                     {
-                        if (PlatformInfo.IsMacOSX)
+                        if (ms_platform == Platform.MACOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = (uint)int.Parse(a_asz[3]);
@@ -11207,7 +13633,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.UINT8:
                     {
-                        if (PlatformInfo.IsMacOSX)
+                        if (ms_platform == Platform.MACOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = (uint)byte.Parse(a_asz[3]);
@@ -11243,7 +13669,7 @@ namespace TWAINWorkingGroup
                 case TWTY.BOOL:
                 case TWTY.UINT16:
                     {
-                        if (PlatformInfo.IsMacOSX)
+                        if (ms_platform == Platform.MACOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = (uint)ushort.Parse(a_asz[3]);
@@ -11278,7 +13704,7 @@ namespace TWAINWorkingGroup
 
                 case TWTY.UINT32:
                     {
-                        if (PlatformInfo.IsMacOSX)
+                        if (ms_platform == Platform.MACOSX)
                         {
                             twrangemacosx.ItemType = (uint)a_twty;
                             twrangemacosx.MinValue = uint.Parse(a_asz[3]);
@@ -11318,7 +13744,7 @@ namespace TWAINWorkingGroup
                         double dStepSize = Convert.ToDouble(a_asz[5]);
                         double dDefaultValue = Convert.ToDouble(a_asz[6]);
                         double dCurrentValue = Convert.ToDouble(a_asz[7]);
-                        if (PlatformInfo.IsMacOSX)
+                        if (ms_platform == Platform.MACOSX)
                         {
                             twrangefix32macosx.ItemType = (uint)a_twty;
                             twrangefix32macosx.MinValue.Whole = (short)dMinValue;
@@ -11425,175 +13851,173 @@ namespace TWAINWorkingGroup
             return ((UInt16)STS.SUCCESS);
         }
 
-        ///// <summary>
-        ///// Get .NET 'Bitmap' object from memory DIB via stream constructor.
-        ///// This should work for most DIBs.
-        ///// </summary>
-        ///// <param name="a_platform">Our operating system</param>
-        ///// <param name="a_intptrNative">The pointer to something (presumably a BITMAP or a TIFF image)</param>
-        ///// <returns>C# Bitmap of image</returns>
-        //private Bitmap NativeToBitmap(Platform a_platform, IntPtr a_intptrNative)
-        //{
-        //    ushort u16Magic;
-        //    IntPtr intptrNative;
+        /// <summary>
+        /// Get .NET 'Bitmap' object from memory DIB via stream constructor.
+        /// This should work for most DIBs.
+        /// </summary>
+        /// <param name="a_platform">Our operating system</param>
+        /// <param name="a_intptrNative">The pointer to something (presumably a BITMAP or a TIFF image)</param>
+        /// <returns>C# Bitmap of image</returns>
+        private Bitmap NativeToBitmap(Platform a_platform, IntPtr a_intptrNative)
+        {
+            ushort u16Magic;
+            IntPtr intptrNative;
 
-        //    // We need the first two bytes to decide if we have a DIB or a TIFF.  Don't
-        //    // forget to lock the silly thing...
-        //    intptrNative = DsmMemLock(a_intptrNative);
-        //    u16Magic = (ushort)Marshal.PtrToStructure(intptrNative, typeof(ushort));
+            // We need the first two bytes to decide if we have a DIB or a TIFF.  Don't
+            // forget to lock the silly thing...
+            intptrNative = DsmMemLock(a_intptrNative);
+            u16Magic = (ushort)Marshal.PtrToStructure(intptrNative, typeof(ushort));
 
-        //    // Windows uses a DIB, the first usigned short is 40...
-        //    if (u16Magic == 40)
-        //    {
-        //        byte[] bBitmap;
-        //        BITMAPFILEHEADER bitmapfileheader;
-        //        BITMAPINFOHEADER bitmapinfoheader;
+            // Windows uses a DIB, the first usigned short is 40...
+            if (u16Magic == 40)
+            {
+                byte[] bBitmap;
+                BITMAPFILEHEADER bitmapfileheader;
+                BITMAPINFOHEADER bitmapinfoheader;
 
-        //        // Our incoming DIB is a bitmap info header...
-        //        bitmapinfoheader = (BITMAPINFOHEADER)Marshal.PtrToStructure(intptrNative, typeof(BITMAPINFOHEADER));
+                // Our incoming DIB is a bitmap info header...
+                bitmapinfoheader = (BITMAPINFOHEADER)Marshal.PtrToStructure(intptrNative, typeof(BITMAPINFOHEADER));
 
-        //        // Build our file header...
-        //        bitmapfileheader = new BITMAPFILEHEADER();
-        //        bitmapfileheader.bfType = 0x4D42; // "BM"
-        //        bitmapfileheader.bfSize
-        //            = (uint)Marshal.SizeOf(typeof(BITMAPFILEHEADER)) +
-        //               bitmapinfoheader.biSize +
-        //               (bitmapinfoheader.biClrUsed * 4) +
-        //               bitmapinfoheader.biSizeImage;
-        //        bitmapfileheader.bfOffBits
-        //            = (uint)Marshal.SizeOf(typeof(BITMAPFILEHEADER)) +
-        //               bitmapinfoheader.biSize +
-        //               (bitmapinfoheader.biClrUsed * 4);
+                // Build our file header...
+                bitmapfileheader = new BITMAPFILEHEADER();
+                bitmapfileheader.bfType = 0x4D42; // "BM"
+                bitmapfileheader.bfSize
+                    = (uint)Marshal.SizeOf(typeof(BITMAPFILEHEADER)) +
+                       bitmapinfoheader.biSize +
+                       (bitmapinfoheader.biClrUsed * 4) +
+                       bitmapinfoheader.biSizeImage;
+                bitmapfileheader.bfOffBits
+                    = (uint)Marshal.SizeOf(typeof(BITMAPFILEHEADER)) +
+                       bitmapinfoheader.biSize +
+                       (bitmapinfoheader.biClrUsed * 4);
 
-        //        // Copy the file header into our byte array...
-        //        IntPtr intptr = Marshal.AllocHGlobal(Marshal.SizeOf(bitmapfileheader));
-        //        Marshal.StructureToPtr(bitmapfileheader, intptr, true);
-        //        bBitmap = new byte[bitmapfileheader.bfSize];
-        //        Marshal.Copy(intptr, bBitmap, 0, Marshal.SizeOf(bitmapfileheader));
-        //        Marshal.FreeHGlobal(intptr);
-        //        intptr = IntPtr.Zero;
+                // Copy the file header into our byte array...
+                IntPtr intptr = Marshal.AllocHGlobal(Marshal.SizeOf(bitmapfileheader));
+                Marshal.StructureToPtr(bitmapfileheader, intptr, true);
+                bBitmap = new byte[bitmapfileheader.bfSize];
+                Marshal.Copy(intptr, bBitmap, 0, Marshal.SizeOf(bitmapfileheader));
+                Marshal.FreeHGlobal(intptr);
+                intptr = IntPtr.Zero;
 
-        //        // Copy the rest of the DIB into our byte array......
-        //        Marshal.Copy(intptrNative, bBitmap, Marshal.SizeOf(typeof(BITMAPFILEHEADER)), (int)bitmapfileheader.bfSize - Marshal.SizeOf(typeof(BITMAPFILEHEADER)));
+                // Copy the rest of the DIB into our byte array......
+                Marshal.Copy(intptrNative, bBitmap, Marshal.SizeOf(typeof(BITMAPFILEHEADER)), (int)bitmapfileheader.bfSize - Marshal.SizeOf(typeof(BITMAPFILEHEADER)));
 
-        //        // Now we can turn the in-memory bitmap file into a Bitmap object...
-        //        MemoryStream memorystream = new MemoryStream(bBitmap);
+                // Now we can turn the in-memory bitmap file into a Bitmap object...
+                MemoryStream memorystream = new MemoryStream(bBitmap);
 
-        //        // Unfortunately the stream has to be kept with the bitmap...
-        //        Bitmap bitmapStream = new Bitmap(memorystream);
+                // Unfortunately the stream has to be kept with the bitmap...
+                Bitmap bitmapStream = new Bitmap(memorystream);
 
-        //        // So we make a copy (ick)...
-        //        Bitmap bitmap;
-        //        switch (bitmapinfoheader.biBitCount)
-        //        {
-        //            default:
-        //            case 24:
-        //                bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-        //                break;
-        //            case 8:
-        //                bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
-        //                break;
-        //            case 1:
-        //                bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
-        //                break;
-        //        }
+                // So we make a copy (ick)...
+                Bitmap bitmap;
+                switch (bitmapinfoheader.biBitCount)
+                {
+                    default:
+                    case 24:
+                        bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                        break;
+                    case 8:
+                        bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
+                        break;
+                    case 1:
+                        bitmap = bitmapStream.Clone(new Rectangle(0, 0, bitmapStream.Width, bitmapStream.Height), System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+                        break;
+                }
 
-        //        // Fix the resolution...
-        //        bitmap.SetResolution((int)(bitmap.HorizontalResolution + 0.5), (int)(bitmap.VerticalResolution + 0.5));
+                // Fix the resolution...
+                bitmap.SetResolution((int)(bitmap.HorizontalResolution + 0.5), (int)(bitmap.VerticalResolution + 0.5));
 
-        //        // Cleanup...
-        //        //bitmapStream.Dispose();
-        //        //memorystream.Close();
-        //        bitmapStream = null;
-        //        memorystream = null;
-        //        bBitmap = null;
+                // Cleanup...
+                //bitmapStream.Dispose();
+                //memorystream.Close();
+                bitmapStream = null;
+                memorystream = null;
+                bBitmap = null;
 
-        //        // Return our bitmap...
-        //        DsmMemUnlock(a_intptrNative);
-        //        return (bitmap);
-        //    }
+                // Return our bitmap...
+                DsmMemUnlock(a_intptrNative);
+                return (bitmap);
+            }
 
-        //    // Linux and Mac OS X use TIFF.  We'll handle a simple Intel TIFF ("II")...
-        //    else if (u16Magic == 0x4949)
-        //    {
-        //        int iTiffSize;
-        //        ulong u64;
-        //        ulong u64Pointer;
-        //        ulong u64TiffHeaderSize;
-        //        ulong u64TiffTagSize;
-        //        byte[] abTiff;
-        //        TIFFHEADER tiffheader;
-        //        TIFFTAG tifftag;
+            // Linux and Mac OS X use TIFF.  We'll handle a simple Intel TIFF ("II")...
+            else if (u16Magic == 0x4949)
+            {
+                int iTiffSize;
+                ulong u64;
+                ulong u64Pointer;
+                ulong u64TiffHeaderSize;
+                ulong u64TiffTagSize;
+                byte[] abTiff;
+                TIFFHEADER tiffheader;
+                TIFFTAG tifftag;
 
-        //        // Init stuff...
-        //        tiffheader = new TIFFHEADER();
-        //        tifftag = new TIFFTAG();
-        //        u64TiffHeaderSize = (ulong)Marshal.SizeOf(tiffheader);
-        //        u64TiffTagSize = (ulong)Marshal.SizeOf(tifftag);
+                // Init stuff...
+                tiffheader = new TIFFHEADER();
+                tifftag = new TIFFTAG();
+                u64TiffHeaderSize = (ulong)Marshal.SizeOf(tiffheader);
+                u64TiffTagSize = (ulong)Marshal.SizeOf(tifftag);
 
-        //        // Find the size of the image so we can turn it into a memory stream...
-        //        iTiffSize = 0;
-        //        tiffheader = (TIFFHEADER)Marshal.PtrToStructure(intptrNative, typeof(TIFFHEADER));
-        //        for (u64 = 0; u64 < 999; u64++)
-        //        {
-        //            u64Pointer = (ulong)intptrNative + u64TiffHeaderSize + (u64TiffTagSize * u64);
-        //            tifftag = (TIFFTAG)Marshal.PtrToStructure((IntPtr)u64Pointer, typeof(TIFFTAG));
+                // Find the size of the image so we can turn it into a memory stream...
+                iTiffSize = 0;
+                tiffheader = (TIFFHEADER)Marshal.PtrToStructure(intptrNative, typeof(TIFFHEADER));
+                for (u64 = 0; u64 < 999; u64++)
+                {
+                    u64Pointer = (ulong)intptrNative + u64TiffHeaderSize + (u64TiffTagSize * u64);
+                    tifftag = (TIFFTAG)Marshal.PtrToStructure((IntPtr)u64Pointer, typeof(TIFFTAG));
 
-        //            // StripOffsets...
-        //            if (tifftag.u16Tag == 273)
-        //            {
-        //                iTiffSize += (int)tifftag.u32Value;
-        //            }
+                    // StripOffsets...
+                    if (tifftag.u16Tag == 273)
+                    {
+                        iTiffSize += (int)tifftag.u32Value;
+                    }
 
-        //            // StripByteCounts...
-        //            if (tifftag.u16Tag == 279)
-        //            {
-        //                iTiffSize += (int)tifftag.u32Value;
-        //            }
-        //        }
+                    // StripByteCounts...
+                    if (tifftag.u16Tag == 279)
+                    {
+                        iTiffSize += (int)tifftag.u32Value;
+                    }
+                }
 
-        //        // No joy...
-        //        if (iTiffSize == 0)
-        //        {
-        //            DsmMemUnlock(a_intptrNative);
-        //            return (null);
-        //        }
+                // No joy...
+                if (iTiffSize == 0)
+                {
+                    DsmMemUnlock(a_intptrNative);
+                    return (null);
+                }
 
-        //        // Copy the data to our byte array...
-        //        abTiff = new byte[iTiffSize];
-        //        Marshal.Copy(intptrNative, abTiff, 0, iTiffSize);
+                // Copy the data to our byte array...
+                abTiff = new byte[iTiffSize];
+                Marshal.Copy(intptrNative, abTiff, 0, iTiffSize);
 
-        //        // Move the image into a memory stream...
-        //        MemoryStream memorystream = new MemoryStream(abTiff);
+                // Move the image into a memory stream...
+                MemoryStream memorystream = new MemoryStream(abTiff);
 
-        //        // Turn the memory stream into an in-memory TIFF image...
-        //        Image imageTiff = Image.FromStream(memorystream);
+                // Turn the memory stream into an in-memory TIFF image...
+                Image imageTiff = Image.FromStream(memorystream);
 
-        //        // Convert the in-memory tiff to a Bitmap object...
-        //        Bitmap bitmap = new Bitmap(imageTiff);
+                // Convert the in-memory tiff to a Bitmap object...
+                Bitmap bitmap = new Bitmap(imageTiff);
 
-        //        // Cleanup...
-        //        abTiff = null;
-        //        memorystream = null;
-        //        imageTiff = null;
+                // Cleanup...
+                abTiff = null;
+                memorystream = null;
+                imageTiff = null;
 
-        //        // Return our bitmap...
-        //        DsmMemUnlock(a_intptrNative);
-        //        return (bitmap);
-        //    }
+                // Return our bitmap...
+                DsmMemUnlock(a_intptrNative);
+                return (bitmap);
+            }
 
-        //    // Uh-oh...
-        //    DsmMemUnlock(a_intptrNative);
-        //    return (null);
-        //}
+            // Uh-oh...
+            DsmMemUnlock(a_intptrNative);
+            return (null);
+        }
 
         /// <summary>
         /// Get .NET 'Bitmap' object from memory DIB via stream constructor.
         /// This should work for most DIBs.
         /// </summary>
         /// <param name="a_intptrNative">The pointer to something (presumably a BITMAP or a TIFF image)</param>
-        /// <param name="a_blIsHandle"></param>
-        /// <param name="a_iHeaderBytes"></param>
         /// <returns>C# Bitmap of image</returns>
         public byte[] NativeToByteArray(IntPtr a_intptrNative, bool a_blIsHandle, out int a_iHeaderBytes)
         {
@@ -11724,24 +14148,21 @@ namespace TWAINWorkingGroup
                     byte[] abJfif;
 
                     // We need the size of this memory block...
-                    if (PlatformInfo.IsWindows)
+                    switch (GetPlatform())
                     {
-                        uintptrBytes = NativeMethods._msize(a_intptrNative);
+                        default:
+                            Log.Error("Really? <" + GetPlatform() + ">");
+                            return (null);
+                        case Platform.WINDOWS:
+                            uintptrBytes = NativeMethods._msize(a_intptrNative);
+                            break;
+                        case Platform.LINUX:
+                            uintptrBytes = NativeMethods.malloc_usable_size(a_intptrNative);
+                            break;
+                        case Platform.MACOSX:
+                            uintptrBytes = NativeMethods.malloc_size(a_intptrNative);
+                            break;
                     }
-                    else if (PlatformInfo.IsLinux)
-                    {
-                        uintptrBytes = NativeMethods.malloc_usable_size(a_intptrNative);
-                    }
-                    else if (PlatformInfo.IsMacOSX)
-                    {
-                        uintptrBytes = NativeMethods.malloc_size(a_intptrNative);
-                    }
-                    else
-                    {
-                        Log.Error("Really? <" + Environment.OSVersion.Platform + ">");
-                        return (null);
-                    }
-
                     abJfif = new byte[(int)uintptrBytes];
                     Marshal.Copy(a_intptrNative, abJfif, 0, (int)(int)uintptrBytes);
                     return (abJfif);
@@ -11852,7 +14273,7 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// Convert a linux64 identity to a public identity...
         /// </summary>
-        /// <param name="a_twidentitylinux64">identity to convert</param>
+        /// <param name="a_twidentitylegacy">Legacy identity to convert</param>
         /// <returns>Regular form of identity</returns>
         private TW_IDENTITY Twidentitylinux64ToTwidentity(TW_IDENTITY_LINUX64 a_twidentitylinux64)
         {
@@ -11907,7 +14328,7 @@ namespace TWAINWorkingGroup
         /// <summary>
         /// The data we share with the thread...
         /// </summary>
-        
+        [SuppressMessage("Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable")]
         private struct ThreadData
         {
             // The state of the structure...
@@ -11927,9 +14348,8 @@ namespace TWAINWorkingGroup
             public IntPtr intptrBitmap;
             public IntPtr intptrAudio;
             public IntPtr twmemref;
-            // TODO: Recode later
-            //public Bitmap bitmap;
-            //public bool blUseBitmapHandle;
+            public Bitmap bitmap;
+            public bool blUseBitmapHandle;
             public UInt32 twuint32;
             public TW_AUDIOINFO twaudioinfo;
             public TW_CALLBACK twcallback;
@@ -11993,6 +14413,71 @@ namespace TWAINWorkingGroup
             public IntPtr lParam;
             public UInt32 time;
             public POINT pt;
+        }
+
+        /// <summary>
+        /// The header for a Bitmap file.
+        /// Needed for supporting DAT.IMAGENATIVEXFER...
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        private struct BITMAPFILEHEADER
+        {
+            public ushort bfType;
+            public uint bfSize;
+            public ushort bfReserved1;
+            public ushort bfReserved2;
+            public uint bfOffBits;
+        }
+
+        /// <summary>
+        /// The header for a Device Independent Bitmap (DIB).
+        /// Needed for supporting DAT.IMAGENATIVEXFER...
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        private struct BITMAPINFOHEADER
+        {
+            public uint biSize;
+            public int biWidth;
+            public int biHeight;
+            public ushort biPlanes;
+            public ushort biBitCount;
+            public uint biCompression;
+            public uint biSizeImage;
+            public int biXPelsPerMeter;
+            public int biYPelsPerMeter;
+            public uint biClrUsed;
+            public uint biClrImportant;
+
+            public void Init()
+            {
+                biSize = (uint)Marshal.SizeOf(this);
+            }
+        }
+
+        /// <summary>
+        /// The TIFF file header.
+        /// Needed for supporting DAT.IMAGENATIVEXFER...
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        private struct TIFFHEADER
+        {
+            public ushort u8ByteOrder;
+            public ushort u16Version;
+            public uint u32OffsetFirstIFD;
+            public ushort u16u16IFD;
+        }
+
+        /// <summary>
+        /// An individual TIFF Tag.
+        /// Needed for supporting DAT.IMAGENATIVEXFER...
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        private struct TIFFTAG
+        {
+            public ushort u16Tag;
+            public ushort u16Type;
+            public uint u32Count;
+            public uint u32Value;
         }
 
         #endregion
@@ -12065,10 +14550,12 @@ namespace TWAINWorkingGroup
         /// </summary>
         private bool m_blUseCallbacks;
 
-        ///// <summary>
-        ///// The platform we're running on...
-        ///// </summary>
-        //static Platform ms_platform;
+        /// <summary>
+        /// The platform we're running on...
+        /// </summary>
+        private static Platform ms_platform;
+        private static Processor ms_processor;
+        private static bool ms_blFirstPassGetPlatform = true;
 
         /// <summary>
         /// Delegates for DAT_CALLBACK...
@@ -12105,10 +14592,10 @@ namespace TWAINWorkingGroup
         /// </summary>
         private AutoResetEvent m_autoreseteventThreadStarted;
 
-        ///// <summary>
-        ///// The data we share with the thread...
-        ///// </summary>
-        ////private ThreadData m_threaddata;
+        /// <summary>
+        /// The data we share with the thread...
+        /// </summary>
+        //private ThreadData m_threaddata;
 
         /// <summary>
         /// Our callback for device events...
@@ -12241,7 +14728,7 @@ namespace TWAINWorkingGroup
                 }
 
                 // Clear the record...
-                m_athreaddata[a_lIndex] = default;
+                m_athreaddata[a_lIndex] = default(ThreadData);
             }
 
             /// <summary>
@@ -12273,10 +14760,10 @@ namespace TWAINWorkingGroup
                 // Init stuff...
                 lIndex = m_lIndex;
                 a_lIndex = 0;
-                a_threaddata = default;
+                a_threaddata = default(ThreadData);
 
                 // Cycle once through the commands to see if we have any...
-                for (; ; )
+                for (;;)
                 {
                     // We found something, copy it out, point to the next
                     // item (so we know we're looking at the whole list)
@@ -12318,7 +14805,7 @@ namespace TWAINWorkingGroup
                 long ll;
 
                 // We won't leave until we've submitted the beastie...
-                for (; ; )
+                for (;;)
                 {
                     // Look for a free slot...
                     for (ll = 0; ll < m_athreaddata.Length; ll++)
@@ -12381,6 +14868,672 @@ namespace TWAINWorkingGroup
 
             #endregion
         }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// A quick and dirty CSV reader/writer...
+    /// </summary>
+    public class CSV
+    {
+        ///////////////////////////////////////////////////////////////////////////////
+        // Public Functions...
+        ///////////////////////////////////////////////////////////////////////////////
+        #region Public Functions...
+
+        /// <summary>
+        /// Start with an empty string...
+        /// </summary>
+        public CSV()
+        {
+            m_szCsv = "";
+        }
+
+        /// <summary>
+        /// Add an item to a CSV string...
+        /// </summary>
+        /// <param name="a_szItem">Something to add to the CSV string</param>
+        public void Add(string a_szItem)
+        {
+            // If the item has commas, we need to do work...
+            if (a_szItem.Contains(","))
+            {
+                // If the item has quotes, replace them with paired quotes, then
+                // quote it and add it...
+                if (a_szItem.Contains("\""))
+                {
+                    m_szCsv += ((m_szCsv != "") ? "," : "") + "\"" + a_szItem.Replace("\"", "\"\"") + "\"";
+                }
+
+                // Otherwise, just quote it and add it...
+                else
+                {
+                    m_szCsv += ((m_szCsv != "") ? "," : "") + "\"" + a_szItem + "\"";
+                }
+            }
+
+            // If the item has quotes, replace them with escaped quotes, then
+            // quote it and add it...
+            else if (a_szItem.Contains("\""))
+            {
+                m_szCsv += ((m_szCsv != "") ? "," : "") + "\"" + a_szItem.Replace("\"", "\"\"") + "\"";
+            }
+
+            // Otherwise, just add it...
+            else
+            {
+                m_szCsv += ((m_szCsv != "") ? "," : "") + a_szItem;
+            }
+        }
+
+        /// <summary>
+        /// Clear the record...
+        /// </summary>
+        public void Clear()
+        {
+            m_szCsv = "";
+        }
+
+        /// <summary>
+        /// Get the current CSV string...
+        /// </summary>
+        /// <returns>The current value of the CSV string</returns>
+        public string Get()
+        {
+            return (m_szCsv);
+        }
+
+        /// <summary>
+        /// Parse a CSV string...
+        /// </summary>
+        /// <param name="a_szCsv">A CSV string to parse</param>
+        /// <returns>An array if items (some can be CSV themselves)</returns>
+        public static string[] Parse(string a_szCsv)
+        {
+            int ii;
+            bool blEnd;
+            string[] aszCsv;
+            string[] aszLeft;
+            string[] aszRight;
+
+            // Validate...
+            if ((a_szCsv == null) || (a_szCsv == ""))
+            {
+                return (new string[] { "" });
+            }
+
+            // If there are no quotes, then parse it fast...
+            if (!a_szCsv.Contains("\""))
+            {
+                return (a_szCsv.Split(new char[] { ',' }));
+            }
+
+            // There's no opening quote, so split and recurse...
+            if (a_szCsv[0] != '"')
+            {
+                aszLeft = new string[] { a_szCsv.Substring(0, a_szCsv.IndexOf(',')) };
+                aszRight = Parse(a_szCsv.Remove(0, a_szCsv.IndexOf(',') + 1));
+                aszCsv = new string[aszLeft.Length + aszRight.Length];
+                aszLeft.CopyTo(aszCsv, 0);
+                aszRight.CopyTo(aszCsv, aszLeft.Length);
+                return (aszCsv);
+            }
+
+            // Handle the quoted string...
+            else
+            {
+                // Find the terminating quote...
+                blEnd = true;
+                for (ii = 0; ii < a_szCsv.Length; ii++)
+                {
+                    if (a_szCsv[ii] == '"')
+                    {
+                        blEnd = !blEnd;
+                    }
+                    else if (blEnd && (a_szCsv[ii] == ','))
+                    {
+                        break;
+                    }
+                }
+                ii -= 1;
+
+                // We have a problem...
+                if (!blEnd)
+                {
+                    throw new Exception("Error in CSV string...");
+                }
+
+                // This is the last item, remove any escaped quotes and return it...
+                if (((ii + 1) >= a_szCsv.Length))
+                {
+                    return (new string[] { a_szCsv.Substring(1, a_szCsv.Length - 2).Replace("\"\"", "\"") });
+                }
+
+                // We have more data...
+                if (a_szCsv[ii + 1] == ',')
+                {
+                    aszLeft = new string[] { a_szCsv.Substring(1, ii - 1).Replace("\"\"", "\"") };
+                    aszRight = Parse(a_szCsv.Remove(0, ii + 2));
+                    aszCsv = new string[aszLeft.Length + aszRight.Length];
+                    aszLeft.CopyTo(aszCsv, 0);
+                    aszRight.CopyTo(aszCsv, aszLeft.Length);
+                    return (aszCsv);
+                }
+
+                // We have a problem...
+                throw new Exception("Error in CSV string...");
+            }
+        }
+
+        #endregion
+
+
+        ///////////////////////////////////////////////////////////////////////////////
+        // Private Attributes...
+        ///////////////////////////////////////////////////////////////////////////////
+        #region Private Attributes...
+
+        /// <summary>
+        /// Our working string for creating or parsing...
+        /// </summary>
+        private string m_szCsv;
+
+        #endregion
+    }
+
+
+    /// <summary>
+    /// Our logger.  If we bump up to 4.5 (and if mono supports it at compile
+    /// time), then we'll be able to add the following to our traces, which
+    /// seems like it should be more than enough to locate log messages.  For
+    /// now we'll leave the log messages undecorated:
+    ///     [CallerFilePath] string file = "",
+    ///     [CallerMemberName] string member = "",
+    ///     [CallerLineNumber] int line = 0
+    /// </summary>
+    public static class Log
+    {
+        // Public Methods...
+        #region Public Methods...
+
+        /// <summary>
+        /// Initialize our delegates...
+        /// </summary>
+        static Log()
+        {
+            Close = CloseLocal;
+            GetLevel =  GetLevelLocal;
+            Open = OpenLocal;
+            RegisterTwain = RegisterTwainLocal;
+            SetFlush = SetFlushLocal;
+            SetLevel = SetLevelLocal;
+            WriteEntry = WriteEntryLocal;
+        }
+
+        /// <summary>
+        /// Let the caller override our delegates with their own functions...
+        /// </summary>
+        /// <param name="a_closedelegate">use this to close the logging session</param>
+        /// <param name="a_getleveldelegate">get the current log level</param>
+        /// <param name="a_opendelegate">open the logging session</param>
+        /// <param name="a_registertwaindelegate">not needed at this time</param>
+        /// <param name="a_setflushdelegate">turn flushing on and off</param>
+        /// <param name="a_setleveldelegate">set the new log level</param>
+        /// <param name="a_writeentrydelegate">the function that actually writes to the log</param>
+        /// <param name="a_getstatedelegate">returns a way to get the current TWAIN state</param>
+        public static void Override
+        (
+            CloseDelegate a_closedelegate,
+            GetLevelDelegate a_getleveldelegate,
+            OpenDelegate a_opendelegate,
+            RegisterTwainDelegate a_registertwaindelegate,
+            SetFlushDelegate a_setflushdelegate,
+            SetLevelDelegate a_setleveldelegate,
+            WriteEntryDelegate a_writeentrydelegate,
+            out GetStateDelegate a_getstatedelegate
+        )
+        {
+            Close = (a_closedelegate != null) ? a_closedelegate : CloseLocal;
+            GetLevel = (a_getleveldelegate != null) ? a_getleveldelegate : GetLevelLocal;
+            Open = (a_opendelegate != null) ? a_opendelegate : OpenLocal;
+            RegisterTwain = (a_registertwaindelegate != null) ? a_registertwaindelegate : RegisterTwainLocal;
+            SetFlush = (a_setflushdelegate != null) ? a_setflushdelegate : SetFlushLocal;
+            SetLevel = (a_setleveldelegate != null) ? a_setleveldelegate : SetLevelLocal;
+            WriteEntry = (a_writeentrydelegate != null) ? a_writeentrydelegate : WriteEntryLocal;
+            a_getstatedelegate = GetStateLocal;
+        }
+
+        /// <summary>
+        /// Write an assert message, but only throw with a debug build...
+        /// </summary>
+        /// <param name="a_szMessage">message to log</param>
+        public static void Assert(string a_szMessage)
+        {
+            WriteEntry("A", a_szMessage, true);
+            #if DEBUG
+                throw new Exception(a_szMessage);
+            #endif
+        }
+
+        /// <summary>
+        /// Write an error message...
+        /// </summary>
+        /// <param name="a_szMessage">message to log</param>
+        public static void Error(string a_szMessage)
+        {
+            WriteEntry("E", a_szMessage, true);
+        }
+
+        /// <summary>
+        /// Write an informational message...
+        /// </summary>
+        /// <param name="a_szMessage">message to log</param>
+        public static void Info(string a_szMessage)
+        {
+            WriteEntry(".", a_szMessage, ms_blFlush);
+        }
+
+        /// <summary>
+        /// Log after sending to the TWAIN driver...
+        /// </summary>
+        /// <param name="a_sts">status</param>
+        /// <param name="a_szMemref">data</param>
+        public static void LogSendAfter(TWAIN.STS a_sts, string a_szMemref)
+        {
+            // The data argument type (DAT) stuff...
+            if ((a_szMemref != null) && (a_szMemref != "") && (a_szMemref[0] != '('))
+            {
+                Log.Info("twn> " + a_szMemref);
+            }
+
+            // TWRC...
+            if ((int)a_sts < TWAIN.STSCC)
+            {
+                Log.Info("twn> " + a_sts);
+            }
+            // TWCC...
+            else
+            {
+                Log.Info("twn> FAILURE/" + a_sts);
+            }
+        }
+
+        /// <summary>
+        /// Log before sending to the TWAIN driver...
+        /// </summary>
+        /// <param name="a_szDg">data group</param>
+        /// <param name="a_szDat">data argument type</param>
+        /// <param name="a_szMsg">message</param>
+        /// <param name="a_szMemref">data</param>
+        public static void LogSendBefore(string a_szDg, string a_szDat, string a_szMsg, string a_szMemref)
+        {
+            Log.Info("");
+            Log.Info("twn> DG_" + a_szDg + "/DAT_" + a_szDat + "/MSG_" + a_szMsg);
+            if ((a_szMemref != null) && (a_szMemref != "") && (a_szMemref[0] != '('))
+            {
+                Log.Info("twn> " + a_szMemref);
+            }
+        }
+
+        /// <summary>
+        /// Write a verbose message, this is extra info that isn't normally
+        /// needed to diagnose problems, but may provide insight into what
+        /// the code is doing...
+        /// </summary>
+        /// <param name="a_szMessage">message to log</param>
+        public static void Verbose(string a_szMessage)
+        {
+            WriteEntry("V", a_szMessage, ms_blFlush);
+        }
+
+        /// <summary>
+        /// Write a verbose data message, this is extra info, specifically
+        /// data transfers, that isn't normally needed to diagnose problems.
+        /// Turning this one can really bloat the logs...
+        /// </summary>
+        /// <param name="a_szMessage">message to log</param>
+        public static void VerboseData(string a_szMessage)
+        {
+            WriteEntry("D", a_szMessage, ms_blFlush);
+        }
+
+        /// <summary>
+        /// Write an warning message...
+        /// </summary>
+        /// <param name="a_szMessage">message to log</param>
+        public static void Warn(string a_szMessage)
+        {
+            WriteEntry("W", a_szMessage, ms_blFlush);
+        }
+
+        #endregion
+
+
+        // Public Definitions...
+        #region Public Definitions...
+
+        // The public methods that need attributes, here offered
+        // as delegates, so that a caller will be able to override
+        // them...
+        public delegate void CloseDelegate();
+        public delegate int GetLevelDelegate();
+        public delegate string GetStateDelegate();
+        public delegate void OpenDelegate(string a_szName, string a_szPath, int a_iLevel);
+        public delegate void RegisterTwainDelegate(TWAIN a_twain);
+        public delegate void SetFlushDelegate(bool a_blFlush);
+        public delegate void SetLevelDelegate(int a_iLevel);
+        public delegate void WriteEntryDelegate(string a_szSeverity, string a_szMessage, bool a_blFlush);
+
+        #endregion
+
+
+        // Public Attributes...
+        #region Public Attributes...
+
+        // The public methods that need attributes, here offered
+        // as delegates, so that a caller will be able to override
+        // them...
+        public static CloseDelegate Close;
+        public static GetLevelDelegate GetLevel;
+        public static OpenDelegate Open;
+        public static RegisterTwainDelegate RegisterTwain;
+        public static SetFlushDelegate SetFlush;
+        public static SetLevelDelegate SetLevel;
+        public static WriteEntryDelegate WriteEntry;
+
+        #endregion
+
+
+        // Private Methods...
+        #region Private Methods...
+
+        /// <summary>
+        /// Close tracing...
+        /// </summary>
+        private static void CloseLocal()
+        {
+            if (!ms_blFirstPass)
+            {
+                Trace.Close();
+                ms_filestream.Close();
+                ms_filestream = null;
+            }
+            ms_blFirstPass = true;
+            ms_blOpened = false;
+            ms_blFlush = false;
+            ms_iMessageNumber = 0;
+        }
+
+        /// <summary>
+        /// Get the debugging level...
+        /// </summary>
+        /// <returns>the level</returns>
+        private static int GetLevelLocal()
+        {
+            return (ms_iLevel);
+        }
+
+        /// <summary>
+        /// Get the state...
+        /// </summary>
+        /// <returns>the level</returns>
+        private static string GetStateLocal()
+        {
+            return ((ms_twain == null) ? "S1" : ms_twain.GetState().ToString());
+        }
+
+        /// <summary>
+        /// Turn on the listener for our log file...
+        /// </summary>
+        /// <param name="a_szName">the name of our log</param>
+        /// <param name="a_szPath">the path where we want our log to go</param>
+        /// <param name="a_iLevel">debug level</param>
+        private static void OpenLocal(string a_szName, string a_szPath, int a_iLevel)
+        {
+            string szLogFile;
+
+            // Init stuff...
+            ms_blFirstPass = true;
+            ms_blOpened = true;
+            ms_blFlush = false;
+            ms_iMessageNumber = 0;
+            ms_iLevel = a_iLevel;
+
+            // Ask for a TWAINDSM log...
+            if (a_iLevel > 0)
+            {
+                Environment.SetEnvironmentVariable("TWAINDSM_LOG", Path.Combine(a_szPath, "twaindsm.log"));
+                Environment.SetEnvironmentVariable("TWAINDSM_MODE", "w");
+            }
+
+            // Backup old stuff...
+            szLogFile = Path.Combine(a_szPath, a_szName);
+            try
+            {
+                if (File.Exists(szLogFile + "_backup_2.log"))
+                {
+                    File.Delete(szLogFile + "_backup_2.log");
+                }
+                if (File.Exists(szLogFile + "_backup_1.log"))
+                {
+                    File.Move(szLogFile + "_backup_1.log", szLogFile + "_backup_2.log");
+                }
+                if (File.Exists(szLogFile + ".log"))
+                {
+                    File.Move(szLogFile + ".log", szLogFile + "_backup_1.log");
+                }
+            }
+            catch
+            {
+                // Don't care, keep going...
+            }
+
+            // Turn on the listener...
+            ms_filestream = File.Open(szLogFile + ".log", FileMode.Append, FileAccess.Write, FileShare.Read);
+            Trace.Listeners.Add(new TextWriterTraceListener(ms_filestream, a_szName + "Listener"));
+        }
+
+        /// <summary>
+        /// Register the TWAIN object so we can get some extra info...
+        /// </summary>
+        /// <param name="a_twain">twain object or null</param>
+        private static void RegisterTwainLocal(TWAIN a_twain)
+        {
+            ms_twain = a_twain;
+        }
+
+        /// <summary>
+        /// Flush data to the file...
+        /// </summary>
+        private static void SetFlushLocal(bool a_blFlush)
+        {
+            ms_blFlush = a_blFlush;
+            if (a_blFlush)
+            {
+                Trace.Flush();
+            }
+        }
+
+        /// <summary>
+        /// Set the debugging level
+        /// </summary>
+        /// <param name="a_iLevel"></param>
+        private static void SetLevelLocal(int a_iLevel)
+        {
+            // Squirrel this value away...
+            ms_iLevel = a_iLevel;
+
+            // One has to opt out of flushing, since the consequence
+            // of turning it off often involves losing log data...
+            if ((a_iLevel & c_iDebugNoFlush) == c_iDebugNoFlush)
+            {
+                SetFlush(false);
+            }
+            else
+            {
+                SetFlush(true);
+            }
+        }
+
+        /// <summary>
+        /// Do this for all of them...
+        /// </summary>
+        /// <param name="a_szMessage">The message</param>
+        /// <param name="a_szSeverity">Message severity</param>
+        /// <param name="a_blFlush">Flush it to disk</param>
+        private static void WriteEntryLocal(string a_szSeverity, string a_szMessage, bool a_blFlush)
+        {
+            long lThreadId;
+
+            // Filter...
+            switch (a_szSeverity)
+            {
+                // Always log these, and always flush them to disk...
+                case "A":
+                case "E":
+                case "W":
+                    a_blFlush = true;
+                    break;
+
+                // Log informationals when bit-0 is set...
+                case ".":
+                    if ((ms_iLevel & c_iDebugInfo) != 0)
+                    {
+                        break;
+                    }
+                    return;
+
+                // Log verbose when bit-1 is set...
+                case "V":
+                    if ((ms_iLevel & c_iDebugVerbose) != 0)
+                    {
+                        a_szSeverity = ".";
+                        break;
+                    }
+                    return;
+
+                // Log verbose data when bit-1 is set...
+                case "D":
+                    if ((ms_iLevel & c_iDebugVerboseData) != 0)
+                    {
+                        a_szSeverity = ".";
+                        break;
+                    }
+                    return;
+            }
+
+            // Get our thread id...
+            if (ms_blIsWindows)
+            {
+                lThreadId = NativeMethods.GetCurrentThreadId();
+            }
+            else
+            {
+                lThreadId = Thread.CurrentThread.ManagedThreadId;
+            }
+
+            // First pass...
+            if (ms_blFirstPass)
+            {
+                string szPlatform;
+
+                // We're Windows...
+                if (Environment.OSVersion.ToString().Contains("Microsoft Windows"))
+                {
+                    szPlatform = "windows";
+                }
+
+                // We're Mac OS X (this has to come before LINUX!!!)...
+                else if (Directory.Exists("/Library/Application Support"))
+                {
+                    szPlatform = "macosx";
+                }
+
+                // We're Linux...
+                else if (Environment.OSVersion.ToString().Contains("Unix"))
+                {
+                    szPlatform = "linux";
+                }
+
+                // We have a problem, Log will throw for us...
+                else
+                {
+                    szPlatform = "unknown";
+                }
+                if (!ms_blOpened)
+                {
+                    // We'll assume they want logging, since they didn't tell us...
+                    Open("Twain", ".", 1);
+                }
+                Trace.UseGlobalLock = true;
+                ms_blFirstPass = false;
+                Trace.WriteLine
+                (
+                    string.Format
+                    (
+                        "{0:D6} {1} {2} T{3:D8} V{4} ts:{5} os:{6}",
+                        ms_iMessageNumber++,
+                        DateTime.Now.ToString("HHmmssffffff"),
+                        (ms_twain != null) ? ms_twain.GetState().ToString() : "S1",
+                        lThreadId,
+                        a_szSeverity.ToString(),
+                        DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ffffff"),
+                        szPlatform
+                    )
+                );
+            }
+
+            // And log it...
+            Trace.WriteLine
+            (
+                string.Format
+                (
+                    "{0:D6} {1} {2} T{3:D8} V{4} {5}",
+                    ms_iMessageNumber++,
+                    DateTime.Now.ToString("HHmmssffffff"),
+                    (ms_twain != null) ? ms_twain.GetState().ToString() : "S1",
+                    lThreadId,
+                    a_szSeverity.ToString(),
+                    a_szMessage
+                )
+            );
+
+            // Flush it...
+            if (a_blFlush)
+            {
+                Trace.Flush();
+            }
+        }
+
+        #endregion
+
+
+        // Private Definitions...
+        #region Private Definitions
+
+        /// <summary>
+        /// LogLevel bitmask...
+        /// </summary>
+        private const int c_iDebugInfo = 0x0001;
+        private const int c_iDebugVerbose = 0x0002;
+        private const int c_iDebugVerboseData = 0x0004;
+        private const int c_iDebugNoFlush = 0x0008;
+
+        #endregion
+
+
+        // Private Attributes...
+        #region Private Attributes
+
+        private static bool ms_blFirstPass = true;
+        private static bool ms_blOpened = false;
+        private static bool ms_blFlush = false;
+        private static int ms_iMessageNumber = 0;
+        private static int ms_iLevel = 0;
+        private static TWAIN ms_twain = null;
+        private static bool ms_blIsWindows = false;
+        private static FileStream ms_filestream;
 
         #endregion
     }

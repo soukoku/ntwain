@@ -1,5 +1,6 @@
 ﻿using System;
 using TWAINWorkingGroup;
+using static TWAINWorkingGroup.TWAIN;
 
 namespace NTwain
 {

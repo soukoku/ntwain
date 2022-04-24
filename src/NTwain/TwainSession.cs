@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TWAINWorkingGroup;
+using static TWAINWorkingGroup.TWAIN;
 
 namespace NTwain
 {
