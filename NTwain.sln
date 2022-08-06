@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30907.101
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain", "src\NTwain\NTwain.csproj", "{0C5A6FB1-0282-4D61-8354-68DEB1515001}"
 EndProject
@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{4CE0B9ED-2CD1-440F-B4EC-35ECA6D61EFE}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.txt = LICENSE.txt
+		Make-package.cmd = Make-package.cmd
 		README.md = README.md
 		Spec\twain2.3.h = Spec\twain2.3.h
 	EndProjectSection
@@ -26,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B77C17FE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Net5Console", "samples\Sample.Net5Console\Sample.Net5Console.csproj", "{DDEA155C-68E9-4B42-8390-01B060DB25DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Net5Winform", "samples\Sample.Net5Winform\Sample.Net5Winform.csproj", "{5DA59B03-A286-4BC4-9F85-CDE893BB6C6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Net5Winform", "samples\Sample.Net5Winform\Sample.Net5Winform.csproj", "{5DA59B03-A286-4BC4-9F85-CDE893BB6C6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
