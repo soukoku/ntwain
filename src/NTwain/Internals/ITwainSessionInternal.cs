@@ -41,6 +41,7 @@ namespace NTwain.Internals
         ReturnCode DisableSource();
 
         void SafeSyncableRaiseEvent(DataTransferredEventArgs e);
+        void SafeSyncableRaiseEvent(TransferCanceledEventArgs e);
         void SafeSyncableRaiseEvent(TransferErrorEventArgs e);
         void SafeSyncableRaiseEvent(TransferReadyEventArgs e);
 

@@ -145,8 +145,10 @@ namespace NTwain.Internals
             {
                 case ReturnCode.Success:
                 case ReturnCode.XferDone:
-                case ReturnCode.Cancel:
                     // ok to keep going
+                    break;
+                case ReturnCode.Cancel:
+                    session.SafeSyncableRaiseEvent(new TransferCanceledEventArgs());
                     break;
                 default:
                     var status = session.CurrentSource.GetStatus();

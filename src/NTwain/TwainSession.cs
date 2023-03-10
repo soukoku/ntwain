@@ -482,6 +482,10 @@ namespace NTwain
         /// </summary>
         public event EventHandler<DataTransferredEventArgs> DataTransferred;
         /// <summary>
+        /// Occurs when a transfer was canceled.
+        /// </summary>
+        public event EventHandler<TransferCanceledEventArgs> TransferCanceled;
+        /// <summary>
         /// Occurs when an error has been encountered during transfer.
         /// </summary>
         public event EventHandler<TransferErrorEventArgs> TransferError;
@@ -679,6 +683,12 @@ namespace NTwain
         /// </summary>
         /// <param name="e">The <see cref="DataTransferredEventArgs"/> instance containing the event data.</param>
         protected virtual void OnDataTransferred(DataTransferredEventArgs e) { }
+
+        /// <summary>
+        /// Called when a transfer was canceled.
+        /// </summary>
+        /// <param name="e">The <see cref="TransferCanceledEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnTransferCanceled(TransferCanceledEventArgs e) { }
 
         /// <summary>
         /// Called when an error has been encountered during transfer.
