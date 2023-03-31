@@ -1,19 +1,18 @@
 # TWAIN dotnet library
 
-NOTE: This is a rewrite test that's based off twaincs from
-the TWAIN Working Group and doesn't fully work yet.
-Use V3 branch for current version.
+NOTE: This is a rewrite test that internally uses 
+[twaincs](https://github.com/twain/twain-cs) from
+the TWAIN Working Group. It doesn't fully work yet.
+Use V3 branch for the current version.
 
 ## Info
 
 This is a dotnet library created to make working with 
-[TWAIN](http://twain.org/) easier. 
+[TWAIN](http://twain.org/) devices easier in dotnet. 
 V4 of this lib has these goals:
 
-* Targets latest TWAIN version (2.4 as of this writing).
-* Supports all the TWAIN functions in the spec (directly or through dotnet wrapper).
-* Works with both 32 or 64 bit data sources as appropriate for the 32 or 64 bit apps.
-* Supports full framework (4.5+) and netcore apps.
+* Targets latest TWAIN version (2.5).
+* Supports full framework and netcore apps (if the framework is still supported).
 
 ## Using the lib
 
