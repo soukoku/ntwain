@@ -14,7 +14,7 @@ namespace TWAINWorkingGroup
   {
     static TwainPlatform()
     {
-      Is64bit = IntPtr.Size == 8;
+      Is32bit = IntPtr.Size == 4;
 
 #if NETFRAMEWORK
       if (Environment.OSVersion.Platform == PlatformID.Win32NT)
@@ -64,7 +64,14 @@ namespace TWAINWorkingGroup
     /// <summary>
     /// Whether the code is running in 64bit or 32bit.
     /// </summary>
-    public static bool Is64bit { get; }
+    public static bool Is32bit { get; }
+
+    /// <summary>
+    /// Whether to use the older DSM lib on Windows and Mac. 
+    /// On Windows it only takes effect when running in 32bit. 
+    /// Defaults to false.
+    /// </summary>
+    public static bool PreferLegacyDSM { get; set; }
   }
 
   /// <summary>

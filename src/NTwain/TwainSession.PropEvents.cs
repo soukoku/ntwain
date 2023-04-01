@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Triplets;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace NTwain
     public STATE State
     {
       get => _state;
-      private set
+      internal set
       {
         if (_state != value)
         {
@@ -53,8 +54,21 @@ namespace NTwain
     }
 
     /// <summary>
-    /// Fired when state changes.
+    /// Fired when <see cref="State"/> changes.
     /// </summary>
     public event Action<TwainSession, STATE>? StateChanged;
+
+    /// <summary>
+    /// TWAIN triplet API calls with <see cref="DG.CONTROL"/>.
+    /// </summary>
+    public DGControl DGControl { get; }
+    /// <summary>
+    /// TWAIN triplet API calls with <see cref="DG.IMAGE"/>.
+    /// </summary>
+    public DGImage DGImage { get; }
+    /// <summary>
+    /// TWAIN triplet API calls with <see cref="DG.AUDIO"/>.
+    /// </summary>
+    public DGAudio DGAudio { get; }
   }
 }

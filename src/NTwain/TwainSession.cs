@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Triplets;
+using System;
 using System.Diagnostics;
 using System.Text;
 using TWAINWorkingGroup;
@@ -62,7 +63,7 @@ namespace NTwain
         ProductName = productName,
         ProtocolMajor = (ushort)TWON_PROTOCOL.MAJOR,
         ProtocolMinor = (ushort)TWON_PROTOCOL.MINOR,
-        SupportedGroups = (uint)(supportedTypes | DG.APP2),
+        SupportedGroups = (uint)(supportedTypes | DG.CONTROL | DG.APP2),
         Version = new TW_VERSION
         {
           Country = appCountry,
@@ -74,6 +75,10 @@ namespace NTwain
       };
       if (TwainPlatform.IsLinux) _appIdentity = _appIdentityLegacy;
       else if (TwainPlatform.IsMacOSX) _appIdentityOSX = _appIdentityLegacy;
+
+      DGControl = new DGControl(this);
+      DGImage = new DGImage(this);
+      DGAudio = new DGAudio(this);
     }
   }
 }
