@@ -59,7 +59,7 @@ namespace NTwain
         __encodingRegistered = true;
       }
 
-      _appIdentityLegacy = new()
+      _appIdentity; = new()
       {
         Manufacturer = companyName,
         ProductFamily = productFamily,
@@ -76,8 +76,8 @@ namespace NTwain
           MinorNum = (ushort)productVersion.Minor,
         }
       };
-      //if (TwainPlatform.IsLinux) _appIdentity = _appIdentityLegacy;
-      if (TwainPlatform.IsMacOSX) _appIdentityOSX = _appIdentityLegacy;
+      //if (TwainPlatform.IsLinux) _appIdentity = _appIdentity;
+      if (TwainPlatform.IsMacOSX) _appIdentityOSX = _appIdentity;;
 
       DGControl = new DGControl(this);
       DGImage = new DGImage(this);

@@ -51,7 +51,7 @@ namespace NTwain.Triplets
       var rc = STS.FAILURE;
       if (TwainPlatform.IsWindows)
       {
-        var app = Session._appIdentityLegacy;
+        var app = Session._appIdentity;
         TW_IDENTITY_LEGACY dummy = default;
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
@@ -64,11 +64,11 @@ namespace NTwain.Triplets
       }
       //else if (TwainPlatform.IsLinux)
       //{
-      //  var app = Session._appIdentityLegacy;
+      //  var app = Session._appIdentity;
       //}
       else if (TwainPlatform.IsMacOSX)
       {
-        var app = Session._appIdentityOSX;
+        TW_IDENTITY_MACOSX app = Session._appIdentity;
         TW_IDENTITY_MACOSX dummy = default;
         if (TwainPlatform.PreferLegacyDSM)
         {

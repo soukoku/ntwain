@@ -21,18 +21,20 @@ namespace NTwain
     /// <summary>
     /// Gets the app identity.
     /// </summary>
-    public TW_IDENTITY_LEGACY AppIdentity => _appIdentityLegacy;
-    internal TW_IDENTITY_LEGACY _appIdentityLegacy;
-    //internal TW_IDENTITY _appIdentity;
-    internal TW_IDENTITY_MACOSX _appIdentityOSX;
+    public TW_IDENTITY_LEGACY AppIdentity => _appIdentity;
+    internal TW_IDENTITY_LEGACY _appIdentity;
 
     /// <summary>
     /// Gets the current data source.
     /// </summary>
-    public TW_IDENTITY_LEGACY DSIdentity => _dsIdentityLegacy;
-    internal TW_IDENTITY_LEGACY _dsIdentityLegacy;
-    //internal TW_IDENTITY _dsIdentity;
-    internal TW_IDENTITY_MACOSX _dsIdentityOSX;
+    public TW_IDENTITY_LEGACY CurrentDS => _currentDS;
+    internal TW_IDENTITY_LEGACY _currentDS;
+
+    /// <summary>
+    /// Gets the default data source.
+    /// </summary>
+    public TW_IDENTITY_LEGACY DefaultDS => _defaultDS;
+    internal TW_IDENTITY_LEGACY _defaultDS;
 
     private STATE _state = STATE.S1;
 

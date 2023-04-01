@@ -24,8 +24,11 @@ namespace NTwain.Triplets
       {
         Session._hwnd = hwnd;
         Session.State = STATE.S3;
+
+        // todo: get default source
+
         // determine memory mgmt routines used
-        if ((((DG)Session._appIdentityLegacy.SupportedGroups) & DG.DSM2) == DG.DSM2)
+        if ((((DG)Session._appIdentity.SupportedGroups) & DG.DSM2) == DG.DSM2)
         {
           TW_ENTRYPOINT_DELEGATES entry = default;
           if (Session.DGControl.EntryPoint.Get(ref entry) == STS.SUCCESS)
@@ -60,7 +63,7 @@ namespace NTwain.Triplets
       var rc = STS.FAILURE;
       if (TwainPlatform.IsWindows)
       {
-        var app = Session._appIdentityLegacy;
+        var app = Session._appIdentity;
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
           rc = (STS)NativeMethods.WindowsTwain32DsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
@@ -69,17 +72,17 @@ namespace NTwain.Triplets
         {
           rc = (STS)NativeMethods.WindowsTwaindsmDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
         }
-        if (rc == STS.SUCCESS) Session._appIdentityLegacy = app;
+        if (rc == STS.SUCCESS) Session._appIdentity = app;
       }
       //else if (TwainPlatform.IsLinux)
       //{
-      //  var app = Session._appIdentityLegacy;
+      //  var app = Session._appIdentity;
       //  rc = (STS)NativeMethods.LinuxDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
-      //  if (rc == STS.SUCCESS) Session._appIdentityLegacy = app;
+      //  if (rc == STS.SUCCESS) Session._appIdentity = app;
       //}
       else if (TwainPlatform.IsMacOSX)
       {
-        var app = Session._appIdentityOSX;
+        TW_IDENTITY_MACOSX app = Session._appIdentity;
         if (TwainPlatform.PreferLegacyDSM)
         {
           rc = (STS)NativeMethods.MacosxTwainDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
@@ -90,8 +93,7 @@ namespace NTwain.Triplets
         }
         if (rc == STS.SUCCESS)
         {
-          Session._appIdentityOSX = app;
-          Session._appIdentityLegacy = app;
+          Session._appIdentity = app;
         }
       }
       return rc;
