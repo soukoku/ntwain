@@ -23,6 +23,15 @@ namespace NTwain.Triplets
       if ((rc = DoIt(MSG.OPENDSM, ref hwnd)) == STS.SUCCESS)
       {
         Session.State = STATE.S3;
+        // determine memory mgmt routines used
+        if ((((DG)Session._appIdentityLegacy.SupportedGroups) & DG.DSM2) == DG.DSM2)
+        {
+          TW_ENTRYPOINT_DELEGATES entry = default;
+          if (Session.DGControl.EntryPoint.Get(ref entry) == STS.SUCCESS)
+          {
+            Session._entryPoint = entry;
+          }
+        }
       }
       return rc;
     }
@@ -38,6 +47,7 @@ namespace NTwain.Triplets
       if ((rc = DoIt(MSG.CLOSEDSM, ref hwnd)) == STS.SUCCESS)
       {
         Session.State = STATE.S2;
+        Session._entryPoint = default;
       }
       return rc;
     }
@@ -57,15 +67,14 @@ namespace NTwain.Triplets
         {
           rc = (STS)NativeMethods.WindowsTwaindsmDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
         }
-        if (rc == STS.SUCCESS) Session._appIdentity = app;
+        if (rc == STS.SUCCESS) Session._appIdentityLegacy = app;
       }
-      else if (TwainPlatform.IsLinux)
-      {
-        var app = Session._appIdentityLegacy;
-
-        rc = (STS)NativeMethods.LinuxDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
-        if (rc == STS.SUCCESS) Session._appIdentity = app;
-      }
+      //else if (TwainPlatform.IsLinux)
+      //{
+      //  var app = Session._appIdentityLegacy;
+      //  rc = (STS)NativeMethods.LinuxDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
+      //  if (rc == STS.SUCCESS) Session._appIdentityLegacy = app;
+      //}
       else if (TwainPlatform.IsMacOSX)
       {
         var app = Session._appIdentityOSX;
@@ -77,7 +86,11 @@ namespace NTwain.Triplets
         {
           rc = (STS)NativeMethods.MacosxTwaindsmDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
         }
-        if (rc == STS.SUCCESS) Session._appIdentityOSX = app;
+        if (rc == STS.SUCCESS)
+        {
+          Session._appIdentityOSX = app;
+          Session._appIdentityLegacy = app;
+        }
       }
       return rc;
     }

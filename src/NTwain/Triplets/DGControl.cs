@@ -12,5 +12,8 @@
     private DATParent? _parent;
     public DATParent Parent => _parent ??= new DATParent(Session);
 
+    private DATEntryPoint? _entryPoint;
+    public DATEntryPoint EntryPoint => _entryPoint ??= new DATEntryPoint(Session);
+
   }
 }

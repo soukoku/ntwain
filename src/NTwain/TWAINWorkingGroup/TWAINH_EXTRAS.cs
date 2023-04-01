@@ -529,6 +529,24 @@ namespace TWAINWorkingGroup
     {
       return $"{Manufacturer} - {ProductFamily} - {ProductName} {Version} (TWAIN {ProtocolMajor}.{ProtocolMinor})";
     }
+    public static implicit operator TW_IDENTITY_LEGACY(TW_IDENTITY_MACOSX value) => new()
+    {
+      Id = value.Id,
+      Manufacturer = value.Manufacturer,
+      ProductFamily = value.ProductFamily,
+      ProductName = value.ProductName,
+      ProtocolMajor = value.ProtocolMajor,
+      ProtocolMinor = value.ProtocolMinor,
+      SupportedGroups = value.SupportedGroups,
+      Version = new()
+      {
+        Country = value.Version.Country,
+        Info = value.Version.Info,
+        Language = value.Version.Language,
+        MajorNum = value.Version.MajorNum,
+        MinorNum = value.Version.MinorNum,
+      }
+    };
   }
   partial struct TW_IDENTITY_LEGACY
   {

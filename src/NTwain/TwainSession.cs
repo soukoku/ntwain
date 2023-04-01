@@ -31,8 +31,11 @@ namespace NTwain
     /// <param name="appCountry"></param>
     public TwainSession(FileVersionInfo appInfo,
         TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
-        this(appInfo.CompanyName, appInfo.ProductName, appInfo.ProductName, new Version(appInfo.FileVersion),
-          appInfo.FileDescription, appLanguage, appCountry)
+        this(appInfo.CompanyName ?? "",
+          appInfo.ProductName ?? "",
+          appInfo.ProductName ?? "",
+          new Version(appInfo.FileVersion ?? "1.0"),
+          appInfo.FileDescription ?? "", appLanguage, appCountry)
     { }
     /// <summary>
     /// Creates TWAIN session with explicit app info.
@@ -73,8 +76,8 @@ namespace NTwain
           MinorNum = (ushort)productVersion.Minor,
         }
       };
-      if (TwainPlatform.IsLinux) _appIdentity = _appIdentityLegacy;
-      else if (TwainPlatform.IsMacOSX) _appIdentityOSX = _appIdentityLegacy;
+      //if (TwainPlatform.IsLinux) _appIdentity = _appIdentityLegacy;
+      if (TwainPlatform.IsMacOSX) _appIdentityOSX = _appIdentityLegacy;
 
       DGControl = new DGControl(this);
       DGImage = new DGImage(this);

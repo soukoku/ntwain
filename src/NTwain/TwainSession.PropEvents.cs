@@ -23,7 +23,7 @@ namespace NTwain
     /// </summary>
     public TW_IDENTITY_LEGACY AppIdentity => _appIdentityLegacy;
     internal TW_IDENTITY_LEGACY _appIdentityLegacy;
-    internal TW_IDENTITY _appIdentity;
+    //internal TW_IDENTITY _appIdentity;
     internal TW_IDENTITY_MACOSX _appIdentityOSX;
 
     /// <summary>
@@ -31,9 +31,8 @@ namespace NTwain
     /// </summary>
     public TW_IDENTITY_LEGACY DSIdentity => _dsIdentityLegacy;
     internal TW_IDENTITY_LEGACY _dsIdentityLegacy;
-    internal TW_IDENTITY _dsIdentity;
+    //internal TW_IDENTITY _dsIdentity;
     internal TW_IDENTITY_MACOSX _dsIdentityOSX;
-
 
     private STATE _state = STATE.S1;
 

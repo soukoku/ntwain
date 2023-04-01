@@ -15,16 +15,10 @@ namespace WinForm32
     {
       InitializeComponent();
 
-      InitTwain();
-    }
-
-    private void InitTwain()
-    {
       TwainPlatform.PreferLegacyDSM = true;
 
       twain = new TwainSession(Assembly.GetExecutingAssembly().Location);
       twain.StateChanged += Twain_StateChanged;
-
     }
 
     private static void Twain_StateChanged(TwainSession session, TWAINWorkingGroup.STATE state)
