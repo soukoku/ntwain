@@ -29,22 +29,22 @@ namespace NTwain
         object Invoke(Delegate work, params object[] args);
     }
 
-    ///// <summary>
-    ///// Async calls are marshalled to threadpool thread. 
-    ///// Should only be used in non-UI apps.
-    ///// </summary>
-    //public class ThreadPoolMarshaller : IThreadMarshaller
-    //{
-    //    public bool InvokeRequired => throw new NotImplementedException();
+  /// <summary>
+  /// Async calls are marshalled to threadpool thread. 
+  /// Should only be used in non-UI apps.
+  /// </summary>
+  public class ThreadPoolMarshaller : IThreadMarshaller
+  {
+    public bool InvokeRequired => throw new NotImplementedException();
 
-    //    public void BeginInvoke(Delegate work, params object[] args)
-    //    {
-    //        Task.Run(() => work.DynamicInvoke(args));
-    //    }
+    public void BeginInvoke(Delegate work, params object[] args)
+    {
+      Task.Run(() => work.DynamicInvoke(args));
+    }
 
-    //    public object Invoke(Delegate work, params object[] args)
-    //    {
-    //        return work.DynamicInvoke(args);
-    //    }
-    //}
+    public object Invoke(Delegate work, params object[] args)
+    {
+      return work.DynamicInvoke(args);
+    }
+  }
 }

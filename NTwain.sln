@@ -22,6 +22,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_twain-doc", "_twain-doc", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain", "src\NTwain\NTwain.csproj", "{3C8A3CF9-A60D-4F21-B866-D291A7AABD4A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain-temp", "src\NTwain-temp\NTwain-temp.csproj", "{A7020B90-5CE4-43EF-A75D-5E1F9B501CAC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console32", "samples\Console32\Console32.csproj", "{AAF9FE1B-B695-4AFD-A014-CA4DFDD06A79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,9 +36,19 @@ Global
 		{3C8A3CF9-A60D-4F21-B866-D291A7AABD4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C8A3CF9-A60D-4F21-B866-D291A7AABD4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C8A3CF9-A60D-4F21-B866-D291A7AABD4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7020B90-5CE4-43EF-A75D-5E1F9B501CAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7020B90-5CE4-43EF-A75D-5E1F9B501CAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7020B90-5CE4-43EF-A75D-5E1F9B501CAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAF9FE1B-B695-4AFD-A014-CA4DFDD06A79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAF9FE1B-B695-4AFD-A014-CA4DFDD06A79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAF9FE1B-B695-4AFD-A014-CA4DFDD06A79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAF9FE1B-B695-4AFD-A014-CA4DFDD06A79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AAF9FE1B-B695-4AFD-A014-CA4DFDD06A79} = {707B4313-8EF8-4D0F-A95E-590783422187}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7459323B-44F6-4E07-8574-E1B4B525086B}

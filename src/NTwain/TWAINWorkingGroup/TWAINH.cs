@@ -2147,7 +2147,7 @@ namespace TWAINWorkingGroup
     public TW_STR32 ProductName;
   }
   [StructLayout(LayoutKind.Sequential, Pack = 2, CharSet = CharSet.Ansi)]
-  public struct TW_IDENTITY_LEGACY
+  public partial struct TW_IDENTITY_LEGACY
   {
     public uint Id;
     public TW_VERSION Version;
@@ -2172,7 +2172,7 @@ namespace TWAINWorkingGroup
     public TW_STR32 ProductName;
   }
   [StructLayout(LayoutKind.Sequential, Pack = 2, CharSet = CharSet.Ansi)]
-  public struct TW_IDENTITY_MACOSX
+  public partial struct TW_IDENTITY_MACOSX
   {
     public uint Id;
     public TW_VERSION Version;

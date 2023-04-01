@@ -1,4 +1,6 @@
-﻿using System;
+﻿// NOTE this is derived from the TWAIN.cs in twaincs
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;

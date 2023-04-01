@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
@@ -17,7 +15,7 @@ namespace TWAINWorkingGroup
     static TwainPlatform()
     {
       Is64bit = IntPtr.Size == 8;
-      
+
 #if NETFRAMEWORK
       if (Environment.OSVersion.Platform == PlatformID.Win32NT)
       {
@@ -72,7 +70,7 @@ namespace TWAINWorkingGroup
   /// <summary>
   /// Contains value that don't fit into enums nicely.
   /// </summary>
-  public class TwainConst
+  public static class TwainConst
   {
     /// <summary>
     /// Don't care values...
@@ -453,7 +451,7 @@ namespace TWAINWorkingGroup
     }
 
     public static implicit operator string(TW_STR32 value) => value.ToString();
-    public static explicit operator TW_STR32(string value) => new(value);
+    public static implicit operator TW_STR32(string value) => new(value);
 
   }
 
@@ -472,7 +470,7 @@ namespace TWAINWorkingGroup
     }
 
     public static implicit operator string(TW_STR64 value) => value.ToString();
-    public static explicit operator TW_STR64(string value) => new(value);
+    public static implicit operator TW_STR64(string value) => new(value);
   }
 
   partial struct TW_STR128
@@ -490,7 +488,7 @@ namespace TWAINWorkingGroup
     }
 
     public static implicit operator string(TW_STR128 value) => value.ToString();
-    public static explicit operator TW_STR128(string value) => new(value);
+    public static implicit operator TW_STR128(string value) => new(value);
   }
 
   partial struct TW_STR255
@@ -508,7 +506,7 @@ namespace TWAINWorkingGroup
     }
 
     public static implicit operator string(TW_STR255 value) => value.ToString();
-    public static explicit operator TW_STR255(string value) => new(value);
+    public static implicit operator TW_STR255(string value) => new(value);
   }
 
   partial struct TW_IDENTITY
@@ -517,6 +515,56 @@ namespace TWAINWorkingGroup
     {
       return $"{Manufacturer} - {ProductFamily} - {ProductName} {Version} (TWAIN {ProtocolMajor}.{ProtocolMinor})";
     }
+  }
+  partial struct TW_IDENTITY_MACOSX
+  {
+    public override string ToString()
+    {
+      return $"{Manufacturer} - {ProductFamily} - {ProductName} {Version} (TWAIN {ProtocolMajor}.{ProtocolMinor})";
+    }
+  }
+  partial struct TW_IDENTITY_LEGACY
+  {
+    public override string ToString()
+    {
+      return $"{Manufacturer} - {ProductFamily} - {ProductName} {Version} (TWAIN {ProtocolMajor}.{ProtocolMinor})";
+    }
+    public static implicit operator TW_IDENTITY(TW_IDENTITY_LEGACY value) => new()
+    {
+      Id = value.Id,
+      Manufacturer = value.Manufacturer,
+      ProductFamily = value.ProductFamily,
+      ProductName = value.ProductName,
+      ProtocolMajor = value.ProtocolMajor,
+      ProtocolMinor = value.ProtocolMinor,
+      SupportedGroups = value.SupportedGroups,
+      Version = new()
+      {
+        Country = value.Version.Country,
+        Info = value.Version.Info,
+        Language = value.Version.Language,
+        MajorNum = value.Version.MajorNum,
+        MinorNum = value.Version.MinorNum,
+      }
+    };
+    public static implicit operator TW_IDENTITY_MACOSX(TW_IDENTITY_LEGACY value) => new()
+    {
+      Id = value.Id,
+      Manufacturer = value.Manufacturer,
+      ProductFamily = value.ProductFamily,
+      ProductName = value.ProductName,
+      ProtocolMajor = value.ProtocolMajor,
+      ProtocolMinor = value.ProtocolMinor,
+      SupportedGroups = value.SupportedGroups,
+      Version = new()
+      {
+        Country = value.Version.Country,
+        Info = value.Version.Info,
+        Language = value.Version.Language,
+        MajorNum = value.Version.MajorNum,
+        MinorNum = value.Version.MinorNum,
+      }
+    };
   }
 
   partial struct TW_VERSION
