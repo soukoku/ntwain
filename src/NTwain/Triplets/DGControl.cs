@@ -15,5 +15,8 @@
     private DATEntryPoint? _entryPoint;
     public DATEntryPoint EntryPoint => _entryPoint ??= new DATEntryPoint(Session);
 
+    private DATIdentity? _identity;
+    public DATIdentity Identity => _identity ??= new DATIdentity(Session);
+
   }
 }

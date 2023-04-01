@@ -24,7 +24,7 @@ namespace WinForm32
 
     private static void Twain_StateChanged(TwainSession session, STATE state)
     {
-      Console.WriteLine($"State changed to {state}");
+      Debug.WriteLine($"State changed to {state}");
     }
 
     protected override void OnHandleCreated(EventArgs e)
@@ -35,6 +35,7 @@ namespace WinForm32
       var hwnd = this.Handle;
       var rc = twain.DGControl.Parent.OpenDSM(ref hwnd);
       Debug.WriteLine($"OpenDSM={rc}");
+
     }
 
     protected override void OnClosing(CancelEventArgs e)
