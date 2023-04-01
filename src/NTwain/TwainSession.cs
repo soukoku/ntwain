@@ -92,10 +92,21 @@ namespace NTwain
     /// <returns>The final state.</returns>
     public STATE TryStepdown(STATE targetState)
     {
-      if (State > targetState)
+      int tries = 0;
+      while (State > targetState)
       {
-        // shouldn't care about handle when closing really
-        DGControl.Parent.CloseDSM(ref _hwnd);
+        if (tries++ > 5) break;
+
+        switch (State)
+        {
+          case STATE.S4:
+            DGControl.Identity.CloseDS();
+            break;
+          case STATE.S3:
+            // shouldn't care about handle when closing really
+            DGControl.Parent.CloseDSM(ref _hwnd);
+            break;
+        }
       }
       return State;
     }

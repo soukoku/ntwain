@@ -15,7 +15,7 @@ namespace WinForm32
     public Form1()
     {
       InitializeComponent();
-
+      Text += TwainPlatform.Is32bit ? " 32bit" : " 64bit";
       TwainPlatform.PreferLegacyDSM = true;
 
       twain = new TwainSession(Assembly.GetExecutingAssembly().Location);
@@ -69,6 +69,27 @@ namespace WinForm32
       {
         listSources.Items.Add(ds);
       }
+    }
+
+    private void btnSetDef_Click(object sender, EventArgs e)
+    {
+      if (listSources.SelectedItem is TW_IDENTITY_LEGACY ds)
+      {
+        twain.DGControl.Identity.Set(ds);
+      }
+    }
+
+    private void btnOpen_Click(object sender, EventArgs e)
+    {
+      if (listSources.SelectedItem is TW_IDENTITY_LEGACY ds)
+      {
+        twain.DGControl.Identity.OpenDS(ds);
+      }
+    }
+
+    private void btnClose_Click(object sender, EventArgs e)
+    {
+      twain.DGControl.Identity.CloseDS();
     }
   }
 }
