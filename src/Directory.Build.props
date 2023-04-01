@@ -19,9 +19,9 @@
 
     <Version>$(PkgVersion)</Version>
     <FileVersion>$(PkgVersion)</FileVersion>
-    <LangVersion>7.1</LangVersion>
-    <!--don't warn missing xml docs and naming conventions-->
-    <NoWarn>1591,IDE1006</NoWarn>
+    <LangVersion>11</LangVersion>
+    <!--don't warn missing xml docs, naming conventions, and suppressions-->
+    <NoWarn>1591,IDE1006,IDE0079</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
