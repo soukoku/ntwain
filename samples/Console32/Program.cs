@@ -8,6 +8,8 @@ namespace SampleConsole
 {
   internal class Program
   {
+    // CONSOLE won't work yet until I got a message loop going.
+
     static void Main(string[] args)
     {
       TwainPlatform.PreferLegacyDSM = true;

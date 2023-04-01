@@ -25,10 +25,14 @@ namespace NTwain.Triplets
         Session._hwnd = hwnd;
         Session.State = STATE.S3;
 
-        // todo: get default source
+        // get default source
+        if (Session.DGControl.Identity.GetDefault(out TW_IDENTITY_LEGACY ds) == STS.SUCCESS)
+        {
+          Session.DefaultSource = ds;
+        }
 
         // determine memory mgmt routines used
-        if ((((DG)Session._appIdentity.SupportedGroups) & DG.DSM2) == DG.DSM2)
+        if ((((DG)Session.AppIdentity.SupportedGroups) & DG.DSM2) == DG.DSM2)
         {
           TW_ENTRYPOINT_DELEGATES entry = default;
           if (Session.DGControl.EntryPoint.Get(ref entry) == STS.SUCCESS)
@@ -63,7 +67,7 @@ namespace NTwain.Triplets
       var rc = STS.FAILURE;
       if (TwainPlatform.IsWindows)
       {
-        var app = Session._appIdentity;
+        var app = Session.AppIdentity;
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
           rc = (STS)NativeMethods.WindowsTwain32DsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
@@ -72,7 +76,7 @@ namespace NTwain.Triplets
         {
           rc = (STS)NativeMethods.WindowsTwaindsmDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
         }
-        if (rc == STS.SUCCESS) Session._appIdentity = app;
+        if (rc == STS.SUCCESS) Session.AppIdentity = app;
       }
       //else if (TwainPlatform.IsLinux)
       //{
@@ -82,7 +86,7 @@ namespace NTwain.Triplets
       //}
       else if (TwainPlatform.IsMacOSX)
       {
-        TW_IDENTITY_MACOSX app = Session._appIdentity;
+        TW_IDENTITY_MACOSX app = Session.AppIdentity;
         if (TwainPlatform.PreferLegacyDSM)
         {
           rc = (STS)NativeMethods.MacosxTwainDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
@@ -93,7 +97,7 @@ namespace NTwain.Triplets
         }
         if (rc == STS.SUCCESS)
         {
-          Session._appIdentity = app;
+          Session.AppIdentity = app;
         }
       }
       return rc;

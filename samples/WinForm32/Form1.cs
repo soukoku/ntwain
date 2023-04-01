@@ -20,6 +20,18 @@ namespace WinForm32
 
       twain = new TwainSession(Assembly.GetExecutingAssembly().Location);
       twain.StateChanged += Twain_StateChanged;
+      twain.DefaultSourceChanged += Twain_DefaultSourceChanged;
+      twain.CurrentSourceChanged += Twain_CurrentSourceChanged;
+    }
+
+    private void Twain_CurrentSourceChanged(TwainSession arg1, TW_IDENTITY_LEGACY ds)
+    {
+      lblCurrent.Text = ds.ProductName;
+    }
+
+    private void Twain_DefaultSourceChanged(TwainSession arg1, TW_IDENTITY_LEGACY ds)
+    {
+      lblDefault.Text = ds.ProductName;
     }
 
     private static void Twain_StateChanged(TwainSession session, STATE state)
@@ -35,7 +47,6 @@ namespace WinForm32
       var hwnd = this.Handle;
       var rc = twain.DGControl.Parent.OpenDSM(ref hwnd);
       Debug.WriteLine($"OpenDSM={rc}");
-
     }
 
     protected override void OnClosing(CancelEventArgs e)
@@ -44,6 +55,20 @@ namespace WinForm32
       Debug.WriteLine($"Stepdown result state={finalState}");
 
       base.OnClosing(e);
+    }
+
+    private void btnSelect_Click(object sender, EventArgs e)
+    {
+      twain.DGControl.Identity.UserSelect();
+    }
+
+    private void btnEnumSources_Click(object sender, EventArgs e)
+    {
+      listSources.Items.Clear();
+      foreach (var ds in twain.GetSources())
+      {
+        listSources.Items.Add(ds);
+      }
     }
   }
 }

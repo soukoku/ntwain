@@ -527,7 +527,7 @@ namespace TWAINWorkingGroup
   {
     public override string ToString()
     {
-      return $"{Manufacturer} - {ProductFamily} - {ProductName} {Version} (TWAIN {ProtocolMajor}.{ProtocolMinor})";
+      return $"{Manufacturer} - {ProductName} v{Version.MajorNum}.{Version.MinorNum} (TWAIN {ProtocolMajor}.{ProtocolMinor})";
     }
     public static implicit operator TW_IDENTITY_LEGACY(TW_IDENTITY_MACOSX value) => new()
     {
@@ -552,7 +552,7 @@ namespace TWAINWorkingGroup
   {
     public override string ToString()
     {
-      return $"{Manufacturer} - {ProductFamily} - {ProductName} {Version} (TWAIN {ProtocolMajor}.{ProtocolMinor})";
+      return $"{Manufacturer} - {ProductName} v{Version.MajorNum}.{Version.MinorNum} (TWAIN {ProtocolMajor}.{ProtocolMinor})";
     }
     public static implicit operator TW_IDENTITY(TW_IDENTITY_LEGACY value) => new()
     {

@@ -1,5 +1,6 @@
 ﻿using NTwain.Triplets;
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Text;
 using TWAINWorkingGroup;
@@ -59,7 +60,7 @@ namespace NTwain
         __encodingRegistered = true;
       }
 
-      _appIdentity; = new()
+      _appIdentity = new()
       {
         Manufacturer = companyName,
         ProductFamily = productFamily,
@@ -76,8 +77,6 @@ namespace NTwain
           MinorNum = (ushort)productVersion.Minor,
         }
       };
-      //if (TwainPlatform.IsLinux) _appIdentity = _appIdentity;
-      if (TwainPlatform.IsMacOSX) _appIdentityOSX = _appIdentity;;
 
       DGControl = new DGControl(this);
       DGImage = new DGImage(this);

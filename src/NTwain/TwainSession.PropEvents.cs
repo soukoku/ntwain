@@ -1,11 +1,5 @@
 ﻿using NTwain.Triplets;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using TWAINWorkingGroup;
 
 namespace NTwain
@@ -14,29 +8,47 @@ namespace NTwain
 
   partial class TwainSession
   {
-
-    // really legacy version is the one to be used (except on mac) or
-    // until it doesn't work (special linux)
-
     /// <summary>
     /// Gets the app identity.
     /// </summary>
-    public TW_IDENTITY_LEGACY AppIdentity => _appIdentity;
-    internal TW_IDENTITY_LEGACY _appIdentity;
+    public TW_IDENTITY_LEGACY AppIdentity
+    {
+      get => _appIdentity;
+      internal set
+      {
+        _appIdentity = value;
+      }
+    }
+    TW_IDENTITY_LEGACY _appIdentity;
 
     /// <summary>
-    /// Gets the current data source.
+    /// Gets the current (opened) data source.
     /// </summary>
-    public TW_IDENTITY_LEGACY CurrentDS => _currentDS;
-    internal TW_IDENTITY_LEGACY _currentDS;
+    public TW_IDENTITY_LEGACY CurrentSource
+    {
+      get => _currentDS;
+      internal set
+      {
+        _currentDS = value;
+        CurrentSourceChanged?.Invoke(this, value);
+      }
+    }
+    TW_IDENTITY_LEGACY _currentDS;
 
     /// <summary>
     /// Gets the default data source.
     /// </summary>
-    public TW_IDENTITY_LEGACY DefaultDS => _defaultDS;
-    internal TW_IDENTITY_LEGACY _defaultDS;
+    public TW_IDENTITY_LEGACY DefaultSource
+    {
+      get => _defaultDS;
+      internal set
+      {
+        _defaultDS = value;
+        DefaultSourceChanged?.Invoke(this, value);
+      }
+    }
+    TW_IDENTITY_LEGACY _defaultDS;
 
-    private STATE _state = STATE.S1;
 
     /// <summary>
     /// Current TWAIN session state.
@@ -53,11 +65,8 @@ namespace NTwain
         }
       }
     }
+    STATE _state = STATE.S1;
 
-    /// <summary>
-    /// Fired when <see cref="State"/> changes.
-    /// </summary>
-    public event Action<TwainSession, STATE>? StateChanged;
 
     /// <summary>
     /// TWAIN triplet API calls with <see cref="DG.CONTROL"/>.
@@ -71,5 +80,24 @@ namespace NTwain
     /// TWAIN triplet API calls with <see cref="DG.AUDIO"/>.
     /// </summary>
     public DGAudio DGAudio { get; }
+
+
+
+
+    /// <summary>
+    /// Fires when <see cref="State"/> changes.
+    /// </summary>
+    public event Action<TwainSession, STATE>? StateChanged;
+
+    /// <summary>
+    /// Fires when <see cref="DefaultSource"/> changes.
+    /// </summary>
+    public event Action<TwainSession, TW_IDENTITY_LEGACY>? DefaultSourceChanged;
+
+    /// <summary>
+    /// Fires when <see cref="CurrentSource"/> changes.
+    /// </summary>
+    public event Action<TwainSession, TW_IDENTITY_LEGACY>? CurrentSourceChanged;
+
   }
 }
