@@ -34,9 +34,9 @@ namespace WinForm32
       lblDefault.Text = ds.ProductName;
     }
 
-    private static void Twain_StateChanged(TwainSession session, STATE state)
+    private void Twain_StateChanged(TwainSession session, STATE state)
     {
-      Debug.WriteLine($"State changed to {state}");
+      lblState.Text = state.ToString();
     }
 
     protected override void OnHandleCreated(EventArgs e)
@@ -83,6 +83,8 @@ namespace WinForm32
     {
       if (listSources.SelectedItem is TW_IDENTITY_LEGACY ds)
       {
+        twain.TryStepdown(STATE.S3);
+
         twain.DGControl.Identity.OpenDS(ds);
       }
     }
@@ -90,6 +92,13 @@ namespace WinForm32
     private void btnClose_Click(object sender, EventArgs e)
     {
       twain.DGControl.Identity.CloseDS();
+    }
+
+    private void btnOpenDef_Click(object sender, EventArgs e)
+    {
+      twain.TryStepdown(STATE.S3);
+
+      twain.DGControl.Identity.OpenDS(twain.DefaultSource);
     }
   }
 }

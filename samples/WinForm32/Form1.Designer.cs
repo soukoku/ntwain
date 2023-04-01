@@ -38,6 +38,9 @@
       btnSetDef = new System.Windows.Forms.Button();
       btnOpen = new System.Windows.Forms.Button();
       splitContainer1 = new System.Windows.Forms.SplitContainer();
+      lblState = new System.Windows.Forms.Label();
+      label3 = new System.Windows.Forms.Label();
+      btnOpenDef = new System.Windows.Forms.Button();
       btnClose = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
@@ -47,7 +50,7 @@
       // 
       // btnSelect
       // 
-      btnSelect.Location = new System.Drawing.Point(13, 14);
+      btnSelect.Location = new System.Drawing.Point(12, 58);
       btnSelect.Name = "btnSelect";
       btnSelect.Size = new System.Drawing.Size(151, 23);
       btnSelect.TabIndex = 0;
@@ -58,16 +61,16 @@
       // label1
       // 
       label1.AutoSize = true;
-      label1.Location = new System.Drawing.Point(13, 53);
+      label1.Location = new System.Drawing.Point(13, 36);
       label1.Name = "label1";
-      label1.Size = new System.Drawing.Size(98, 15);
+      label1.Size = new System.Drawing.Size(87, 15);
       label1.TabIndex = 1;
-      label1.Text = "Default Source = ";
+      label1.Text = "Default Source:";
       // 
       // lblDefault
       // 
       lblDefault.AutoSize = true;
-      lblDefault.Location = new System.Drawing.Point(116, 53);
+      lblDefault.Location = new System.Drawing.Point(106, 36);
       lblDefault.Name = "lblDefault";
       lblDefault.Size = new System.Drawing.Size(24, 15);
       lblDefault.TabIndex = 2;
@@ -78,14 +81,14 @@
       label2.AutoSize = true;
       label2.Location = new System.Drawing.Point(13, 14);
       label2.Name = "label2";
-      label2.Size = new System.Drawing.Size(97, 15);
+      label2.Size = new System.Drawing.Size(89, 15);
       label2.TabIndex = 3;
-      label2.Text = "Current Source =";
+      label2.Text = "Current Source:";
       // 
       // lblCurrent
       // 
       lblCurrent.AutoSize = true;
-      lblCurrent.Location = new System.Drawing.Point(116, 14);
+      lblCurrent.Location = new System.Drawing.Point(108, 14);
       lblCurrent.Name = "lblCurrent";
       lblCurrent.Size = new System.Drawing.Size(24, 15);
       lblCurrent.TabIndex = 4;
@@ -93,7 +96,7 @@
       // 
       // btnEnumSources
       // 
-      btnEnumSources.Location = new System.Drawing.Point(13, 81);
+      btnEnumSources.Location = new System.Drawing.Point(13, 87);
       btnEnumSources.Name = "btnEnumSources";
       btnEnumSources.Size = new System.Drawing.Size(151, 23);
       btnEnumSources.TabIndex = 5;
@@ -106,9 +109,9 @@
       listSources.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
       listSources.FormattingEnabled = true;
       listSources.ItemHeight = 15;
-      listSources.Location = new System.Drawing.Point(13, 115);
+      listSources.Location = new System.Drawing.Point(13, 130);
       listSources.Name = "listSources";
-      listSources.Size = new System.Drawing.Size(289, 394);
+      listSources.Size = new System.Drawing.Size(289, 379);
       listSources.TabIndex = 6;
       // 
       // btnSetDef
@@ -142,6 +145,9 @@
       // 
       // splitContainer1.Panel1
       // 
+      splitContainer1.Panel1.Controls.Add(lblState);
+      splitContainer1.Panel1.Controls.Add(label3);
+      splitContainer1.Panel1.Controls.Add(btnOpenDef);
       splitContainer1.Panel1.Controls.Add(btnSelect);
       splitContainer1.Panel1.Controls.Add(btnOpen);
       splitContainer1.Panel1.Controls.Add(label1);
@@ -159,9 +165,37 @@
       splitContainer1.SplitterDistance = 305;
       splitContainer1.TabIndex = 9;
       // 
+      // lblState
+      // 
+      lblState.AutoSize = true;
+      lblState.Location = new System.Drawing.Point(54, 14);
+      lblState.Name = "lblState";
+      lblState.Size = new System.Drawing.Size(13, 15);
+      lblState.TabIndex = 10;
+      lblState.Text = "0";
+      // 
+      // label3
+      // 
+      label3.AutoSize = true;
+      label3.Location = new System.Drawing.Point(13, 14);
+      label3.Name = "label3";
+      label3.Size = new System.Drawing.Size(36, 15);
+      label3.TabIndex = 9;
+      label3.Text = "State:";
+      // 
+      // btnOpenDef
+      // 
+      btnOpenDef.Location = new System.Drawing.Point(169, 58);
+      btnOpenDef.Name = "btnOpenDef";
+      btnOpenDef.Size = new System.Drawing.Size(104, 23);
+      btnOpenDef.TabIndex = 0;
+      btnOpenDef.Text = "Open default";
+      btnOpenDef.UseVisualStyleBackColor = true;
+      btnOpenDef.Click += btnOpenDef_Click;
+      // 
       // btnClose
       // 
-      btnClose.Location = new System.Drawing.Point(13, 45);
+      btnClose.Location = new System.Drawing.Point(13, 32);
       btnClose.Name = "btnClose";
       btnClose.Size = new System.Drawing.Size(142, 23);
       btnClose.TabIndex = 0;
@@ -199,5 +233,8 @@
     private System.Windows.Forms.Button btnOpen;
     private System.Windows.Forms.SplitContainer splitContainer1;
     private System.Windows.Forms.Button btnClose;
+    private System.Windows.Forms.Button btnOpenDef;
+    private System.Windows.Forms.Label lblState;
+    private System.Windows.Forms.Label label3;
   }
 }
