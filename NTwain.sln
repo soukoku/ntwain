@@ -11,13 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_common", "_common", "{4CE0
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain", "src\NTwain\NTwain.csproj", "{B391C1B7-5647-4B7A-9079-81E835E633DD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Console", "samples\Net5Console\Net5Console.csproj", "{9F6C1B39-D0C9-4466-96A0-AB41C58762A9}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{707B4313-8EF8-4D0F-A95E-590783422187}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain.Win", "src\NTwain.Win\NTwain.Win.csproj", "{F836149E-E64D-476E-A325-478D18BE1CC7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_twain-doc", "_twain-doc", "{0C94E5AD-E226-4A30-92B4-C28FE5B7FC23}"
 	ProjectSection(SolutionItems) = preProject
@@ -26,30 +20,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_twain-doc", "_twain-doc", 
 		twain-doc\twain2.5.h = twain-doc\twain2.5.h
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain", "src\NTwain\NTwain.csproj", "{3C8A3CF9-A60D-4F21-B866-D291A7AABD4A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B391C1B7-5647-4B7A-9079-81E835E633DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B391C1B7-5647-4B7A-9079-81E835E633DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B391C1B7-5647-4B7A-9079-81E835E633DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B391C1B7-5647-4B7A-9079-81E835E633DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9F6C1B39-D0C9-4466-96A0-AB41C58762A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9F6C1B39-D0C9-4466-96A0-AB41C58762A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9F6C1B39-D0C9-4466-96A0-AB41C58762A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9F6C1B39-D0C9-4466-96A0-AB41C58762A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F836149E-E64D-476E-A325-478D18BE1CC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F836149E-E64D-476E-A325-478D18BE1CC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F836149E-E64D-476E-A325-478D18BE1CC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F836149E-E64D-476E-A325-478D18BE1CC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C8A3CF9-A60D-4F21-B866-D291A7AABD4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C8A3CF9-A60D-4F21-B866-D291A7AABD4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C8A3CF9-A60D-4F21-B866-D291A7AABD4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C8A3CF9-A60D-4F21-B866-D291A7AABD4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{9F6C1B39-D0C9-4466-96A0-AB41C58762A9} = {707B4313-8EF8-4D0F-A95E-590783422187}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7459323B-44F6-4E07-8574-E1B4B525086B}

@@ -105,7 +105,7 @@ namespace NTwain
 
     private void HandleUIThreadAction(Action action)
     {
-      DebugThreadInfo("begin");
+      DebugThreadInfo("begin UI thread action");
 
       _threadMarshaller.Invoke(action);
     }
@@ -118,7 +118,7 @@ namespace NTwain
       // Drain the event queue...
       while (true)
       {
-        DebugThreadInfo("in loop");
+        DebugThreadInfo("in device event loop");
 
         // Try to get an event...
         twdeviceevent = default;
@@ -143,92 +143,92 @@ namespace NTwain
 
     private STS HandleScanEvent(bool closing)
     {
-      DebugThreadInfo("begin");
+      DebugThreadInfo("scan event begin");
 
       // the scan event needs to return asap since it can come from msg loop
       // so fire off the handling work to another thread
-      _threadMarshaller.BeginInvoke(new Action<bool>(HandleScanEventReal), closing);
+      //_threadMarshaller.BeginInvoke(new Action<bool>(HandleScanEventReal), closing);
       return STS.SUCCESS;
     }
 
-    void HandleScanEventReal(bool closing)
-    {
-      DebugThreadInfo("begin");
+    //void HandleScanEventReal(bool closing)
+    //{
+    //  DebugThreadInfo("begin");
 
-      if (_twain == null || State <= STATE.S4 || closing) return;
+    //  if (_twain == null || State <= STATE.S4 || closing) return;
 
-      if (_twain.IsMsgCloseDsReq() || _twain.IsMsgCloseDsOk())
-      {
-        _twain.Rollback(STATE.S4);
-        return;
-      }
+    //  if (_twain.IsMsgCloseDsReq() || _twain.IsMsgCloseDsOk())
+    //  {
+    //    _twain.Rollback(STATE.S4);
+    //    return;
+    //  }
 
-      // all except mem xfer will run this once and raise event.
-      // mem xfer will run this multiple times until complete image is assembled
-      if (_twain.IsMsgXferReady())
-      {
-        TW_PENDINGXFERS pending = default;
-        var sts = _twain.DatPendingxfers(DG.CONTROL, MSG.GET, ref pending);
-        if (sts != STS.SUCCESS)
-        {
-          try
-          {
-            TransferError?.Invoke(this, new TransferErrorEventArgs(sts));
-          }
-          catch { }
-          return; // do more?
-        }
+    //  // all except mem xfer will run this once and raise event.
+    //  // mem xfer will run this multiple times until complete image is assembled
+    //  if (_twain.IsMsgXferReady())
+    //  {
+    //    TW_PENDINGXFERS pending = default;
+    //    var sts = _twain.DatPendingxfers(DG.CONTROL, MSG.GET, ref pending);
+    //    if (sts != STS.SUCCESS)
+    //    {
+    //      try
+    //      {
+    //        TransferError?.Invoke(this, new TransferErrorEventArgs(sts));
+    //      }
+    //      catch { }
+    //      return; // do more?
+    //    }
 
-        var xferMech = Capabilities.ICAP_XFERMECH.GetCurrent();
+    //    var xferMech = Capabilities.ICAP_XFERMECH.GetCurrent();
 
-        var readyArgs = new TransferReadyEventArgs(_twain, pending.Count, (TWEJ)pending.EOJ);
-        try
-        {
-          TransferReady?.Invoke(this, readyArgs);
-        }
-        catch { }
+    //    var readyArgs = new TransferReadyEventArgs(_twain, pending.Count, (TWEJ)pending.EOJ);
+    //    try
+    //    {
+    //      TransferReady?.Invoke(this, readyArgs);
+    //    }
+    //    catch { }
 
-        if (readyArgs.CancelCapture == CancelType.Immediate)
-        {
-          sts = _twain.DatPendingxfers(DG.CONTROL, MSG.RESET, ref pending);
-        }
-        else
-        {
-          if (readyArgs.CancelCapture == CancelType.Graceful) StopCapture();
+    //    if (readyArgs.CancelCapture == CancelType.Immediate)
+    //    {
+    //      sts = _twain.DatPendingxfers(DG.CONTROL, MSG.RESET, ref pending);
+    //    }
+    //    else
+    //    {
+    //      if (readyArgs.CancelCapture == CancelType.Graceful) StopCapture();
 
-          if (!readyArgs.SkipCurrent)
-          {
-            switch (xferMech)
-            {
-              case TWSX.NATIVE:
-                RunImageNativeXfer();
-                break;
-              case TWSX.MEMFILE:
-                RunImageMemFileXfer();
-                break;
-              case TWSX.FILE:
-                RunImageFileXfer();
-                break;
-              case TWSX.MEMORY:
-                RunImageMemoryXfer();
-                break;
-            }
-          }
-          sts = _twain.DatPendingxfers(DG.CONTROL, MSG.ENDXFER, ref pending);
-        }
+    //      if (!readyArgs.SkipCurrent)
+    //      {
+    //        switch (xferMech)
+    //        {
+    //          case TWSX.NATIVE:
+    //            RunImageNativeXfer();
+    //            break;
+    //          case TWSX.MEMFILE:
+    //            RunImageMemFileXfer();
+    //            break;
+    //          case TWSX.FILE:
+    //            RunImageFileXfer();
+    //            break;
+    //          case TWSX.MEMORY:
+    //            RunImageMemoryXfer();
+    //            break;
+    //        }
+    //      }
+    //      sts = _twain.DatPendingxfers(DG.CONTROL, MSG.ENDXFER, ref pending);
+    //    }
 
-        // TODO: may be wrong for now
-        if (pending.Count == 0 || sts == STS.CANCEL || sts == STS.XFERDONE)
-        {
-          _twain.Rollback(STATE.S4);
-        }
-        else
-        {
-          HandleScanEvent(State <= STATE.S3);
-        }
-      }
+    //    // TODO: may be wrong for now
+    //    if (pending.Count == 0 || sts == STS.CANCEL || sts == STS.XFERDONE)
+    //    {
+    //      _twain.Rollback(STATE.S4);
+    //    }
+    //    else
+    //    {
+    //      HandleScanEvent(State <= STATE.S3);
+    //    }
+    //  }
 
-    }
+    //}
 
     [Conditional("DEBUG")]
     private void DebugThreadInfo(string description, [CallerMemberName] string callerName = "")
