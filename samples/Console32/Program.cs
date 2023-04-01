@@ -15,18 +15,18 @@ namespace SampleConsole
       var twain = new TwainSession(Assembly.GetExecutingAssembly().Location);
       twain.StateChanged += Twain_StateChanged;
 
-      var hwnd = IntPtr.Zero;
+      var hwnd = IntPtr.Zero; // required for windows
       var rc = twain.DGControl.Parent.OpenDSM(ref hwnd);
       Debug.WriteLine($"OpenDSM={rc}");
 
-      if (rc == TWAINWorkingGroup.STS.SUCCESS)
+      if (rc == STS.SUCCESS)
       {
         Debug.WriteLine($"CloseDSM={rc}");
         rc = twain.DGControl.Parent.CloseDSM(ref hwnd);
       }
     }
 
-    private static void Twain_StateChanged(TwainSession session, TWAINWorkingGroup.STATE state)
+    private static void Twain_StateChanged(TwainSession session, STATE state)
     {
       Console.WriteLine($"State changed to {state}");
     }

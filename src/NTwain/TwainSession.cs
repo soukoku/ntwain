@@ -6,7 +6,7 @@ using TWAINWorkingGroup;
 
 namespace NTwain
 {
-  // this file contains initialization-related things.
+  // this file contains initialization/cleanup things.
 
   public partial class TwainSession
   {
@@ -82,6 +82,23 @@ namespace NTwain
       DGControl = new DGControl(this);
       DGImage = new DGImage(this);
       DGAudio = new DGAudio(this);
+    }
+
+    internal IntPtr _hwnd;
+
+    /// <summary>
+    /// Tries to bring the TWAIN session down to some state.
+    /// </summary>
+    /// <param name="targetState"></param>
+    /// <returns>The final state.</returns>
+    public STATE TryStepdown(STATE targetState)
+    {
+      if (State > targetState)
+      {
+        // shouldn't care about handle when closing really
+        DGControl.Parent.CloseDSM(ref _hwnd);
+      }
+      return State;
     }
   }
 }

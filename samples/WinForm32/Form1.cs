@@ -1,5 +1,6 @@
 using NTwain;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
@@ -21,7 +22,7 @@ namespace WinForm32
       twain.StateChanged += Twain_StateChanged;
     }
 
-    private static void Twain_StateChanged(TwainSession session, TWAINWorkingGroup.STATE state)
+    private static void Twain_StateChanged(TwainSession session, STATE state)
     {
       Console.WriteLine($"State changed to {state}");
     }
@@ -34,12 +35,14 @@ namespace WinForm32
       var hwnd = this.Handle;
       var rc = twain.DGControl.Parent.OpenDSM(ref hwnd);
       Debug.WriteLine($"OpenDSM={rc}");
+    }
 
-      if (rc == TWAINWorkingGroup.STS.SUCCESS)
-      {
-        Debug.WriteLine($"CloseDSM={rc}");
-        rc = twain.DGControl.Parent.CloseDSM(ref hwnd);
-      }
+    protected override void OnClosing(CancelEventArgs e)
+    {
+      var finalState = twain.TryStepdown(STATE.S2);
+      Debug.WriteLine($"Stepdown result state={finalState}");
+
+      base.OnClosing(e);
     }
   }
 }

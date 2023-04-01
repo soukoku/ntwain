@@ -22,6 +22,7 @@ namespace NTwain.Triplets
       STS rc;
       if ((rc = DoIt(MSG.OPENDSM, ref hwnd)) == STS.SUCCESS)
       {
+        Session._hwnd = hwnd;
         Session.State = STATE.S3;
         // determine memory mgmt routines used
         if ((((DG)Session._appIdentityLegacy.SupportedGroups) & DG.DSM2) == DG.DSM2)
@@ -46,8 +47,9 @@ namespace NTwain.Triplets
       STS rc;
       if ((rc = DoIt(MSG.CLOSEDSM, ref hwnd)) == STS.SUCCESS)
       {
-        Session.State = STATE.S2;
+        Session._hwnd = IntPtr.Zero;
         Session._entryPoint = default;
+        Session.State = STATE.S2;
       }
       return rc;
     }
