@@ -1,5 +1,6 @@
 ﻿using NTwain.Triplets;
 using System;
+using System.Runtime.InteropServices;
 using TWAINWorkingGroup;
 
 namespace NTwain
@@ -66,6 +67,59 @@ namespace NTwain
       }
     }
     STATE _state = STATE.S1;
+
+
+    /// <summary>
+    /// Gets/sets the current source's settings as opaque data.
+    /// Returns null if not supported. This is only valid in <see cref="STATE.S4"/>.
+    /// </summary>
+    public byte[]? CustomDsData
+    {
+      get
+      {
+        TW_CUSTOMDSDATA data = default;
+        var sts = DGControl.CustomDsData.Get(ref data);
+        if (sts == STS.SUCCESS)
+        {
+          if (data.hData != IntPtr.Zero && data.InfoLength > 0)
+          {
+            try
+            {
+              var lockedPtr = Lock(data.hData);
+              var bytes = new byte[data.InfoLength];
+              Marshal.Copy(lockedPtr, bytes, 0, bytes.Length);
+            }
+            finally
+            {
+              Unlock(data.hData);
+              Free(data.hData);
+            }
+          }
+          //return Array.Empty<byte>();
+        }
+        return null;
+      }
+      set
+      {
+        if (value == null || value.Length == 0) return;
+
+        TW_CUSTOMDSDATA data = default;
+        data.InfoLength = (uint)value.Length;
+        data.hData = Alloc(data.InfoLength);
+        try
+        {
+          var lockedPtr = Lock(data.hData);
+          Marshal.Copy(value, 0, lockedPtr, value.Length);
+          Unlock(data.hData);
+          var sts = DGControl.CustomDsData.Set(ref data);
+        }
+        finally
+        {
+          // should be freed already if no error but just in case
+          if (data.hData != IntPtr.Zero) Free(data.hData);
+        }
+      }
+    }
 
 
     /// <summary>

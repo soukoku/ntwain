@@ -55,11 +55,11 @@ namespace NTwain.Triplets
         TW_IDENTITY_LEGACY dummy = default;
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)NativeMethods.WindowsTwain32DsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.PARENT, msg, ref entry);
+          rc = (STS)NativeMethods.WindowsTwain32DsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
         else
         {
-          rc = (STS)NativeMethods.WindowsTwaindsmDsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.PARENT, msg, ref entry);
+          rc = (STS)NativeMethods.WindowsTwaindsmDsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
       }
       //else if (TwainPlatform.IsLinux)
@@ -72,11 +72,11 @@ namespace NTwain.Triplets
         TW_IDENTITY_MACOSX dummy = default;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)NativeMethods.MacosxTwainDsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.PARENT, msg, ref entry);
+          rc = (STS)NativeMethods.MacosxTwainDsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
         else
         {
-          rc = (STS)NativeMethods.MacosxTwaindsmDsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.PARENT, msg, ref entry);
+          rc = (STS)NativeMethods.MacosxTwaindsmDsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
       }
       return rc;

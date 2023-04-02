@@ -24,5 +24,8 @@
     private DATStatusUtf8? _statusUtf8;
     public DATStatusUtf8 StatusUtf8 => _statusUtf8 ??= new DATStatusUtf8(Session);
 
+    private DATCustomDsData? _customDsData;
+    public DATCustomDsData CustomDsData => _customDsData ??= new DATCustomDsData(Session);
+
   }
 }
