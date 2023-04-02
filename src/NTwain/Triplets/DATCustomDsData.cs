@@ -12,19 +12,20 @@ namespace NTwain.Triplets
     }
 
     /// <summary>
-    /// Loads and opens the specified data source.
+    /// Loads the custom DS data.
     /// </summary>
-    /// <param name="ds"></param>
+    /// <param name="data"></param>
     /// <returns></returns>
-    public STS Get(ref TW_CUSTOMDSDATA data)
+    public STS Get(out TW_CUSTOMDSDATA data)
     {
+      data = default;
       return DoIt(MSG.GET, ref data);
     }
 
     /// <summary>
-    /// Sets the customs data.
+    /// Sets the custom DS data.
     /// </summary>
-    /// <param name="ds"></param>
+    /// <param name="data"></param>
     /// <returns></returns>
     public STS Set(ref TW_CUSTOMDSDATA data)
     {

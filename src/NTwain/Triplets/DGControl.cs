@@ -27,5 +27,8 @@
     private DATCustomDsData? _customDsData;
     public DATCustomDsData CustomDsData => _customDsData ??= new DATCustomDsData(Session);
 
+    private DATDeviceEvent? _deviceEvent;
+    public DATDeviceEvent DeviceEvent => _deviceEvent ??= new DATDeviceEvent(Session);
+
   }
 }

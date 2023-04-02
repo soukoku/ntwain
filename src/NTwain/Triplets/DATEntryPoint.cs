@@ -18,8 +18,9 @@ namespace NTwain.Triplets
     /// </summary>
     /// <param name="entry"></param>
     /// <returns></returns>
-    public STS Get(ref TW_ENTRYPOINT_DELEGATES entry)
+    public STS Get(out TW_ENTRYPOINT_DELEGATES entry)
     {
+      entry = default;
       TW_ENTRYPOINT rawentry = default;
       var rc = DoIt(MSG.GET, ref rawentry);
       if (rc == STS.SUCCESS)

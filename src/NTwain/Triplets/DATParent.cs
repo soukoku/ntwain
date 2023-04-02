@@ -34,8 +34,7 @@ namespace NTwain.Triplets
         // determine memory mgmt routines used
         if ((((DG)Session.AppIdentity.SupportedGroups) & DG.DSM2) == DG.DSM2)
         {
-          TW_ENTRYPOINT_DELEGATES entry = default;
-          if (Session.DGControl.EntryPoint.Get(ref entry) == STS.SUCCESS)
+          if (Session.DGControl.EntryPoint.Get(out TW_ENTRYPOINT_DELEGATES entry) == STS.SUCCESS)
           {
             Session._entryPoint = entry;
           }

@@ -77,8 +77,7 @@ namespace NTwain
     {
       get
       {
-        TW_CUSTOMDSDATA data = default;
-        var sts = DGControl.CustomDsData.Get(ref data);
+        var sts = DGControl.CustomDsData.Get(out TW_CUSTOMDSDATA data);
         if (sts == STS.SUCCESS)
         {
           if (data.hData != IntPtr.Zero && data.InfoLength > 0)
