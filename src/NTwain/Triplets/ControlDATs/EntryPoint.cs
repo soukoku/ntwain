@@ -3,14 +3,14 @@ using System;
 using System.Runtime.InteropServices;
 using TWAINWorkingGroup;
 
-namespace NTwain.Triplets
+namespace NTwain.Triplets.ControlDATs
 {
   /// <summary>
   /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.ENTRYPOINT"/>.
   /// </summary>
-  public class DATEntryPoint : TripletBase
+  public class EntryPoint : TripletBase
   {
-    public DATEntryPoint(TwainSession session) : base(session)
+    public EntryPoint(TwainSession session) : base(session)
     {
     }
 

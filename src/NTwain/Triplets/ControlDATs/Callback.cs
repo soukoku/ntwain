@@ -1,29 +1,28 @@
 ﻿using NTwain.DSM;
 using TWAINWorkingGroup;
 
-namespace NTwain.Triplets
+namespace NTwain.Triplets.ControlDATs
 {
   /// <summary>
-  /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.DEVICEEVENT"/>.
+  /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.CALLBACK"/>.
   /// </summary>
-  public class DATDeviceEvent : TripletBase
+  public class Callback : TripletBase
   {
-    public DATDeviceEvent(TwainSession session) : base(session)
+    public Callback(TwainSession session) : base(session)
     {
     }
 
     /// <summary>
-    /// Gets the device event detail.
+    /// Registers the callback function.
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    public STS Get(out TW_DEVICEEVENT data)
+    public STS RegisterCallback(ref TW_CALLBACK data)
     {
-      data = default;
-      return DoIt(MSG.GET, ref data);
+      return DoIt(MSG.REGISTER_CALLBACK, ref data);
     }
 
-    STS DoIt(MSG msg, ref TW_DEVICEEVENT data)
+    STS DoIt(MSG msg, ref TW_CALLBACK data)
     {
       var rc = STS.FAILURE;
       if (TwainPlatform.IsWindows)

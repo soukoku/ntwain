@@ -2,14 +2,14 @@
 using System;
 using TWAINWorkingGroup;
 
-namespace NTwain.Triplets
+namespace NTwain.Triplets.ControlDATs
 {
   /// <summary>
   /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.PARENT"/>.
   /// </summary>
-  public class DATParent : TripletBase
+  public class Parent : TripletBase
   {
-    public DATParent(TwainSession session) : base(session)
+    public Parent(TwainSession session) : base(session)
     {
     }
 
@@ -32,7 +32,7 @@ namespace NTwain.Triplets
         }
 
         // determine memory mgmt routines used
-        if ((((DG)Session.AppIdentity.SupportedGroups) & DG.DSM2) == DG.DSM2)
+        if (((DG)Session.AppIdentity.SupportedGroups & DG.DSM2) == DG.DSM2)
         {
           if (Session.DGControl.EntryPoint.Get(out TW_ENTRYPOINT_DELEGATES entry) == STS.SUCCESS)
           {

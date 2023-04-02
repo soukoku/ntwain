@@ -1,14 +1,14 @@
 ﻿using NTwain.DSM;
 using TWAINWorkingGroup;
 
-namespace NTwain.Triplets
+namespace NTwain.Triplets.ControlDATs
 {
   /// <summary>
   /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.CUSTOMDSDATA"/>.
   /// </summary>
-  public class DATCustomDsData : TripletBase
+  public class CustomDsData : TripletBase
   {
-    public DATCustomDsData(TwainSession session) : base(session)
+    public CustomDsData(TwainSession session) : base(session)
     {
     }
 

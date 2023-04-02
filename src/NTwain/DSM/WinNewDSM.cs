@@ -9,110 +9,70 @@ namespace NTwain.DSM
     const string DsmName = "twaindsm.dll";
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
-    internal static extern UInt16 DSM_Entry
+    internal static extern ushort DSM_Entry
     (
-        ref TW_IDENTITY_LEGACY origin,
-        IntPtr dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        ref IntPtr hwnd
+        ref TW_IDENTITY_LEGACY origin, IntPtr dest,
+        DG dg, DAT dat, MSG msg, ref IntPtr hwnd
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
-    internal static extern UInt16 DSM_Entry
+    internal static extern ushort DSM_Entry
     (
-        ref TW_IDENTITY_LEGACY origin,
-        IntPtr dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        ref TW_IDENTITY_LEGACY twidentity
+        ref TW_IDENTITY_LEGACY origin, IntPtr dest,
+        DG dg, DAT dat, MSG msg, ref TW_IDENTITY_LEGACY twidentity
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
-    internal static extern UInt16 DSM_Entry
+    internal static extern ushort DSM_Entry
     (
-        ref TW_IDENTITY_LEGACY origin,
-        ref TW_IDENTITY_LEGACY dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        ref TW_STATUS twstatus
+        ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
+        DG dg, DAT dat, MSG msg, ref TW_STATUS twstatus
     );
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
-    internal static extern UInt16 DSM_Entry
+    internal static extern ushort DSM_Entry
     (
-        ref TW_IDENTITY_LEGACY origin,
-        IntPtr dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        ref TW_STATUS twstatus
+        ref TW_IDENTITY_LEGACY origin, IntPtr dest,
+        DG dg, DAT dat, MSG msg, ref TW_STATUS twstatus
     );
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
-    internal static extern UInt16 DSM_Entry
+    internal static extern ushort DSM_Entry
     (
-        ref TW_IDENTITY_LEGACY origin,
-        IntPtr dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        ref TW_STATUSUTF8 twstatusutf8
+        ref TW_IDENTITY_LEGACY origin, IntPtr dest,
+        DG dg, DAT dat, MSG msg, ref TW_STATUSUTF8 twstatusutf8
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
-    internal static extern UInt16 DSM_Entry
+    internal static extern ushort DSM_Entry
     (
-        ref TW_IDENTITY_LEGACY origin,
-        IntPtr dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        ref TW_ENTRYPOINT twentrypoint
+        ref TW_IDENTITY_LEGACY origin, IntPtr dest,
+        DG dg, DAT dat, MSG msg, ref TW_ENTRYPOINT twentrypoint
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
-    internal static extern UInt16 DSM_Entry
+    internal static extern ushort DSM_Entry
     (
-        ref TW_IDENTITY_LEGACY origin,
-        ref TW_IDENTITY_LEGACY dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        ref TW_DEVICEEVENT twdeviceevent
+        ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
+        DG dg, DAT dat, MSG msg, ref TW_DEVICEEVENT twdeviceevent
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
-    internal static extern UInt16 DSM_Entry
+    internal static extern ushort DSM_Entry
     (
-        ref TW_IDENTITY_LEGACY origin,
-        ref TW_IDENTITY_LEGACY dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        ref TW_CUSTOMDSDATA twcustomedsdata
+        ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
+        DG dg, DAT dat, MSG msg, ref TW_CUSTOMDSDATA twcustomedsdata
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
-    internal static extern UInt16 DSM_Entry
+    internal static extern ushort DSM_Entry
     (
-        ref TW_IDENTITY_LEGACY origin,
-        ref TW_IDENTITY_LEGACY dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        ref TW_CALLBACK twcallback
+        ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
+        DG dg, DAT dat, MSG msg, ref TW_CALLBACK twcallback
     );
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
-    internal static extern UInt16 DSM_Entry
+    internal static extern ushort DSM_Entry
     (
-        ref TW_IDENTITY_LEGACY origin,
-        ref TW_IDENTITY_LEGACY dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        ref TW_CALLBACK2 twcallback
+        ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
+        DG dg, DAT dat, MSG msg, ref TW_CALLBACK2 twcallback
     );
   }
 }

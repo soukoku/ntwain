@@ -2,14 +2,14 @@
 using System;
 using TWAINWorkingGroup;
 
-namespace NTwain.Triplets
+namespace NTwain.Triplets.ControlDATs
 {
   /// <summary>
   /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.STATUSUTF8"/>.
   /// </summary>
-  public class DATStatusUtf8 : TripletBase
+  public class StatusUtf8 : TripletBase
   {
-    public DATStatusUtf8(TwainSession session) : base(session)
+    public StatusUtf8(TwainSession session) : base(session)
     {
 
     }

@@ -2,14 +2,14 @@
 using System;
 using TWAINWorkingGroup;
 
-namespace NTwain.Triplets
+namespace NTwain.Triplets.ControlDATs
 {
   /// <summary>
   /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.IDENTITY"/>.
   /// </summary>
-  public class DATIdentity : TripletBase
+  public class Identity : TripletBase
   {
-    public DATIdentity(TwainSession session) : base(session)
+    public Identity(TwainSession session) : base(session)
     {
     }
 
