@@ -14,13 +14,56 @@ namespace NTwain
     /// <returns></returns>
     public IEnumerable<TW_IDENTITY_LEGACY> GetSources()
     {
-      var rc = DGControl.Identity.GetFirst(out TW_IDENTITY_LEGACY ds);
+      var rc = DGControl.Identity.GetFirst(ref _appIdentity, out TW_IDENTITY_LEGACY ds);
       while (rc == STS.SUCCESS)
       {
         yield return ds;
-        rc = DGControl.Identity.GetNext(out ds);
+        rc = DGControl.Identity.GetNext(ref _appIdentity, out ds);
       }
     }
+
+    /// <summary>
+    /// Shows the TWAIN source selection UI for setting the default source.
+    /// </summary>
+    public void ShowUserSelect()
+    {
+      if (DGControl.Identity.UserSelect(ref _appIdentity, out TW_IDENTITY_LEGACY ds) == STS.SUCCESS)
+      {
+        _defaultDS = ds;
+        DefaultSourceChanged?.Invoke(this, ds);
+      }
+    }
+
+    public void OpenSource(TW_IDENTITY_LEGACY source)
+    {
+      if (DGControl.Identity.OpenDS(ref _appIdentity, ref source) == STS.SUCCESS)
+      {
+        RegisterCallback();
+        CurrentSource = source;
+        State = STATE.S4;
+      }
+    }
+
+    public void CloseSource()
+    {
+      if (DGControl.Identity.CloseDS(ref _appIdentity, ref _currentDS) == STS.SUCCESS)
+      {
+        State = STATE.S3;
+        CurrentSource = default;
+      }
+    }
+
+    public STS SetDefaultSource(TW_IDENTITY_LEGACY source)
+    {
+      var rc = DGControl.Identity.Set(ref _appIdentity, ref source);
+      if (rc == STS.SUCCESS)
+      {
+        _defaultDS = source;
+        DefaultSourceChanged?.Invoke(this, source);
+      }
+      return rc;
+    }
+
 
     /// <summary>
     /// Enables the currently open source.
@@ -36,11 +79,14 @@ namespace NTwain
         ShowUI = (ushort)((showUI || uiOnly) ? 1 : 0),
         hParent = _hwnd,
       };
-      var rc = uiOnly ? DGControl.UserInterface.EnableDSUIOnly(ref ui) : DGControl.UserInterface.EnableDS(ref ui);
+      var rc = uiOnly ?
+        DGControl.UserInterface.EnableDSUIOnly(ref _appIdentity, ref _currentDS, ref ui) :
+        DGControl.UserInterface.EnableDS(ref _appIdentity, ref _currentDS, ref ui);
       if (rc == STS.SUCCESS || (!uiOnly && !showUI && rc == STS.CHECKSTATUS))
       {
         // keep it around for disable use
         _userInterface = ui;
+        State = STATE.S5;
       };
       return rc;
     }
@@ -51,7 +97,12 @@ namespace NTwain
     /// <returns></returns>
     public STS DisableSource()
     {
-      return DGControl.UserInterface.DisableDS(ref _userInterface);
+      var rc = DGControl.UserInterface.DisableDS(ref _appIdentity, ref _currentDS, ref _userInterface);
+      if (rc == STS.SUCCESS)
+      {
+        State = STATE.S4;
+      }
+      return rc;
     }
   }
 }

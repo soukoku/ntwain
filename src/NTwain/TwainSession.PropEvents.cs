@@ -2,7 +2,6 @@
 using System;
 using System.Runtime.InteropServices;
 using TWAINWorkingGroup;
-using static System.Collections.Specialized.BitVector32;
 
 namespace NTwain
 {
@@ -38,16 +37,11 @@ namespace NTwain
     TW_IDENTITY_LEGACY _currentDS;
 
     /// <summary>
-    /// Gets the default data source.
+    /// Gets/sets the default data source.
     /// </summary>
     public TW_IDENTITY_LEGACY DefaultSource
     {
       get => _defaultDS;
-      internal set
-      {
-        _defaultDS = value;
-        DefaultSourceChanged?.Invoke(this, value);
-      }
     }
     TW_IDENTITY_LEGACY _defaultDS;
 
@@ -78,7 +72,7 @@ namespace NTwain
     {
       get
       {
-        var sts = DGControl.CustomDsData.Get(out TW_CUSTOMDSDATA data);
+        var sts = DGControl.CustomDsData.Get(ref _appIdentity, ref _currentDS, out TW_CUSTOMDSDATA data);
         if (sts == STS.SUCCESS)
         {
           if (data.hData != IntPtr.Zero && data.InfoLength > 0)
@@ -111,7 +105,7 @@ namespace NTwain
           var lockedPtr = Lock(data.hData);
           Marshal.Copy(value, 0, lockedPtr, value.Length);
           Unlock(data.hData);
-          var sts = DGControl.CustomDsData.Set(ref data);
+          var sts = DGControl.CustomDsData.Set(ref _appIdentity, ref _currentDS, ref data);
         }
         finally
         {

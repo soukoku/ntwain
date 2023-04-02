@@ -36,13 +36,13 @@ namespace NTwain
       if (_appIdentity.ProtocolMajor > 2 || (_appIdentity.ProtocolMajor >= 2 && _appIdentity.ProtocolMinor >= 2))
       {
         var cb2 = new TW_CALLBACK2 { CallBackProc = cbPtr };
-        rc = DGControl.Callback2.RegisterCallback(ref cb2);
+        rc = DGControl.Callback2.RegisterCallback(ref _appIdentity, ref _currentDS, ref cb2);
       }
       if (rc != STS.SUCCESS)
       {
         // always try old callback
         var cb = new TW_CALLBACK { CallBackProc = cbPtr };
-        DGControl.Callback.RegisterCallback(ref cb);
+        DGControl.Callback.RegisterCallback(ref _appIdentity, ref _currentDS, ref cb);
       }
     }
 

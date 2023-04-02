@@ -6,21 +6,17 @@ namespace NTwain.Triplets.ControlDATs
   /// <summary>
   /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.XFERGROUP"/>.
   /// </summary>
-  public class XferGroup : TripletBase
+  public class XferGroup
   {
-    public XferGroup(TwainSession session) : base(session)
-    {
-    }
-
     /// <summary>
     /// Gets the transfer group used.
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    public STS Get(out DG data)
+    public STS Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out DG data)
     {
       data = default;
-      return DoIt(MSG.GET, ref data);
+      return DoIt(ref app, ref ds, MSG.GET, ref data);
     }
 
     /// <summary>
@@ -28,18 +24,16 @@ namespace NTwain.Triplets.ControlDATs
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    public STS Set(DG data)
+    public STS Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, DG data)
     {
-      return DoIt(MSG.SET, ref data);
+      return DoIt(ref app, ref ds, MSG.SET, ref data);
     }
 
-    STS DoIt(MSG msg, ref DG data)
+    static STS DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, ref DG data)
     {
       var rc = STS.FAILURE;
       if (TwainPlatform.IsWindows)
       {
-        var app = Session.AppIdentity;
-        var ds = Session.CurrentSource;
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
           rc = (STS)WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.XFERGROUP, msg, ref data);
@@ -51,15 +45,15 @@ namespace NTwain.Triplets.ControlDATs
       }
       else if (TwainPlatform.IsMacOSX)
       {
-        TW_IDENTITY_MACOSX app = Session.AppIdentity;
-        TW_IDENTITY_MACOSX ds = Session.CurrentSource;
+        TW_IDENTITY_MACOSX app2 = app;
+        TW_IDENTITY_MACOSX ds2 = ds;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.XFERGROUP, msg, ref data);
+          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.XFERGROUP, msg, ref data);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.XFERGROUP, msg, ref data);
+          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.XFERGROUP, msg, ref data);
         }
       }
       return rc;

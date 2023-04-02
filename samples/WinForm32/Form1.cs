@@ -45,7 +45,7 @@ namespace WinForm32
 
 
       var hwnd = this.Handle;
-      var rc = twain.DGControl.Parent.OpenDSM(ref hwnd);
+      var rc = twain.OpenDSM(hwnd);
       Debug.WriteLine($"OpenDSM={rc}");
     }
 
@@ -59,7 +59,7 @@ namespace WinForm32
 
     private void btnSelect_Click(object sender, EventArgs e)
     {
-      twain.DGControl.Identity.UserSelect();
+      twain.ShowUserSelect();
     }
 
     private void btnEnumSources_Click(object sender, EventArgs e)
@@ -75,7 +75,7 @@ namespace WinForm32
     {
       if (listSources.SelectedItem is TW_IDENTITY_LEGACY ds)
       {
-        twain.DGControl.Identity.Set(ds);
+        twain.SetDefaultSource(ds);
       }
     }
 
@@ -85,20 +85,20 @@ namespace WinForm32
       {
         twain.TryStepdown(STATE.S3);
 
-        twain.DGControl.Identity.OpenDS(ds);
+        twain.OpenSource(ds);
       }
     }
 
     private void btnClose_Click(object sender, EventArgs e)
     {
-      twain.DGControl.Identity.CloseDS();
+      twain.CloseSource();
     }
 
     private void btnOpenDef_Click(object sender, EventArgs e)
     {
       twain.TryStepdown(STATE.S3);
 
-      twain.DGControl.Identity.OpenDS(twain.DefaultSource);
+      twain.OpenSource(twain.DefaultSource);
     }
 
     private void btnShowSettings_Click(object sender, EventArgs e)

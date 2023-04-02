@@ -6,21 +6,17 @@ namespace NTwain.Triplets.ControlDATs
   /// <summary>
   /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.CUSTOMDSDATA"/>.
   /// </summary>
-  public class CustomDsData : TripletBase
+  public class CustomDsData
   {
-    public CustomDsData(TwainSession session) : base(session)
-    {
-    }
-
     /// <summary>
     /// Loads the custom DS data.
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    public STS Get(out TW_CUSTOMDSDATA data)
+    public STS Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_CUSTOMDSDATA data)
     {
       data = default;
-      return DoIt(MSG.GET, ref data);
+      return DoIt(ref app, ref ds, MSG.GET, ref data);
     }
 
     /// <summary>
@@ -28,18 +24,14 @@ namespace NTwain.Triplets.ControlDATs
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    public STS Set(ref TW_CUSTOMDSDATA data)
-    {
-      return DoIt(MSG.SET, ref data);
-    }
+    public STS Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CUSTOMDSDATA data)
+      => DoIt(ref app, ref ds, MSG.SET, ref data);
 
-    STS DoIt(MSG msg, ref TW_CUSTOMDSDATA data)
+    static STS DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, ref TW_CUSTOMDSDATA data)
     {
       var rc = STS.FAILURE;
       if (TwainPlatform.IsWindows)
       {
-        var app = Session.AppIdentity;
-        var ds = Session.CurrentSource;
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
           rc = (STS)WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.CUSTOMDSDATA, msg, ref data);
@@ -51,15 +43,15 @@ namespace NTwain.Triplets.ControlDATs
       }
       else if (TwainPlatform.IsMacOSX)
       {
-        TW_IDENTITY_MACOSX app = Session.AppIdentity;
-        TW_IDENTITY_MACOSX ds = Session.CurrentSource;
+        TW_IDENTITY_MACOSX app2 = app;
+        TW_IDENTITY_MACOSX ds2 = ds;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.CUSTOMDSDATA, msg, ref data);
+          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.CUSTOMDSDATA, msg, ref data);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.CUSTOMDSDATA, msg, ref data);
+          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.CUSTOMDSDATA, msg, ref data);
         }
       }
       return rc;

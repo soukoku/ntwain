@@ -1,6 +1,5 @@
 ﻿using NTwain.Triplets;
 using System;
-using System.Collections;
 using System.Diagnostics;
 using System.Text;
 using TWAINWorkingGroup;
@@ -78,9 +77,9 @@ namespace NTwain
         }
       };
 
-      DGControl = new DGControl(this);
-      DGImage = new DGImage(this);
-      DGAudio = new DGAudio(this);
+      DGControl = new DGControl();
+      DGImage = new DGImage();
+      DGAudio = new DGAudio();
 
       _legacyCallbackDelegate = LegacyCallbackHandler;
       _osxCallbackDelegate = OSXCallbackHandler;
@@ -88,6 +87,88 @@ namespace NTwain
 
     internal IntPtr _hwnd;
     internal TW_USERINTERFACE _userInterface;
+
+    /// <summary>
+    /// Loads and opens the TWAIN data source manager.
+    /// </summary>
+    /// <param name="hwnd">Required if on Windows.</param>
+    /// <returns></returns>
+    public STS OpenDSM(IntPtr hwnd)
+    {
+      var rc = DGControl.Parent.OpenDSM(ref _appIdentity, hwnd);
+      if (rc == STS.SUCCESS)
+      {
+        _hwnd = hwnd;
+        State = STATE.S3;
+        // get default source
+        if (DGControl.Identity.GetDefault(ref _appIdentity, out TW_IDENTITY_LEGACY ds) == STS.SUCCESS)
+        {
+          _defaultDS = ds;
+          DefaultSourceChanged?.Invoke(this, _defaultDS);
+        }
+
+        // determine memory mgmt routines used
+        if (((DG)AppIdentity.SupportedGroups & DG.DSM2) == DG.DSM2)
+        {
+          DGControl.EntryPoint.Get(ref _appIdentity, out _entryPoint);
+        }
+      }
+      return rc;
+    }
+
+
+    /// <summary>
+    /// Closes the TWAIN data source manager.
+    /// </summary>
+    /// <returns></returns>
+    public STS CloseDSM()
+    {
+      var rc = DGControl.Parent.CloseDSM(ref _appIdentity, _hwnd);
+      if (rc == STS.SUCCESS)
+      {
+        State = STATE.S2;
+        _entryPoint = default;
+        _defaultDS = default;
+        DefaultSourceChanged?.Invoke(this, _defaultDS);
+        _hwnd = IntPtr.Zero;
+      }
+      return rc;
+    }
+
+    /// <summary>
+    /// Gets the last status code if an operation did not return success.
+    /// This can only be done once after an error.
+    /// </summary>
+    /// <param name="forDsmOnly">true to get status for dsm operation error, false to get status for ds operation error,</param>
+    /// <returns></returns>
+    public TW_STATUS GetLastStatus(bool forDsmOnly)
+    {
+      if (forDsmOnly)
+      {
+        DGControl.Status.GetForDSM(ref _appIdentity, out TW_STATUS status);
+        return status;
+      }
+      else
+      {
+        DGControl.Status.GetForDS(ref _appIdentity, ref _currentDS, out TW_STATUS status);
+        return status;
+      }
+    }
+
+    /// <summary>
+    /// Tries to get string representation of a previously gotten status 
+    /// from <see cref="GetLastStatus"/> if possible.
+    /// </summary>
+    /// <param name="status"></param>
+    /// <returns></returns>
+    public string? GetStatusText(TW_STATUS status)
+    {
+      if (DGControl.StatusUtf8.Get(ref _appIdentity, status, out TW_STATUSUTF8 extendedStatus) == STS.SUCCESS)
+      {
+        return extendedStatus.ReadAndFree(this);
+      }
+      return null;
+    }
 
     /// <summary>
     /// Tries to bring the TWAIN session down to some state.
@@ -104,14 +185,13 @@ namespace NTwain
         switch (State)
         {
           case STATE.S5:
-            DGControl.UserInterface.DisableDS(ref _userInterface);
+            DisableSource();
             break;
           case STATE.S4:
-            DGControl.Identity.CloseDS();
+            CloseSource();
             break;
           case STATE.S3:
-            // shouldn't care about handle when closing really
-            DGControl.Parent.CloseDSM(ref _hwnd);
+            CloseDSM();
             break;
         }
       }

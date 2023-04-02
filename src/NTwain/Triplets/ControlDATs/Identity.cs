@@ -7,59 +7,32 @@ namespace NTwain.Triplets.ControlDATs
   /// <summary>
   /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.IDENTITY"/>.
   /// </summary>
-  public class Identity : TripletBase
+  public class Identity
   {
-    public Identity(TwainSession session) : base(session)
-    {
-    }
-
     /// <summary>
     /// Loads and opens the specified data source.
     /// </summary>
     /// <param name="ds"></param>
     /// <returns></returns>
-    public STS OpenDS(TW_IDENTITY_LEGACY ds) // not a ref on purpose
-    {
-      STS rc;
-      if ((rc = DoIt(MSG.OPENDS, ref ds)) == STS.SUCCESS)
-      {
-        Session.CurrentSource = ds;
-        Session.RegisterCallback();
-        Session.State = STATE.S4;
-      }
-      return rc;
-    }
+    public STS OpenDS(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds)
+      => DoIt(ref app, MSG.OPENDS, ref ds);
 
     /// <summary>
     /// Closes the currently open data source.
     /// </summary>
     /// <returns></returns>
-    public STS CloseDS()
-    {
-      STS rc;
-      var ds = Session.CurrentSource;
-      if ((rc = DoIt(MSG.CLOSEDS, ref ds)) == STS.SUCCESS)
-      {
-        Session.State = STATE.S3;
-        Session.CurrentSource = default;
-      }
-      return rc;
-    }
+    public STS CloseDS(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds)
+      => DoIt(ref app, MSG.CLOSEDS, ref ds);
 
     /// <summary>
     /// Opens the TWAIN data source selector dialog
     /// to choose the default data source.
     /// </summary>
     /// <returns></returns>
-    public STS UserSelect()
+    public STS UserSelect(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)
     {
-      STS rc;
-      var ds = Session.DefaultSource;
-      if ((rc = DoIt(MSG.USERSELECT, ref ds)) == STS.SUCCESS)
-      {
-        Session.DefaultSource = ds;
-      }
-      return rc;
+      ds = default;
+      return DoIt(ref app, MSG.USERSELECT, ref ds);
     }
 
     /// <summary>
@@ -67,10 +40,10 @@ namespace NTwain.Triplets.ControlDATs
     /// </summary>
     /// <param name="ds"></param>
     /// <returns></returns>
-    public STS GetDefault(out TW_IDENTITY_LEGACY ds)
+    public STS GetDefault(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)
     {
       ds = default;
-      return DoIt(MSG.GETDEFAULT, ref ds);
+      return DoIt(ref app, MSG.GETDEFAULT, ref ds);
     }
 
     /// <summary>
@@ -78,15 +51,8 @@ namespace NTwain.Triplets.ControlDATs
     /// </summary>
     /// <param name="ds"></param>
     /// <returns></returns>
-    public STS Set(TW_IDENTITY_LEGACY ds)
-    {
-      STS rc;
-      if ((rc = DoIt(MSG.SET, ref ds)) == STS.SUCCESS)
-      {
-        Session.DefaultSource = ds;
-      }
-      return rc;
-    }
+    public STS Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds)
+      => DoIt(ref app, MSG.SET, ref ds);
 
     /// <summary>
     /// Gets the first available data source in an enumerating fashion 
@@ -94,10 +60,10 @@ namespace NTwain.Triplets.ControlDATs
     /// </summary>
     /// <param name="ds"></param>
     /// <returns></returns>
-    public STS GetFirst(out TW_IDENTITY_LEGACY ds)
+    public STS GetFirst(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)
     {
       ds = default;
-      return DoIt(MSG.GETFIRST, ref ds);
+      return DoIt(ref app, MSG.GETFIRST, ref ds);
     }
 
     /// <summary>
@@ -106,19 +72,18 @@ namespace NTwain.Triplets.ControlDATs
     /// </summary>
     /// <param name="ds"></param>
     /// <returns></returns>
-    public STS GetNext(out TW_IDENTITY_LEGACY ds)
+    public STS GetNext(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)
     {
       ds = default;
-      return DoIt(MSG.GETNEXT, ref ds);
+      return DoIt(ref app, MSG.GETNEXT, ref ds);
     }
 
 
-    STS DoIt(MSG msg, ref TW_IDENTITY_LEGACY ds)
+    static STS DoIt(ref TW_IDENTITY_LEGACY app, MSG msg, ref TW_IDENTITY_LEGACY ds)
     {
       var rc = STS.FAILURE;
       if (TwainPlatform.IsWindows)
       {
-        var app = Session.AppIdentity;
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
           rc = (STS)WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref ds);
@@ -130,15 +95,15 @@ namespace NTwain.Triplets.ControlDATs
       }
       else if (TwainPlatform.IsMacOSX)
       {
-        TW_IDENTITY_MACOSX app = Session.AppIdentity;
+        TW_IDENTITY_MACOSX app2 = app;
         TW_IDENTITY_MACOSX osxds = ds;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref osxds);
+          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref osxds);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref osxds);
+          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref osxds);
         }
         ds = osxds;
       }

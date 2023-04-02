@@ -18,13 +18,13 @@ namespace SampleConsole
       twain.StateChanged += Twain_StateChanged;
 
       var hwnd = IntPtr.Zero; // required for windows
-      var rc = twain.DGControl.Parent.OpenDSM(ref hwnd);
+      var rc = twain.OpenDSM(hwnd);
       Debug.WriteLine($"OpenDSM={rc}");
 
       if (rc == STS.SUCCESS)
       {
         Debug.WriteLine($"CloseDSM={rc}");
-        rc = twain.DGControl.Parent.CloseDSM(ref hwnd);
+        rc = twain.CloseDSM();
       }
     }
 

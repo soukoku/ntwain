@@ -5,10 +5,7 @@ namespace NTwain.Triplets
   /// <summary>
   /// Contains calls used with <see cref="DG.IMAGE"/>.
   /// </summary>
-  public class DGImage : TripletBase
+  public class DGImage
   {
-    public DGImage(TwainSession session) : base(session)
-    {
-    }
   }
 }
