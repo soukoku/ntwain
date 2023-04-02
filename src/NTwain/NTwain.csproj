@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Triplets\ImageDATs\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="DSM\DSMGenerator.dummy">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

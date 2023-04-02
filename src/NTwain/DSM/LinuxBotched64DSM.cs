@@ -168,5 +168,82 @@ namespace NTwain.DSM
         ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_AUDIOINFO auioinfo
     );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_IMAGEMEMXFER memxfer
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_CIECOLOR ciecolor
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_EXTIMAGEINFO imginfo
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_FILTER filter
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_GRAYRESPONSE resp
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_MEMORY mem
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_IMAGEINFO info
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_IMAGELAYOUT layout
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_JPEGCOMPRESSION compression
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_PALETTE8 palette
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_RGBRESPONSE resp
+    );
   }
 }
