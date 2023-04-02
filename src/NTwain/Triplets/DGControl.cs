@@ -3,42 +3,35 @@
 namespace NTwain.Triplets
 {
   /// <summary>
-  /// Contains calls used with <see cref="DG.CONTROL"/>.
+  /// Contains triplet calls starting with <see cref="DG.CONTROL"/>.
   /// </summary>
-  public class DGControl
+  public static class DGControl
   {
-    private Parent? _parent;
-    public Parent Parent => _parent ??= new Parent();
+    public static readonly Parent Parent = new();
 
-    private EntryPoint? _entryPoint;
-    public EntryPoint EntryPoint => _entryPoint ??= new EntryPoint();
+    public static readonly EntryPoint EntryPoint = new();
 
-    private Identity? _identity;
-    public Identity Identity => _identity ??= new Identity();
+    public static readonly Identity Identity = new();
 
-    private Status? _status;
-    public Status Status => _status ??= new Status();
+    public static readonly Status Status = new();
 
-    private StatusUtf8? _statusUtf8;
-    public StatusUtf8 StatusUtf8 => _statusUtf8 ??= new StatusUtf8();
+    public static readonly StatusUtf8 StatusUtf8 = new();
 
-    private CustomDsData? _customDsData;
-    public CustomDsData CustomDsData => _customDsData ??= new CustomDsData();
+    public static readonly CustomDsData CustomDsData = new();
 
-    private DeviceEvent? _deviceEvent;
-    public DeviceEvent DeviceEvent => _deviceEvent ??= new DeviceEvent();
+    public static readonly DeviceEvent DeviceEvent = new();
 
-    private Callback? _callback;
-    public Callback Callback => _callback ??= new Callback();
+    public static readonly Callback Callback = new();
 
-    private Callback2? _callback2;
-    public Callback2 Callback2 => _callback2 ??= new Callback2();
+    public static readonly Callback2 Callback2 = new();
 
-    private XferGroup? _xferGroup;
-    public XferGroup XferGroup => _xferGroup ??= new XferGroup();
+    public static readonly XferGroup XferGroup = new();
 
-    private UserInterface? _userInterface;
-    public UserInterface UserInterface => _userInterface ??= new UserInterface();
+    public static readonly UserInterface UserInterface = new();
+
+    public static readonly Event Event = new();
+
+    public static readonly PendingXfers PendingXfers = new();
 
   }
 }

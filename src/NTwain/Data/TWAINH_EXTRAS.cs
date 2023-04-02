@@ -4,9 +4,9 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace TWAINWorkingGroup
+namespace NTwain.Data
 {
-  // this contains my additions under the TWAINWorkingGroup namespace
+  // this contains my additions 
   // that makes some twain types easier to work with.
 
   /// <summary>

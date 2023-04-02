@@ -1,6 +1,6 @@
-﻿using NTwain.Triplets;
+﻿using NTwain.Data;
+using NTwain.Triplets;
 using System.Collections.Generic;
-using TWAINWorkingGroup;
 
 namespace NTwain
 {
@@ -34,6 +34,10 @@ namespace NTwain
       }
     }
 
+    /// <summary>
+    /// Loads and opens the specified data source.
+    /// </summary>
+    /// <param name="source"></param>
     public void OpenSource(TW_IDENTITY_LEGACY source)
     {
       if (DGControl.Identity.OpenDS(ref _appIdentity, ref source) == STS.SUCCESS)
@@ -44,6 +48,9 @@ namespace NTwain
       }
     }
 
+    /// <summary>
+    /// Closes the currently open data source.
+    /// </summary>
     public void CloseSource()
     {
       if (DGControl.Identity.CloseDS(ref _appIdentity, ref _currentDS) == STS.SUCCESS)
@@ -53,8 +60,15 @@ namespace NTwain
       }
     }
 
+    /// <summary>
+    /// Sets the default data source.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
     public STS SetDefaultSource(TW_IDENTITY_LEGACY source)
     {
+      // TODO: this doesn't work???
+
       var rc = DGControl.Identity.Set(ref _appIdentity, ref source);
       if (rc == STS.SUCCESS)
       {

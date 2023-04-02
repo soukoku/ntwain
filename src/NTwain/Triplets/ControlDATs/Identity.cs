@@ -1,6 +1,6 @@
-﻿using NTwain.DSM;
+﻿using NTwain.Data;
+using NTwain.DSM;
 using System;
-using TWAINWorkingGroup;
 
 namespace NTwain.Triplets.ControlDATs
 {
@@ -9,18 +9,9 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class Identity
   {
-    /// <summary>
-    /// Loads and opens the specified data source.
-    /// </summary>
-    /// <param name="ds"></param>
-    /// <returns></returns>
     public STS OpenDS(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds)
       => DoIt(ref app, MSG.OPENDS, ref ds);
 
-    /// <summary>
-    /// Closes the currently open data source.
-    /// </summary>
-    /// <returns></returns>
     public STS CloseDS(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds)
       => DoIt(ref app, MSG.CLOSEDS, ref ds);
 
@@ -35,11 +26,6 @@ namespace NTwain.Triplets.ControlDATs
       return DoIt(ref app, MSG.USERSELECT, ref ds);
     }
 
-    /// <summary>
-    /// Gets the default data source.
-    /// </summary>
-    /// <param name="ds"></param>
-    /// <returns></returns>
     public STS GetDefault(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)
     {
       ds = default;

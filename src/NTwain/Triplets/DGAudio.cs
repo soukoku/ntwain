@@ -3,9 +3,9 @@
 namespace NTwain.Triplets
 {
   /// <summary>
-  /// Contains calls used with <see cref="DG.AUDIO"/>.
+  /// Contains triplet calls starting with <see cref="DG.AUDIO"/>.
   /// </summary>
-  public class DGAudio
+  public static class DGAudio
   {
   }
 }

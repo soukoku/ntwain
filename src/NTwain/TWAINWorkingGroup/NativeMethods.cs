@@ -41,6 +41,7 @@
 //  DEALINGS IN THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////////
 
+using NTwain.Data;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;

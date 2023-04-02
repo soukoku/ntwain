@@ -1,4 +1,5 @@
-﻿using NTwain.Triplets;
+﻿using NTwain.Data;
+using NTwain.Triplets;
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -76,10 +77,6 @@ namespace NTwain
           MinorNum = (ushort)productVersion.Minor,
         }
       };
-
-      DGControl = new DGControl();
-      DGImage = new DGImage();
-      DGAudio = new DGAudio();
 
       _legacyCallbackDelegate = LegacyCallbackHandler;
       _osxCallbackDelegate = OSXCallbackHandler;

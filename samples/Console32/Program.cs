@@ -1,8 +1,8 @@
 ﻿using NTwain;
+using NTwain.Data;
 using System;
 using System.Diagnostics;
 using System.Reflection;
-using TWAINWorkingGroup;
 
 namespace SampleConsole
 {

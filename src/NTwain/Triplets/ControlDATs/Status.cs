@@ -1,6 +1,6 @@
-﻿using NTwain.DSM;
+﻿using NTwain.Data;
+using NTwain.DSM;
 using System;
-using TWAINWorkingGroup;
 
 namespace NTwain.Triplets.ControlDATs
 {

@@ -46,7 +46,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace TWAINWorkingGroup
+namespace NTwain.Data
 {
   ///// <summary>
   ///// This file contains content gleaned from version 2.4 of the C/C++ H

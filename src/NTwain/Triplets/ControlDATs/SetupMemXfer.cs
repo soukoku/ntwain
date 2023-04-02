@@ -4,18 +4,12 @@ using NTwain.DSM;
 namespace NTwain.Triplets.ControlDATs
 {
   /// <summary>
-  /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.DEVICEEVENT"/>.
+  /// Contains calls used with <see cref="DG.SetupMemXfer"/> and <see cref="DAT.SETUPMEMXFER"/>.
   /// </summary>
-  public class DeviceEvent
+  public class SetupMemXfer
   {
-    /// <summary>
-    /// Gets the device event detail.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public STS Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_DEVICEEVENT data)
+    public STS Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_SETUPMEMXFER data)
     {
-      data = default;
       var rc = STS.FAILURE;
       if (TwainPlatform.IsWindows)
       {

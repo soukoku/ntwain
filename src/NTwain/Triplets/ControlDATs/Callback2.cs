@@ -1,5 +1,5 @@
-﻿using NTwain.DSM;
-using TWAINWorkingGroup;
+﻿using NTwain.Data;
+using NTwain.DSM;
 
 namespace NTwain.Triplets.ControlDATs
 {
@@ -8,11 +8,6 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class Callback2
   {
-    /// <summary>
-    /// Registers the callback function.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
     public STS RegisterCallback(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CALLBACK2 data)
     {
       var rc = STS.FAILURE;

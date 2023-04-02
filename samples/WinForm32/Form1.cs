@@ -1,10 +1,10 @@
 using NTwain;
+using NTwain.Data;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
-using TWAINWorkingGroup;
 
 namespace WinForm32
 {

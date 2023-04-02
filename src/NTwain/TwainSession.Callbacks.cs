@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NTwain.Data;
+using NTwain.Triplets;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TWAINWorkingGroup;

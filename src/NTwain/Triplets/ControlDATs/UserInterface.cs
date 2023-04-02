@@ -1,5 +1,5 @@
-﻿using NTwain.DSM;
-using TWAINWorkingGroup;
+﻿using NTwain.Data;
+using NTwain.DSM;
 
 namespace NTwain.Triplets.ControlDATs
 {
@@ -8,27 +8,12 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class UserInterface
   {
-    /// <summary>
-    /// Disables source to bring state down to <see cref="STATE.S4"/>.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
     public STS DisableDS(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_USERINTERFACE data)
       => DoIt(ref app, ref ds, MSG.DISABLEDS, ref data);
 
-    /// <summary>
-    /// Enables source to bring state up to <see cref="STATE.S5"/>.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
     public STS EnableDS(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_USERINTERFACE data)
       => DoIt(ref app, ref ds, MSG.ENABLEDS, ref data);
 
-    /// <summary>
-    /// Enables source to bring state up to <see cref="STATE.S5"/>.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
     public STS EnableDSUIOnly(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_USERINTERFACE data)
       => DoIt(ref app, ref ds, MSG.ENABLEDSUIONLY, ref data);
 

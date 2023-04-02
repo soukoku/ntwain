@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Data;
+using System;
 using System.Runtime.InteropServices;
 using TWAINWorkingGroup;
 

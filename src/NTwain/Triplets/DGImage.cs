@@ -3,9 +3,9 @@
 namespace NTwain.Triplets
 {
   /// <summary>
-  /// Contains calls used with <see cref="DG.IMAGE"/>.
+  /// Contains triplet calls starting with <see cref="DG.IMAGE"/>.
   /// </summary>
-  public class DGImage
+  public static class DGImage
   {
   }
 }

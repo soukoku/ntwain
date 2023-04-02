@@ -1,0 +1,7 @@
+This contains the pinvoke methods for the DSM entry.
+This is the lowest API level of the lib and should not
+be used directly unless you know what you're doing. 
+
+A higher level abstraction such as the ones in the
+Triplets namespace or the TwainSession object
+would be easier to use.

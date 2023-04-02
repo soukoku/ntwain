@@ -1,5 +1,5 @@
-﻿using NTwain.DSM;
-using TWAINWorkingGroup;
+﻿using NTwain.Data;
+using NTwain.DSM;
 
 namespace NTwain.Triplets.ControlDATs
 {
@@ -8,22 +8,12 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class CustomDsData
   {
-    /// <summary>
-    /// Loads the custom DS data.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
     public STS Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_CUSTOMDSDATA data)
     {
       data = default;
       return DoIt(ref app, ref ds, MSG.GET, ref data);
     }
 
-    /// <summary>
-    /// Sets the custom DS data.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
     public STS Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CUSTOMDSDATA data)
       => DoIt(ref app, ref ds, MSG.SET, ref data);
 

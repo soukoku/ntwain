@@ -1,9 +1,8 @@
 All TWAIN operations are done through the a combination of 
 Data Group (DG), Data Argument Type (DAT), and Message (MSG) 
-triplets. Rather than letting consumers of this lib deal 
-with all the combinations themselves and risk passing the 
-wrong thing, all valid triplet combinations are simply 
-made available under this namespace.
+triplets. Rather than dealing with all the combinations 
+directly and risk passing the wrong thing, all valid triplet 
+combinations are simply made available under this namespace.
 
 Example:
 To get the status of the DS, just use the 
@@ -18,5 +17,5 @@ DGControl.Status.Get(...)
 Only triplets usable by the
 application-side are defined here.
 
-Due to the number of things involved, the properties are 
-lazy-loaded until used.
+These are still low-level calls and TwainSession is the higher
+level abstraction with some state keeping and other checks for ease of use.

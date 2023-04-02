@@ -1,7 +1,7 @@
-﻿using NTwain.DSM;
+﻿using NTwain.Data;
+using NTwain.DSM;
 using System;
 using System.Runtime.InteropServices;
-using TWAINWorkingGroup;
 
 namespace NTwain.Triplets.ControlDATs
 {
@@ -10,11 +10,6 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class EntryPoint
   {
-    /// <summary>
-    /// Loads and opens the DSM.
-    /// </summary>
-    /// <param name="entry"></param>
-    /// <returns></returns>
     public STS Get(ref TW_IDENTITY_LEGACY app, out TW_ENTRYPOINT_DELEGATES entry)
     {
       entry = default;
