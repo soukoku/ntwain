@@ -52,11 +52,11 @@ namespace NTwain.Triplets.ControlDATs
         TW_IDENTITY_MACOSX app2 = app;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
+          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, hwnd);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
+          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, hwnd);
         }
       }
       return rc;

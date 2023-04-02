@@ -22,6 +22,27 @@ namespace NTwain.DSM
     public static extern ushort DSM_Entry
     (
         ref TW_IDENTITY_LEGACY origin, IntPtr dest,
+        DG dg, DAT dat, MSG msg, IntPtr zero
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
+        DG dg, DAT dat, MSG msg, IntPtr zero
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
+        DG dg, DAT dat, MSG msg, ref IntPtr mem
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY_LEGACY origin, IntPtr dest,
         DG dg, DAT dat, MSG msg, ref TW_IDENTITY_LEGACY twidentity
     );
 
@@ -139,6 +160,13 @@ namespace NTwain.DSM
     (
         ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
         DG dg, DAT dat, MSG msg, ref TW_CAPABILITY cap
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
+        DG dg, DAT dat, MSG msg, ref TW_AUDIOINFO auioinfo
     );
   }
 }
