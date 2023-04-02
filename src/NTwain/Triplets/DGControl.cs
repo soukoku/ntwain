@@ -38,5 +38,8 @@ namespace NTwain.Triplets
     private Callback2? _callback2;
     public Callback2 Callback2 => _callback2 ??= new Callback2(Session);
 
+    private XferGroup? _xferGroup;
+    public XferGroup XferGroup => _xferGroup ??= new XferGroup(Session);
+
   }
 }
