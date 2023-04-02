@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 using TWAINWorkingGroup;
+using static System.Collections.Specialized.BitVector32;
 
 namespace NTwain
 {
@@ -151,6 +152,5 @@ namespace NTwain
     /// Fires when <see cref="CurrentSource"/> changes.
     /// </summary>
     public event Action<TwainSession, TW_IDENTITY_LEGACY>? CurrentSourceChanged;
-
   }
 }

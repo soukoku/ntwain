@@ -24,7 +24,6 @@ namespace NTwain.Triplets
       if ((rc = DoIt(MSG.OPENDSM, ref hwnd)) == STS.SUCCESS)
       {
         Session._hwnd = hwnd;
-        Session.State = STATE.S3;
 
         // get default source
         if (Session.DGControl.Identity.GetDefault(out TW_IDENTITY_LEGACY ds) == STS.SUCCESS)
@@ -40,6 +39,7 @@ namespace NTwain.Triplets
             Session._entryPoint = entry;
           }
         }
+        Session.State = STATE.S3;
       }
       return rc;
     }
@@ -54,9 +54,10 @@ namespace NTwain.Triplets
       STS rc;
       if ((rc = DoIt(MSG.CLOSEDSM, ref hwnd)) == STS.SUCCESS)
       {
-        Session._hwnd = IntPtr.Zero;
-        Session._entryPoint = default;
         Session.State = STATE.S2;
+        Session._entryPoint = default;
+        Session.DefaultSource = default;
+        Session._hwnd = IntPtr.Zero;
       }
       return rc;
     }

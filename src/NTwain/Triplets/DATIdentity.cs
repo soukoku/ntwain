@@ -24,16 +24,8 @@ namespace NTwain.Triplets
       if ((rc = DoIt(MSG.OPENDS, ref ds)) == STS.SUCCESS)
       {
         Session.CurrentSource = ds;
+        Session.RegisterCallback();
         Session.State = STATE.S4;
-        //// determine memory mgmt routines used
-        //if ((((DG)Session._appIdentity.SupportedGroups) & DG.DSM2) == DG.DSM2)
-        //{
-        //  TW_ENTRYPOINT_DELEGATES entry = default;
-        //  if (Session.DGControl.EntryPoint.Get(ref entry) == STS.SUCCESS)
-        //  {
-        //    Session._entryPoint = entry;
-        //  }
-        //}
       }
       return rc;
     }
@@ -48,8 +40,8 @@ namespace NTwain.Triplets
       var ds = Session.CurrentSource;
       if ((rc = DoIt(MSG.CLOSEDS, ref ds)) == STS.SUCCESS)
       {
-        Session.CurrentSource = default;
         Session.State = STATE.S3;
+        Session.CurrentSource = default;
       }
       return rc;
     }

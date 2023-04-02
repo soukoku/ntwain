@@ -81,6 +81,9 @@ namespace NTwain
       DGControl = new DGControl(this);
       DGImage = new DGImage(this);
       DGAudio = new DGAudio(this);
+
+      _legacyCallbackDelegate = LegacyCallbackHandler;
+      _osxCallbackDelegate = OSXCallbackHandler;
     }
 
     internal IntPtr _hwnd;

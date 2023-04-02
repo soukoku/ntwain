@@ -30,5 +30,11 @@
     private DATDeviceEvent? _deviceEvent;
     public DATDeviceEvent DeviceEvent => _deviceEvent ??= new DATDeviceEvent(Session);
 
+    private DATCallback? _callback;
+    public DATCallback Callback => _callback ??= new DATCallback(Session);
+
+    private DATCallback2? _callback2;
+    public DATCallback2 Callback2 => _callback2 ??= new DATCallback2(Session);
+
   }
 }

@@ -93,5 +93,26 @@ namespace NTwain.DSM
         MSG msg,
         ref TW_CUSTOMDSDATA twcustomedsdata
     );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    internal static extern UInt16 DSM_Entry
+    (
+        ref TW_IDENTITY_MACOSX origin,
+        ref TW_IDENTITY_MACOSX dest,
+        DG dg,
+        DAT dat,
+        MSG msg,
+        ref TW_CALLBACK twcallback
+    );
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    internal static extern UInt16 DSM_Entry
+    (
+        ref TW_IDENTITY_MACOSX origin,
+        ref TW_IDENTITY_MACOSX dest,
+        DG dg,
+        DAT dat,
+        MSG msg,
+        ref TW_CALLBACK2 twcallback
+    );
   }
 }
