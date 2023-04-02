@@ -1,23 +1,3 @@
-﻿<#@ template debug="false" hostspecific="true" language="C#" #>
-<#@ assembly name="System.Core" #>
-<#@ import namespace="System.IO" #>
-<#@ import namespace="System.Linq" #>
-<#@ import namespace="System.Text" #>
-<#@ import namespace="System.Collections.Generic" #>
-<#@ output extension="dummy" #>
-<#
-List<(string className, string dllPath, string identityClass)> outputs = new() {
- ("OSXLegacyDSM", "/System/Library/Frameworks/framework/TWAIN", "TW_IDENTITY_MACOSX"),
- ("OSXNewDSM", "/Library/Frameworks/TWAINDSM.framework/TWAINDSM", "TW_IDENTITY_MACOSX"),
- ("LinuxDSM", "/usr/local/lib/libtwaindsm.so", "TW_IDENTITY_LEGACY"),
- ("Linux64DSM", "/usr/local/lib64/libtwaindsm.so", "TW_IDENTITY_LEGACY"),
- ("LinuxBotched64DSM", "/usr/local/lib/libtwaindsm.so.2.3.2", "TW_IDENTITY"),
- ("WinLegacyDSM", "twain_32.dll", "TW_IDENTITY_LEGACY"),
- ("WinNewDSM", "twaindsm.dll", "TW_IDENTITY_LEGACY")
-};
-
-foreach(var file in outputs) {
-#>
 using NTwain.Data;
 using System;
 using System.Runtime.InteropServices;
@@ -25,180 +5,168 @@ using System.Runtime.InteropServices;
 namespace NTwain.DSM
 {
   /// <summary>
-  /// Low-level pinvoke methods using <#= file.dllPath #>.
+  /// Low-level pinvoke methods using /usr/local/lib/libtwaindsm.so.2.3.2.
   /// </summary>
-  public static class <#= file.className #>
+  public static class LinuxBotched64DSM
   {
-    const string DsmName = "<#= file.dllPath #>";
+    const string DsmName = "/usr/local/lib/libtwaindsm.so.2.3.2";
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, IntPtr dest,
+        ref TW_IDENTITY origin, IntPtr dest,
         DG dg, DAT dat, MSG msg, ref IntPtr hwnd
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, IntPtr dest,
+        ref TW_IDENTITY origin, IntPtr dest,
         DG dg, DAT dat, MSG msg, IntPtr zero
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, IntPtr zero
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref IntPtr mem
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, IntPtr dest,
-        DG dg, DAT dat, MSG msg, ref <#= file.identityClass #> twidentity
+        ref TW_IDENTITY origin, IntPtr dest,
+        DG dg, DAT dat, MSG msg, ref TW_IDENTITY twidentity
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_STATUS twstatus
     );
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, IntPtr dest,
+        ref TW_IDENTITY origin, IntPtr dest,
         DG dg, DAT dat, MSG msg, ref TW_STATUS twstatus
     );
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, IntPtr dest,
+        ref TW_IDENTITY origin, IntPtr dest,
         DG dg, DAT dat, MSG msg, ref TW_STATUSUTF8 twstatusutf8
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, IntPtr dest,
+        ref TW_IDENTITY origin, IntPtr dest,
         DG dg, DAT dat, MSG msg, ref TW_ENTRYPOINT twentrypoint
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_DEVICEEVENT twdeviceevent
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_CUSTOMDSDATA twcustomedsdata
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_CALLBACK twcallback
     );
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_CALLBACK2 twcallback
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref DG xfergroup
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_USERINTERFACE userinterface
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_EVENT evt
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_PENDINGXFERS pendingxfers
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_SETUPMEMXFER memxfer
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_SETUPFILEXFER filexfer
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_PASSTHRU passthru
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_FILESYSTEM filesystem
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_CAPABILITY cap
     );
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern ushort DSM_Entry
     (
-        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_AUDIOINFO auioinfo
     );
   }
 }
-<#
-  SaveOutput(file.className + ".cs");
-}#>
-
-<#+
-private void SaveOutput(string outputFileName) {
-  string templateDirectory = Path.GetDirectoryName(Host.TemplateFile);
-  string outputFilePath = Path.Combine(templateDirectory, outputFileName);
-  File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
-  this.GenerationEnvironment.Clear();
-}
-#>
