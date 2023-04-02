@@ -2488,7 +2488,7 @@ namespace TWAINWorkingGroup
   /// Translates the contents of Status into a localized UTF8string.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
-  public struct TW_STATUSUTF8
+  public partial struct TW_STATUSUTF8
   {
     public TW_STATUS Status;
     public uint Size;

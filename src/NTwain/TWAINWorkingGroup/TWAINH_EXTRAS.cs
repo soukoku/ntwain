@@ -1,6 +1,8 @@
-﻿using System;
+﻿using NTwain;
+using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace TWAINWorkingGroup
 {
@@ -597,6 +599,53 @@ namespace TWAINWorkingGroup
     public override string ToString()
     {
       return $"{MajorNum}.{MinorNum}";
+    }
+  }
+
+  partial struct TW_STATUSUTF8
+  {
+    /// <summary>
+    /// Tries to read the text content and frees the memory.
+    /// </summary>
+    /// <param name="session"></param>
+    /// <returns></returns>
+    public string? ReadAndFree(TwainSession session)
+    {
+      string? val = null;
+      if (UTF8string != IntPtr.Zero && Size > 0)
+      {
+        var locked = session.Lock(UTF8string);
+        if (locked != IntPtr.Zero)
+        {
+          // does this work? who knows.
+          try
+          {
+#if NETFRAMEWORK
+          var bytes = new byte[Size];
+          Marshal.Copy(locked, bytes, 0, bytes.Length);
+          val = Encoding.UTF8.GetString(bytes);
+#else
+            val = Marshal.PtrToStringUTF8(locked, (int)Size);
+#endif
+          }
+          finally
+          {
+            session.Unlock(UTF8string);
+          }
+        }
+      }
+      Free(session);
+      return val;
+    }
+
+    /// <summary>
+    /// Frees the memory if necessary.
+    /// </summary>
+    /// <param name="session"></param>
+    public void Free(TwainSession session)
+    {
+      session.Free(UTF8string);
+      UTF8string = IntPtr.Zero;
     }
   }
 

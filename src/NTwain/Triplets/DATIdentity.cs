@@ -72,6 +72,7 @@ namespace NTwain.Triplets
     /// <summary>
     /// Gets the default data source.
     /// </summary>
+    /// <param name="ds"></param>
     /// <returns></returns>
     public STS GetDefault(out TW_IDENTITY_LEGACY ds)
     {
@@ -98,6 +99,7 @@ namespace NTwain.Triplets
     /// Gets the first available data source in an enumerating fashion 
     /// (use <see cref="GetNext"/> for subsequent ones).
     /// </summary>
+    /// <param name="ds"></param>
     /// <returns></returns>
     public STS GetFirst(out TW_IDENTITY_LEGACY ds)
     {
@@ -109,6 +111,7 @@ namespace NTwain.Triplets
     /// Gets the next available data source in an enumerating fashion (after using <see cref="GetFirst"/>).
     /// Ends when return values is <see cref="STS.ENDOFLIST"/>.
     /// </summary>
+    /// <param name="ds"></param>
     /// <returns></returns>
     public STS GetNext(out TW_IDENTITY_LEGACY ds)
     {

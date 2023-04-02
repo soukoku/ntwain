@@ -18,5 +18,11 @@
     private DATIdentity? _identity;
     public DATIdentity Identity => _identity ??= new DATIdentity(Session);
 
+    private DATStatus? _status;
+    public DATStatus Status => _status ??= new DATStatus(Session);
+
+    private DATStatusUtf8? _statusUtf8;
+    public DATStatusUtf8 StatusUtf8 => _statusUtf8 ??= new DATStatusUtf8(Session);
+
   }
 }
