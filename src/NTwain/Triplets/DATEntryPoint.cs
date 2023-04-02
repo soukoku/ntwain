@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.DSM;
+using System;
 using System.Runtime.InteropServices;
 using TWAINWorkingGroup;
 
@@ -53,14 +54,13 @@ namespace NTwain.Triplets
       if (TwainPlatform.IsWindows)
       {
         var app = Session.AppIdentity;
-        TW_IDENTITY_LEGACY dummy = default;
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)NativeMethods.WindowsTwain32DsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
+          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
         else
         {
-          rc = (STS)NativeMethods.WindowsTwaindsmDsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
+          rc = (STS)WinNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
       }
       //else if (TwainPlatform.IsLinux)
@@ -70,14 +70,13 @@ namespace NTwain.Triplets
       else if (TwainPlatform.IsMacOSX)
       {
         TW_IDENTITY_MACOSX app = Session.AppIdentity;
-        TW_IDENTITY_MACOSX dummy = default;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)NativeMethods.MacosxTwainDsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
+          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
         else
         {
-          rc = (STS)NativeMethods.MacosxTwaindsmDsmEntryEntrypoint(ref app, ref dummy, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
+          rc = (STS)OSXNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
       }
       return rc;

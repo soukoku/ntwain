@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.DSM;
+using System;
 using TWAINWorkingGroup;
 
 namespace NTwain.Triplets
@@ -69,11 +70,11 @@ namespace NTwain.Triplets
         var app = Session.AppIdentity;
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)NativeMethods.WindowsTwain32DsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
+          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
         }
         else
         {
-          rc = (STS)NativeMethods.WindowsTwaindsmDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
+          rc = (STS)WinNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
         }
         if (rc == STS.SUCCESS) Session.AppIdentity = app;
       }
@@ -88,11 +89,11 @@ namespace NTwain.Triplets
         TW_IDENTITY_MACOSX app = Session.AppIdentity;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)NativeMethods.MacosxTwainDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
+          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
         }
         else
         {
-          rc = (STS)NativeMethods.MacosxTwaindsmDsmEntryParent(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
+          rc = (STS)OSXNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.PARENT, msg, ref hwnd);
         }
         if (rc == STS.SUCCESS)
         {

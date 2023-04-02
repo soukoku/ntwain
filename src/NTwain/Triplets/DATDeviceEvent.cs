@@ -1,4 +1,5 @@
-﻿using TWAINWorkingGroup;
+﻿using NTwain.DSM;
+using TWAINWorkingGroup;
 
 namespace NTwain.Triplets
 {
@@ -31,11 +32,11 @@ namespace NTwain.Triplets
         var ds = Session.CurrentSource;
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)NativeMethods.WindowsTwain32DsmEntryDeviceevent(ref app, ref ds, DG.CONTROL, DAT.DEVICEEVENT, msg, ref data);
+          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.DEVICEEVENT, msg, ref data);
         }
         else
         {
-          rc = (STS)NativeMethods.WindowsTwaindsmDsmEntryDeviceevent(ref app, ref ds, DG.CONTROL, DAT.DEVICEEVENT, msg, ref data);
+          rc = (STS)WinNewDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.DEVICEEVENT, msg, ref data);
         }
       }
       else if (TwainPlatform.IsMacOSX)
@@ -44,11 +45,11 @@ namespace NTwain.Triplets
         TW_IDENTITY_MACOSX ds = Session.CurrentSource;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)NativeMethods.MacosxTwainDsmEntryDeviceevent(ref app, ref ds, DG.CONTROL, DAT.DEVICEEVENT, msg, ref data);
+          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.DEVICEEVENT, msg, ref data);
         }
         else
         {
-          rc = (STS)NativeMethods.MacosxTwaindsmDsmEntryDeviceevent(ref app, ref ds, DG.CONTROL, DAT.DEVICEEVENT, msg, ref data);
+          rc = (STS)OSXNewDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.DEVICEEVENT, msg, ref data);
         }
       }
       return rc;

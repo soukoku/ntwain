@@ -1,5 +1,5 @@
-﻿using System;
-using System.Text;
+﻿using NTwain.DSM;
+using System;
 using TWAINWorkingGroup;
 
 namespace NTwain.Triplets
@@ -30,14 +30,13 @@ namespace NTwain.Triplets
       if (TwainPlatform.IsWindows)
       {
         var app = Session.AppIdentity;
-        var ds = Session.CurrentSource;
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)NativeMethods.WindowsTwain32DsmEntryStatusutf8(ref app, ref ds, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
+          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
         }
         else
         {
-          rc = (STS)NativeMethods.WindowsTwaindsmDsmEntryStatusutf8(ref app, ref ds, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
+          rc = (STS)WinNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
         }
       }
       else if (TwainPlatform.IsMacOSX)
@@ -46,11 +45,11 @@ namespace NTwain.Triplets
         TW_IDENTITY_MACOSX ds = Session.CurrentSource;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)NativeMethods.MacosxTwainDsmEntryStatusutf8(ref app, ref ds, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
+          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
         }
         else
         {
-          rc = (STS)NativeMethods.MacosxTwaindsmDsmEntryStatusutf8(ref app, ref ds, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
+          rc = (STS)OSXNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
         }
       }
       return rc;
