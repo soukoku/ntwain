@@ -87,6 +87,7 @@ namespace NTwain
     }
 
     internal IntPtr _hwnd;
+    internal TW_USERINTERFACE _userInterface;
 
     /// <summary>
     /// Tries to bring the TWAIN session down to some state.
@@ -102,6 +103,9 @@ namespace NTwain
 
         switch (State)
         {
+          case STATE.S5:
+            DGControl.UserInterface.DisableDS(ref _userInterface);
+            break;
           case STATE.S4:
             DGControl.Identity.CloseDS();
             break;

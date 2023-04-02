@@ -42,6 +42,7 @@
       label3 = new System.Windows.Forms.Label();
       btnOpenDef = new System.Windows.Forms.Button();
       btnClose = new System.Windows.Forms.Button();
+      btnShowSettings = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
       splitContainer1.Panel2.SuspendLayout();
@@ -158,6 +159,7 @@
       // 
       // splitContainer1.Panel2
       // 
+      splitContainer1.Panel2.Controls.Add(btnShowSettings);
       splitContainer1.Panel2.Controls.Add(btnClose);
       splitContainer1.Panel2.Controls.Add(label2);
       splitContainer1.Panel2.Controls.Add(lblCurrent);
@@ -203,6 +205,16 @@
       btnClose.UseVisualStyleBackColor = true;
       btnClose.Click += btnClose_Click;
       // 
+      // btnShowSettings
+      // 
+      btnShowSettings.Location = new System.Drawing.Point(161, 32);
+      btnShowSettings.Name = "btnShowSettings";
+      btnShowSettings.Size = new System.Drawing.Size(132, 23);
+      btnShowSettings.TabIndex = 5;
+      btnShowSettings.Text = "Show settings only";
+      btnShowSettings.UseVisualStyleBackColor = true;
+      btnShowSettings.Click += btnShowSettings_Click;
+      // 
       // Form1
       // 
       AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -236,5 +248,6 @@
     private System.Windows.Forms.Button btnOpenDef;
     private System.Windows.Forms.Label lblState;
     private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Button btnShowSettings;
   }
 }

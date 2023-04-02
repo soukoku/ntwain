@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TWAINWorkingGroup;
 
@@ -55,6 +56,7 @@ namespace NTwain
         IntPtr twnull
     )
     {
+      Debug.WriteLine($"Legacy callback got {msg}");
       HandleSourceMsg(msg);
       return (ushort)STS.SUCCESS;
     }
@@ -69,6 +71,7 @@ namespace NTwain
         IntPtr twnull
     )
     {
+      Debug.WriteLine($"OSX callback got {msg}");
       HandleSourceMsg(msg);
       return (ushort)STS.SUCCESS;
     }
@@ -82,10 +85,17 @@ namespace NTwain
         case MSG.DEVICEEVENT:
           break;
         case MSG.CLOSEDSOK:
+          DisableSource();
           break;
         case MSG.CLOSEDSREQ:
+          DisableSource();
           break;
       }
+    }
+
+    public void HandleWin32Message(uint msg)
+    {
+
     }
   }
 }

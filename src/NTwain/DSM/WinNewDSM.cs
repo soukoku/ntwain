@@ -81,5 +81,12 @@ namespace NTwain.DSM
         ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
         DG dg, DAT dat, MSG msg, ref DG xfergroup
     );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    internal static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
+        DG dg, DAT dat, MSG msg, ref TW_USERINTERFACE userinterface
+    );
   }
 }

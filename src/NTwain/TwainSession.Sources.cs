@@ -21,5 +21,37 @@ namespace NTwain
         rc = DGControl.Identity.GetNext(out ds);
       }
     }
+
+    /// <summary>
+    /// Enables the currently open source.
+    /// </summary>
+    /// <param name="showUI">Whether to show driver interface.</param>
+    /// <param name="uiOnly">If true try to display only driver dialog (no capture). 
+    /// Otherwise capturing will begin after this.</param>
+    /// <returns></returns>
+    public STS EnableSource(bool showUI, bool uiOnly)
+    {
+      var ui = new TW_USERINTERFACE
+      {
+        ShowUI = (ushort)((showUI || uiOnly) ? 1 : 0),
+        hParent = _hwnd,
+      };
+      var rc = uiOnly ? DGControl.UserInterface.EnableDSUIOnly(ref ui) : DGControl.UserInterface.EnableDS(ref ui);
+      if (rc == STS.SUCCESS || (!uiOnly && !showUI && rc == STS.CHECKSTATUS))
+      {
+        // keep it around for disable use
+        _userInterface = ui;
+      };
+      return rc;
+    }
+
+    /// <summary>
+    /// Disables the currently enabled source.
+    /// </summary>
+    /// <returns></returns>
+    public STS DisableSource()
+    {
+      return DGControl.UserInterface.DisableDS(ref _userInterface);
+    }
   }
 }

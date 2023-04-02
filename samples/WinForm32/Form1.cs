@@ -100,5 +100,10 @@ namespace WinForm32
 
       twain.DGControl.Identity.OpenDS(twain.DefaultSource);
     }
+
+    private void btnShowSettings_Click(object sender, EventArgs e)
+    {
+      twain.EnableSource(true, true);
+    }
   }
 }

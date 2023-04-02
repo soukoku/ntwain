@@ -14,7 +14,7 @@ namespace NTwain.Triplets
     /// <exception cref="System.ArgumentNullException"></exception>
     public TripletBase(TwainSession session)
     {
-      Session = session ?? throw new ArgumentNullException("session");
+      Session = session ?? throw new ArgumentNullException(nameof(session));
     }
 
     /// <summary>

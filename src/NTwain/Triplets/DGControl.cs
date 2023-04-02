@@ -41,5 +41,8 @@ namespace NTwain.Triplets
     private XferGroup? _xferGroup;
     public XferGroup XferGroup => _xferGroup ??= new XferGroup(Session);
 
+    private UserInterface? _userInterface;
+    public UserInterface UserInterface => _userInterface ??= new UserInterface(Session);
+
   }
 }
