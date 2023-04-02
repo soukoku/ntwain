@@ -19,4 +19,20 @@
   <ItemGroup>
     <Folder Include="Triplets\ImageDATs\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DSM\DSMGenerator.dummy">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DSMGenerator.tt</DependentUpon>
+    </None>
+    <None Update="DSM\DSMGenerator.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>DSMGenerator.dummy</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
 </Project>

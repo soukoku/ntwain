@@ -1,11 +1,11 @@
-﻿using NTwain.Data;
+using NTwain.Data;
 using System;
 using System.Runtime.InteropServices;
 
 namespace NTwain.DSM
 {
   /// <summary>
-  /// Low-level pinvoke methods for twaindsm.dll.
+  /// Low-level pinvoke methods using twaindsm.dll.
   /// </summary>
   public static class WinNewDSM
   {

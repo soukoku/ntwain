@@ -1,11 +1,11 @@
-﻿using NTwain.Data;
+using NTwain.Data;
 using System;
 using System.Runtime.InteropServices;
 
 namespace NTwain.DSM
 {
   /// <summary>
-  /// Low-level pinvoke methods for /Library/Frameworks/TWAINDSM.framework/TWAINDSM.
+  /// Low-level pinvoke methods using /Library/Frameworks/TWAINDSM.framework/TWAINDSM.
   /// </summary>
   public static class OSXNewDSM
   {
