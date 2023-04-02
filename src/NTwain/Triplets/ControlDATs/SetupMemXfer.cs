@@ -4,7 +4,7 @@ using NTwain.DSM;
 namespace NTwain.Triplets.ControlDATs
 {
   /// <summary>
-  /// Contains calls used with <see cref="DG.SetupMemXfer"/> and <see cref="DAT.SETUPMEMXFER"/>.
+  /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.SETUPMEMXFER"/>.
   /// </summary>
   public class SetupMemXfer
   {
@@ -15,11 +15,11 @@ namespace NTwain.Triplets.ControlDATs
       {
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.DEVICEEVENT, MSG.GET, ref data);
+          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.SETUPMEMXFER, MSG.GET, ref data);
         }
         else
         {
-          rc = (STS)WinNewDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.DEVICEEVENT, MSG.GET, ref data);
+          rc = (STS)WinNewDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.SETUPMEMXFER, MSG.GET, ref data);
         }
       }
       else if (TwainPlatform.IsMacOSX)
@@ -28,11 +28,11 @@ namespace NTwain.Triplets.ControlDATs
         TW_IDENTITY_MACOSX ds2 = ds;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.DEVICEEVENT, MSG.GET, ref data);
+          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.SETUPMEMXFER, MSG.GET, ref data);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.DEVICEEVENT, MSG.GET, ref data);
+          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.SETUPMEMXFER, MSG.GET, ref data);
         }
       }
       return rc;

@@ -1,6 +1,6 @@
 # TWAIN dotnet library
 
-NOTE: This is a rewrite test that internally uses 
+NOTE: This is a rewrite test that internally uses parts of
 [twaincs](https://github.com/twain/twain-cs) from
 the TWAIN Working Group. It doesn't fully work yet.
 Use V3 branch for the current version.

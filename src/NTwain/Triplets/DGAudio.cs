@@ -1,6 +1,4 @@
-﻿using TWAINWorkingGroup;
-
-namespace NTwain.Triplets
+﻿namespace NTwain.Triplets
 {
   /// <summary>
   /// Contains triplet calls starting with <see cref="DG.AUDIO"/>.

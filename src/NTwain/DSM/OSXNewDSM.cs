@@ -119,5 +119,26 @@ namespace NTwain.DSM
         ref TW_IDENTITY_MACOSX origin, ref TW_IDENTITY_MACOSX dest,
         DG dg, DAT dat, MSG msg, ref TW_SETUPFILEXFER filexfer
     );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY_MACOSX origin, ref TW_IDENTITY_MACOSX dest,
+        DG dg, DAT dat, MSG msg, ref TW_PASSTHRU passthru
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY_MACOSX origin, ref TW_IDENTITY_MACOSX dest,
+        DG dg, DAT dat, MSG msg, ref TW_FILESYSTEM filesystem
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern ushort DSM_Entry
+    (
+        ref TW_IDENTITY_MACOSX origin, ref TW_IDENTITY_MACOSX dest,
+        DG dg, DAT dat, MSG msg, ref TW_CAPABILITY cap
+    );
   }
 }

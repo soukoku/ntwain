@@ -110,10 +110,5 @@ namespace NTwain
         throw new PlatformNotSupportedException();
       }
     }
-
-    public delegate IntPtr DSM_MEMALLOC(uint size);
-    public delegate void DSM_MEMFREE(IntPtr handle);
-    public delegate IntPtr DSM_MEMLOCK(IntPtr handle);
-    public delegate void DSM_MEMUNLOCK(IntPtr handle);
   }
 }
