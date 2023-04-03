@@ -1,37 +1,43 @@
 ﻿using NTwain.Data;
 using NTwain.Triplets;
 using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 
 namespace NTwain
 {
   // this file contains initialization/cleanup things.
 
-  public partial class TwainSession
+  public partial class TwainSession : IDisposable
   {
     static bool __encodingRegistered;
 
     /// <summary>
     /// Creates TWAIN session with app info derived an executable file.
     /// </summary>
+    /// <param name="uiThreadMarshaller"></param>
     /// <param name="exeFilePath"></param>
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
-    public TwainSession(string exeFilePath,
-        TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
-        this(FileVersionInfo.GetVersionInfo(exeFilePath),
-          appLanguage, appCountry)
+    public TwainSession(IThreadMarshaller uiThreadMarshaller,
+      string exeFilePath,
+      TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
+      this(uiThreadMarshaller, FileVersionInfo.GetVersionInfo(exeFilePath), appLanguage, appCountry)
     { }
     /// <summary>
     /// Creates TWAIN session with app info derived from a <see cref="FileVersionInfo"/> object.
     /// </summary>
+    /// <param name="uiThreadMarshaller"></param>
     /// <param name="appInfo"></param>
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
-    public TwainSession(FileVersionInfo appInfo,
+    public TwainSession(IThreadMarshaller uiThreadMarshaller,
+        FileVersionInfo appInfo,
         TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
-        this(appInfo.CompanyName ?? "",
+        this(uiThreadMarshaller,
+          appInfo.CompanyName ?? "",
           appInfo.ProductName ?? "",
           appInfo.ProductName ?? "",
           new Version(appInfo.FileVersion ?? "1.0"),
@@ -40,6 +46,7 @@ namespace NTwain
     /// <summary>
     /// Creates TWAIN session with explicit app info.
     /// </summary>
+    /// <param name="uiThreadMarshaller"></param>
     /// <param name="companyName"></param>
     /// <param name="productFamily"></param>
     /// <param name="productName"></param>
@@ -48,11 +55,13 @@ namespace NTwain
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
     /// <param name="supportedTypes"></param>
-    public TwainSession(string companyName, string productFamily, string productName,
+    public TwainSession(IThreadMarshaller uiThreadMarshaller,
+        string companyName, string productFamily, string productName,
         Version productVersion, string productDescription = "",
         TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA,
         DG supportedTypes = DG.IMAGE)
     {
+      // todo: find a better place for this
       if (!__encodingRegistered)
       {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -79,10 +88,86 @@ namespace NTwain
 
       _legacyCallbackDelegate = LegacyCallbackHandler;
       _osxCallbackDelegate = OSXCallbackHandler;
+
+      _uiThreadMarshaller = uiThreadMarshaller;
+      StartBackgroundThread();
     }
 
     internal IntPtr _hwnd;
     internal TW_USERINTERFACE _userInterface;
+    // test this a bit
+    readonly BlockingCollection<MSG> _bgPendingMsgs = new();
+    private readonly IThreadMarshaller _uiThreadMarshaller;
+    private bool disposedValue;
+
+    void StartBackgroundThread()
+    {
+      Thread t = new(BackgroundThreadLoop)
+      {
+        IsBackground = true
+      };
+      t.SetApartmentState(ApartmentState.STA); // just in case
+      t.Start();
+    }
+
+    private void BackgroundThreadLoop(object? obj)
+    {
+      foreach (var msg in _bgPendingMsgs.GetConsumingEnumerable())
+      {
+        switch (msg)
+        {
+          case MSG.CLOSEDS:
+          case MSG.CLOSEDSREQ:
+            // this should be done on ui thread (or same one that enabled the ds)
+            _uiThreadMarshaller.BeginInvoke(() =>
+            {
+              DisableSource();
+            });
+            break;
+          case MSG.DEVICEEVENT:
+            if (DGControl.DeviceEvent.Get(ref _appIdentity, ref _currentDS, out TW_DEVICEEVENT de) == STS.SUCCESS)
+            {
+              _uiThreadMarshaller.BeginInvoke(() =>
+              {
+                DeviceEvent?.Invoke(this, de);
+              });
+            }
+            break;
+          case MSG.XFERREADY:
+            break;
+        }
+
+      }
+      Debug.WriteLine("Ending BackgroundThreadLoop...");
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!disposedValue)
+      {
+        if (disposing)
+        {
+          // this will end the bg thread
+          _bgPendingMsgs.CompleteAdding();
+        }
+        disposedValue = true;
+      }
+    }
+
+    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+    // ~TwainSession()
+    // {
+    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+    //     Dispose(disposing: false);
+    // }
+
+    public void Dispose()
+    {
+      // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+      Dispose(disposing: true);
+      GC.SuppressFinalize(this);
+    }
+
 
     /// <summary>
     /// Loads and opens the TWAIN data source manager.

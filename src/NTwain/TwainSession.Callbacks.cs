@@ -90,19 +90,13 @@ namespace NTwain
       switch (msg)
       {
         case MSG.XFERREADY:
-          break;
         case MSG.DEVICEEVENT:
-          // use diff thread to get it
-          //if (DGControl.DeviceEvent.Get(ref _appIdentity, ref _currentDS, out TW_DEVICEEVENT de) == STS.SUCCESS)
-          //{
-
-          //}
-          break;
         case MSG.CLOSEDSOK:
-          DisableSource();
-          break;
         case MSG.CLOSEDSREQ:
-          DisableSource();
+          // the reason we post these to the background is
+          // if they're coming from UI message loop then
+          // this needs to return asap
+          _bgPendingMsgs.Add(msg);
           break;
       }
     }

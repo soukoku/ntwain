@@ -18,10 +18,17 @@ namespace WinForm32
       Text += TwainPlatform.Is32bit ? " 32bit" : " 64bit";
       TwainPlatform.PreferLegacyDSM = false;
 
-      twain = new TwainSession(Assembly.GetExecutingAssembly().Location);
+      twain = new TwainSession(new WinformMarshaller(this), Assembly.GetExecutingAssembly().Location);
       twain.StateChanged += Twain_StateChanged;
       twain.DefaultSourceChanged += Twain_DefaultSourceChanged;
       twain.CurrentSourceChanged += Twain_CurrentSourceChanged;
+
+      this.Disposed += Form1_Disposed;
+    }
+
+    private void Form1_Disposed(object? sender, EventArgs e)
+    {
+      twain.Dispose();
     }
 
     private void Twain_CurrentSourceChanged(TwainSession arg1, TW_IDENTITY_LEGACY ds)

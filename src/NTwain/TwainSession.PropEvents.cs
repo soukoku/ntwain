@@ -130,5 +130,10 @@ namespace NTwain
     /// Fires when <see cref="CurrentSource"/> changes.
     /// </summary>
     public event Action<TwainSession, TW_IDENTITY_LEGACY>? CurrentSourceChanged;
+
+    /// <summary>
+    /// Fires when the source has some device event happening.
+    /// </summary>
+    public event Action<TwainSession, TW_DEVICEEVENT>? DeviceEvent;
   }
 }

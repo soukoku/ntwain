@@ -14,7 +14,7 @@ namespace SampleConsole
     {
       TwainPlatform.PreferLegacyDSM = true;
 
-      var twain = new TwainSession(Assembly.GetExecutingAssembly().Location);
+      var twain = new TwainSession(new InPlaceMarshaller(), Assembly.GetExecutingAssembly().Location);
       twain.StateChanged += Twain_StateChanged;
 
       var hwnd = IntPtr.Zero; // required for windows
