@@ -46,6 +46,7 @@ namespace WinForm32
 
       var hwnd = this.Handle;
       var rc = twain.OpenDSM(hwnd);
+      Application.AddMessageFilter(twain);
       Debug.WriteLine($"OpenDSM={rc}");
     }
 
@@ -54,6 +55,7 @@ namespace WinForm32
       var finalState = twain.TryStepdown(STATE.S2);
       Debug.WriteLine($"Stepdown result state={finalState}");
 
+      Application.RemoveMessageFilter(twain);
       base.OnClosing(e);
     }
 
@@ -104,6 +106,11 @@ namespace WinForm32
     private void btnShowSettings_Click(object sender, EventArgs e)
     {
       twain.EnableSource(true, true);
+    }
+
+    private void btnStart_Click(object sender, EventArgs e)
+    {
+      twain.EnableSource(true, false);
     }
   }
 }

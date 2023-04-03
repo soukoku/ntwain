@@ -41,8 +41,9 @@
       lblState = new System.Windows.Forms.Label();
       label3 = new System.Windows.Forms.Label();
       btnOpenDef = new System.Windows.Forms.Button();
-      btnClose = new System.Windows.Forms.Button();
       btnShowSettings = new System.Windows.Forms.Button();
+      btnClose = new System.Windows.Forms.Button();
+      btnStart = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
       splitContainer1.Panel2.SuspendLayout();
@@ -159,6 +160,7 @@
       // 
       // splitContainer1.Panel2
       // 
+      splitContainer1.Panel2.Controls.Add(btnStart);
       splitContainer1.Panel2.Controls.Add(btnShowSettings);
       splitContainer1.Panel2.Controls.Add(btnClose);
       splitContainer1.Panel2.Controls.Add(label2);
@@ -195,6 +197,16 @@
       btnOpenDef.UseVisualStyleBackColor = true;
       btnOpenDef.Click += btnOpenDef_Click;
       // 
+      // btnShowSettings
+      // 
+      btnShowSettings.Location = new System.Drawing.Point(161, 32);
+      btnShowSettings.Name = "btnShowSettings";
+      btnShowSettings.Size = new System.Drawing.Size(132, 23);
+      btnShowSettings.TabIndex = 5;
+      btnShowSettings.Text = "Show settings only";
+      btnShowSettings.UseVisualStyleBackColor = true;
+      btnShowSettings.Click += btnShowSettings_Click;
+      // 
       // btnClose
       // 
       btnClose.Location = new System.Drawing.Point(13, 32);
@@ -205,15 +217,15 @@
       btnClose.UseVisualStyleBackColor = true;
       btnClose.Click += btnClose_Click;
       // 
-      // btnShowSettings
+      // btnStart
       // 
-      btnShowSettings.Location = new System.Drawing.Point(161, 32);
-      btnShowSettings.Name = "btnShowSettings";
-      btnShowSettings.Size = new System.Drawing.Size(132, 23);
-      btnShowSettings.TabIndex = 5;
-      btnShowSettings.Text = "Show settings only";
-      btnShowSettings.UseVisualStyleBackColor = true;
-      btnShowSettings.Click += btnShowSettings_Click;
+      btnStart.Location = new System.Drawing.Point(299, 32);
+      btnStart.Name = "btnStart";
+      btnStart.Size = new System.Drawing.Size(132, 23);
+      btnStart.TabIndex = 6;
+      btnStart.Text = "Start acquisition";
+      btnStart.UseVisualStyleBackColor = true;
+      btnStart.Click += btnStart_Click;
       // 
       // Form1
       // 
@@ -249,5 +261,6 @@
     private System.Windows.Forms.Label lblState;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Button btnShowSettings;
+    private System.Windows.Forms.Button btnStart;
   }
 }

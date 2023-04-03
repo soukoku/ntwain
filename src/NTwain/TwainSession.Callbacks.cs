@@ -92,6 +92,11 @@ namespace NTwain
         case MSG.XFERREADY:
           break;
         case MSG.DEVICEEVENT:
+          // use diff thread to get it
+          //if (DGControl.DeviceEvent.Get(ref _appIdentity, ref _currentDS, out TW_DEVICEEVENT de) == STS.SUCCESS)
+          //{
+
+          //}
           break;
         case MSG.CLOSEDSOK:
           DisableSource();
@@ -100,11 +105,6 @@ namespace NTwain
           DisableSource();
           break;
       }
-    }
-
-    public void HandleWin32Message(uint msg)
-    {
-
     }
   }
 }
