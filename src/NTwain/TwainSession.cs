@@ -64,7 +64,9 @@ namespace NTwain
       // todo: find a better place for this
       if (!__encodingRegistered)
       {
+#if !NETFRAMEWORK
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
         __encodingRegistered = true;
       }
 
