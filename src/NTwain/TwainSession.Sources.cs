@@ -67,7 +67,7 @@ namespace NTwain
     /// <returns></returns>
     public STS SetDefaultSource(TW_IDENTITY_LEGACY source)
     {
-      // TODO: this doesn't work???
+      // this doesn't work on windows legacy twain_32.dll
 
       var rc = DGControl.Identity.Set(ref _appIdentity, ref source);
       if (rc == STS.SUCCESS)

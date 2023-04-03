@@ -16,7 +16,7 @@ namespace WinForm32
     {
       InitializeComponent();
       Text += TwainPlatform.Is32bit ? " 32bit" : " 64bit";
-      TwainPlatform.PreferLegacyDSM = true;
+      TwainPlatform.PreferLegacyDSM = false;
 
       twain = new TwainSession(Assembly.GetExecutingAssembly().Location);
       twain.StateChanged += Twain_StateChanged;
@@ -46,7 +46,7 @@ namespace WinForm32
 
       var hwnd = this.Handle;
       var rc = twain.OpenDSM(hwnd);
-      Application.AddMessageFilter(twain);
+      twain.AddWinformFilter();
       Debug.WriteLine($"OpenDSM={rc}");
     }
 
@@ -54,8 +54,7 @@ namespace WinForm32
     {
       var finalState = twain.TryStepdown(STATE.S2);
       Debug.WriteLine($"Stepdown result state={finalState}");
-
-      Application.RemoveMessageFilter(twain);
+      twain.RemoveWinformFilter();
       base.OnClosing(e);
     }
 
