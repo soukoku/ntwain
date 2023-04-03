@@ -41,6 +41,8 @@ namespace NTwain.Triplets
 
     public static readonly StatusUtf8 StatusUtf8 = new();
 
+    public static readonly TwainDirect TwainDirect = new();
+
     public static readonly UserInterface UserInterface = new();
 
     public static readonly XferGroup XferGroup = new();
