@@ -88,20 +88,24 @@ namespace NTwain
     /// <returns></returns>
     public STS EnableSource(bool showUI, bool uiOnly)
     {
-      var ui = new TW_USERINTERFACE
+      if (State != STATE.S4) return STS.SEQERROR; // shouldn't check it ourselves but whatev
+
+      _userInterface = new TW_USERINTERFACE
       {
         ShowUI = (ushort)((showUI || uiOnly) ? 1 : 0),
         hParent = _hwnd,
       };
       var rc = uiOnly ?
-        DGControl.UserInterface.EnableDSUIOnly(ref _appIdentity, ref _currentDS, ref ui) :
-        DGControl.UserInterface.EnableDS(ref _appIdentity, ref _currentDS, ref ui);
+        DGControl.UserInterface.EnableDSUIOnly(ref _appIdentity, ref _currentDS, ref _userInterface) :
+        DGControl.UserInterface.EnableDS(ref _appIdentity, ref _currentDS, ref _userInterface);
       if (rc == STS.SUCCESS || (!uiOnly && !showUI && rc == STS.CHECKSTATUS))
       {
-        // keep it around for disable use
-        _userInterface = ui;
         State = STATE.S5;
-      };
+      }
+      else
+      {
+        _userInterface = default;
+      }
       return rc;
     }
 

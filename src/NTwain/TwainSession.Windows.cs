@@ -17,7 +17,7 @@ namespace NTwain
 
   partial class TwainSession : IMessageFilter
   {
-    private HwndSource? _wpfhook;
+    HwndSource? _wpfhook;
 
     /// <summary>
     /// Registers this session for use in a Winform UI thread.
@@ -75,32 +75,24 @@ namespace NTwain
       bool handled = false;
       if (_state >= STATE.S5)
       {
-        TW_EVENT evt = default;
-        try
+        var winMsg = new WIN_MESSAGE
         {
-          var winMsg = new WIN_MESSAGE
-          {
-            hwnd = hWnd,
-            message = (uint)msg,
-            wParam = wParam,
-            lParam = lParam
-          };
-          // no need to do another lock call when using marshal alloc
-          evt.pEvent = Marshal.AllocHGlobal(Marshal.SizeOf(winMsg));
-          Marshal.StructureToPtr(winMsg, evt.pEvent, false);
+          hwnd = hWnd,
+          message = (uint)msg,
+          wParam = wParam,
+          lParam = lParam
+        };
+        // no need to do another lock call when using marshal alloc
+        if (_procEvent.pEvent == IntPtr.Zero)
+          _procEvent.pEvent = Marshal.AllocHGlobal(Marshal.SizeOf(winMsg));
+        Marshal.StructureToPtr(winMsg, _procEvent.pEvent, true);
 
-          var rc = DGControl.Event.ProcessEvent(ref _appIdentity, ref _currentDS, ref evt);
-          handled = rc == STS.DSEVENT;
-          if (evt.TWMessage != 0 && (handled || rc == STS.NOTDSEVENT))
-          {
-            Debug.WriteLine("Thread {0}: CheckIfTwainMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, (MSG)evt.TWMessage);
-            HandleSourceMsg((MSG)evt.TWMessage);
-          }
-        }
-        finally
+        var rc = DGControl.Event.ProcessEvent(ref _appIdentity, ref _currentDS, ref _procEvent);
+        handled = rc == STS.DSEVENT;
+        if (_procEvent.TWMessage != 0 && (handled || rc == STS.NOTDSEVENT))
         {
-          // do we need to free it
-          if (evt.pEvent != IntPtr.Zero) Marshal.FreeHGlobal(evt.pEvent);
+          Debug.WriteLine("Thread {0}: CheckIfTwainMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, (MSG)_procEvent.TWMessage);
+          HandleSourceMsg((MSG)_procEvent.TWMessage);
         }
       }
       return handled;

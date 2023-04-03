@@ -3,6 +3,7 @@ using NTwain.Triplets;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
@@ -96,8 +97,9 @@ namespace NTwain
     }
 
     internal IntPtr _hwnd;
-    internal TW_USERINTERFACE _userInterface;
-    // test this a bit
+    internal TW_USERINTERFACE _userInterface; // kept around for disable use
+    TW_EVENT _procEvent = default; // kept here so the alloc/free only happens once
+    // test threads a bit
     readonly BlockingCollection<MSG> _bgPendingMsgs = new();
     private readonly IThreadMarshaller _uiThreadMarshaller;
     private bool disposedValue;
@@ -152,6 +154,7 @@ namespace NTwain
           // this will end the bg thread
           _bgPendingMsgs.CompleteAdding();
         }
+        if (_procEvent.pEvent != IntPtr.Zero) Marshal.FreeHGlobal(_procEvent.pEvent);
         disposedValue = true;
       }
     }
@@ -263,10 +266,14 @@ namespace NTwain
       int tries = 0;
       while (State > targetState)
       {
-        if (tries++ > 5) break;
+        var oldState = State;
 
-        switch (State)
+        switch (oldState)
         {
+          // todo: finish
+          case STATE.S7:
+          case STATE.S6:
+            break;
           case STATE.S5:
             DisableSource();
             break;
@@ -276,6 +283,11 @@ namespace NTwain
           case STATE.S3:
             CloseDSM();
             break;
+        }
+        if (oldState == State)
+        {
+          // didn't work
+          if (tries++ > 5) break;
         }
       }
       return State;
