@@ -5,10 +5,11 @@
     <Description>Library containing the TWAIN API for dotnet.</Description>
     <TargetFrameworks>net6.0;net6.0-windows;net462;</TargetFrameworks>
     <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!--<AllowUnsafeBlocks>true</AllowUnsafeBlocks>-->
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net462' OR '$(TargetFramework)' == 'net6.0-windows'">
+    <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
@@ -26,9 +27,5 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>DSMGenerator.dummy</LastGenOutput>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 </Project>

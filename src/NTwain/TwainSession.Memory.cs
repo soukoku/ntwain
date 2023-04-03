@@ -1,7 +1,7 @@
 ﻿using NTwain.Data;
+using NTwain.Native;
 using System;
 using System.Runtime.InteropServices;
-using TWAINWorkingGroup;
 
 namespace NTwain
 {
@@ -19,7 +19,7 @@ namespace NTwain
       }
       else if (TwainPlatform.IsWindows)
       {
-        return NativeMethods.GlobalAlloc(0x0042 /* GHND */, (UIntPtr)size);
+        return NativeMemoryMethods.WinGlobalAlloc(NativeMemoryMethods.AllocFlag.GHND, (UIntPtr)size);
       }
       else if (TwainPlatform.IsLinux)
       {
@@ -45,7 +45,7 @@ namespace NTwain
       }
       else if (TwainPlatform.IsWindows)
       {
-        NativeMethods.GlobalFree(handle);
+        NativeMemoryMethods.WinGlobalFree(handle);
       }
       else if (TwainPlatform.IsLinux)
       {
@@ -71,7 +71,7 @@ namespace NTwain
       }
       else if (TwainPlatform.IsWindows)
       {
-        return NativeMethods.GlobalLock(handle);
+        return NativeMemoryMethods.WinGlobalLock(handle);
       }
       else if (TwainPlatform.IsLinux)
       {
@@ -97,7 +97,7 @@ namespace NTwain
       }
       else if (TwainPlatform.IsWindows)
       {
-        NativeMethods.GlobalUnlock(handle);
+        NativeMemoryMethods.WinGlobalUnlock(handle);
       }
       else if (TwainPlatform.IsLinux)
       {

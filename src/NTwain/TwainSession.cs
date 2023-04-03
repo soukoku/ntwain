@@ -3,7 +3,6 @@ using NTwain.Triplets;
 using System;
 using System.Diagnostics;
 using System.Text;
-using TWAINWorkingGroup;
 
 namespace NTwain
 {

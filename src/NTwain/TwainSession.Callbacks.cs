@@ -3,7 +3,6 @@ using NTwain.Triplets;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TWAINWorkingGroup;
 
 namespace NTwain
 {
@@ -11,10 +10,26 @@ namespace NTwain
 
   partial class TwainSession
   {
+
+    delegate ushort LegacyIDCallbackDelegate(
+      ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
+        DG dg, DAT dat, MSG msg, IntPtr twnull
+    );
+    delegate ushort BotchedLinuxCallbackDelegate
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, IntPtr twnull
+    );
+    delegate ushort OSXCallbackDelegate
+    (
+        ref TW_IDENTITY_MACOSX origin, ref TW_IDENTITY_MACOSX dest,
+        DG dg, DAT dat, MSG msg, IntPtr twnull
+    );
+
     // these are kept around while a callback ptr is registered so they
     // don't get gc'd
-    readonly NativeMethods.WindowsDsmEntryCallbackDelegate _legacyCallbackDelegate;
-    readonly NativeMethods.MacosxDsmEntryCallbackDelegate _osxCallbackDelegate;
+    readonly LegacyIDCallbackDelegate _legacyCallbackDelegate;
+    readonly OSXCallbackDelegate _osxCallbackDelegate;
 
     /// <summary>
     /// Try to registers callbacks for after opening the source.
@@ -50,12 +65,8 @@ namespace NTwain
 
     private ushort LegacyCallbackHandler
     (
-        ref TW_IDENTITY_LEGACY origin,
-        ref TW_IDENTITY_LEGACY dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        IntPtr twnull
+        ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
+        DG dg, DAT dat, MSG msg, IntPtr twnull
     )
     {
       Debug.WriteLine($"Legacy callback got {msg}");
@@ -65,12 +76,8 @@ namespace NTwain
 
     private ushort OSXCallbackHandler
     (
-        ref TW_IDENTITY_MACOSX origin,
-        ref TW_IDENTITY_MACOSX dest,
-        DG dg,
-        DAT dat,
-        MSG msg,
-        IntPtr twnull
+        ref TW_IDENTITY_MACOSX origin, ref TW_IDENTITY_MACOSX dest,
+        DG dg, DAT dat, MSG msg, IntPtr twnull
     )
     {
       Debug.WriteLine($"OSX callback got {msg}");
