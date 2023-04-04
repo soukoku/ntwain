@@ -10,7 +10,7 @@ namespace WinForm32
 {
   public partial class Form1 : Form
   {
-    private TwainSession twain;
+    private TwainAppSession twain;
 
     public Form1()
     {
@@ -18,7 +18,7 @@ namespace WinForm32
       Text += TwainPlatform.Is32bit ? " 32bit" : " 64bit";
       TwainPlatform.PreferLegacyDSM = false;
 
-      twain = new TwainSession(new WinformMarshaller(this), Assembly.GetExecutingAssembly().Location);
+      twain = new TwainAppSession(new WinformMarshaller(this), Assembly.GetExecutingAssembly().Location);
       twain.StateChanged += Twain_StateChanged;
       twain.DefaultSourceChanged += Twain_DefaultSourceChanged;
       twain.CurrentSourceChanged += Twain_CurrentSourceChanged;
@@ -31,17 +31,17 @@ namespace WinForm32
       twain.Dispose();
     }
 
-    private void Twain_CurrentSourceChanged(TwainSession arg1, TW_IDENTITY_LEGACY ds)
+    private void Twain_CurrentSourceChanged(TwainAppSession arg1, TW_IDENTITY_LEGACY ds)
     {
       lblCurrent.Text = ds.ProductName;
     }
 
-    private void Twain_DefaultSourceChanged(TwainSession arg1, TW_IDENTITY_LEGACY ds)
+    private void Twain_DefaultSourceChanged(TwainAppSession arg1, TW_IDENTITY_LEGACY ds)
     {
       lblDefault.Text = ds.ProductName;
     }
 
-    private void Twain_StateChanged(TwainSession session, STATE state)
+    private void Twain_StateChanged(TwainAppSession session, STATE state)
     {
       lblState.Text = state.ToString();
     }

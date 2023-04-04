@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace NTwain.DSM
 {
   /// <summary>
-  /// Low-level pinvoke methods using twaindsm.dll.
+  /// Low-level pinvoke methods using twaindsm.dll. 
   /// </summary>
   public static class WinNewDSM
   {

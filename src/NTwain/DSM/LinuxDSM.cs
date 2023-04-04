@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace NTwain.DSM
 {
   /// <summary>
-  /// Low-level pinvoke methods using /usr/local/lib/libtwaindsm.so.
+  /// Low-level pinvoke methods using /usr/local/lib/libtwaindsm.so. 
   /// </summary>
   public static class LinuxDSM
   {

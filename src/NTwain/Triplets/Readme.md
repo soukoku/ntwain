@@ -1,21 +1,20 @@
 All TWAIN operations are done through the a combination of 
 Data Group (DG), Data Argument Type (DAT), and Message (MSG) 
 triplets. Rather than dealing with all the combinations 
-directly and risk passing the wrong thing, all valid triplet 
-combinations are simply made available under this namespace.
+directly in the DSM pinvokes and risk passing the wrong thing, 
+all valid triplet combinations are made available under this namespace.
 
 Example:
-To get the status of the DS, just use the 
-"Get" method (represents MSG), in the
-"Status" property (represnts DAT), in the
-"DGControl" class (represents DG).
+To get the status of the DS, the triplet is
+`DG_Control / DAT_STATUS / MSG_GET` in the documentation. 
+With this wrapper you can use a similar call path:
 
-or better explained in code:
+```cs
+DGControl.Status.Get(...);
+```
 
-DGControl.Status.Get(...)
+Only triplets usable by the application-side are defined here.
 
-Only triplets usable by the
-application-side are defined here.
-
-These are still low-level calls and TwainSession is the higher
-level abstraction with some state keeping and other checks for ease of use.
+These are still relatively low-level calls and `TwainAppSession` is the next higher
+level abstraction with some state keeping and other dotnet-friendly methods
+and events for regular use.

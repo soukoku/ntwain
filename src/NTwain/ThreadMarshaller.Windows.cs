@@ -7,7 +7,7 @@ namespace NTwain
 {
   /// <summary>
   /// An <see cref="IThreadMarshaller"/> that can be used
-  /// to integrate <see cref="TwainSession"/> with
+  /// to integrate <see cref="TwainAppSession"/> with
   /// an existing Winforms app.
   /// </summary>
   public class WinformMarshaller : IThreadMarshaller
@@ -32,7 +32,7 @@ namespace NTwain
 
   /// <summary>
   /// An <see cref="IThreadMarshaller"/> that can be used
-  /// to integrate <see cref="TwainSession"/> with
+  /// to integrate <see cref="TwainAppSession"/> with
   /// an existing WPF app.
   /// </summary>
   public class WpfMarshaller : IThreadMarshaller

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace NTwain.DSM
 {
   /// <summary>
-  /// Low-level pinvoke methods using twain_32.dll.
+  /// Low-level pinvoke methods using twain_32.dll. For 32bit only.
   /// </summary>
   public static class WinLegacyDSM
   {

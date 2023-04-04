@@ -6,7 +6,7 @@ namespace NTwain
 {
   // this file contains data source utilities
 
-  partial class TwainSession
+  partial class TwainAppSession
   {
     /// <summary>
     /// Gets all available sources.

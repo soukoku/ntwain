@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace NTwain.DSM
 {
   /// <summary>
-  /// Low-level pinvoke methods using /System/Library/Frameworks/framework/TWAIN.
+  /// Low-level pinvoke methods using /System/Library/Frameworks/framework/TWAIN. 
   /// </summary>
   public static class OSXLegacyDSM
   {

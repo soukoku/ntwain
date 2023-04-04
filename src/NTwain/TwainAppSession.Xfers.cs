@@ -10,7 +10,7 @@ namespace NTwain
 {
   // this file contains various xfer methods
 
-  partial class TwainSession
+  partial class TwainAppSession
   {
     /// <summary>
     /// Start the transfer loop.

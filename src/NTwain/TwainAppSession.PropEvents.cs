@@ -7,7 +7,7 @@ namespace NTwain
 {
   // this file contains property and event definitions
 
-  partial class TwainSession
+  partial class TwainAppSession
   {
     /// <summary>
     /// Gets the app identity.
@@ -119,22 +119,22 @@ namespace NTwain
     /// <summary>
     /// Fires when <see cref="State"/> changes.
     /// </summary>
-    public event Action<TwainSession, STATE>? StateChanged;
+    public event Action<TwainAppSession, STATE>? StateChanged;
 
     /// <summary>
     /// Fires when <see cref="DefaultSource"/> changes.
     /// </summary>
-    public event Action<TwainSession, TW_IDENTITY_LEGACY>? DefaultSourceChanged;
+    public event Action<TwainAppSession, TW_IDENTITY_LEGACY>? DefaultSourceChanged;
 
     /// <summary>
     /// Fires when <see cref="CurrentSource"/> changes.
     /// </summary>
-    public event Action<TwainSession, TW_IDENTITY_LEGACY>? CurrentSourceChanged;
+    public event Action<TwainAppSession, TW_IDENTITY_LEGACY>? CurrentSourceChanged;
 
     /// <summary>
     /// Fires when the source has some device event happening.
     /// </summary>
-    public event Action<TwainSession, TW_DEVICEEVENT>? DeviceEvent;
+    public event Action<TwainAppSession, TW_DEVICEEVENT>? DeviceEvent;
 
     /// <summary>
     /// Fires when there's an error during transfer.

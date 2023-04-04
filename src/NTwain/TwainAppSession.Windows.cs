@@ -15,7 +15,7 @@ namespace NTwain
 
   // contains parts for winform/wpf message loop integration
 
-  partial class TwainSession : IMessageFilter
+  partial class TwainAppSession : IMessageFilter
   {
     HwndSource? _wpfhook;
 

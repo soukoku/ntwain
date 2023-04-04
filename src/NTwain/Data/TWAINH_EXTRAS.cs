@@ -724,8 +724,7 @@ namespace NTwain.Data
 
             //// unsafe method with 1 copy (does it work?)
             //sbyte* bytes = (sbyte*)locked;
-            //var str = new string(bytes, 0, length, Encoding.UTF8);
-            //return str;
+            //val = new string(bytes, 0, length, Encoding.UTF8);
 #else
             val = Marshal.PtrToStringUTF8(locked, (int)Size);
 #endif

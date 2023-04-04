@@ -7,7 +7,7 @@ namespace NTwain
 {
   // this file contains capability mgmt methods
 
-  partial class TwainSession
+  partial class TwainAppSession
   {
     ///// <summary>
     ///// Gets all the supported caps for the current source.

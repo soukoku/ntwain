@@ -8,7 +8,7 @@ namespace NTwain
 {
   // this file contains callback methods
 
-  partial class TwainSession
+  partial class TwainAppSession
   {
 
     delegate ushort LegacyIDCallbackDelegate(

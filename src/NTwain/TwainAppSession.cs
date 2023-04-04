@@ -11,7 +11,7 @@ namespace NTwain
 {
   // this file contains initialization/cleanup things.
 
-  public partial class TwainSession : IDisposable
+  public partial class TwainAppSession : IDisposable
   {
     static bool __encodingRegistered;
 
@@ -22,7 +22,7 @@ namespace NTwain
     /// <param name="exeFilePath"></param>
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
-    public TwainSession(IThreadMarshaller uiThreadMarshaller,
+    public TwainAppSession(IThreadMarshaller uiThreadMarshaller,
       string exeFilePath,
       TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
       this(uiThreadMarshaller, FileVersionInfo.GetVersionInfo(exeFilePath), appLanguage, appCountry)
@@ -34,7 +34,7 @@ namespace NTwain
     /// <param name="appInfo"></param>
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
-    public TwainSession(IThreadMarshaller uiThreadMarshaller,
+    public TwainAppSession(IThreadMarshaller uiThreadMarshaller,
         FileVersionInfo appInfo,
         TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
         this(uiThreadMarshaller,
@@ -56,7 +56,7 @@ namespace NTwain
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
     /// <param name="supportedTypes"></param>
-    public TwainSession(IThreadMarshaller uiThreadMarshaller,
+    public TwainAppSession(IThreadMarshaller uiThreadMarshaller,
         string companyName, string productFamily, string productName,
         Version productVersion, string productDescription = "",
         TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA,
