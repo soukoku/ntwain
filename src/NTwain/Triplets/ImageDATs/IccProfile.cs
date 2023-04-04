@@ -8,22 +8,22 @@ namespace NTwain.Triplets.ImageDATs
   /// </summary>
   public class IccProfile
   {
-    public STS Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_MEMORY data)
+    public TWRC Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_MEMORY data)
       => DoIt(ref app, ref ds, MSG.GET, out data);
 
-    static STS DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, out TW_MEMORY data)
+    static TWRC DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, out TW_MEMORY data)
     {
-      var rc = STS.FAILURE;
+      var rc = TWRC.FAILURE;
       data = default;
       if (TwainPlatform.IsWindows)
       {
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.ICCPROFILE, msg, ref data);
+          rc = WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.ICCPROFILE, msg, ref data);
         }
         else
         {
-          rc = (STS)WinNewDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.ICCPROFILE, msg, ref data);
+          rc = WinNewDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.ICCPROFILE, msg, ref data);
         }
       }
       else if (TwainPlatform.IsMacOSX)
@@ -32,11 +32,11 @@ namespace NTwain.Triplets.ImageDATs
         TW_IDENTITY_MACOSX ds2 = ds;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.ICCPROFILE, msg, ref data);
+          rc = OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.ICCPROFILE, msg, ref data);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.ICCPROFILE, msg, ref data);
+          rc = OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.ICCPROFILE, msg, ref data);
         }
       }
       return rc;

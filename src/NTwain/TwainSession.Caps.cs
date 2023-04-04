@@ -17,7 +17,7 @@ namespace NTwain
     //{
     //  // just as a sample of how to read cap values
 
-    //  if (GetCapValues(CAP.CAP_SUPPORTEDCAPS, out TW_CAPABILITY value) == STS.SUCCESS)
+    //  if (GetCapValues(CAP.CAP_SUPPORTEDCAPS, out TW_CAPABILITY value) == TWRC.SUCCESS)
     //  {
     //    value.Read(this);
     //  }
@@ -33,7 +33,7 @@ namespace NTwain
     public TWQC QueryCapSupport(CAP cap)
     {
       var value = new TW_CAPABILITY(cap);
-      if (DGControl.Capability.QuerySupport(ref _appIdentity, ref _currentDS, ref value) == STS.SUCCESS)
+      if (DGControl.Capability.QuerySupport(ref _appIdentity, ref _currentDS, ref value) == TWRC.SUCCESS)
       {
         value.Read(this);
       }
@@ -50,7 +50,7 @@ namespace NTwain
     public STS GetCapCurrent(CAP cap, out TW_CAPABILITY value)
     {
       value = new TW_CAPABILITY(cap);
-      return DGControl.Capability.Get(ref _appIdentity, ref _currentDS, ref value);
+      return WrapInSTS(DGControl.Capability.Get(ref _appIdentity, ref _currentDS, ref value));
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ namespace NTwain
     public STS GetCapDefault(CAP cap, out TW_CAPABILITY value)
     {
       value = new TW_CAPABILITY(cap);
-      return DGControl.Capability.GetDefault(ref _appIdentity, ref _currentDS, ref value);
+      return WrapInSTS(DGControl.Capability.GetDefault(ref _appIdentity, ref _currentDS, ref value));
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ namespace NTwain
     public STS GetCapValues(CAP cap, out TW_CAPABILITY value)
     {
       value = new TW_CAPABILITY(cap);
-      return DGControl.Capability.Get(ref _appIdentity, ref _currentDS, ref value);
+      return WrapInSTS(DGControl.Capability.Get(ref _appIdentity, ref _currentDS, ref value));
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ namespace NTwain
       var value = new TW_CAPABILITY(cap);
       var rc = DGControl.Capability.GetHelp(ref _appIdentity, ref _currentDS, ref value);
       value.Free(this);
-      return rc;
+      return WrapInSTS(rc);
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ namespace NTwain
       var value = new TW_CAPABILITY(cap);
       var rc = DGControl.Capability.GetLabel(ref _appIdentity, ref _currentDS, ref value);
       value.Free(this);
-      return rc;
+      return WrapInSTS(rc);
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ namespace NTwain
       var value = new TW_CAPABILITY(cap);
       var rc = DGControl.Capability.GetLabelEnum(ref _appIdentity, ref _currentDS, ref value);
       value.Free(this);
-      return rc;
+      return WrapInSTS(rc);
     }
 
     /// <summary>
@@ -133,7 +133,7 @@ namespace NTwain
     {
       var rc = DGControl.Capability.Set(ref _appIdentity, ref _currentDS, ref value);
       value.Free(this);
-      return rc;
+      return WrapInSTS(rc);
     }
 
     /// <summary>
@@ -145,7 +145,7 @@ namespace NTwain
     {
       var rc = DGControl.Capability.SetConstraint(ref _appIdentity, ref _currentDS, ref value);
       value.Free(this);
-      return rc;
+      return WrapInSTS(rc);
     }
 
     /// <summary>
@@ -158,7 +158,7 @@ namespace NTwain
     public STS ResetCap(CAP cap, out TW_CAPABILITY value)
     {
       value = new TW_CAPABILITY(cap);
-      return DGControl.Capability.Reset(ref _appIdentity, ref _currentDS, ref value);
+      return WrapInSTS(DGControl.Capability.Reset(ref _appIdentity, ref _currentDS, ref value));
     }
 
     /// <summary>
@@ -168,8 +168,7 @@ namespace NTwain
     public STS ResetAllCaps()
     {
       var value = new TW_CAPABILITY(CAP.CAP_SUPPORTEDCAPS);
-      var rc = DGControl.Capability.ResetAll(ref _appIdentity, ref _currentDS, ref value);
-      return rc;
+      return WrapInSTS(DGControl.Capability.ResetAll(ref _appIdentity, ref _currentDS, ref value));
     }
   }
 }

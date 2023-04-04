@@ -24,7 +24,7 @@ namespace NTwain
       bool xferAudio = false;
       var imgXferMech = TWSX.NATIVE;
       var audXferMech = TWSX.NATIVE;
-      if (DGControl.XferGroup.Get(ref _appIdentity, ref _currentDS, out DG xferType) == STS.SUCCESS)
+      if (DGControl.XferGroup.Get(ref _appIdentity, ref _currentDS, out DG xferType) == TWRC.SUCCESS)
       {
         xferAudio = (xferType & DG.AUDIO) == DG.AUDIO;
         var dsName = _currentDS.ProductName.ToString();
@@ -53,7 +53,7 @@ namespace NTwain
 
       TW_PENDINGXFERS pending = default;
       var rc = DGControl.PendingXfers.Get(ref _appIdentity, ref _currentDS, ref pending);
-      if (rc == STS.SUCCESS)
+      if (rc == TWRC.SUCCESS)
       {
         do
         {
@@ -72,7 +72,7 @@ namespace NTwain
           //  DoTransferImage();
           //}
 
-        } while (rc == STS.SUCCESS && pending.Count != 0);
+        } while (rc == TWRC.SUCCESS && pending.Count != 0);
       }
       else
       {
@@ -84,13 +84,13 @@ namespace NTwain
       });
     }
 
-    private void HandleNonSuccessXferCode(STS rc)
+    private void HandleNonSuccessXferCode(TWRC rc)
     {
       switch (rc)
       {
-        case STS.SUCCESS:
-        case STS.XFERDONE:
-        case STS.CANCEL:
+        case TWRC.SUCCESS:
+        case TWRC.XFERDONE:
+        case TWRC.CANCEL:
           // ok to keep going
           break;
         default:

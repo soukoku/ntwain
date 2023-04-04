@@ -14,19 +14,19 @@ namespace NTwain.Triplets.ControlDATs
     /// </summary>
     /// <param name="status"></param>
     /// <returns></returns>
-    public STS GetForDSM(ref TW_IDENTITY_LEGACY app, out TW_STATUS status)
+    public TWRC GetForDSM(ref TW_IDENTITY_LEGACY app, out TW_STATUS status)
     {
       status = default;
-      var rc = STS.FAILURE;
+      var rc = TWRC.FAILURE;
       if (TwainPlatform.IsWindows)
       {
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
+          rc = WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
         }
         else
         {
-          rc = (STS)WinNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
+          rc = WinNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
         }
       }
       else if (TwainPlatform.IsMacOSX)
@@ -34,11 +34,11 @@ namespace NTwain.Triplets.ControlDATs
         TW_IDENTITY_MACOSX app2 = app;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
+          rc = OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
+          rc = OSXNewDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
         }
       }
       return rc;
@@ -49,19 +49,19 @@ namespace NTwain.Triplets.ControlDATs
     /// </summary>
     /// <param name="status"></param>
     /// <returns></returns>
-    public STS GetForDS(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_STATUS status)
+    public TWRC GetForDS(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_STATUS status)
     {
       status = default;
-      var rc = STS.FAILURE;
+      var rc = TWRC.FAILURE;
       if (TwainPlatform.IsWindows)
       {
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
+          rc = WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
         }
         else
         {
-          rc = (STS)WinNewDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
+          rc = WinNewDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
         }
       }
       else if (TwainPlatform.IsMacOSX)
@@ -70,11 +70,11 @@ namespace NTwain.Triplets.ControlDATs
         TW_IDENTITY_MACOSX osxds = ds;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, ref osxds, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
+          rc = OSXLegacyDSM.DSM_Entry(ref app2, ref osxds, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, ref osxds, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
+          rc = OSXNewDSM.DSM_Entry(ref app2, ref osxds, DG.CONTROL, DAT.STATUS, MSG.GET, ref status);
         }
       }
       return rc;

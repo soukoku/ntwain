@@ -8,21 +8,21 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class TwainDirect
   {
-    public STS SetTask(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_TWAINDIRECT data)
+    public TWRC SetTask(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_TWAINDIRECT data)
       => DoIt(ref app, ref ds, MSG.SETTASK, ref data);
 
-    static STS DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, ref TW_TWAINDIRECT data)
+    static TWRC DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, ref TW_TWAINDIRECT data)
     {
-      var rc = STS.FAILURE;
+      var rc = TWRC.FAILURE;
       if (TwainPlatform.IsWindows)
       {
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.CIECOLOR, msg, ref data);
+          rc = WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.CIECOLOR, msg, ref data);
         }
         else
         {
-          rc = (STS)WinNewDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.CIECOLOR, msg, ref data);
+          rc = WinNewDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.CIECOLOR, msg, ref data);
         }
       }
       else if (TwainPlatform.IsMacOSX)
@@ -31,11 +31,11 @@ namespace NTwain.Triplets.ControlDATs
         TW_IDENTITY_MACOSX ds2 = ds;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.CIECOLOR, msg, ref data);
+          rc = OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.CIECOLOR, msg, ref data);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.CIECOLOR, msg, ref data);
+          rc = OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.CIECOLOR, msg, ref data);
         }
       }
       return rc;

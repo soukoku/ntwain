@@ -47,7 +47,7 @@ namespace NTwain
         cbPtr = Marshal.GetFunctionPointerForDelegate(_legacyCallbackDelegate);
       }
 
-      var rc = STS.FAILURE;
+      var rc = TWRC.FAILURE;
 
       // per the spec (pg 8-10), apps for 2.2 or higher uses callback2 so try this first
       if (_appIdentity.ProtocolMajor > 2 || (_appIdentity.ProtocolMajor >= 2 && _appIdentity.ProtocolMinor >= 2))
@@ -55,7 +55,7 @@ namespace NTwain
         var cb2 = new TW_CALLBACK2 { CallBackProc = cbPtr };
         rc = DGControl.Callback2.RegisterCallback(ref _appIdentity, ref _currentDS, ref cb2);
       }
-      if (rc != STS.SUCCESS)
+      if (rc != TWRC.SUCCESS)
       {
         // always try old callback
         var cb = new TW_CALLBACK { CallBackProc = cbPtr };
@@ -71,7 +71,7 @@ namespace NTwain
     {
       Debug.WriteLine($"Legacy callback got {msg}");
       HandleSourceMsg(msg);
-      return (ushort)STS.SUCCESS;
+      return (ushort)TWRC.SUCCESS;
     }
 
     private ushort OSXCallbackHandler
@@ -82,7 +82,7 @@ namespace NTwain
     {
       Debug.WriteLine($"OSX callback got {msg}");
       HandleSourceMsg(msg);
-      return (ushort)STS.SUCCESS;
+      return (ushort)TWRC.SUCCESS;
     }
 
     private void HandleSourceMsg(MSG msg)

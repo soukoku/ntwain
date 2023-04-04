@@ -111,40 +111,123 @@ namespace NTwain.Data
     True = 1
   }
 
+  ///// <summary>
+  ///// A more dotnet-friendly representation of <see cref="TW_METRICS"/>.
+  ///// </summary>
+  //public struct Metrics
+  //{
+  //  /// <summary>
+  //  /// Return code of querying the metrics.
+  //  /// </summary>
+  //  public STS ReturnCode;
+
+  //  /// <summary>
+  //  /// The number of sheets of paper processed by the scanner.
+  //  /// </summary>
+  //  public int Sheets;
+
+  //  /// <summary>
+  //  /// The number of images made available for transfer by the driver. This is not
+  //  /// necessarily the same as the number of images actually transferred, since the
+  //  /// application may opt to skip transfers or to end without transferring all images.
+  //  /// </summary>
+  //  public int Images;
+  //}
+
   /// <summary>
-  /// A more dotnet-friendly representation of <see cref="TW_METRICS"/>.
+  /// More dotnet friendly return type for twaindirect set result.
   /// </summary>
-  public struct Metrics
-  {
-    /// <summary>
-    /// Return code of querying the metrics.
-    /// </summary>
-    public STS ReturnCode;
-
-    /// <summary>
-    /// The number of sheets of paper processed by the scanner.
-    /// </summary>
-    public int Sheets;
-
-    /// <summary>
-    /// The number of images made available for transfer by the driver. This is not
-    /// necessarily the same as the number of images actually transferred, since the
-    /// application may opt to skip transfers or to end without transferring all images.
-    /// </summary>
-    public int Images;
-  }
-
   public struct TwainDirectTaskResult
   {
     /// <summary>
     /// Return code of task.
     /// </summary>
-    public STS ReturnCode;
+    public TWRC ReturnCode;
 
     /// <summary>
     /// The response of the task in JSON if successful.
     /// </summary>
     public string ResponseJson;
+  }
+
+  public enum TWRC : ushort
+  {
+    // Custom base (same for TWRC and TWCC)...
+    CUSTOMBASE = 0x8000,
+
+    // Return codes...
+    SUCCESS = 0,
+    FAILURE = 1,
+    CHECKSTATUS = 2,
+    CANCEL = 3,
+    DSEVENT = 4,
+    NOTDSEVENT = 5,
+    XFERDONE = 6,
+    ENDOFLIST = 7,
+    INFONOTSUPPORTED = 8,
+    DATANOTAVAILABLE = 9,
+    BUSY = 10,
+    SCANNERLOCKED = 11,
+  }
+  public enum TWCC : ushort
+  {
+    // Condition codes (always associated with TWRC_FAILURE)...
+    CUSTOMBASE = 0x8000,
+    BUMMER = 1,
+    LOWMEMORY = 2,
+    NODS = 3,
+    MAXCONNECTIONS = 4,
+    OPERATIONERROR = 5,
+    BADCAP = 6,
+    BADPROTOCOL = 9,
+    BADVALUE = 10,
+    SEQERROR = 11,
+    BADDEST = 12,
+    CAPUNSUPPORTED = 13,
+    CAPBADOPERATION = 14,
+    CAPSEQERROR = 15,
+    DENIED = 16,
+    FILEEXISTS = 17,
+    FILENOTFOUND = 18,
+    NOTEMPTY = 19,
+    PAPERJAM = 20,
+    PAPERDOUBLEFEED = 21,
+    FILEWRITEERROR = 22,
+    CHECKDEVICEONLINE = 23,
+    INTERLOCK = 24,
+    DAMAGEDCORNER = 25,
+    FOCUSERROR = 26,
+    DOCTOOLIGHT = 27,
+    DOCTOODARK = 28,
+    NOMEDIA = 29
+  }
+
+  //[StructLayout(LayoutKind.Sequential, Pack = 2)]
+
+  /// <summary>
+  /// Extended return type with original return code and additional
+  /// status if RC is <see cref="TWRC.FAILURE"/>.
+  /// </summary>
+  public struct STS
+  {
+    /// <summary>
+    /// The original return code.
+    /// </summary>
+    public TWRC RC;
+
+    /// <summary>
+    /// Additional status if RC is <see cref="TWRC.FAILURE"/>.
+    /// </summary>
+    public TW_STATUS STATUS;
+
+    ///// <summary>
+    ///// For easy conversion from DSM calls to the one we want
+    ///// </summary>
+    ///// <param name="rc"></param>
+    //public static implicit operator STS(TWRC rc)
+    //{
+    //  return new STS { RC = rc };
+    //}
   }
 
   ///// <summary>

@@ -8,41 +8,41 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class Capability
   {
-    public STS Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+    public TWRC Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.GET, ref data);
-    public STS GetCurrent(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+    public TWRC GetCurrent(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.GETCURRENT, ref data);
-    public STS GetDefault(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+    public TWRC GetDefault(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.GETDEFAULT, ref data);
-    public STS GetHelp(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+    public TWRC GetHelp(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.GETHELP, ref data);
-    public STS GetLabel(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+    public TWRC GetLabel(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.GETLABEL, ref data);
-    public STS GetLabelEnum(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+    public TWRC GetLabelEnum(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.GETLABELENUM, ref data);
-    public STS QuerySupport(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+    public TWRC QuerySupport(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.QUERYSUPPORT, ref data);
-    public STS Reset(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+    public TWRC Reset(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.RESET, ref data);
-    public STS ResetAll(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+    public TWRC ResetAll(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.RESETALL, ref data);
-    public STS Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+    public TWRC Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.SET, ref data);
-    public STS SetConstraint(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+    public TWRC SetConstraint(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.SETCONSTRAINT, ref data);
 
-    static STS DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, ref TW_CAPABILITY data)
+    static TWRC DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, ref TW_CAPABILITY data)
     {
-      var rc = STS.FAILURE;
+      var rc = TWRC.FAILURE;
       if (TwainPlatform.IsWindows)
       {
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
+          rc = WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
         }
         else
         {
-          rc = (STS)WinNewDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
+          rc = WinNewDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
         }
       }
       else if (TwainPlatform.IsMacOSX)
@@ -51,11 +51,11 @@ namespace NTwain.Triplets.ControlDATs
         TW_IDENTITY_MACOSX ds2 = ds;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
+          rc = OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
+          rc = OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
         }
       }
       return rc;

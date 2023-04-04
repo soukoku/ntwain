@@ -129,7 +129,7 @@ namespace NTwain
             });
             break;
           case MSG.DEVICEEVENT:
-            if (DGControl.DeviceEvent.Get(ref _appIdentity, ref _currentDS, out TW_DEVICEEVENT de) == STS.SUCCESS)
+            if (DGControl.DeviceEvent.Get(ref _appIdentity, ref _currentDS, out TW_DEVICEEVENT de) == TWRC.SUCCESS)
             {
               _uiThreadMarshaller.BeginInvoke(() =>
               {
@@ -187,12 +187,12 @@ namespace NTwain
     public STS OpenDSM(IntPtr hwnd)
     {
       var rc = DGControl.Parent.OpenDSM(ref _appIdentity, hwnd);
-      if (rc == STS.SUCCESS)
+      if (rc == TWRC.SUCCESS)
       {
         _hwnd = hwnd;
         State = STATE.S3;
         // get default source
-        if (DGControl.Identity.GetDefault(ref _appIdentity, out TW_IDENTITY_LEGACY ds) == STS.SUCCESS)
+        if (DGControl.Identity.GetDefault(ref _appIdentity, out TW_IDENTITY_LEGACY ds) == TWRC.SUCCESS)
         {
           _defaultDS = ds;
           DefaultSourceChanged?.Invoke(this, _defaultDS);
@@ -204,7 +204,7 @@ namespace NTwain
           DGControl.EntryPoint.Get(ref _appIdentity, out _entryPoint);
         }
       }
-      return rc;
+      return WrapInSTS(rc, true);
     }
 
 
@@ -215,7 +215,7 @@ namespace NTwain
     public STS CloseDSM()
     {
       var rc = DGControl.Parent.CloseDSM(ref _appIdentity, _hwnd);
-      if (rc == STS.SUCCESS)
+      if (rc == TWRC.SUCCESS)
       {
         State = STATE.S2;
         _entryPoint = default;
@@ -223,18 +223,30 @@ namespace NTwain
         DefaultSourceChanged?.Invoke(this, _defaultDS);
         _hwnd = IntPtr.Zero;
       }
-      return rc;
+      return WrapInSTS(rc, true);
+    }
+
+    /// <summary>
+    /// Wraps return code with additional status if not successful.
+    /// </summary>
+    /// <param name="rc"></param>
+    /// <param name="dsmOnly">true to get status for dsm operation error, false to get status for ds operation error,</param>
+    /// <returns></returns>
+    protected STS WrapInSTS(TWRC rc, bool dsmOnly = false)
+    {
+      if (rc != TWRC.FAILURE) return new STS { RC = rc };
+      return new STS { RC = rc, STATUS = GetLastStatus(dsmOnly) };
     }
 
     /// <summary>
     /// Gets the last status code if an operation did not return success.
     /// This can only be done once after an error.
     /// </summary>
-    /// <param name="forDsmOnly">true to get status for dsm operation error, false to get status for ds operation error,</param>
+    /// <param name="dsmOnly">true to get status for dsm operation error, false to get status for ds operation error,</param>
     /// <returns></returns>
-    public TW_STATUS GetLastStatus(bool forDsmOnly)
+    public TW_STATUS GetLastStatus(bool dsmOnly = false)
     {
-      if (forDsmOnly)
+      if (dsmOnly)
       {
         DGControl.Status.GetForDSM(ref _appIdentity, out TW_STATUS status);
         return status;
@@ -254,7 +266,7 @@ namespace NTwain
     /// <returns></returns>
     public string? GetStatusText(TW_STATUS status)
     {
-      if (DGControl.StatusUtf8.Get(ref _appIdentity, status, out TW_STATUSUTF8 extendedStatus) == STS.SUCCESS)
+      if (DGControl.StatusUtf8.Get(ref _appIdentity, status, out TW_STATUSUTF8 extendedStatus) == TWRC.SUCCESS)
       {
         return extendedStatus.Read(this);
       }

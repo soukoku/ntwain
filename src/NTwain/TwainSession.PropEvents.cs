@@ -73,7 +73,7 @@ namespace NTwain
       get
       {
         var sts = DGControl.CustomDsData.Get(ref _appIdentity, ref _currentDS, out TW_CUSTOMDSDATA data);
-        if (sts == STS.SUCCESS)
+        if (sts == TWRC.SUCCESS)
         {
           if (data.hData != IntPtr.Zero && data.InfoLength > 0)
           {

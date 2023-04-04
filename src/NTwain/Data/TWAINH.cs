@@ -2480,7 +2480,7 @@ namespace NTwain.Data
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
   public struct TW_STATUS
   {
-    public ushort ConditionCode;
+    public TWCC ConditionCode;
     public ushort Data;
   }
 
@@ -4276,54 +4276,54 @@ namespace NTwain.Data
   ///////////////////////////////////////////////////////////////////////////////
   #region Return Codes and Condition Codes section...
 
-  public enum STS
-  {
-    // Custom base (same for TWRC and TWCC)...
-    CUSTOMBASE = 0x8000,
+  //public enum STS
+  //{
+  //  // Custom base (same for TWRC and TWCC)...
+  //  CUSTOMBASE = 0x8000,
 
-    // Return codes...
-    SUCCESS = 0,
-    FAILURE = 1,
-    CHECKSTATUS = 2,
-    CANCEL = 3,
-    DSEVENT = 4,
-    NOTDSEVENT = 5,
-    XFERDONE = 6,
-    ENDOFLIST = 7,
-    INFONOTSUPPORTED = 8,
-    DATANOTAVAILABLE = 9,
-    BUSY = 10,
-    SCANNERLOCKED = 11,
+  //  // Return codes...
+  //  SUCCESS = 0,
+  //  FAILURE = 1,
+  //  CHECKSTATUS = 2,
+  //  CANCEL = 3,
+  //  DSEVENT = 4,
+  //  NOTDSEVENT = 5,
+  //  XFERDONE = 6,
+  //  ENDOFLIST = 7,
+  //  INFONOTSUPPORTED = 8,
+  //  DATANOTAVAILABLE = 9,
+  //  BUSY = 10,
+  //  SCANNERLOCKED = 11,
 
-    // Condition codes (always associated with TWRC_FAILURE)...
-    BUMMER = TwainConst.STSCC + 1,
-    LOWMEMORY = TwainConst.STSCC + 2,
-    NODS = TwainConst.STSCC + 3,
-    MAXCONNECTIONS = TwainConst.STSCC + 4,
-    OPERATIONERROR = TwainConst.STSCC + 5,
-    BADCAP = TwainConst.STSCC + 6,
-    BADPROTOCOL = TwainConst.STSCC + 9,
-    BADVALUE = TwainConst.STSCC + 10,
-    SEQERROR = TwainConst.STSCC + 11,
-    BADDEST = TwainConst.STSCC + 12,
-    CAPUNSUPPORTED = TwainConst.STSCC + 13,
-    CAPBADOPERATION = TwainConst.STSCC + 14,
-    CAPSEQERROR = TwainConst.STSCC + 15,
-    DENIED = TwainConst.STSCC + 16,
-    FILEEXISTS = TwainConst.STSCC + 17,
-    FILENOTFOUND = TwainConst.STSCC + 18,
-    NOTEMPTY = TwainConst.STSCC + 19,
-    PAPERJAM = TwainConst.STSCC + 20,
-    PAPERDOUBLEFEED = TwainConst.STSCC + 21,
-    FILEWRITEERROR = TwainConst.STSCC + 22,
-    CHECKDEVICEONLINE = TwainConst.STSCC + 23,
-    INTERLOCK = TwainConst.STSCC + 24,
-    DAMAGEDCORNER = TwainConst.STSCC + 25,
-    FOCUSERROR = TwainConst.STSCC + 26,
-    DOCTOOLIGHT = TwainConst.STSCC + 27,
-    DOCTOODARK = TwainConst.STSCC + 28,
-    NOMEDIA = TwainConst.STSCC + 29
-  }
+  //  // Condition codes (always associated with TWRC_FAILURE)...
+  //  BUMMER = TwainConst.STSCC + 1,
+  //  LOWMEMORY = TwainConst.STSCC + 2,
+  //  NODS = TwainConst.STSCC + 3,
+  //  MAXCONNECTIONS = TwainConst.STSCC + 4,
+  //  OPERATIONERROR = TwainConst.STSCC + 5,
+  //  BADCAP = TwainConst.STSCC + 6,
+  //  BADPROTOCOL = TwainConst.STSCC + 9,
+  //  BADVALUE = TwainConst.STSCC + 10,
+  //  SEQERROR = TwainConst.STSCC + 11,
+  //  BADDEST = TwainConst.STSCC + 12,
+  //  CAPUNSUPPORTED = TwainConst.STSCC + 13,
+  //  CAPBADOPERATION = TwainConst.STSCC + 14,
+  //  CAPSEQERROR = TwainConst.STSCC + 15,
+  //  DENIED = TwainConst.STSCC + 16,
+  //  FILEEXISTS = TwainConst.STSCC + 17,
+  //  FILENOTFOUND = TwainConst.STSCC + 18,
+  //  NOTEMPTY = TwainConst.STSCC + 19,
+  //  PAPERJAM = TwainConst.STSCC + 20,
+  //  PAPERDOUBLEFEED = TwainConst.STSCC + 21,
+  //  FILEWRITEERROR = TwainConst.STSCC + 22,
+  //  CHECKDEVICEONLINE = TwainConst.STSCC + 23,
+  //  INTERLOCK = TwainConst.STSCC + 24,
+  //  DAMAGEDCORNER = TwainConst.STSCC + 25,
+  //  FOCUSERROR = TwainConst.STSCC + 26,
+  //  DOCTOOLIGHT = TwainConst.STSCC + 27,
+  //  DOCTOODARK = TwainConst.STSCC + 28,
+  //  NOMEDIA = TwainConst.STSCC + 29
+  //}
 
   /// <summary>
   /// bit patterns: for query the operation that are supported by the data source on a capability

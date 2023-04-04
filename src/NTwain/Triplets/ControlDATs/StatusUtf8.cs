@@ -18,19 +18,19 @@ namespace NTwain.Triplets.ControlDATs
     /// <param name="status"></param>
     /// <param name="extendedStatus"></param>
     /// <returns></returns>
-    public STS Get(ref TW_IDENTITY_LEGACY app, TW_STATUS status, out TW_STATUSUTF8 extendedStatus)
+    public TWRC Get(ref TW_IDENTITY_LEGACY app, TW_STATUS status, out TW_STATUSUTF8 extendedStatus)
     {
       extendedStatus = new TW_STATUSUTF8 { Status = status };
-      var rc = STS.FAILURE;
+      var rc = TWRC.FAILURE;
       if (TwainPlatform.IsWindows)
       {
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
+          rc = WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
         }
         else
         {
-          rc = (STS)WinNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
+          rc = WinNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
         }
       }
       else if (TwainPlatform.IsMacOSX)
@@ -38,11 +38,11 @@ namespace NTwain.Triplets.ControlDATs
         TW_IDENTITY_MACOSX app2 = app;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
+          rc = OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
+          rc = OSXNewDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
         }
       }
       return rc;

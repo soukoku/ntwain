@@ -10,12 +10,12 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class EntryPoint
   {
-    public STS Get(ref TW_IDENTITY_LEGACY app, out TW_ENTRYPOINT_DELEGATES entry)
+    public TWRC Get(ref TW_IDENTITY_LEGACY app, out TW_ENTRYPOINT_DELEGATES entry)
     {
       entry = default;
       TW_ENTRYPOINT rawentry = default;
       var rc = DoIt(ref app, MSG.GET, ref rawentry);
-      if (rc == STS.SUCCESS)
+      if (rc == TWRC.SUCCESS)
       {
         entry.Size = rawentry.Size;
         entry.DSM_Entry = rawentry.DSM_Entry;
@@ -39,18 +39,18 @@ namespace NTwain.Triplets.ControlDATs
       return rc;
     }
 
-    static STS DoIt(ref TW_IDENTITY_LEGACY app, MSG msg, ref TW_ENTRYPOINT entry)
+    static TWRC DoIt(ref TW_IDENTITY_LEGACY app, MSG msg, ref TW_ENTRYPOINT entry)
     {
-      var rc = STS.FAILURE;
+      var rc = TWRC.FAILURE;
       if (TwainPlatform.IsWindows)
       {
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
+          rc = WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
         else
         {
-          rc = (STS)WinNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
+          rc = WinNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
       }
       //else if (TwainPlatform.IsLinux)
@@ -62,11 +62,11 @@ namespace NTwain.Triplets.ControlDATs
         TW_IDENTITY_MACOSX app2 = app;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
+          rc = OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
+          rc = OSXNewDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
       }
       return rc;

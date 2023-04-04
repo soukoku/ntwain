@@ -9,21 +9,21 @@ namespace NTwain.Triplets.AudioDATs
   /// </summary>
   public class AudioFileXfer
   {
-    public STS Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds)
+    public TWRC Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds)
       => DoIt(ref app, ref ds, MSG.GET);
 
-    static STS DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg)
+    static TWRC DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg)
     {
-      var rc = STS.FAILURE;
+      var rc = TWRC.FAILURE;
       if (TwainPlatform.IsWindows)
       {
         if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.AUDIO, DAT.AUDIOFILEXFER, msg, IntPtr.Zero);
+          rc = WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.AUDIO, DAT.AUDIOFILEXFER, msg, IntPtr.Zero);
         }
         else
         {
-          rc = (STS)WinNewDSM.DSM_Entry(ref app, ref ds, DG.AUDIO, DAT.AUDIOFILEXFER, msg, IntPtr.Zero);
+          rc = WinNewDSM.DSM_Entry(ref app, ref ds, DG.AUDIO, DAT.AUDIOFILEXFER, msg, IntPtr.Zero);
         }
       }
       else if (TwainPlatform.IsMacOSX)
@@ -32,11 +32,11 @@ namespace NTwain.Triplets.AudioDATs
         TW_IDENTITY_MACOSX ds2 = ds;
         if (TwainPlatform.PreferLegacyDSM)
         {
-          rc = (STS)OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.AUDIO, DAT.AUDIOFILEXFER, msg, IntPtr.Zero);
+          rc = OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.AUDIO, DAT.AUDIOFILEXFER, msg, IntPtr.Zero);
         }
         else
         {
-          rc = (STS)OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.AUDIO, DAT.AUDIOFILEXFER, msg, IntPtr.Zero);
+          rc = OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.AUDIO, DAT.AUDIOFILEXFER, msg, IntPtr.Zero);
         }
       }
       return rc;

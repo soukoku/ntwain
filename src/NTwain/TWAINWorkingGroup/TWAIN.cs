@@ -1144,7 +1144,7 @@
 //            TWAIN.TW_CAPABILITY twcapability = default(TWAIN.TW_CAPABILITY);
 //            CsvToCapability(ref twcapability, ref szStatus, a_szTwmemref);
 //            sts = DatCapability((TWAIN.DG)iDg, (TWAIN.MSG)iMsg, ref twcapability);
-//            if ((sts == TWAIN.STS.SUCCESS) || (sts == TWAIN.STS.CHECKSTATUS))
+//            if ((sts == TWAIN.TWRC.SUCCESS) || (sts == TWAIN.STS.CHECKSTATUS))
 //            {
 //              // Convert the data to CSV...
 //              a_szTwmemref = CapabilityToCsv(twcapability, ((TWAIN.MSG)iMsg != TWAIN.MSG.QUERYSUPPORT));
@@ -5588,7 +5588,7 @@
 
 //              // Hmmm...
 //              if ((a_msg == MSG.GETCURRENT)
-//                  && (m_twaincommand.Get(lIndex).sts == STS.SUCCESS)
+//                  && (m_twaincommand.Get(lIndex).sts == TWRC.SUCCESS)
 //                  && (m_twaincommand.Get(lIndex).twcapability.ConType == (TWON)0)
 //                  && (m_twaincommand.Get(lIndex).twcapability.hContainer == IntPtr.Zero))
 //              {
@@ -5761,7 +5761,7 @@
 //      // Log it...
 //      if (Log.GetLevel() > 0)
 //      {
-//        if ((a_msg == MSG.RESETALL) || ((sts != STS.SUCCESS) && (sts != STS.CHECKSTATUS)))
+//        if ((a_msg == MSG.RESETALL) || ((sts != TWRC.SUCCESS) && (sts != STS.CHECKSTATUS)))
 //        {
 //          Log.LogSendAfter(stsRcOrCc, "");
 //        }
@@ -5778,7 +5778,7 @@
 
 //        // if it was successful, then go with what was set.
 //        // otherwise ask the DS what it is currently set to
-//        if (sts == STS.SUCCESS)
+//        if (sts == TWRC.SUCCESS)
 //        {
 //          str = CapabilityToCsv(a_twcapability, (a_msg != TWAIN.MSG.QUERYSUPPORT));
 //        }
@@ -5788,7 +5788,7 @@
 //          twcapability.Cap = CAP.CAP_LANGUAGE;
 //          twcapability.ConType = TWON.ONEVALUE;
 //          sts = DatCapability(a_dg, MSG.GETCURRENT, ref twcapability);
-//          if (sts == STS.SUCCESS)
+//          if (sts == TWRC.SUCCESS)
 //          {
 //            str = CapabilityToCsv(twcapability, (a_msg != TWAIN.MSG.QUERYSUPPORT));
 //          }
@@ -6413,7 +6413,7 @@
 //      }
 
 //      // If we were successful, then squirrel away the data...
-//      if (sts == TWAIN.STS.SUCCESS)
+//      if (sts == TWAIN.TWRC.SUCCESS)
 //      {
 //        m_twentrypointdelegates = default(TWAIN.TW_ENTRYPOINT_DELEGATES);
 //        m_twentrypointdelegates.Size = a_twentrypoint.Size;
@@ -7787,7 +7787,7 @@
 //            }
 
 //            // We got it...
-//            if (sts == STS.SUCCESS)
+//            if (sts == TWRC.SUCCESS)
 //            {
 //              a_twidentity = TwidentitylegacyToTwidentity(twidentitylegacy);
 //              m_linuxdsm = LinuxDsm.IsLatestDsm;
@@ -7809,7 +7809,7 @@
 //              }
 
 //              // We got it...
-//              if (sts == STS.SUCCESS)
+//              if (sts == TWRC.SUCCESS)
 //              {
 //                a_twidentity = Twidentitylinux64ToTwidentity(twidentitylinux64);
 //                m_linuxdsm = LinuxDsm.Is020302Dsm64bit;
@@ -7877,7 +7877,7 @@
 //      // If we opened, go to state 4...
 //      if (a_msg == MSG.OPENDS)
 //      {
-//        if (sts == STS.SUCCESS)
+//        if (sts == TWRC.SUCCESS)
 //        {
 //          // Change our state, and record the identity we picked...
 //          m_state = STATE.S4;
@@ -8016,7 +8016,7 @@
 //      // If we closed, go to state 3...
 //      else if (a_msg == MSG.CLOSEDS)
 //      {
-//        if (sts == STS.SUCCESS)
+//        if (sts == TWRC.SUCCESS)
 //        {
 //          m_state = STATE.S3;
 //        }
@@ -10089,9 +10089,9 @@
 
 //        // We only need one success to get through this...
 //        sts = STS.BUMMER;
-//        if ((stsLatest == STS.SUCCESS) || (sts020302Dsm64bit == STS.SUCCESS))
+//        if ((stsLatest == TWRC.SUCCESS) || (sts020302Dsm64bit == TWRC.SUCCESS))
 //        {
-//          sts = STS.SUCCESS;
+//          sts = TWRC.SUCCESS;
 //        }
 //      }
 
@@ -10141,7 +10141,7 @@
 //      // TWAIN's state in the log file...
 //      if (a_msg == MSG.OPENDSM)
 //      {
-//        if (sts == STS.SUCCESS)
+//        if (sts == TWRC.SUCCESS)
 //        {
 //          m_state = STATE.S3;
 //          Log.RegisterTwain(this);
@@ -10152,7 +10152,7 @@
 //      // TWAIN's state in the log file...
 //      else if (a_msg == MSG.CLOSEDSM)
 //      {
-//        if (sts == STS.SUCCESS)
+//        if (sts == TWRC.SUCCESS)
 //        {
 //          m_state = STATE.S2;
 //          Log.RegisterTwain(null);
@@ -10521,7 +10521,7 @@
 //      // If we endxfer, go to state 5 or 6...
 //      if (a_msg == MSG.ENDXFER)
 //      {
-//        if (sts == STS.SUCCESS)
+//        if (sts == TWRC.SUCCESS)
 //        {
 //          if (a_twpendingxfers.Count == 0)
 //          {
@@ -10539,7 +10539,7 @@
 //      // If we reset, go to state 5...
 //      else if (a_msg == MSG.RESET)
 //      {
-//        if (sts == STS.SUCCESS)
+//        if (sts == TWRC.SUCCESS)
 //        {
 //          m_blAcceptXferReady = true;
 //          m_blIsMsgxferready = false;
@@ -11849,7 +11849,7 @@
 //      }
 
 //      // If successful, decide which way to jump...
-//      if (sts == STS.SUCCESS)
+//      if (sts == TWRC.SUCCESS)
 //      {
 //        switch (a_msg)
 //        {
@@ -12725,7 +12725,7 @@
 //          // Scan and GUI commands...
 //          case DAT.USERINTERFACE:
 //            threaddata.sts = DatUserinterface(threaddata.dg, threaddata.msg, ref threaddata.twuserinterface);
-//            if (threaddata.sts == STS.SUCCESS)
+//            if (threaddata.sts == TWRC.SUCCESS)
 //            {
 //              if ((threaddata.dg == DG.CONTROL) && (threaddata.dat == DAT.USERINTERFACE) && (threaddata.msg == MSG.DISABLEDS))
 //              {
@@ -13103,7 +13103,7 @@
 //      }
 
 //      // Uh-oh, the status call failed...
-//      if (sts != STS.SUCCESS)
+//      if (sts != TWRC.SUCCESS)
 //      {
 //        return (a_sts);
 //      }
@@ -13800,7 +13800,7 @@
 //    )
 //    {
 //      ProcessEvent(msg);
-//      return ((UInt16)STS.SUCCESS);
+//      return ((UInt16)TWRC.SUCCESS);
 //    }
 
 //    /// <summary>
@@ -13824,7 +13824,7 @@
 //    )
 //    {
 //      ProcessEvent(msg);
-//      return ((UInt16)STS.SUCCESS);
+//      return ((UInt16)TWRC.SUCCESS);
 //    }
 
 //    /// <summary>
@@ -13848,7 +13848,7 @@
 //    )
 //    {
 //      ProcessEvent(msg);
-//      return ((UInt16)STS.SUCCESS);
+//      return ((UInt16)TWRC.SUCCESS);
 //    }
 
 //    /// <summary>

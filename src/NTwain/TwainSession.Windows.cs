@@ -89,8 +89,8 @@ namespace NTwain
         Marshal.StructureToPtr(winMsg, _procEvent.pEvent, true);
 
         var rc = DGControl.Event.ProcessEvent(ref _appIdentity, ref _currentDS, ref _procEvent);
-        handled = rc == STS.DSEVENT;
-        if (_procEvent.TWMessage != 0 && (handled || rc == STS.NOTDSEVENT))
+        handled = rc == TWRC.DSEVENT;
+        if (_procEvent.TWMessage != 0 && (handled || rc == TWRC.NOTDSEVENT))
         {
           Debug.WriteLine("Thread {0}: CheckIfTwainMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, (MSG)_procEvent.TWMessage);
           HandleSourceMsg((MSG)_procEvent.TWMessage);
