@@ -1148,7 +1148,7 @@ namespace NTwain.Data
   /// Used by application to get/set capability from/in a data source.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 2, CharSet = CharSet.Ansi)]
-  public struct TW_CAPABILITY
+  public partial struct TW_CAPABILITY
   {
     public CAP Cap;
     public TWON ConType;
@@ -2557,6 +2557,7 @@ namespace NTwain.Data
   /// <summary>
   /// Flags used in TW_MEMORY structure.
   /// </summary>
+  [Flags]
   public enum TWMF : ushort
   {
     APPOWNS = 0x0001,
@@ -3778,6 +3779,7 @@ namespace NTwain.Data
   /// <summary>
   /// Data Groups...
   /// </summary>
+  [Flags]
   public enum DG : uint
   {
     CONTROL = 0x1,
@@ -4327,6 +4329,7 @@ namespace NTwain.Data
   /// bit patterns: for query the operation that are supported by the data source on a capability
   /// Application gets these through DG_CONTROL/DAT_CAPABILITY/MSG_QUERYSUPPORT
   /// </summary>
+  [Flags]
   public enum TWQC : ushort
   {
     Unknown = 0,

@@ -606,16 +606,28 @@ namespace NTwain.Data
   partial struct TW_STATUSUTF8
   {
     /// <summary>
-    /// Tries to read the text content and frees the memory.
+    /// Frees the memory if necessary.
     /// </summary>
-    /// <param name="session"></param>
+    /// <param name="mgr"></param>
+    public void Free(IMemoryManager mgr)
+    {
+      // session already checks for zero
+      mgr.Free(UTF8string);
+      UTF8string = IntPtr.Zero;
+    }
+
+    /// <summary>
+    /// Tries to read the text content and optionally frees the memory.
+    /// </summary>
+    /// <param name="mgr"></param>
+    /// <param name="freeMemory">Whether to free the pointer after reads.</param>
     /// <returns></returns>
-    public string? ReadAndFree(TwainSession session)
+    public string? Read(IMemoryManager mgr, bool freeMemory = true)
     {
       string? val = null;
       if (UTF8string != IntPtr.Zero && Size > 0)
       {
-        var locked = session.Lock(UTF8string);
+        var locked = mgr.Lock(UTF8string);
         if (locked != IntPtr.Zero)
         {
           // does this work? who knows.
@@ -637,22 +649,37 @@ namespace NTwain.Data
           }
           finally
           {
-            session.Unlock(UTF8string);
+            mgr.Unlock(UTF8string);
           }
         }
       }
-      Free(session);
+      if (freeMemory) Free(mgr);
       return val;
+    }
+  }
+
+  partial struct TW_CAPABILITY
+  {
+    public TW_CAPABILITY(CAP cap)
+    {
+      Cap = cap;
+      ConType = (TWON)TwainConst.TWON_DONTCARE16;
     }
 
     /// <summary>
     /// Frees the memory if necessary.
     /// </summary>
-    /// <param name="session"></param>
-    public void Free(TwainSession session)
+    /// <param name="mgr"></param>
+    public void Free(IMemoryManager mgr)
     {
-      session.Free(UTF8string);
-      UTF8string = IntPtr.Zero;
+      // session already checks for zero
+      mgr.Free(hContainer);
+      hContainer = IntPtr.Zero;
+    }
+
+    public void Read(IMemoryManager mgr, bool freeMemory = true)
+    {
+      if (freeMemory) Free(mgr);
     }
   }
 

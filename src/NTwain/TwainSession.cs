@@ -256,7 +256,7 @@ namespace NTwain
     {
       if (DGControl.StatusUtf8.Get(ref _appIdentity, status, out TW_STATUSUTF8 extendedStatus) == STS.SUCCESS)
       {
-        return extendedStatus.ReadAndFree(this);
+        return extendedStatus.Read(this);
       }
       return null;
     }

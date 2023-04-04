@@ -28,6 +28,8 @@ namespace NTwain.Triplets.ControlDATs
       => DoIt(ref app, ref ds, MSG.RESETALL, ref data);
     public STS Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
       => DoIt(ref app, ref ds, MSG.SET, ref data);
+    public STS SetConstraint(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
+      => DoIt(ref app, ref ds, MSG.SETCONSTRAINT, ref data);
 
     static STS DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, ref TW_CAPABILITY data)
     {

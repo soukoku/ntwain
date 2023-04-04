@@ -7,7 +7,7 @@ namespace NTwain
 {
   // this file contains memory methods
 
-  partial class TwainSession
+  partial class TwainSession : IMemoryManager
   {
     internal TW_ENTRYPOINT_DELEGATES _entryPoint;
 
