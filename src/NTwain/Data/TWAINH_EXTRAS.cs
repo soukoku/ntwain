@@ -710,30 +710,7 @@ namespace NTwain.Data
       string? val = null;
       if (UTF8string != IntPtr.Zero && Size > 0)
       {
-        var locked = mgr.Lock(UTF8string);
-        if (locked != IntPtr.Zero)
-        {
-          // does this work? who knows.
-          try
-          {
-#if NETFRAMEWORK
-            // safe method but with 2 copies (arr and parsed string)
-            var bytes = new byte[Size];
-            Marshal.Copy(locked, bytes, 0, bytes.Length);
-            val = Encoding.UTF8.GetString(bytes);
-
-            //// unsafe method with 1 copy (does it work?)
-            //sbyte* bytes = (sbyte*)locked;
-            //val = new string(bytes, 0, length, Encoding.UTF8);
-#else
-            val = Marshal.PtrToStringUTF8(locked, (int)Size);
-#endif
-          }
-          finally
-          {
-            mgr.Unlock(UTF8string);
-          }
-        }
+        val = ValueReader.PtrToStringUTF8(mgr, UTF8string, (int)Size);
       }
       if (freeMemory) Free(mgr);
       return val;
