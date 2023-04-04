@@ -135,5 +135,10 @@ namespace NTwain
     /// Fires when the source has some device event happening.
     /// </summary>
     public event Action<TwainSession, TW_DEVICEEVENT>? DeviceEvent;
+
+    /// <summary>
+    /// Fires when there's an error during transfer.
+    /// </summary>
+    public event EventHandler<TransferErrorEventArgs>? TransferError;
   }
 }

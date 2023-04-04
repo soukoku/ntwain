@@ -36,6 +36,8 @@ namespace NTwain
 
     /// <summary>
     /// Registers this session for use in a WPF UI thread.
+    /// This requires the hwnd used in <see cref="OpenDSM(IntPtr)"/>
+    /// be a valid WPF window handle.
     /// </summary>
     public void AddWpfHook()
     {
@@ -57,12 +59,11 @@ namespace NTwain
       }
     }
 
-    bool System.Windows.Forms.IMessageFilter.PreFilterMessage(ref System.Windows.Forms.Message m)
+    bool IMessageFilter.PreFilterMessage(ref Message m)
     {
       return CheckIfTwainMessage(m.HWnd, m.Msg, m.WParam, m.LParam);
     }
 
-    // wpf use with HwndSource.FromHwnd(Handle).AddHook(
     IntPtr WpfHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
       handled = CheckIfTwainMessage(hwnd, msg, wParam, lParam);

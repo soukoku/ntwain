@@ -97,8 +97,8 @@ namespace NTwain
     }
 
     internal IntPtr _hwnd;
-    internal TW_USERINTERFACE _userInterface; // kept around for disable use
-    TW_EVENT _procEvent = default; // kept here so the alloc/free only happens once
+    internal TW_USERINTERFACE _userInterface; // kept around for disable to use
+    TW_EVENT _procEvent; // kept here so the alloc/free only happens once
     // test threads a bit
     readonly BlockingCollection<MSG> _bgPendingMsgs = new();
     private readonly IThreadMarshaller _uiThreadMarshaller;
@@ -138,6 +138,11 @@ namespace NTwain
             }
             break;
           case MSG.XFERREADY:
+            _uiThreadMarshaller.Invoke(() =>
+            {
+              State = STATE.S6;
+            });
+            EnterTransferRoutine();
             break;
         }
 

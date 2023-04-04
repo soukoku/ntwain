@@ -24,7 +24,7 @@ namespace NTwain
   }
 
   /// <summary>
-  /// No marshalling occurs. Invokes happen right in place.
+  /// No marshalling occurs. Invokes happen right in place synchronously.
   /// </summary>
   public class InPlaceMarshaller : IThreadMarshaller
   {

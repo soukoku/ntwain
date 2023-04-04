@@ -5,7 +5,11 @@ using System.Windows.Threading;
 
 namespace NTwain
 {
-
+  /// <summary>
+  /// An <see cref="IThreadMarshaller"/> that can be used
+  /// to integrate <see cref="TwainSession"/> with
+  /// an existing Winforms app.
+  /// </summary>
   public class WinformMarshaller : IThreadMarshaller
   {
     private readonly Control control;
@@ -26,6 +30,11 @@ namespace NTwain
     }
   }
 
+  /// <summary>
+  /// An <see cref="IThreadMarshaller"/> that can be used
+  /// to integrate <see cref="TwainSession"/> with
+  /// an existing WPF app.
+  /// </summary>
   public class WpfMarshaller : IThreadMarshaller
   {
     private readonly Dispatcher dispatcher;

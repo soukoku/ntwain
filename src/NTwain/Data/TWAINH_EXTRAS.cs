@@ -2,6 +2,7 @@
 using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace NTwain.Data
@@ -621,9 +622,15 @@ namespace NTwain.Data
           try
           {
 #if NETFRAMEWORK
-          var bytes = new byte[Size];
-          Marshal.Copy(locked, bytes, 0, bytes.Length);
-          val = Encoding.UTF8.GetString(bytes);
+            // safe method but with 2 copies (arr and parsed string)
+            var bytes = new byte[Size];
+            Marshal.Copy(locked, bytes, 0, bytes.Length);
+            val = Encoding.UTF8.GetString(bytes);
+
+            //// unsafe method with 1 copy (does it work?)
+            //sbyte* bytes = (sbyte*)locked;
+            //var str = new string(bytes, 0, length, Encoding.UTF8);
+            //return str;
 #else
             val = Marshal.PtrToStringUTF8(locked, (int)Size);
 #endif

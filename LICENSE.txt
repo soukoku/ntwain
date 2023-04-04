@@ -1,3 +1,5 @@
+# For NTwain
+
 The MIT License (MIT)
 
 Copyright (c) 2012 - 2023 Eugene Wang
@@ -21,10 +23,9 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
+# Third Party Code Used
 
-
-# for twaincs
-
+## For twaincs
 
 Copyright(C) 2013 - 2021 Kodak Alaris Inc.
 
