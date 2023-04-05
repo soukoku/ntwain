@@ -1,0 +1,7 @@
+{
+  // have to use v6 since v7 doesn't generate correct version attributes
+  // for -windows variant
+  "sdk": {
+    "version": "6.0"
+  }
+}

@@ -1,24 +1,24 @@
 <Project>
   <PropertyGroup>
-    <!--change in each release-->
-    <PackageVersion>4.0.0-alpha.1</PackageVersion>
-
+    <!--change these in each release-->
+    <VersionPrefix>4.0.0.0</VersionPrefix>
+    <VersionSuffix>alpha.1</VersionSuffix>
+    
     <!--keep it the same until major # changes-->
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
-    
+
+    <!--even more unlikely to change-->
+    <FileVersion>$(VersionPrefix)</FileVersion>
     <PackageProjectUrl>https://github.com/soukoku/ntwain</PackageProjectUrl>
     <PackageTags>twain scan</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Scanner-Icon.png</PackageIcon>
-    <!--<PackageIconUrl>https://github.com/soukoku/ntwain/blob/master/Scanner-Icon.png?raw=true</PackageIconUrl>-->
     <RepositoryUrl>https://github.com/soukoku/ntwain</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <!--<Copyright>Eugene Wang 2012</Copyright>-->
+    <Copyright>Eugene Wang 2012-2023</Copyright>
     <Authors>Eugene Wang</Authors>
 
-    <Version>$(PkgVersion)</Version>
-    <FileVersion>$(PkgVersion)</FileVersion>
     <LangVersion>11</LangVersion>
     <!--don't warn missing xml docs, naming conventions, and suppressions-->
     <NoWarn>1591,IDE1006,IDE0079</NoWarn>
@@ -35,7 +35,7 @@
   <ItemGroup>
     <None Include="../../Scanner-Icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>

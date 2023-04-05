@@ -72,11 +72,11 @@ namespace NTwain
 
     private bool CheckIfTwainMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
     {
-      // this handles the message from a typical WndProc message loop and check if it's from the TWAIN source.
+      // this handles the message from a typical WndProc message loop and checks if it's for the TWAIN source.
       bool handled = false;
       if (_state >= STATE.S5)
       {
-        var winMsg = new WIN_MESSAGE
+        WIN_MESSAGE winMsg = new()
         {
           hwnd = hWnd,
           message = (uint)msg,

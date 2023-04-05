@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace WinForm32
+namespace WinFormSample
 {
   internal static class Program
   {

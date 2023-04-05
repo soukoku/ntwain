@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace WinForm32
+namespace WinFormSample
 {
   public partial class Form1 : Form
   {
@@ -15,7 +15,9 @@ namespace WinForm32
     public Form1()
     {
       InitializeComponent();
-      Text += TwainPlatform.Is32bit ? " 32bit" : " 64bit";
+      var libVer = FileVersionInfo.GetVersionInfo(typeof(TwainAppSession).Assembly.Location).FileVersion;
+      Text += $"{(TwainPlatform.Is32bit ? " 32bit" : " 64bit")} on NTwain {libVer}";
+      
       TwainPlatform.PreferLegacyDSM = false;
 
       twain = new TwainAppSession(new WinformMarshaller(this), Assembly.GetExecutingAssembly().Location);

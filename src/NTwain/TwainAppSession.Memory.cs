@@ -9,7 +9,7 @@ namespace NTwain
 
   partial class TwainAppSession : IMemoryManager
   {
-    internal TW_ENTRYPOINT_DELEGATES _entryPoint;
+    TW_ENTRYPOINT_DELEGATES _entryPoint;
 
     public IntPtr Alloc(uint size)
     {

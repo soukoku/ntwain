@@ -6,10 +6,17 @@
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<PlatformTarget>x86</PlatformTarget>
+    <RootNamespace>WinFormSample</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\src\NTwain\NTwain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="platforms\qwindows.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

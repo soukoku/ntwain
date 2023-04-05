@@ -1,4 +1,4 @@
-﻿namespace WinForm32
+﻿namespace WinFormSample
 {
   partial class Form1
   {
