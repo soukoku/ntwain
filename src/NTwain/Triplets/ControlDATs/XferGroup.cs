@@ -8,22 +8,12 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class XferGroup
   {
-    /// <summary>
-    /// Gets the transfer group used.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
     public TWRC Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out DG data)
     {
       data = default;
       return DoIt(ref app, ref ds, MSG.GET, ref data);
     }
 
-    /// <summary>
-    /// Sets the transfer group to be used.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
     public TWRC Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, DG data)
     {
       return DoIt(ref app, ref ds, MSG.SET, ref data);

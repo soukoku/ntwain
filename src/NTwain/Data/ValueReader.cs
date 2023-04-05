@@ -15,6 +15,7 @@ namespace NTwain.Data
     /// <summary>
     /// Reads pointer as UTF8 string.
     /// </summary>
+    /// <param name="memMgr"></param>
     /// <param name="data">Pointer to string.</param>
     /// <param name="length">Number of bytes to read.</param>
     /// <returns></returns>

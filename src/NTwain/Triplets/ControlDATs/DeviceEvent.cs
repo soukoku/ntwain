@@ -8,11 +8,6 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class DeviceEvent
   {
-    /// <summary>
-    /// Gets the device event detail.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
     public TWRC Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_DEVICEEVENT data)
     {
       data = default;

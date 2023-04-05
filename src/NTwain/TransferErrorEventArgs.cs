@@ -21,7 +21,7 @@ namespace NTwain
     /// Initializes a new instance of the <see cref="TransferErrorEventArgs"/> class.
     /// </summary>
     /// <param name="code">The code.</param>
-    /// <param name="status">Additional status info from TWAIN.</param>
+    /// <param name="info">Additional status info from TWAIN.</param>
     public TransferErrorEventArgs(STS code, string? info)
     {
       Code = code;

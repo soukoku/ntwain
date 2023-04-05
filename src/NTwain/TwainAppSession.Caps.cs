@@ -83,7 +83,7 @@ namespace NTwain
     /// Gets a CAP's help text (description).
     /// </summary>
     /// <param name="cap"></param>
-    /// <param name="value"></param>
+    /// <param name="help"></param>
     /// <returns></returns>
     public STS GetCapHelp(CAP cap, out string? help)
     {
@@ -98,7 +98,7 @@ namespace NTwain
     /// Gets a CAP's text name label.
     /// </summary>
     /// <param name="cap"></param>
-    /// <param name="value"></param>
+    /// <param name="label"></param>
     /// <returns></returns>
     public STS GetCapLabel(CAP cap, out string? label)
     {
@@ -113,7 +113,7 @@ namespace NTwain
     /// Gets a CAP's value label texts.
     /// </summary>
     /// <param name="cap"></param>
-    /// <param name="value"></param>
+    /// <param name="labels"></param>
     /// <returns></returns>
     public STS GetCapLabelEnum(CAP cap, out string[]? labels)
     {
@@ -127,7 +127,7 @@ namespace NTwain
     /// <summary>
     /// Sets a CAP's current value.
     /// </summary>
-    /// <param name="cap"></param>
+    /// <param name="value"></param>
     /// <returns></returns>
     public STS SetCap(ref TW_CAPABILITY value)
     {
@@ -139,7 +139,7 @@ namespace NTwain
     /// <summary>
     /// Sets a CAP's constraint values.
     /// </summary>
-    /// <param name="cap"></param>
+    /// <param name="value"></param>
     /// <returns></returns>
     public STS SetConstraint(ref TW_CAPABILITY value)
     {

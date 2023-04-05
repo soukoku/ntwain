@@ -240,6 +240,7 @@ namespace NTwain.Data
     /// Set our value...
     /// </summary>
     /// <param name="a_sz"></param>
+    /// <param name="a_blMayHavePrefix"></param>
     private void SetValue(string a_sz, bool a_blMayHavePrefix)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...
@@ -415,6 +416,7 @@ namespace NTwain.Data
     /// Set our value...
     /// </summary>
     /// <param name="a_sz"></param>
+    /// <param name="a_blMayHavePrefix"></param>
     private void SetValue(string a_sz, bool a_blMayHavePrefix)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...
@@ -629,6 +631,7 @@ namespace NTwain.Data
     /// Set our value...
     /// </summary>
     /// <param name="a_sz"></param>
+    /// <param name="a_blMayHavePrefix"></param>
     private void SetValue(string a_sz, bool a_blMayHavePrefix)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...
@@ -923,6 +926,7 @@ namespace NTwain.Data
     /// Set our value...
     /// </summary>
     /// <param name="a_sz"></param>
+    /// <param name="a_blMayHavePrefix"></param>
     private void SetValue(string a_sz, bool a_blMayHavePrefix)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...

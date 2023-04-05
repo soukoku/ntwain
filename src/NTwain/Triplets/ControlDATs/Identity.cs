@@ -19,6 +19,8 @@ namespace NTwain.Triplets.ControlDATs
     /// Opens the TWAIN data source selector dialog
     /// to choose the default data source.
     /// </summary>
+    /// <param name="app"></param>
+    /// <param name="ds"></param>
     /// <returns></returns>
     public TWRC UserSelect(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)
     {
@@ -35,6 +37,7 @@ namespace NTwain.Triplets.ControlDATs
     /// <summary>
     /// Sets the default data source.
     /// </summary>
+    /// <param name="app"></param>
     /// <param name="ds"></param>
     /// <returns></returns>
     public TWRC Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds)
@@ -44,6 +47,7 @@ namespace NTwain.Triplets.ControlDATs
     /// Gets the first available data source in an enumerating fashion 
     /// (use <see cref="GetNext"/> for subsequent ones).
     /// </summary>
+    /// <param name="app"></param>
     /// <param name="ds"></param>
     /// <returns></returns>
     public TWRC GetFirst(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)
@@ -54,8 +58,9 @@ namespace NTwain.Triplets.ControlDATs
 
     /// <summary>
     /// Gets the next available data source in an enumerating fashion (after using <see cref="GetFirst"/>).
-    /// Ends when return values is <see cref="STS.ENDOFLIST"/>.
+    /// Ends when return values is <see cref="TWRC.ENDOFLIST"/>.
     /// </summary>
+    /// <param name="app"></param>
     /// <param name="ds"></param>
     /// <returns></returns>
     public TWRC GetNext(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)

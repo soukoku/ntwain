@@ -1,4 +1,5 @@
-﻿using NTwain.Triplets.AudioDATs;
+﻿using NTwain.Data;
+using NTwain.Triplets.AudioDATs;
 
 namespace NTwain.Triplets
 {

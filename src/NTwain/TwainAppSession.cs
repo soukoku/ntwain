@@ -110,7 +110,9 @@ namespace NTwain
       {
         IsBackground = true
       };
+#if WINDOWS || NETFRAMEWORK
       t.SetApartmentState(ApartmentState.STA); // just in case
+#endif
       t.Start();
     }
 

@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTwain-temp", "src\NTwain-t
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinForm32", "samples\WinForm32\WinForm32.csproj", "{7792A94E-D0B4-440D-8BD5-CA1CA548782C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForm64", "samples\WinForm64\WinForm64.csproj", "{C9666CB2-C9A6-48C8-AB51-D616A48058A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinForm64", "samples\WinForm64\WinForm64.csproj", "{C9666CB2-C9A6-48C8-AB51-D616A48058A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,7 +41,6 @@ Global
 		{3C8A3CF9-A60D-4F21-B866-D291A7AABD4A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A7020B90-5CE4-43EF-A75D-5E1F9B501CAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A7020B90-5CE4-43EF-A75D-5E1F9B501CAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7020B90-5CE4-43EF-A75D-5E1F9B501CAC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7792A94E-D0B4-440D-8BD5-CA1CA548782C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7792A94E-D0B4-440D-8BD5-CA1CA548782C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7792A94E-D0B4-440D-8BD5-CA1CA548782C}.Release|Any CPU.ActiveCfg = Release|Any CPU

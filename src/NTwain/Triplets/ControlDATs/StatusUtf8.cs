@@ -11,10 +11,11 @@ namespace NTwain.Triplets.ControlDATs
   {
     /// <summary>
     /// Gets the extended text info for a previously received <see cref="TW_STATUS"/>.
-    /// If this is called you should try to extract the string value from it once
-    /// with <see cref="TW_STATUSUTF8.ReadAndFree"/> or call <see cref="TW_STATUSUTF8.Free"/>
+    /// If this is called you should try to extract the string value from it
+    /// with <see cref="TW_STATUSUTF8.Read(IMemoryManager, bool)"/> or call <see cref="TW_STATUSUTF8.Free"/>
     /// so there's no memory leak.
     /// </summary>
+    /// <param name="app"></param>
     /// <param name="status"></param>
     /// <param name="extendedStatus"></param>
     /// <returns></returns>

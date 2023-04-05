@@ -9,11 +9,6 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class Status
   {
-    /// <summary>
-    /// Gets the current status for the DSM.
-    /// </summary>
-    /// <param name="status"></param>
-    /// <returns></returns>
     public TWRC GetForDSM(ref TW_IDENTITY_LEGACY app, out TW_STATUS status)
     {
       status = default;
@@ -44,11 +39,6 @@ namespace NTwain.Triplets.ControlDATs
       return rc;
     }
 
-    /// <summary>
-    /// Gets the status for the current source.
-    /// </summary>
-    /// <param name="status"></param>
-    /// <returns></returns>
     public TWRC GetForDS(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_STATUS status)
     {
       status = default;
