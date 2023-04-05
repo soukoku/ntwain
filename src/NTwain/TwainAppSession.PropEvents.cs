@@ -72,8 +72,8 @@ namespace NTwain
     {
       get
       {
-        var sts = DGControl.CustomDsData.Get(ref _appIdentity, ref _currentDS, out TW_CUSTOMDSDATA data);
-        if (sts == TWRC.SUCCESS)
+        var rc = DGControl.CustomDsData.Get(ref _appIdentity, ref _currentDS, out TW_CUSTOMDSDATA data);
+        if (rc == TWRC.SUCCESS)
         {
           if (data.hData != IntPtr.Zero && data.InfoLength > 0)
           {
@@ -105,7 +105,7 @@ namespace NTwain
           var lockedPtr = Lock(data.hData);
           Marshal.Copy(value, 0, lockedPtr, value.Length);
           Unlock(data.hData);
-          var sts = DGControl.CustomDsData.Set(ref _appIdentity, ref _currentDS, ref data);
+          var rc = DGControl.CustomDsData.Set(ref _appIdentity, ref _currentDS, ref data);
         }
         finally
         {

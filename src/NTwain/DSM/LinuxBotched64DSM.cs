@@ -152,6 +152,13 @@ namespace NTwain.DSM
     public static extern TWRC DSM_Entry
     (
         ref TW_IDENTITY origin, ref TW_IDENTITY dest,
+        DG dg, DAT dat, MSG msg, ref TW_METRICS metrics
+    );
+
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern TWRC DSM_Entry
+    (
+        ref TW_IDENTITY origin, ref TW_IDENTITY dest,
         DG dg, DAT dat, MSG msg, ref TW_PASSTHRU passthru
     );
 

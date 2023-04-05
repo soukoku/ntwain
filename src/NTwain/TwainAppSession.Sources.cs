@@ -1,6 +1,8 @@
 ﻿using NTwain.Data;
 using NTwain.Triplets;
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace NTwain
 {
@@ -131,6 +133,50 @@ namespace NTwain
         State = STATE.S4;
       }
       return WrapInSTS(rc);
+    }
+
+    /// <summary>
+    /// Reads information relating to the last capture run.
+    /// Only valid on state 4 after a capture.
+    /// </summary>
+    public STS GetMetrics(out TW_METRICS metrics)
+    {
+      return WrapInSTS(DGControl.Metrics.Get(ref _appIdentity, ref _currentDS, out metrics));
+    }
+
+    /// <summary>
+    /// Sends a TWAIN Direct task from the application to the driver.
+    /// </summary>
+    /// <param name="taskJson">The TWAIN Direct task in JSON.</param>
+    /// <param name="communicationManager">The current system being used to connect the application to the scanner.</param>
+    /// <returns></returns>
+    public TwainDirectTaskResult SetTwainDirectTask(string taskJson, ushort communicationManager = 0)
+    {
+      var result = new TwainDirectTaskResult { ReturnCode = TWRC.FAILURE };
+      TW_TWAINDIRECT task = default;
+      try
+      {
+        task.SizeOf = (uint)Marshal.SizeOf(typeof(TW_TWAINDIRECT));
+        task.CommunicationManager = communicationManager;
+        task.Send = ValueWriter.StringToPtrUTF8(this, taskJson, out uint length);
+        task.SendSize = length;
+
+        result.ReturnCode = DGControl.TwainDirect.SetTask(ref _appIdentity, ref _currentDS, ref task);
+        if (result.ReturnCode == TWRC.FAILURE)
+        {
+          result.Status = GetLastStatus();
+        }
+        else if (result.ReturnCode == TWRC.SUCCESS && task.ReceiveSize > 0 && task.Receive != IntPtr.Zero)
+        {
+          result.ResponseJson = ValueReader.PtrToStringUTF8(this, task.Receive, (int)task.ReceiveSize);
+        }
+      }
+      finally
+      {
+        //if (task.Send != IntPtr.Zero) Free(task.Send); // does source free the Send?
+        if (task.Receive != IntPtr.Zero) Free(task.Receive);
+      }
+      return result;
     }
   }
 }

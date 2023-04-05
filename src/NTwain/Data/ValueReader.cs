@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -17,24 +18,22 @@ namespace NTwain.Data
     /// <param name="data">Pointer to string.</param>
     /// <param name="length">Number of bytes to read.</param>
     /// <returns></returns>
-    public static string? PtrToStringUTF8(IMemoryManager memMgr, IntPtr data, int length)
+    public static unsafe string? PtrToStringUTF8(IMemoryManager memMgr, IntPtr data, int length)
     {
       string? val = null;
       var locked = memMgr.Lock(data);
       if (locked != IntPtr.Zero)
       {
-        // does this work? who knows.
         try
         {
 #if NETFRAMEWORK
           // safe method but with 2 copies (arr and parsed string)
-          var bytes = new byte[length];
-          Marshal.Copy(locked, bytes, 0, bytes.Length);
-          val = Encoding.UTF8.GetString(bytes);
+          //var bytes = new byte[length];
+          //Marshal.Copy(locked, bytes, 0, bytes.Length);
+          //val = Encoding.UTF8.GetString(bytes);
 
-          //// unsafe method with 1 copy (does it work?)
-          //sbyte* bytes = (sbyte*)locked;
-          //val = new string(bytes, 0, length, Encoding.UTF8);
+          // does this work?
+          val = Encoding.UTF8.GetString((byte*)locked, length);
 #else
           val = Marshal.PtrToStringUTF8(locked, length);
 #endif

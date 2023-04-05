@@ -86,7 +86,7 @@ namespace NTwain.Data
     /// Don't care values...
     /// </summary>
     public const byte TWON_DONTCARE8 = 0xff;
-    public const ushort TWON_DONTCARE16 = 0xff;
+    public const ushort TWON_DONTCARE16 = 0xffff;
     public const uint TWON_DONTCARE32 = 0xffffffff;
     /// <summary>
     /// We're departing from a strict translation of H so that
@@ -145,9 +145,14 @@ namespace NTwain.Data
     public TWRC ReturnCode;
 
     /// <summary>
+    /// Status if code is failure.
+    /// </summary>
+    public TW_STATUS Status;
+
+    /// <summary>
     /// The response of the task in JSON if successful.
     /// </summary>
-    public string ResponseJson;
+    public string? ResponseJson;
   }
 
   public enum TWRC : ushort
@@ -173,6 +178,7 @@ namespace NTwain.Data
   {
     // Condition codes (always associated with TWRC_FAILURE)...
     CUSTOMBASE = 0x8000,
+    None = 0,
     BUMMER = 1,
     LOWMEMORY = 2,
     NODS = 3,

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -9,46 +10,29 @@ namespace NTwain.Data
   /// </summary>
   static class ValueWriter
   {
-    ///// <summary>
-    ///// Allocates and copies the string value into a pointer in UTF8 that's null-terminated.
-    ///// </summary>
-    ///// <param name="twain"></param>
-    ///// <param name="value"></param>
-    ///// <param name="length">Actual number of bytes used to encode the string without the null.</param>
-    ///// <returns></returns>
-    //public static unsafe IntPtr StringToPtrUTF8(IMemoryManager memMgr, string value, out int length)
-    //{
-    //  if (value == null)
-    //  {
-    //    length = 0;
-    //    return IntPtr.Zero;
-    //  }
+    /// <summary>
+    /// Allocates and copies the string value into a pointer in UTF8 that's null-terminated.
+    /// </summary>
+    /// <param name="memMgr"></param>
+    /// <param name="value"></param>
+    /// <param name="finalLength">Final length to use with the pointer (includes the null).</param>
+    /// <returns></returns>
+    public static unsafe IntPtr StringToPtrUTF8(IMemoryManager memMgr, string? value, out uint finalLength)
+    {
+      finalLength = 0;
+      if (value == null) return IntPtr.Zero;
 
-    //  var utf8 = Encoding.UTF8;
-    //  length = utf8.GetByteCount(value);
-
-    //  var ptr = memMgr.Alloc((uint)length + 1); // +1 for null-terminated
-
-    //  // TODO: test if this works
-    //  int written;
-    //  byte* bytes = (byte*)ptr;
-    //  try
-    //  {
-    //    // fixed for managed pointer
-    //    fixed (char* firstChar = value)
-    //    {
-    //      written = Encoding.UTF8.GetBytes(firstChar, value.Length, bytes, length);
-    //    }
-
-    //    bytes[written] = 0;
-    //  }
-    //  finally
-    //  {
-    //    if (ptr != IntPtr.Zero) memMgr.Free(ptr);
-    //  }
-
-    //  return ptr;
-    //}
+      fixed (char* pInput = value)
+      {
+        var len = Encoding.UTF8.GetByteCount(pInput, value.Length);
+        finalLength = (uint)len + 1;
+        var pResult = (byte*)memMgr.Alloc(finalLength);
+        var bytesWritten = Encoding.UTF8.GetBytes(pInput, value.Length, pResult, len);
+        Trace.Assert(len == bytesWritten);
+        pResult[len] = 0;
+        return (IntPtr)pResult;
+      }
+    }
 
 
 

@@ -27,6 +27,8 @@ namespace NTwain.Triplets
 
     public static readonly Identity Identity = new();
 
+    public static readonly Metrics Metrics = new();
+
     public static readonly Parent Parent = new();
 
     public static readonly Passthru Passthru = new();
