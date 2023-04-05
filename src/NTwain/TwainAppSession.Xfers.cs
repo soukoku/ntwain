@@ -1,6 +1,7 @@
 ﻿using NTwain.Data;
 using NTwain.Triplets;
 using System;
+using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,6 +13,12 @@ namespace NTwain
 
   partial class TwainAppSession
   {
+    // experiment using array pool for things transferred in memory.
+    // this can pool up to a "normal" max of legal size paper in 24 bit at 300 dpi (~31MB)
+    // so the array max is made with 32 MB. Typical usage should be a lot less.
+    static readonly ArrayPool<byte> XferMemPool = ArrayPool<byte>.Create(32505856, 4);
+
+
     /// <summary>
     /// Start the transfer loop.
     /// This should be called after receiving 
