@@ -140,5 +140,16 @@ namespace NTwain
     /// Fires when there's an error during transfer.
     /// </summary>
     public event EventHandler<TransferErrorEventArgs>? TransferError;
+
+    /// <summary>
+    /// Fires when there's an upcoming transfer. App can inspect the image info
+    /// and cancel if needed.
+    /// </summary>
+    public event EventHandler<TransferReadyEventArgs>? TransferReady;
+
+    /// <summary>
+    /// Fires when transferred data is available for app to use.
+    /// </summary>
+    public event EventHandler<DataTransferredEventArgs>? DataTransferred;
   }
 }

@@ -18,6 +18,11 @@ namespace NTwain
     // so the array max is made with 32 MB. Typical usage should be a lot less.
     static readonly ArrayPool<byte> XferMemPool = ArrayPool<byte>.Create(32505856, 4);
 
+    public STS GetImageInfo(out TW_IMAGEINFO info)
+    {
+      return WrapInSTS(DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out info));
+    }
+
 
     /// <summary>
     /// Start the transfer loop.
@@ -49,14 +54,22 @@ namespace NTwain
         }
       }
 
-      //if (xferImage)
-      //{
-      //  imgXferMech = session.CurrentSource.Capabilities.ICapXferMech.GetCurrent();
-      //}
-      //if (xferAudio)
-      //{
-      //  audXferMech = session.CurrentSource.Capabilities.ACapXferMech.GetCurrent();
-      //}
+      if (xferImage)
+      {
+        if (GetCapCurrent(CAP.ICAP_XFERMECH, out TW_CAPABILITY cap).RC == TWRC.SUCCESS)
+        {
+          // todo:
+          cap.Free(this);
+        }
+      }
+      else if (xferAudio)
+      {
+        if (GetCapCurrent(CAP.ACAP_XFERMECH, out TW_CAPABILITY cap).RC == TWRC.SUCCESS)
+        {
+          // todo:
+          cap.Free(this);
+        }
+      }
 
       TW_PENDINGXFERS pending = default;
       var rc = DGControl.PendingXfers.Get(ref _appIdentity, ref _currentDS, ref pending);
@@ -64,20 +77,37 @@ namespace NTwain
       {
         do
         {
-          // cancel for now
-          //rc = DGControl.PendingXfers.Reset(ref _appIdentity, ref _currentDS, ref pending);
+          var readyArgs = new TransferReadyEventArgs(this, pending.Count, (TWEJ)pending.EOJ);
+          _uiThreadMarshaller.Invoke(() =>
+          {
+            TransferReady?.Invoke(this, readyArgs);
+          });
 
+          switch (readyArgs.Cancel)
+          {
+            case CancelType.SkipCurrent:
+              rc = DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
+              break;
+            case CancelType.EndNow:
+              rc = DGControl.PendingXfers.Reset(ref _appIdentity, ref _currentDS, ref pending);
+              break;
+            case CancelType.Graceful:
+              //??? oh boy
+              rc = DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
+              break;
+            default:
+              // normal capture
+              if (xferImage)
+              {
 
-          rc = DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
+              }
+              else if (xferAudio)
+              {
 
-          //if (xferType.HasFlag(DG.AUDIO))
-          //{
-          //  DoTransferAudio();
-          //}
-          //else // just defaults to image
-          //{
-          //  DoTransferImage();
-          //}
+              }
+              rc = DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
+              break;
+          }
 
         } while (rc == TWRC.SUCCESS && pending.Count != 0);
       }

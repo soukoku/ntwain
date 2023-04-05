@@ -2385,7 +2385,7 @@ namespace NTwain.Data
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
   public struct TW_PENDINGXFERS
   {
-    public ushort Count;
+    public short Count;
     public uint EOJ;
   }
 
