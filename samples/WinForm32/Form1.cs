@@ -17,7 +17,16 @@ namespace WinFormSample
       InitializeComponent();
       var libVer = FileVersionInfo.GetVersionInfo(typeof(TwainAppSession).Assembly.Location).FileVersion;
       Text += $"{(TwainPlatform.Is32bit ? " 32bit" : " 64bit")} on NTwain {libVer}";
-      
+
+      if (DsmLoader.TryUseCustomDSM())
+      {
+        Debug.WriteLine("Using our own dsm now :)");
+      }
+      else
+      {
+        Debug.WriteLine("Will attempt to use default dsm :(");
+      }
+
       TwainPlatform.PreferLegacyDSM = false;
 
       twain = new TwainAppSession(new WinformMarshaller(this), Assembly.GetExecutingAssembly().Location);
