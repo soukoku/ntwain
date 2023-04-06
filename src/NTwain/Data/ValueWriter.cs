@@ -13,11 +13,11 @@ namespace NTwain.Data
     /// <summary>
     /// Allocates and copies the string value into a pointer in UTF8 that's null-terminated.
     /// </summary>
-    /// <param name="memMgr"></param>
     /// <param name="value"></param>
+    /// <param name="memMgr"></param>
     /// <param name="finalLength">Final length to use with the pointer (includes the null).</param>
     /// <returns></returns>
-    public static unsafe IntPtr StringToPtrUTF8(IMemoryManager memMgr, string? value, out uint finalLength)
+    public static unsafe IntPtr StringToPtrUTF8(this string? value, IMemoryManager memMgr, out uint finalLength)
     {
       finalLength = 0;
       if (value == null) return IntPtr.Zero;

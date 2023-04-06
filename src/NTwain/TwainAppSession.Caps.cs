@@ -1,7 +1,7 @@
 ﻿using NTwain.Data;
 using NTwain.Triplets;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace NTwain
 {
@@ -9,20 +9,20 @@ namespace NTwain
 
   partial class TwainAppSession
   {
-    ///// <summary>
-    ///// Gets all the supported caps for the current source.
-    ///// </summary>
-    ///// <returns></returns>
-    //public IEnumerable<CAP> GetAllCaps()
-    //{
-    //  // just as a sample of how to read cap values
+    /// <summary>
+    /// Gets all the supported caps for the current source.
+    /// </summary>
+    /// <returns></returns>
+    public IList<CAP> GetAllCaps()
+    {
+      // just as a sample of how to read cap values
 
-    //  if (GetCapValues(CAP.CAP_SUPPORTEDCAPS, out TW_CAPABILITY value) == TWRC.SUCCESS)
-    //  {
-    //    value.Read(this);
-    //  }
-    //  return Enumerable.Empty<CAP>();
-    //}
+      if (GetCapValues(CAP.CAP_SUPPORTEDCAPS, out TW_CAPABILITY value).RC == TWRC.SUCCESS)
+      {
+        return value.ReadArray<CAP>(this);
+      }
+      return Array.Empty<CAP>();
+    }
 
     /// <summary>
     /// Gets a CAP's actual supported operations. 
@@ -32,10 +32,10 @@ namespace NTwain
     /// <returns></returns>
     public TWQC QueryCapSupport(CAP cap)
     {
-      var value = new TW_CAPABILITY(cap);
+      var value = new TW_CAPABILITY(cap) { ConType = TWON.ONEVALUE };
       if (DGControl.Capability.QuerySupport(ref _appIdentity, ref _currentDS, ref value) == TWRC.SUCCESS)
       {
-        value.Read(this);
+        return value.ReadOneValue<TWQC>(this);
       }
       return TWQC.Unknown;
     }

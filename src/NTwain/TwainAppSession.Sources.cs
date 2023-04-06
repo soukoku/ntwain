@@ -47,9 +47,9 @@ namespace NTwain
       var rc = DGControl.Identity.OpenDS(ref _appIdentity, ref source);
       if (rc == TWRC.SUCCESS)
       {
+        State = STATE.S4;
         RegisterCallback();
         CurrentSource = source;
-        State = STATE.S4;
       }
       return WrapInSTS(rc);
     }
@@ -158,7 +158,7 @@ namespace NTwain
       {
         task.SizeOf = (uint)Marshal.SizeOf(typeof(TW_TWAINDIRECT));
         task.CommunicationManager = communicationManager;
-        task.Send = ValueWriter.StringToPtrUTF8(this, taskJson, out uint length);
+        task.Send = taskJson.StringToPtrUTF8(this, out uint length);
         task.SendSize = length;
 
         result.ReturnCode = DGControl.TwainDirect.SetTask(ref _appIdentity, ref _currentDS, ref task);
@@ -168,7 +168,7 @@ namespace NTwain
         }
         else if (result.ReturnCode == TWRC.SUCCESS && task.ReceiveSize > 0 && task.Receive != IntPtr.Zero)
         {
-          result.ResponseJson = ValueReader.PtrToStringUTF8(this, task.Receive, (int)task.ReceiveSize);
+          result.ResponseJson = task.Receive.PtrToStringUTF8(this, (int)task.ReceiveSize);
         }
       }
       finally

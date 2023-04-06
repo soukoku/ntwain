@@ -41,9 +41,11 @@
       lblState = new System.Windows.Forms.Label();
       label3 = new System.Windows.Forms.Label();
       btnOpenDef = new System.Windows.Forms.Button();
+      listCaps = new System.Windows.Forms.ListBox();
+      label4 = new System.Windows.Forms.Label();
+      btnStart = new System.Windows.Forms.Button();
       btnShowSettings = new System.Windows.Forms.Button();
       btnClose = new System.Windows.Forms.Button();
-      btnStart = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
       splitContainer1.Panel2.SuspendLayout();
@@ -56,7 +58,7 @@
       btnSelect.Name = "btnSelect";
       btnSelect.Size = new System.Drawing.Size(151, 23);
       btnSelect.TabIndex = 0;
-      btnSelect.Text = "Select default source";
+      btnSelect.Text = "Choose default source";
       btnSelect.UseVisualStyleBackColor = true;
       btnSelect.Click += btnSelect_Click;
       // 
@@ -111,15 +113,14 @@
       listSources.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
       listSources.FormattingEnabled = true;
       listSources.ItemHeight = 15;
-      listSources.Location = new System.Drawing.Point(13, 130);
+      listSources.Location = new System.Drawing.Point(13, 170);
       listSources.Name = "listSources";
-      listSources.Size = new System.Drawing.Size(289, 379);
+      listSources.Size = new System.Drawing.Size(297, 379);
       listSources.TabIndex = 6;
       // 
       // btnSetDef
       // 
-      btnSetDef.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-      btnSetDef.Location = new System.Drawing.Point(12, 515);
+      btnSetDef.Location = new System.Drawing.Point(13, 131);
       btnSetDef.Name = "btnSetDef";
       btnSetDef.Size = new System.Drawing.Size(169, 23);
       btnSetDef.TabIndex = 7;
@@ -129,10 +130,9 @@
       // 
       // btnOpen
       // 
-      btnOpen.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-      btnOpen.Location = new System.Drawing.Point(187, 515);
+      btnOpen.Location = new System.Drawing.Point(188, 131);
       btnOpen.Name = "btnOpen";
-      btnOpen.Size = new System.Drawing.Size(104, 23);
+      btnOpen.Size = new System.Drawing.Size(114, 23);
       btnOpen.TabIndex = 8;
       btnOpen.Text = "Open selected";
       btnOpen.UseVisualStyleBackColor = true;
@@ -160,13 +160,15 @@
       // 
       // splitContainer1.Panel2
       // 
+      splitContainer1.Panel2.Controls.Add(listCaps);
+      splitContainer1.Panel2.Controls.Add(label4);
       splitContainer1.Panel2.Controls.Add(btnStart);
       splitContainer1.Panel2.Controls.Add(btnShowSettings);
       splitContainer1.Panel2.Controls.Add(btnClose);
       splitContainer1.Panel2.Controls.Add(label2);
       splitContainer1.Panel2.Controls.Add(lblCurrent);
-      splitContainer1.Size = new System.Drawing.Size(800, 564);
-      splitContainer1.SplitterDistance = 305;
+      splitContainer1.Size = new System.Drawing.Size(1023, 564);
+      splitContainer1.SplitterDistance = 325;
       splitContainer1.TabIndex = 9;
       // 
       // lblState
@@ -197,6 +199,34 @@
       btnOpenDef.UseVisualStyleBackColor = true;
       btnOpenDef.Click += btnOpenDef_Click;
       // 
+      // listCaps
+      // 
+      listCaps.FormattingEnabled = true;
+      listCaps.ItemHeight = 15;
+      listCaps.Location = new System.Drawing.Point(13, 87);
+      listCaps.Name = "listCaps";
+      listCaps.Size = new System.Drawing.Size(234, 469);
+      listCaps.TabIndex = 8;
+      // 
+      // label4
+      // 
+      label4.AutoSize = true;
+      label4.Location = new System.Drawing.Point(13, 62);
+      label4.Name = "label4";
+      label4.Size = new System.Drawing.Size(91, 15);
+      label4.TabIndex = 7;
+      label4.Text = "Supported Caps";
+      // 
+      // btnStart
+      // 
+      btnStart.Location = new System.Drawing.Point(299, 32);
+      btnStart.Name = "btnStart";
+      btnStart.Size = new System.Drawing.Size(132, 23);
+      btnStart.TabIndex = 6;
+      btnStart.Text = "Start acquisition";
+      btnStart.UseVisualStyleBackColor = true;
+      btnStart.Click += btnStart_Click;
+      // 
       // btnShowSettings
       // 
       btnShowSettings.Location = new System.Drawing.Point(161, 32);
@@ -217,21 +247,11 @@
       btnClose.UseVisualStyleBackColor = true;
       btnClose.Click += btnClose_Click;
       // 
-      // btnStart
-      // 
-      btnStart.Location = new System.Drawing.Point(299, 32);
-      btnStart.Name = "btnStart";
-      btnStart.Size = new System.Drawing.Size(132, 23);
-      btnStart.TabIndex = 6;
-      btnStart.Text = "Start acquisition";
-      btnStart.UseVisualStyleBackColor = true;
-      btnStart.Click += btnStart_Click;
-      // 
       // Form1
       // 
       AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
       AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      ClientSize = new System.Drawing.Size(800, 564);
+      ClientSize = new System.Drawing.Size(1023, 564);
       Controls.Add(splitContainer1);
       Name = "Form1";
       Text = "TWAIN Test";
@@ -262,5 +282,7 @@
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Button btnShowSettings;
     private System.Windows.Forms.Button btnStart;
+    private System.Windows.Forms.ListBox listCaps;
+    private System.Windows.Forms.Label label4;
   }
 }

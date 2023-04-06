@@ -18,15 +18,6 @@ namespace WinFormSample
       var libVer = FileVersionInfo.GetVersionInfo(typeof(TwainAppSession).Assembly.Location).FileVersion;
       Text += $"{(TwainPlatform.Is32bit ? " 32bit" : " 64bit")} on NTwain {libVer}";
 
-      if (DsmLoader.TryUseCustomDSM())
-      {
-        Debug.WriteLine("Using our own dsm now :)");
-      }
-      else
-      {
-        Debug.WriteLine("Will attempt to use default dsm :(");
-      }
-
       TwainPlatform.PreferLegacyDSM = false;
 
       twain = new TwainAppSession(new WinformMarshaller(this), Assembly.GetExecutingAssembly().Location);
@@ -45,6 +36,16 @@ namespace WinFormSample
     private void Twain_CurrentSourceChanged(TwainAppSession arg1, TW_IDENTITY_LEGACY ds)
     {
       lblCurrent.Text = ds.ProductName;
+      if (twain.State == STATE.S4)
+      {
+        var caps = twain.GetAllCaps();
+        foreach (var c in caps)
+          listCaps.Items.Add(c);
+      }
+      else
+      {
+        listCaps.Items.Clear();
+      }
     }
 
     private void Twain_DefaultSourceChanged(TwainAppSession arg1, TW_IDENTITY_LEGACY ds)

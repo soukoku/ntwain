@@ -1,9 +1,7 @@
-﻿using NTwain;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
 
 namespace NTwain.Data
 {
@@ -236,89 +234,89 @@ namespace NTwain.Data
     //}
   }
 
-  ///// <summary>
-  ///// A more dotnet-friendly representation of <see cref="TW_ENUMERATION"/>.
-  ///// </summary>
-  ///// <typeparam name="TValue"></typeparam>
-  //public class Enumeration<TValue> where TValue : struct
-  //{
-  //  public int CurrentIndex;
+  /// <summary>
+  /// A more dotnet-friendly representation of <see cref="TW_ENUMERATION"/>.
+  /// </summary>
+  /// <typeparam name="TValue"></typeparam>
+  public class Enumeration<TValue> where TValue : struct
+  {
+    public int CurrentIndex;
 
-  //  public int DefaultIndex;
+    public int DefaultIndex;
 
-  //  public TValue[] Items;
-  //}
+    public TValue[]? Items;
+  }
 
-  ///// <summary>
-  ///// A more dotnet-friendly representation of <see cref="TW_RANGE"/>.
-  ///// </summary>
-  ///// <typeparam name="TValue"></typeparam>
-  //public partial class Range<TValue> : IEnumerable<TValue> where TValue : struct
-  //{
-  //  public TValue MinValue;
-  //  public TValue MaxValue;
-  //  public TValue StepSize;
-  //  public TValue DefaultValue;
-  //  public TValue CurrentValue;
+  /// <summary>
+  /// A more dotnet-friendly representation of <see cref="TW_RANGE"/>.
+  /// </summary>
+  /// <typeparam name="TValue"></typeparam>
+  public partial class Range<TValue> : IEnumerable<TValue> where TValue : struct
+  {
+    public TValue MinValue;
+    public TValue MaxValue;
+    public TValue StepSize;
+    public TValue DefaultValue;
+    public TValue CurrentValue;
 
-  //  IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
-  //  {
-  //    if (!(MinValue is IConvertible))
-  //      throw new NotSupportedException($"The value type {typeof(TValue).Name} is not supported for range enumeration.");
+    IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
+    {
+      if (!(MinValue is IConvertible))
+        throw new NotSupportedException($"The value type {typeof(TValue).Name} is not supported for range enumeration.");
 
-  //    return new DynamicEnumerator(MinValue, MaxValue, StepSize);
-  //  }
+      return new DynamicEnumerator(MinValue, MaxValue, StepSize);
+    }
 
-  //  IEnumerator IEnumerable.GetEnumerator()
-  //  {
-  //    return ((IEnumerable<TValue>)this).GetEnumerator();
-  //  }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return ((IEnumerable<TValue>)this).GetEnumerator();
+    }
 
-  //  // dynamic is a cheap hack to sidestep the compiler restrictions if I know TValue is numeric
-  //  class DynamicEnumerator : IEnumerator<TValue>
-  //  {
-  //    private readonly TValue _min;
-  //    private readonly TValue _max;
-  //    private readonly TValue _step;
-  //    private TValue _cur;
-  //    bool started = false;
+    // dynamic is a cheap hack to sidestep the compiler restrictions if I know TValue is numeric
+    class DynamicEnumerator : IEnumerator<TValue>
+    {
+      private readonly TValue _min;
+      private readonly TValue _max;
+      private readonly TValue _step;
+      private TValue _cur;
+      bool started = false;
 
-  //    public DynamicEnumerator(TValue min, TValue max, TValue step)
-  //    {
-  //      _min = min;
-  //      _max = max;
-  //      _step = step;
-  //      _cur = min;
-  //    }
+      public DynamicEnumerator(TValue min, TValue max, TValue step)
+      {
+        _min = min;
+        _max = max;
+        _step = step;
+        _cur = min;
+      }
 
-  //    public TValue Current => _cur;
+      public TValue Current => _cur;
 
-  //    object IEnumerator.Current => this.Current;
+      object System.Collections.IEnumerator.Current => this.Current;
 
-  //    public void Dispose() { }
+      public void Dispose() { }
 
-  //    public bool MoveNext()
-  //    {
-  //      if (!started)
-  //      {
-  //        started = true;
-  //        return true;
-  //      }
+      public bool MoveNext()
+      {
+        if (!started)
+        {
+          started = true;
+          return true;
+        }
 
-  //      var next = _cur + (dynamic)_step;
-  //      if (next == _cur || next < _min || next > _max) return false;
+        var next = _cur + (dynamic)_step;
+        if (next == _cur || next < _min || next > _max) return false;
 
-  //      _cur = next;
-  //      return true;
-  //    }
+        _cur = next;
+        return true;
+      }
 
-  //    public void Reset()
-  //    {
-  //      _cur = _min;
-  //      started = false;
-  //    }
-  //  }
-  //}
+      public void Reset()
+      {
+        _cur = _min;
+        started = false;
+      }
+    }
+  }
 
   partial struct TW_FIX32 : IEquatable<TW_FIX32>, IConvertible
   {
@@ -716,7 +714,7 @@ namespace NTwain.Data
       string? val = null;
       if (UTF8string != IntPtr.Zero && Size > 0)
       {
-        val = ValueReader.PtrToStringUTF8(mgr, UTF8string, (int)Size);
+        val = UTF8string.PtrToStringUTF8(mgr, (int)Size);
       }
       if (freeMemory) Free(mgr);
       return val;
@@ -740,11 +738,6 @@ namespace NTwain.Data
       // session already checks for zero
       mgr.Free(hContainer);
       hContainer = IntPtr.Zero;
-    }
-
-    public void Read(IMemoryManager mgr, bool freeMemory = true)
-    {
-      if (freeMemory) Free(mgr);
     }
   }
 
