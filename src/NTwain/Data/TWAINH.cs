@@ -776,9 +776,9 @@ namespace NTwain.Data
     /// The normal get...
     /// </summary>
     /// <returns></returns>
-    public string Get()
+    public string Get(Encoding? encoding = null)
     {
-      return (GetValue(true));
+      return (GetValue(true, encoding));
     }
 
     /// <summary>
@@ -786,16 +786,16 @@ namespace NTwain.Data
     /// that doesn't include the prefix byte...
     /// </summary>
     /// <returns></returns>
-    public string GetNoPrefix()
+    public string GetNoPrefix(Encoding? encoding = null)
     {
-      return (GetValue(false));
+      return (GetValue(false, encoding));
     }
 
     /// <summary>
     /// Get our value...
     /// </summary>
     /// <returns></returns>
-    private string GetValue(bool a_blMayHavePrefix)
+    private string GetValue(bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // convert what we have into a byte array
       byte[] abyItem = new byte[256];
@@ -879,7 +879,7 @@ namespace NTwain.Data
       }
 
       // change encoding of byte array, then convert the bytes array to a string
-      string sz = Encoding.Unicode.GetString(Encoding.Convert(Language.GetEncoding(), Encoding.Unicode, abyItem));
+      string sz = Encoding.Unicode.GetString(Encoding.Convert(encoding ?? Language.GetEncoding(), Encoding.Unicode, abyItem));
 
       // If the first character is a NUL, then return the empty string...
       if (sz[0] == '\0')
@@ -2482,7 +2482,7 @@ namespace NTwain.Data
   /// Describes the status of a source.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
-  public struct TW_STATUS
+  public partial struct TW_STATUS
   {
     public TWCC ConditionCode;
     public ushort Data;

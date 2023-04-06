@@ -234,6 +234,14 @@ namespace NTwain.Data
     //}
   }
 
+  partial struct TW_STATUS
+  {
+    public override string ToString()
+    {
+      return ConditionCode.ToString();
+    }
+  }
+
   /// <summary>
   /// A more dotnet-friendly representation of <see cref="TW_ENUMERATION"/>.
   /// </summary>

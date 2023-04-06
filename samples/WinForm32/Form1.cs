@@ -41,6 +41,8 @@ namespace WinFormSample
         var caps = twain.GetAllCaps();
         foreach (var c in caps)
           listCaps.Items.Add(c);
+
+        var sts = twain.GetCapLabel(CAP.ICAP_XRESOLUTION, out string? test);
       }
       else
       {

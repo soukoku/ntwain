@@ -2,6 +2,8 @@
 using NTwain.Triplets;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace NTwain
 {
@@ -81,6 +83,7 @@ namespace NTwain
 
     /// <summary>
     /// Gets a CAP's help text (description).
+    /// This is not implemented.
     /// </summary>
     /// <param name="cap"></param>
     /// <param name="help"></param>
@@ -90,12 +93,18 @@ namespace NTwain
       help = null;
       var value = new TW_CAPABILITY(cap);
       var rc = DGControl.Capability.GetHelp(ref _appIdentity, ref _currentDS, ref value);
+      if (rc == TWRC.SUCCESS)
+      {
+        // how to determine the length of this thing???
+        var data = value.ReadOneValue<IntPtr>(this, false);
+      }
       value.Free(this);
       return WrapInSTS(rc);
     }
 
     /// <summary>
     /// Gets a CAP's text name label.
+    /// This is not implemented.
     /// </summary>
     /// <param name="cap"></param>
     /// <param name="label"></param>
@@ -103,8 +112,13 @@ namespace NTwain
     public STS GetCapLabel(CAP cap, out string? label)
     {
       label = null;
-      var value = new TW_CAPABILITY(cap);
+      var value = new TW_CAPABILITY(cap) { ConType = TWON.ONEVALUE };
       var rc = DGControl.Capability.GetLabel(ref _appIdentity, ref _currentDS, ref value);
+      if (rc == TWRC.SUCCESS)
+      {
+        // how to determine the length of this thing???
+        var data = value.ReadOneValue<IntPtr>(this, false);
+      }
       value.Free(this);
       return WrapInSTS(rc);
     }
@@ -120,6 +134,11 @@ namespace NTwain
       labels = null;
       var value = new TW_CAPABILITY(cap);
       var rc = DGControl.Capability.GetLabelEnum(ref _appIdentity, ref _currentDS, ref value);
+      if (rc == TWRC.SUCCESS)
+      {
+        // spec says they're utf8
+        labels = value.ReadArray<TW_STR255>(this, false).Select(t => t.Get(Encoding.UTF8)).ToArray();
+      }
       value.Free(this);
       return WrapInSTS(rc);
     }
@@ -133,6 +152,12 @@ namespace NTwain
     {
       var rc = DGControl.Capability.Set(ref _appIdentity, ref _currentDS, ref value);
       value.Free(this);
+
+      if (value.Cap == CAP.CAP_LANGUAGE && rc == TWRC.SUCCESS)
+      {
+        RefreshCapLanguage();
+      }
+
       return WrapInSTS(rc);
     }
 
@@ -158,7 +183,14 @@ namespace NTwain
     public STS ResetCap(CAP cap, out TW_CAPABILITY value)
     {
       value = new TW_CAPABILITY(cap);
-      return WrapInSTS(DGControl.Capability.Reset(ref _appIdentity, ref _currentDS, ref value));
+      var rc = DGControl.Capability.Reset(ref _appIdentity, ref _currentDS, ref value);
+
+      if (value.Cap == CAP.CAP_LANGUAGE && rc == TWRC.SUCCESS)
+      {
+        RefreshCapLanguage();
+      }
+
+      return WrapInSTS(rc);
     }
 
     /// <summary>
@@ -168,7 +200,24 @@ namespace NTwain
     public STS ResetAllCaps()
     {
       var value = new TW_CAPABILITY(CAP.CAP_SUPPORTEDCAPS);
-      return WrapInSTS(DGControl.Capability.ResetAll(ref _appIdentity, ref _currentDS, ref value));
+      var rc = DGControl.Capability.ResetAll(ref _appIdentity, ref _currentDS, ref value);
+
+      if (rc == TWRC.SUCCESS)
+      {
+        RefreshCapLanguage();
+      }
+
+      return WrapInSTS(rc);
+    }
+
+    private void RefreshCapLanguage()
+    {
+      var rc2 = GetCapCurrent(CAP.CAP_LANGUAGE, out TW_CAPABILITY curCap);
+      if (rc2.RC == TWRC.SUCCESS)
+      {
+        var lang = curCap.ReadOneValue<TWLG>(this);
+        Language.Set(lang);
+      }
     }
   }
 }

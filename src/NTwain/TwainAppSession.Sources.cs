@@ -49,6 +49,7 @@ namespace NTwain
       {
         State = STATE.S4;
         RegisterCallback();
+        Language.Set(source.Version.Language);
         CurrentSource = source;
       }
       return WrapInSTS(rc);
