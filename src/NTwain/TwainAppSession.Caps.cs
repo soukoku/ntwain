@@ -171,7 +171,7 @@ namespace NTwain
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
     /// <param name="cap"></param>
-    /// <param name="value"></param>
+    /// <param name="values"></param>
     /// <returns></returns>
     public STS GetCapValues<TValue>(CAP cap, out IList<TValue> values) where TValue : struct
     {
@@ -208,7 +208,7 @@ namespace NTwain
 
     /// <summary>
     /// Gets a CAP's help text (description).
-    /// This is not implemented due to unclear spec.
+    /// This may not work due to unclear spec.
     /// </summary>
     /// <param name="cap"></param>
     /// <param name="help"></param>
@@ -220,8 +220,7 @@ namespace NTwain
       var rc = DGControl.Capability.GetHelp(ref _appIdentity, ref _currentDS, ref value);
       if (rc == TWRC.SUCCESS)
       {
-        // TODO: how to determine the length of this thing???
-        var data = value.ReadOneValue<IntPtr>(this, false);
+        help = value.ReadString(this, false);
       }
       value.Free(this);
       return WrapInSTS(rc);
@@ -229,7 +228,7 @@ namespace NTwain
 
     /// <summary>
     /// Gets a CAP's text name label.
-    /// This is not implemented due to unclear spec.
+    /// This may not work due to unclear spec.
     /// </summary>
     /// <param name="cap"></param>
     /// <param name="label"></param>
@@ -241,8 +240,7 @@ namespace NTwain
       var rc = DGControl.Capability.GetLabel(ref _appIdentity, ref _currentDS, ref value);
       if (rc == TWRC.SUCCESS)
       {
-        // TODO: how to determine the length of this thing???
-        var data = value.ReadOneValue<IntPtr>(this, false);
+        label = value.ReadString(this, false);
       }
       value.Free(this);
       return WrapInSTS(rc);

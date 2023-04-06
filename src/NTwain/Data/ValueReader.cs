@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -9,7 +10,7 @@ namespace NTwain.Data
   /// <summary>
   /// Contains methods for reading pointers into various things.
   /// </summary>
-  public static class ValueReader
+  static class ValueReader
   {
     /// <summary>
     /// Reads pointer as UTF8 string.
@@ -312,76 +313,84 @@ namespace NTwain.Data
       }
     }
 
-    ///// <summary>
-    ///// Read the one value of a cap as string. Only STR* and HANDLE types are supported.
-    ///// </summary>
-    ///// <param name="twain"></param>
-    ///// <param name="cap"></param>
-    ///// <param name="freeMemory"></param>
-    ///// <returns></returns>
-    //public static string ReadOneValueContainerString(IMemoryManager memMgr, TW_CAPABILITY cap, bool freeMemory = true)
-    //{
-    //  if (cap.hContainer == IntPtr.Zero) return null;
+    /// <summary>
+    /// Read the pointer as string. This is for cap's one value string pointer
+    /// that 
+    /// </summary>
+    /// <param name="memMgr"></param>
+    /// <param name="cap"></param>
+    /// <param name="freeMemory"></param>
+    /// <returns></returns>
+    public static string? ReadString(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true)
+    {
+      if (cap.hContainer == IntPtr.Zero) return null;
 
-    //  var lockedPtr = memMgr.Lock(cap.hContainer);
+      var lockedPtr = memMgr.Lock(cap.hContainer);
 
-    //  try
-    //  {
-    //    if (cap.ConType == TWON.ONEVALUE)
-    //    {
-    //      TWTY itemType;
-    //      // Mac has a level of indirection and a different structure (ick)...
-    //      if (TwainPlatform.IsMacOSX)
-    //      {
-    //        // Crack the container...
-    //        var onevalue = MarshalTo<TW_ONEVALUE_MACOSX>(lockedPtr);
-    //        itemType = (TWTY)onevalue.ItemType;
-    //        lockedPtr += Marshal.SizeOf(onevalue);
-    //      }
-    //      else
-    //      {
-    //        // Crack the container...
-    //        var onevalue = MarshalTo<TW_ONEVALUE>(lockedPtr);
-    //        itemType = onevalue.ItemType;
-    //        lockedPtr += Marshal.SizeOf(onevalue);
-    //      }
+      try
+      {
+        if (cap.ConType == TWON.ONEVALUE)
+        {
+          TWTY itemType;
+          // Mac has a level of indirection and a different structure (ick)...
+          if (TwainPlatform.IsMacOSX)
+          {
+            // Crack the container...
+            var onevalue = MarshalTo<TW_ONEVALUE_MACOSX>(lockedPtr);
+            itemType = (TWTY)onevalue.ItemType;
+            lockedPtr += Marshal.SizeOf(onevalue);
+          }
+          else
+          {
+            // Crack the container...
+            var onevalue = MarshalTo<TW_ONEVALUE>(lockedPtr);
+            itemType = onevalue.ItemType;
+            lockedPtr += Marshal.SizeOf(onevalue);
+          }
 
-    //      switch (itemType)
-    //      {
-    //        case TWTY.STR32:
-    //          return MarshalTo<TW_STR32>(lockedPtr).ToString();
-    //        case TWTY.STR64:
-    //          return MarshalTo<TW_STR64>(lockedPtr).ToString();
-    //        case TWTY.STR128:
-    //          return MarshalTo<TW_STR128>(lockedPtr).ToString();
-    //        case TWTY.STR255:
-    //          return MarshalTo<TW_STR255>(lockedPtr).ToString();
-    //        case TWTY.HANDLE:
-    //          // null-terminated and encoded string.
-    //          // good chance this ain't right.
-    //          using (var stream = new MemoryStream())
-    //          {
-    //            byte read = Marshal.ReadByte(lockedPtr);
-    //            while (read != 0)
-    //            {
-    //              stream.WriteByte(read);
-    //              read = Marshal.ReadByte(lockedPtr);
-    //              lockedPtr += 1;
-    //            }
-    //            // which one?
-    //            return Encoding.Unicode.GetString(Encoding.Convert(Language.GetEncoding(), Encoding.Unicode, stream.ToArray()));
-    //            //return Language.GetEncoding().GetString(stream.ToArray());
-    //          }
-    //      }
-    //    }
-    //  }
-    //  finally
-    //  {
-    //    if (lockedPtr != IntPtr.Zero) memMgr.Unlock(cap.hContainer);
-    //    if (freeMemory) memMgr.Free(ref cap.hContainer);
-    //  }
-    //  return null;
-    //}
+          switch (itemType)
+          {
+            case TWTY.STR32:
+              return MarshalTo<TW_STR32>(lockedPtr).ToString();
+            case TWTY.STR64:
+              return MarshalTo<TW_STR64>(lockedPtr).ToString();
+            case TWTY.STR128:
+              return MarshalTo<TW_STR128>(lockedPtr).ToString();
+            case TWTY.STR255:
+              return MarshalTo<TW_STR255>(lockedPtr).ToString();
+            case TWTY.HANDLE:
+              // TODO: how to determine the length of this thing???
+              // null-terminated and encoded string?
+              // good chance this ain't right.
+              using (var stream = new MemoryStream())
+              {
+                byte read = Marshal.ReadByte(lockedPtr);
+                while (read != 0)
+                {
+                  stream.WriteByte(read);
+                  read = Marshal.ReadByte(lockedPtr);
+                  lockedPtr += 1;
+                }
+                // which one?
+                //return Encoding.Unicode.GetString(Encoding.Convert(Language.GetEncoding(), Encoding.Unicode, stream.ToArray()));
+                return Language.GetEncoding().GetString(stream.ToArray());
+              }
+          }
+        }
+      }
+      finally
+      {
+        if (lockedPtr != IntPtr.Zero) memMgr.Unlock(cap.hContainer);
+        if (freeMemory)
+        {
+          memMgr.Free(cap.hContainer);
+          cap.hContainer = IntPtr.Zero;
+        }
+      }
+      return null;
+    }
+
+
     /// <summary>
     /// Read the container pointer content.
     /// </summary>
