@@ -52,7 +52,7 @@ namespace NTwain
     public STS GetCapCurrent(CAP cap, out TW_CAPABILITY value)
     {
       value = new TW_CAPABILITY(cap);
-      return WrapInSTS(DGControl.Capability.Get(ref _appIdentity, ref _currentDS, ref value));
+      return WrapInSTS(DGControl.Capability.GetCurrent(ref _appIdentity, ref _currentDS, ref value));
     }
 
     /// <summary>

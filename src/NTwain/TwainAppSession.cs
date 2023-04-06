@@ -135,7 +135,11 @@ namespace NTwain
             {
               _uiThreadMarshaller.BeginInvoke(() =>
               {
-                DeviceEvent?.Invoke(this, de);
+                try
+                {
+                  DeviceEvent?.Invoke(this, de);
+                }
+                catch { }
               });
             }
             break;
@@ -197,7 +201,11 @@ namespace NTwain
         if (DGControl.Identity.GetDefault(ref _appIdentity, out TW_IDENTITY_LEGACY ds) == TWRC.SUCCESS)
         {
           _defaultDS = ds;
-          DefaultSourceChanged?.Invoke(this, _defaultDS);
+          try
+          {
+            DefaultSourceChanged?.Invoke(this, _defaultDS);
+          }
+          catch { }
         }
 
         // determine memory mgmt routines used
@@ -222,7 +230,11 @@ namespace NTwain
         State = STATE.S2;
         _entryPoint = default;
         _defaultDS = default;
-        DefaultSourceChanged?.Invoke(this, _defaultDS);
+        try
+        {
+          DefaultSourceChanged?.Invoke(this, _defaultDS);
+        }
+        catch { }
         _hwnd = IntPtr.Zero;
       }
       return WrapInSTS(rc, true);

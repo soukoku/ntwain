@@ -31,7 +31,11 @@ namespace NTwain
       internal set
       {
         _currentDS = value;
-        CurrentSourceChanged?.Invoke(this, value);
+        try
+        {
+          CurrentSourceChanged?.Invoke(this, value);
+        }
+        catch { }
       }
     }
     TW_IDENTITY_LEGACY _currentDS;
@@ -57,7 +61,11 @@ namespace NTwain
         if (_state != value)
         {
           _state = value;
-          StateChanged?.Invoke(this, value); // TODO: should care about thread
+          try
+          {
+            StateChanged?.Invoke(this, value); // TODO: should care about thread
+          }
+          catch { }
         }
       }
     }

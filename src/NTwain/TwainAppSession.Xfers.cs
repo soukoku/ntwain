@@ -31,7 +31,7 @@ namespace NTwain
     /// </summary>
     void EnterTransferRoutine()
     {
-      // default options if source don't support them or whatever
+      // default options if source doesn't support changing them or whatever
       bool xferImage = true;
       bool xferAudio = false;
       var imgXferMech = TWSX.NATIVE;
@@ -54,21 +54,13 @@ namespace NTwain
         }
       }
 
-      if (xferImage)
+      if (xferImage && GetCapCurrent(CAP.ICAP_XFERMECH, out TW_CAPABILITY cap).RC == TWRC.SUCCESS)
       {
-        if (GetCapCurrent(CAP.ICAP_XFERMECH, out TW_CAPABILITY cap).RC == TWRC.SUCCESS)
-        {
-          // todo:
-          cap.Free(this);
-        }
+        imgXferMech = cap.ReadOneValue<TWSX>(this);
       }
-      else if (xferAudio)
+      else if (xferAudio && GetCapCurrent(CAP.ACAP_XFERMECH, out cap).RC == TWRC.SUCCESS)
       {
-        if (GetCapCurrent(CAP.ACAP_XFERMECH, out TW_CAPABILITY cap).RC == TWRC.SUCCESS)
-        {
-          // todo:
-          cap.Free(this);
-        }
+        audXferMech = cap.ReadOneValue<TWSX>(this);
       }
 
       TW_PENDINGXFERS pending = default;
@@ -80,7 +72,11 @@ namespace NTwain
           var readyArgs = new TransferReadyEventArgs(this, pending.Count, (TWEJ)pending.EOJ);
           _uiThreadMarshaller.Invoke(() =>
           {
-            TransferReady?.Invoke(this, readyArgs);
+            try
+            {
+              TransferReady?.Invoke(this, readyArgs);
+            }
+            catch { } // don't let consumer kill the loop if they have exception
           });
 
           switch (readyArgs.Cancel)

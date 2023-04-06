@@ -33,7 +33,11 @@ namespace NTwain
       if (rc == TWRC.SUCCESS)
       {
         _defaultDS = ds;
-        DefaultSourceChanged?.Invoke(this, ds);
+        try
+        {
+          DefaultSourceChanged?.Invoke(this, ds);
+        }
+        catch { }
       }
       return WrapInSTS(rc);
     }
@@ -82,7 +86,11 @@ namespace NTwain
       if (rc == TWRC.SUCCESS)
       {
         _defaultDS = source;
-        DefaultSourceChanged?.Invoke(this, source);
+        try
+        {
+          DefaultSourceChanged?.Invoke(this, source);
+        }
+        catch { }
       }
       return WrapInSTS(rc);
     }
