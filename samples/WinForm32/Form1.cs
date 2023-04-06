@@ -1,6 +1,7 @@
 using NTwain;
 using NTwain.Data;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
@@ -42,7 +43,15 @@ namespace WinFormSample
         foreach (var c in caps)
           listCaps.Items.Add(c);
 
-        var sts = twain.GetCapLabel(CAP.ICAP_XRESOLUTION, out string? test);
+        // never seen a driver support these but here it is
+        var sts = twain.GetCapLabel(CAP.ICAP_SUPPORTEDSIZES, out string? test);
+        var sts2 = twain.GetCapHelp(CAP.ICAP_SUPPORTEDSIZES, out string? test2);
+        var sts3 = twain.GetCapLabelEnum(CAP.ICAP_SUPPORTEDSIZES, out IList<string>? test3);
+
+        if (sts.RC == TWRC.SUCCESS || sts2.RC == TWRC.SUCCESS || sts3.RC == TWRC.SUCCESS)
+        {
+          Debugger.Break();
+        }
       }
       else
       {

@@ -232,6 +232,11 @@ namespace NTwain.Data
     //{
     //  return new STS { RC = rc };
     //}
+
+    public override string ToString()
+    {
+      return $"{RC} - {STATUS.ConditionCode}";
+    }
   }
 
   partial struct TW_STATUS

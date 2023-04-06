@@ -129,7 +129,7 @@ namespace NTwain
     /// <param name="cap"></param>
     /// <param name="labels"></param>
     /// <returns></returns>
-    public STS GetCapLabelEnum(CAP cap, out string[]? labels)
+    public STS GetCapLabelEnum(CAP cap, out IList<string>? labels)
     {
       labels = null;
       var value = new TW_CAPABILITY(cap);
@@ -137,7 +137,7 @@ namespace NTwain
       if (rc == TWRC.SUCCESS)
       {
         // spec says they're utf8
-        labels = value.ReadArray<TW_STR255>(this, false).Select(t => t.Get(Encoding.UTF8)).ToArray();
+        labels = value.ReadArray<TW_STR255>(this, false).Select(t => t.Get(Encoding.UTF8)).ToList();
       }
       value.Free(this);
       return WrapInSTS(rc);

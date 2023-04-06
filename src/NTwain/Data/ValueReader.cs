@@ -424,8 +424,6 @@ namespace NTwain.Data
           intptr += 2 * itemIndex;
           if (isEnum)
           {
-            var shor = MarshalTo<short>(intptr);
-            if (shor == 0x1125) Debugger.Break();
             return NumericToEnum<ushort, TValue>(MarshalTo<ushort>(intptr));
           }
           return MarshalTo<TValue>(intptr);
