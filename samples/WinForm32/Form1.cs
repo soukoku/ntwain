@@ -39,7 +39,7 @@ namespace WinFormSample
       lblCurrent.Text = ds.ProductName;
       if (twain.State == STATE.S4)
       {
-        var caps = twain.GetAllCaps();
+        twain.GetCapValues(CAP.CAP_SUPPORTEDCAPS, out IList<CAP> caps);
         foreach (var c in caps)
           listCaps.Items.Add(c);
 

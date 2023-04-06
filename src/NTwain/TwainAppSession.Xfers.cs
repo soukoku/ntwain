@@ -16,7 +16,7 @@ namespace NTwain
     // experiment using array pool for things transferred in memory.
     // this can pool up to a "normal" max of legal size paper in 24 bit at 300 dpi (~31MB)
     // so the array max is made with 32 MB. Typical usage should be a lot less.
-    static readonly ArrayPool<byte> XferMemPool = ArrayPool<byte>.Create(32505856, 4);
+    static readonly ArrayPool<byte> XferMemPool = ArrayPool<byte>.Create(32 * 1024 * 1024, 8);
 
     public STS GetImageInfo(out TW_IMAGEINFO info)
     {
@@ -34,8 +34,6 @@ namespace NTwain
       // default options if source doesn't support changing them or whatever
       bool xferImage = true;
       bool xferAudio = false;
-      var imgXferMech = TWSX.NATIVE;
-      var audXferMech = TWSX.NATIVE;
       if (DGControl.XferGroup.Get(ref _appIdentity, ref _currentDS, out DG xferType) == TWRC.SUCCESS)
       {
         xferAudio = (xferType & DG.AUDIO) == DG.AUDIO;
@@ -54,14 +52,10 @@ namespace NTwain
         }
       }
 
-      if (xferImage && GetCapCurrent(CAP.ICAP_XFERMECH, out TW_CAPABILITY cap).RC == TWRC.SUCCESS)
-      {
-        imgXferMech = cap.ReadOneValue<TWSX>(this);
-      }
-      else if (xferAudio && GetCapCurrent(CAP.ACAP_XFERMECH, out cap).RC == TWRC.SUCCESS)
-      {
-        audXferMech = cap.ReadOneValue<TWSX>(this);
-      }
+      var imgXferMech = TWSX.NATIVE;
+      var audXferMech = TWSX.NATIVE;
+      if (xferImage) GetCapCurrent(CAP.ICAP_XFERMECH, out imgXferMech);
+      else if (xferAudio) GetCapCurrent(CAP.ACAP_XFERMECH, out audXferMech);
 
       TW_PENDINGXFERS pending = default;
       var rc = DGControl.PendingXfers.Get(ref _appIdentity, ref _currentDS, ref pending);

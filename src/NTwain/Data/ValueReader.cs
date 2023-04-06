@@ -9,7 +9,7 @@ namespace NTwain.Data
   /// <summary>
   /// Contains methods for reading pointers into various things.
   /// </summary>
-  static class ValueReader
+  public static class ValueReader
   {
     /// <summary>
     /// Reads pointer as UTF8 string.
