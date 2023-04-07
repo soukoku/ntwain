@@ -2576,6 +2576,8 @@ namespace NTwain.Data
   /// </summary>
   public enum TWTY : ushort
   {
+    Invalid = 0xffff,
+
     INT8 = 0x0000,
     INT16 = 0x0001,
     INT32 = 0x0002,

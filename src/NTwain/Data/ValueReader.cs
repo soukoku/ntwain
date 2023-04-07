@@ -10,7 +10,7 @@ namespace NTwain.Data
   /// <summary>
   /// Contains methods for reading pointers into various things.
   /// </summary>
-  static class ValueReader
+  public static class ValueReader
   {
     /// <summary>
     /// Reads pointer as UTF8 string.
@@ -51,6 +51,39 @@ namespace NTwain.Data
 
 
     // these contain parts from the original TWAIN.CapabilityToCsv()
+
+    public static TWTY DetermineValueType(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true)
+    {
+      var type = TWTY.Invalid;
+
+
+      var lockedPtr = memMgr.Lock(cap.hContainer);
+
+      try
+      {
+        if (TwainPlatform.IsMacOSX)
+        {
+          type = (TWTY)(ushort)(uint)Marshal.ReadInt32(lockedPtr);
+
+        }
+        else
+        {
+          type = (TWTY)(ushort)Marshal.ReadInt16(lockedPtr);
+        }
+      }
+      finally
+      {
+        if (lockedPtr != IntPtr.Zero) memMgr.Unlock(cap.hContainer);
+        if (freeMemory)
+        {
+          memMgr.Free(cap.hContainer);
+          cap.hContainer = IntPtr.Zero;
+        }
+      }
+
+      return type;
+    }
+
 
     /// <summary>
     /// Reads a one value out of a cap. This can only be done once if memory is freed.

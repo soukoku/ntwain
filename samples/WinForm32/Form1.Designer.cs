@@ -41,11 +41,17 @@
       lblState = new System.Windows.Forms.Label();
       label3 = new System.Windows.Forms.Label();
       btnOpenDef = new System.Windows.Forms.Button();
-      listCaps = new System.Windows.Forms.ListBox();
       label4 = new System.Windows.Forms.Label();
       btnStart = new System.Windows.Forms.Button();
       btnShowSettings = new System.Windows.Forms.Button();
       btnClose = new System.Windows.Forms.Button();
+      capListView = new System.Windows.Forms.ListView();
+      colCap = new System.Windows.Forms.ColumnHeader();
+      colType = new System.Windows.Forms.ColumnHeader();
+      colCur = new System.Windows.Forms.ColumnHeader();
+      colDef = new System.Windows.Forms.ColumnHeader();
+      colSupport = new System.Windows.Forms.ColumnHeader();
+      colExtended = new System.Windows.Forms.ColumnHeader();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
       splitContainer1.Panel2.SuspendLayout();
@@ -160,7 +166,7 @@
       // 
       // splitContainer1.Panel2
       // 
-      splitContainer1.Panel2.Controls.Add(listCaps);
+      splitContainer1.Panel2.Controls.Add(capListView);
       splitContainer1.Panel2.Controls.Add(label4);
       splitContainer1.Panel2.Controls.Add(btnStart);
       splitContainer1.Panel2.Controls.Add(btnShowSettings);
@@ -198,15 +204,6 @@
       btnOpenDef.Text = "Open default";
       btnOpenDef.UseVisualStyleBackColor = true;
       btnOpenDef.Click += btnOpenDef_Click;
-      // 
-      // listCaps
-      // 
-      listCaps.FormattingEnabled = true;
-      listCaps.ItemHeight = 15;
-      listCaps.Location = new System.Drawing.Point(13, 87);
-      listCaps.Name = "listCaps";
-      listCaps.Size = new System.Drawing.Size(234, 469);
-      listCaps.TabIndex = 8;
       // 
       // label4
       // 
@@ -247,11 +244,54 @@
       btnClose.UseVisualStyleBackColor = true;
       btnClose.Click += btnClose_Click;
       // 
+      // capListView
+      // 
+      capListView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+      capListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { colCap, colType, colCur, colDef, colExtended, colSupport });
+      capListView.FullRowSelect = true;
+      capListView.Location = new System.Drawing.Point(11, 87);
+      capListView.MultiSelect = false;
+      capListView.Name = "capListView";
+      capListView.Size = new System.Drawing.Size(671, 462);
+      capListView.TabIndex = 8;
+      capListView.UseCompatibleStateImageBehavior = false;
+      capListView.View = System.Windows.Forms.View.Details;
+      // 
+      // colCap
+      // 
+      colCap.Text = "CAP";
+      colCap.Width = 230;
+      // 
+      // colType
+      // 
+      colType.Text = "Type";
+      colType.Width = 80;
+      // 
+      // colCur
+      // 
+      colCur.Text = "Current";
+      colCur.Width = 80;
+      // 
+      // colDef
+      // 
+      colDef.Text = "Default";
+      colDef.Width = 80;
+      // 
+      // colSupport
+      // 
+      colSupport.Text = "Supports";
+      colSupport.Width = 330;
+      // 
+      // colExtended
+      // 
+      colExtended.Text = "Extended";
+      colExtended.Width = 80;
+      // 
       // Form1
       // 
       AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
       AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      ClientSize = new System.Drawing.Size(1023, 564);
+      ClientSize = new System.Drawing.Size(1123, 564);
       Controls.Add(splitContainer1);
       Name = "Form1";
       Text = "TWAIN Test";
@@ -282,7 +322,13 @@
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Button btnShowSettings;
     private System.Windows.Forms.Button btnStart;
-    private System.Windows.Forms.ListBox listCaps;
     private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.ListView capListView;
+    private System.Windows.Forms.ColumnHeader colCap;
+    private System.Windows.Forms.ColumnHeader colType;
+    private System.Windows.Forms.ColumnHeader colCur;
+    private System.Windows.Forms.ColumnHeader colDef;
+    private System.Windows.Forms.ColumnHeader colSupport;
+    private System.Windows.Forms.ColumnHeader colExtended;
   }
 }
