@@ -26,6 +26,7 @@ namespace NTwain
 
     /// <summary>
     /// Shows the TWAIN source selection UI for setting the default source.
+    /// Only included for completeness, not recommended for real app usage.
     /// </summary>
     public STS ShowUserSelect()
     {
@@ -110,7 +111,7 @@ namespace NTwain
         // already enabled :(
         // TODO: should bring it down?
       }
-
+      _closeDsRequested = false;
       _userInterface = new TW_USERINTERFACE
       {
         ShowUI = (ushort)((showUI || uiOnly) ? 1 : 0),

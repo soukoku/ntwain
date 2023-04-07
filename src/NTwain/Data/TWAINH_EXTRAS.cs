@@ -97,7 +97,7 @@ namespace NTwain.Data
   /// <summary>
   /// TWAIN's boolean values.
   /// </summary>
-  public enum BoolType : ushort
+  public enum TW_BOOL : ushort
   {
     /// <summary>
     /// The false value (0).
@@ -511,7 +511,7 @@ namespace NTwain.Data
     /// <returns></returns>
     public override string ToString()
     {
-      return $"{Left},{Top},{Right},{Bottom}";
+      return $"({Left},{Top}) ({Right},{Bottom})";
     }
 
     public bool Equals(TW_FRAME other)

@@ -249,7 +249,17 @@ namespace NTwain
     protected STS WrapInSTS(TWRC rc, bool dsmOnly = false)
     {
       if (rc != TWRC.FAILURE) return new STS { RC = rc };
-      return new STS { RC = rc, STATUS = GetLastStatus(dsmOnly) };
+      var sts = new STS { RC = rc, STATUS = GetLastStatus() };
+      if (sts.STATUS.ConditionCode == TWCC.BADDEST)
+      {
+        // TODO: the current ds is bad, should assume we're back in S3?
+        // needs the dest parameter to find out.
+      }
+      else if (sts.STATUS.ConditionCode == TWCC.BUMMER)
+      {
+        // TODO: notify with critical event to end the twain stuff
+      }
+      return sts;
     }
 
     /// <summary>

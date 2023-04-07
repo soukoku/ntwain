@@ -86,6 +86,7 @@ namespace WinFormSample
         {
           it.SubItems.Add("");
           it.SubItems.Add("");
+          it.SubItems.Add("");
         }
         it.SubItems.Add(extended.Contains(c).ToString());
         it.SubItems.Add(twain.QueryCapSupport(c).ToString());
@@ -130,9 +131,9 @@ namespace WinFormSample
           return sival.ToString();
         case TWTY.BOOL:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out usval) :
-            twain.GetCapDefault(cap, out usval);
-          return usval.ToString();
+            twain.GetCapCurrent(cap, out TW_BOOL tbval) :
+            twain.GetCapDefault(cap, out tbval);
+          return tbval.ToString();
         case TWTY.FIX32:
           sts = forCurrent ?
             twain.GetCapCurrent(cap, out TW_FIX32 fxval) :

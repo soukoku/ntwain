@@ -85,17 +85,22 @@ namespace NTwain
       return (ushort)TWRC.SUCCESS;
     }
 
+    bool _closeDsRequested;
+
     private void HandleSourceMsg(MSG msg)
     {
+      // the reason we post these to the background is
+      // if they're coming from UI message loop then
+      // this needs to return asap
       switch (msg)
       {
         case MSG.XFERREADY:
         case MSG.DEVICEEVENT:
         case MSG.CLOSEDSOK:
+          _bgPendingMsgs.Add(msg);
+          break;
         case MSG.CLOSEDSREQ:
-          // the reason we post these to the background is
-          // if they're coming from UI message loop then
-          // this needs to return asap
+          _closeDsRequested = true;
           _bgPendingMsgs.Add(msg);
           break;
       }

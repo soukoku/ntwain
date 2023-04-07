@@ -125,7 +125,8 @@ namespace NTwain
 
 
     /// <summary>
-    /// Fires when <see cref="State"/> changes.
+    /// Fires when <see cref="State"/> changes. 
+    /// This is not guaranteed to be raised on the UI thread.
     /// </summary>
     public event Action<TwainAppSession, STATE>? StateChanged;
 

@@ -58,8 +58,8 @@ namespace NTwain
       else if (xferAudio) GetCapCurrent(CAP.ACAP_XFERMECH, out audXferMech);
 
       TW_PENDINGXFERS pending = default;
-      var rc = DGControl.PendingXfers.Get(ref _appIdentity, ref _currentDS, ref pending);
-      if (rc == TWRC.SUCCESS)
+      var sts = WrapInSTS(DGControl.PendingXfers.Get(ref _appIdentity, ref _currentDS, ref pending));
+      if (sts.RC == TWRC.SUCCESS)
       {
         do
         {
@@ -73,37 +73,70 @@ namespace NTwain
             catch { } // don't let consumer kill the loop if they have exception
           });
 
-          switch (readyArgs.Cancel)
+          if (readyArgs.Cancel == CancelType.EndNow || _closeDsRequested)
           {
-            case CancelType.SkipCurrent:
-              rc = DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
-              break;
-            case CancelType.EndNow:
-              rc = DGControl.PendingXfers.Reset(ref _appIdentity, ref _currentDS, ref pending);
-              break;
-            case CancelType.Graceful:
-              //??? oh boy
-              rc = DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
-              break;
-            default:
-              // normal capture
-              if (xferImage)
-              {
-
-              }
-              else if (xferAudio)
-              {
-
-              }
-              rc = DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
-              break;
+            sts = WrapInSTS(DGControl.PendingXfers.Reset(ref _appIdentity, ref _currentDS, ref pending));
+            if (sts.RC == TWRC.SUCCESS) State = STATE.S5;
+            break;
+          }
+          if (readyArgs.Cancel == CancelType.Graceful)
+          {
+            sts = WrapInSTS(DGControl.PendingXfers.StopFeeder(ref _appIdentity, ref _currentDS, ref pending));
           }
 
-        } while (rc == TWRC.SUCCESS && pending.Count != 0);
+          if (readyArgs.Cancel != CancelType.SkipCurrent)
+          {
+            // transfer normally
+            if (xferImage)
+            {
+              switch (imgXferMech)
+              {
+                case TWSX.NATIVE:
+                  TransferNativeImage();
+                  break;
+                case TWSX.FILE:
+                  TransferFileImage();
+                  break;
+                case TWSX.MEMORY:
+                  TransferMemoryImage();
+                  break;
+                case TWSX.MEMFILE:
+                  TransferMemoryFileImage();
+                  break;
+              }
+            }
+            else if (xferAudio)
+            {
+              switch (audXferMech)
+              {
+                case TWSX.NATIVE:
+                  TransferNativeAudio();
+                  break;
+                case TWSX.FILE:
+                  TransferFileAudio();
+                  break;
+              }
+            }
+          }
+
+          sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
+          if (sts.RC == TWRC.SUCCESS)
+          {
+            if (xferImage)
+            {
+              State = pending.Count == 0 ? STATE.S5 : STATE.S6;
+            }
+            else if (xferAudio)
+            {
+              State = STATE.S6;
+            }
+          }
+
+        } while (sts.RC == TWRC.SUCCESS && pending.Count != 0);
       }
       else
       {
-        HandleNonSuccessXferCode(rc);
+        HandleNonSuccessXferCode(sts);
       }
       _uiThreadMarshaller.BeginInvoke(() =>
       {
@@ -111,20 +144,70 @@ namespace NTwain
       });
     }
 
-    private void HandleNonSuccessXferCode(TWRC rc)
+    private void TransferFileAudio()
     {
-      switch (rc)
+
+    }
+
+    private void TransferNativeAudio()
+    {
+
+    }
+
+    private void TransferMemoryFileImage()
+    {
+
+    }
+
+    private void TransferMemoryImage()
+    {
+
+    }
+
+    private void TransferFileImage()
+    {
+
+    }
+
+    private void TransferNativeImage()
+    {
+
+    }
+
+    private void HandleNonSuccessXferCode(STS sts)
+    {
+      switch (sts.RC)
       {
         case TWRC.SUCCESS:
         case TWRC.XFERDONE:
-        case TWRC.CANCEL:
           // ok to keep going
           break;
+        case TWRC.CANCEL:
+          TW_PENDINGXFERS pending = default;
+          DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
+          break;
         default:
-          var status = GetLastStatus(false);
-          var text = GetStatusText(status);
           // TODO: raise error event
-
+          switch (sts.STATUS.ConditionCode)
+          {
+            case TWCC.DAMAGEDCORNER:
+            case TWCC.DOCTOODARK:
+            case TWCC.DOCTOOLIGHT:
+            case TWCC.FOCUSERROR:
+            case TWCC.NOMEDIA:
+            case TWCC.PAPERDOUBLEFEED:
+            case TWCC.PAPERJAM:
+              pending = default;
+              DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
+              break;
+            case TWCC.OPERATIONERROR:
+              GetCapCurrent(CAP.CAP_INDICATORS, out TW_BOOL showIndicator);
+              if (_userInterface.ShowUI == 0 && showIndicator == TW_BOOL.False)
+              {
+                // todo: alert user and drop to S4
+              }
+              break;
+          }
           break;
       }
     }
