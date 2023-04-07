@@ -2193,7 +2193,7 @@ namespace NTwain.Data
   /// Describes the “real” image data, that is, the complete image being transferred between the Source and application.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
-  public struct TW_IMAGEINFO
+  public partial struct TW_IMAGEINFO
   {
     public TW_FIX32 XResolution;
     public TW_FIX32 YResolution;
@@ -2209,9 +2209,9 @@ namespace NTwain.Data
     public short BitsPerSample_6;
     public short BitsPerSample_7;
     public short BitsPerPixel;
-    public ushort Planar;
-    public short PixelType;
-    public ushort Compression;
+    public TW_BOOL Planar;
+    public TWPT PixelType;
+    public TWCP Compression;
   }
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
   public struct TW_IMAGEINFO_LINUX64
@@ -2230,9 +2230,9 @@ namespace NTwain.Data
     public short BitsPerSample_6;
     public short BitsPerSample_7;
     public short BitsPerPixel;
-    public ushort Planar;
-    public short PixelType;
-    public ushort Compression;
+    public TW_BOOL Planar;
+    public TWPT PixelType;
+    public TWCP Compression;
   }
 
   /// <summary>

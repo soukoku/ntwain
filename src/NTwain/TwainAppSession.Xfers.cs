@@ -1,4 +1,5 @@
 ﻿using NTwain.Data;
+using NTwain.Native;
 using NTwain.Triplets;
 using System;
 using System.Buffers;
@@ -18,7 +19,7 @@ namespace NTwain
     // so the array max is made with 32 MB. Typical usage should be a lot less.
     static readonly ArrayPool<byte> XferMemPool = ArrayPool<byte>.Create(32 * 1024 * 1024, 8);
 
-    public STS GetImageInfo(out TW_IMAGEINFO info)
+    internal STS GetImageInfo(out TW_IMAGEINFO info)
     {
       return WrapInSTS(DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out info));
     }
@@ -81,27 +82,30 @@ namespace NTwain
           }
           if (readyArgs.Cancel == CancelType.Graceful)
           {
-            sts = WrapInSTS(DGControl.PendingXfers.StopFeeder(ref _appIdentity, ref _currentDS, ref pending));
+            // ignore rc in this
+            DGControl.PendingXfers.StopFeeder(ref _appIdentity, ref _currentDS, ref pending);
           }
 
-          if (readyArgs.Cancel != CancelType.SkipCurrent)
+          if (readyArgs.Cancel != CancelType.SkipCurrent &&
+            DataTransferred != null)
           {
-            // transfer normally
+            // transfer normally and only if someone's listening
+            // to DataTransferred event
             if (xferImage)
             {
               switch (imgXferMech)
               {
                 case TWSX.NATIVE:
-                  TransferNativeImage();
+                  sts = TransferNativeImage();
                   break;
                 case TWSX.FILE:
-                  TransferFileImage();
+                  sts = TransferFileImage();
                   break;
                 case TWSX.MEMORY:
-                  TransferMemoryImage();
+                  sts = TransferMemoryImage();
                   break;
                 case TWSX.MEMFILE:
-                  TransferMemoryFileImage();
+                  sts = TransferMemoryFileImage();
                   break;
               }
             }
@@ -110,10 +114,10 @@ namespace NTwain
               switch (audXferMech)
               {
                 case TWSX.NATIVE:
-                  TransferNativeAudio();
+                  sts = TransferNativeAudio();
                   break;
                 case TWSX.FILE:
-                  TransferFileAudio();
+                  sts = TransferFileAudio();
                   break;
               }
             }
@@ -138,40 +142,109 @@ namespace NTwain
       {
         HandleNonSuccessXferCode(sts);
       }
-      _uiThreadMarshaller.BeginInvoke(() =>
+
+      //if (State > STATE.S5)
+      //{
+      //if (_closeDsRequested)
+      //{
+        _uiThreadMarshaller.BeginInvoke(() =>
+        {
+          DisableSource();
+        });
+      //}
+    }
+
+    private STS TransferFileAudio()
+    {
+      return default;
+    }
+
+    private STS TransferNativeAudio()
+    {
+      return default;
+    }
+
+    private STS TransferMemoryFileImage()
+    {
+      return default;
+    }
+
+    private STS TransferMemoryImage()
+    {
+      return default;
+    }
+
+    private STS TransferFileImage()
+    {
+      return default;
+    }
+
+    private STS TransferNativeImage()
+    {
+      IntPtr dataPtr = IntPtr.Zero;
+      IntPtr lockedPtr = IntPtr.Zero;
+      STS sts = default;
+      try
       {
-        DisableSource();
-      });
-    }
+        sts = WrapInSTS(DGImage.ImageNativeXfer.Get(ref _appIdentity, ref _currentDS, out dataPtr));
+        if (sts.RC == TWRC.XFERDONE)
+        {
+          State = STATE.S7;
 
-    private void TransferFileAudio()
-    {
+          lockedPtr = Lock(dataPtr);
 
-    }
+          byte[]? data = null;
 
-    private void TransferNativeAudio()
-    {
 
-    }
+          if (ImageTools.IsDib(lockedPtr))
+          {
+            data = ImageTools.GetBitmapData(XferMemPool, lockedPtr);
+          }
+          else if (ImageTools.IsTiff(lockedPtr))
+          {
+            data = ImageTools.GetTiffData(XferMemPool, lockedPtr);
+          }
 
-    private void TransferMemoryFileImage()
-    {
-
-    }
-
-    private void TransferMemoryImage()
-    {
-
-    }
-
-    private void TransferFileImage()
-    {
-
-    }
-
-    private void TransferNativeImage()
-    {
-
+          if (data != null)
+          {
+            try
+            {
+              var args = new DataTransferredEventArgs(this, data, true);
+              DataTransferred?.Invoke(this, args);
+            }
+            catch { }
+            finally
+            {
+              XferMemPool.Return(data);
+            }
+          }
+        }
+        else
+        {
+          HandleNonSuccessXferCode(sts);
+        }
+      }
+      catch (Exception ex)
+      {
+        try
+        {
+          TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
+        }
+        catch { }
+      }
+      finally
+      {
+        State = STATE.S6;
+        if (lockedPtr != IntPtr.Zero)
+        {
+          Unlock(dataPtr);
+        }
+        if (dataPtr != IntPtr.Zero)
+        {
+          Free(dataPtr);
+        }
+      }
+      return sts;
     }
 
     private void HandleNonSuccessXferCode(STS sts)

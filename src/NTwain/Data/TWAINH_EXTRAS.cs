@@ -754,6 +754,14 @@ namespace NTwain.Data
     }
   }
 
+  partial struct TW_IMAGEINFO
+  {
+    public override string ToString()
+    {
+      return $"{ImageWidth}x{ImageLength} {PixelType} {Compression} {BitsPerPixel}bpp";
+    }
+  }
+
   //partial struct TW_DEVICEEVENT
   //{
   //    public TWDE Event { get { return (TWDE)_event; } }

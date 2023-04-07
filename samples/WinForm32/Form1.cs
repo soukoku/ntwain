@@ -25,18 +25,33 @@ namespace WinFormSample
       twain.StateChanged += Twain_StateChanged;
       twain.DefaultSourceChanged += Twain_DefaultSourceChanged;
       twain.CurrentSourceChanged += Twain_CurrentSourceChanged;
+      twain.TransferReady += Twain_TransferReady;
+      twain.DataTransferred += Twain_DataTransferred;
+      twain.TransferError += Twain_TransferError;
+      twain.DeviceEvent += Twain_DeviceEvent;
 
-      SetDoubleBuffered(capListView);
+      capListView.SetDoubleBuffered(true);
 
       this.Disposed += Form1_Disposed;
     }
 
-    static void SetDoubleBuffered(Control control)
+    protected override void OnHandleCreated(EventArgs e)
     {
-      if (SystemInformation.TerminalServerSession) return;
+      base.OnHandleCreated(e);
 
-      var dbprop = control.GetType().GetProperty(nameof(DoubleBuffered), BindingFlags.NonPublic | BindingFlags.Instance);
-      dbprop!.SetValue(control, true);
+
+      var hwnd = this.Handle;
+      var rc = twain.OpenDSM(hwnd);
+      twain.AddWinformFilter();
+      Debug.WriteLine($"OpenDSM={rc}");
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+      var finalState = twain.TryStepdown(STATE.S2);
+      Debug.WriteLine($"Stepdown result state={finalState}");
+      twain.RemoveWinformFilter();
+      base.OnClosing(e);
     }
 
     private void Form1_Disposed(object? sender, EventArgs e)
@@ -44,7 +59,38 @@ namespace WinFormSample
       twain.Dispose();
     }
 
-    private void Twain_CurrentSourceChanged(TwainAppSession arg1, TW_IDENTITY_LEGACY ds)
+
+    private void Twain_DeviceEvent(TwainAppSession sender, TW_DEVICEEVENT e)
+    {
+
+    }
+
+    private void Twain_TransferError(TwainAppSession sender, TransferErrorEventArgs e)
+    {
+
+    }
+
+    private void Twain_DataTransferred(TwainAppSession sender, DataTransferredEventArgs e)
+    {
+      Debug.WriteLine($"Image transferred with info {e.ImageInfo}");
+    }
+
+    private void Twain_TransferReady(TwainAppSession sender, TransferReadyEventArgs e)
+    {
+
+    }
+
+    private void Twain_DefaultSourceChanged(TwainAppSession sender, TW_IDENTITY_LEGACY ds)
+    {
+      lblDefault.Text = ds.ProductName;
+    }
+
+    private void Twain_StateChanged(TwainAppSession sender, STATE state)
+    {
+      Invoke(()=> lblState.Text = state.ToString());
+    }
+
+    private void Twain_CurrentSourceChanged(TwainAppSession sender, TW_IDENTITY_LEGACY ds)
     {
       lblCurrent.Text = ds.ProductName;
       if (twain.State == STATE.S4)
@@ -168,35 +214,6 @@ namespace WinFormSample
           break;
       }
       return "";
-    }
-
-    private void Twain_DefaultSourceChanged(TwainAppSession arg1, TW_IDENTITY_LEGACY ds)
-    {
-      lblDefault.Text = ds.ProductName;
-    }
-
-    private void Twain_StateChanged(TwainAppSession session, STATE state)
-    {
-      lblState.Text = state.ToString();
-    }
-
-    protected override void OnHandleCreated(EventArgs e)
-    {
-      base.OnHandleCreated(e);
-
-
-      var hwnd = this.Handle;
-      var rc = twain.OpenDSM(hwnd);
-      twain.AddWinformFilter();
-      Debug.WriteLine($"OpenDSM={rc}");
-    }
-
-    protected override void OnClosing(CancelEventArgs e)
-    {
-      var finalState = twain.TryStepdown(STATE.S2);
-      Debug.WriteLine($"Stepdown result state={finalState}");
-      twain.RemoveWinformFilter();
-      base.OnClosing(e);
     }
 
     private void btnSelect_Click(object sender, EventArgs e)

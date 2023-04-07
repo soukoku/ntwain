@@ -128,37 +128,37 @@ namespace NTwain
     /// Fires when <see cref="State"/> changes. 
     /// This is not guaranteed to be raised on the UI thread.
     /// </summary>
-    public event Action<TwainAppSession, STATE>? StateChanged;
+    public event TwainEventDelegate<STATE>? StateChanged;
 
     /// <summary>
     /// Fires when <see cref="DefaultSource"/> changes.
     /// </summary>
-    public event Action<TwainAppSession, TW_IDENTITY_LEGACY>? DefaultSourceChanged;
+    public event TwainEventDelegate<TW_IDENTITY_LEGACY>? DefaultSourceChanged;
 
     /// <summary>
     /// Fires when <see cref="CurrentSource"/> changes.
     /// </summary>
-    public event Action<TwainAppSession, TW_IDENTITY_LEGACY>? CurrentSourceChanged;
+    public event TwainEventDelegate<TW_IDENTITY_LEGACY>? CurrentSourceChanged;
 
     /// <summary>
     /// Fires when the source has some device event happening.
     /// </summary>
-    public event Action<TwainAppSession, TW_DEVICEEVENT>? DeviceEvent;
+    public event TwainEventDelegate<TW_DEVICEEVENT>? DeviceEvent;
 
     /// <summary>
     /// Fires when there's an error during transfer.
     /// </summary>
-    public event EventHandler<TransferErrorEventArgs>? TransferError;
+    public event TwainEventDelegate<TransferErrorEventArgs>? TransferError;
 
     /// <summary>
     /// Fires when there's an upcoming transfer. App can inspect the image info
     /// and cancel if needed.
     /// </summary>
-    public event EventHandler<TransferReadyEventArgs>? TransferReady;
+    public event TwainEventDelegate<TransferReadyEventArgs>? TransferReady;
 
     /// <summary>
     /// Fires when transferred data is available for app to use.
     /// </summary>
-    public event EventHandler<DataTransferredEventArgs>? DataTransferred;
+    public event TwainEventDelegate<DataTransferredEventArgs>? DataTransferred;
   }
 }
