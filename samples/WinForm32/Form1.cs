@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -12,6 +15,7 @@ namespace WinFormSample
   public partial class Form1 : Form
   {
     private TwainAppSession twain;
+    private readonly string saveFolder;
 
     public Form1()
     {
@@ -31,6 +35,9 @@ namespace WinFormSample
       twain.DeviceEvent += Twain_DeviceEvent;
 
       capListView.SetDoubleBuffered(true);
+
+      saveFolder = Path.Combine(Path.GetTempPath(), "ntwain-sample");
+      Directory.CreateDirectory(saveFolder);
 
       this.Disposed += Form1_Disposed;
     }
@@ -62,22 +69,39 @@ namespace WinFormSample
 
     private void Twain_DeviceEvent(TwainAppSession sender, TW_DEVICEEVENT e)
     {
+      Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] device event {e}.");
 
     }
 
     private void Twain_TransferError(TwainAppSession sender, TransferErrorEventArgs e)
     {
+      if (e.Exception != null)
+      {
+        Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] transfer error {e.Exception}.");
+      }
+      else
+      {
+        Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] transfer error {e.Code}.");
+      }
 
     }
 
     private void Twain_DataTransferred(TwainAppSession sender, DataTransferredEventArgs e)
     {
-      Debug.WriteLine($"Image transferred with info {e.ImageInfo}");
+      Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] data transferred with info {e.ImageInfo}");
+      if (e.Data == null) return;
+      using (var stream = new MemoryStream(e.Data))
+      using (var img = Image.FromStream(stream))
+      {
+        var saveFile = Path.Combine(saveFolder, (DateTime.Now.Ticks / 1000) + ".png");
+        img.Save(saveFile, ImageFormat.Png);
+        Debug.WriteLine($"Saved image to {saveFile}");
+      }
     }
 
     private void Twain_TransferReady(TwainAppSession sender, TransferReadyEventArgs e)
     {
-
+      Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] transfer ready.");
     }
 
     private void Twain_DefaultSourceChanged(TwainAppSession sender, TW_IDENTITY_LEGACY ds)
@@ -87,7 +111,7 @@ namespace WinFormSample
 
     private void Twain_StateChanged(TwainAppSession sender, STATE state)
     {
-      Invoke(()=> lblState.Text = state.ToString());
+      Invoke(() => lblState.Text = state.ToString());
     }
 
     private void Twain_CurrentSourceChanged(TwainAppSession sender, TW_IDENTITY_LEGACY ds)

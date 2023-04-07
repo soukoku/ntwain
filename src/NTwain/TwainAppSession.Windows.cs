@@ -92,7 +92,7 @@ namespace NTwain
         handled = rc == TWRC.DSEVENT;
         if (_procEvent.TWMessage != 0 && (handled || rc == TWRC.NOTDSEVENT))
         {
-          Debug.WriteLine("Thread {0}: CheckIfTwainMessage at state {1} with MSG={2}.", Thread.CurrentThread.ManagedThreadId, State, (MSG)_procEvent.TWMessage);
+          Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}]: CheckIfTwainMessage at state {State} with MSG={_procEvent.TWMessage}.");
           HandleSourceMsg((MSG)_procEvent.TWMessage);
         }
       }
