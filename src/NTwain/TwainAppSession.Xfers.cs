@@ -147,7 +147,6 @@ namespace NTwain
                   }
                 }
               }
-
             }
             catch (Exception ex)
             {
@@ -160,10 +159,8 @@ namespace NTwain
           }
         } while (sts.RC == TWRC.SUCCESS && pending.Count != 0);
       }
-      else
-      {
-        HandleNonSuccessXferCode(sts);
-      }
+
+      HandleXferCode(sts);
 
       if (State >= STATE.S5)
       {
@@ -171,6 +168,45 @@ namespace NTwain
         {
           DisableSource();
         });
+      }
+    }
+
+    private void HandleXferCode(STS sts)
+    {
+      switch (sts.RC)
+      {
+        case TWRC.SUCCESS:
+        case TWRC.XFERDONE:
+          // ok to keep going
+          break;
+        case TWRC.CANCEL:
+          TW_PENDINGXFERS pending = default;
+          DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
+          // todo: also reset?
+          break;
+        default:
+          // TODO: raise error event
+          switch (sts.STATUS.ConditionCode)
+          {
+            case TWCC.DAMAGEDCORNER:
+            case TWCC.DOCTOODARK:
+            case TWCC.DOCTOOLIGHT:
+            case TWCC.FOCUSERROR:
+            case TWCC.NOMEDIA:
+            case TWCC.PAPERDOUBLEFEED:
+            case TWCC.PAPERJAM:
+              pending = default;
+              DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
+              break;
+            case TWCC.OPERATIONERROR:
+              GetCapCurrent(CAP.CAP_INDICATORS, out TW_BOOL showIndicator);
+              if (_userInterface.ShowUI == 0 && showIndicator == TW_BOOL.False)
+              {
+                // todo: alert user and drop to S4
+              }
+              break;
+          }
+          break;
       }
     }
 
@@ -197,10 +233,6 @@ namespace NTwain
         {
           State = STATE.S6;
         }
-      }
-      else
-      {
-        HandleNonSuccessXferCode(sts);
       }
       return sts;
     }
@@ -255,14 +287,82 @@ namespace NTwain
       var rc = DGControl.SetupMemXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPMEMXFER memSetup);
       if (rc == TWRC.SUCCESS)
       {
+        uint buffSize = memSetup.DetermineBufferSize();
+        var memPtr = Alloc(buffSize);
 
-
-        var sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
-        if (sts.RC == TWRC.SUCCESS)
+        TW_IMAGEMEMXFER memXfer = new()
         {
-          State = pending.Count == 0 ? STATE.S5 : STATE.S6;
+          Memory = new TW_MEMORY
+          {
+            Flags = (uint)(TWMF.APPOWNS | TWMF.POINTER),
+            Length = buffSize,
+            TheMem = memPtr
+          }
+        };
+        TW_IMAGEMEMXFER_MACOSX memXferOSX = new()
+        {
+          Memory = new TW_MEMORY
+          {
+            Flags = (uint)(TWMF.APPOWNS | TWMF.POINTER),
+            Length = buffSize,
+            TheMem = memPtr
+          }
+        };
+
+        byte[] dotnetBuff = XferMemPool.Rent((int)buffSize);
+        try
+        {
+          do
+          {
+            rc = TwainPlatform.IsMacOSX ?
+              DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXferOSX) :
+              DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXfer);
+
+            if (rc == TWRC.SUCCESS || rc == TWRC.XFERDONE)
+            {
+              try
+              {
+                var written = TwainPlatform.IsMacOSX ?
+                  memXferOSX.BytesWritten : memXfer.BytesWritten;
+
+                IntPtr lockedPtr = Lock(memPtr);
+
+                // assemble!
+
+                //Marshal.Copy(lockedPtr, dotnetBuff, 0, (int)written);
+                //outStream.Write(dotnetBuff, 0, (int)written);
+              }
+              finally
+              {
+                Unlock(memPtr);
+              }
+            }
+          } while (rc == TWRC.SUCCESS);
         }
-        return sts;
+        finally
+        {
+          if (memPtr != IntPtr.Zero) Free(memPtr);
+          XferMemPool.Return(dotnetBuff);
+        }
+
+
+        if (rc == TWRC.XFERDONE)
+        {
+          try
+          {
+            GetImageInfo(out TW_IMAGEINFO info);
+            //var args = new DataTransferredEventArgs(info, null, outStream.ToArray());
+            //DataTransferred?.Invoke(this, args);
+          }
+          catch { }
+
+          var sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
+          if (sts.RC == TWRC.SUCCESS)
+          {
+            State = pending.Count == 0 ? STATE.S5 : STATE.S6;
+          }
+          return sts;
+        }
       }
       return WrapInSTS(rc);
     }
@@ -382,10 +482,6 @@ namespace NTwain
           State = pending.Count == 0 ? STATE.S5 : STATE.S6;
         }
       }
-      else
-      {
-        HandleNonSuccessXferCode(sts);
-      }
       return sts;
     }
 
@@ -439,10 +535,6 @@ namespace NTwain
             State = pending.Count == 0 ? STATE.S5 : STATE.S6;
           }
         }
-        else
-        {
-          HandleNonSuccessXferCode(sts);
-        }
         return sts;
       }
       finally
@@ -452,44 +544,5 @@ namespace NTwain
       }
     }
 
-
-    // TODO: this is currently not handled in the right place
-    private void HandleNonSuccessXferCode(STS sts)
-    {
-      switch (sts.RC)
-      {
-        case TWRC.SUCCESS:
-        case TWRC.XFERDONE:
-          // ok to keep going
-          break;
-        case TWRC.CANCEL:
-          TW_PENDINGXFERS pending = default;
-          DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
-          break;
-        default:
-          // TODO: raise error event
-          switch (sts.STATUS.ConditionCode)
-          {
-            case TWCC.DAMAGEDCORNER:
-            case TWCC.DOCTOODARK:
-            case TWCC.DOCTOOLIGHT:
-            case TWCC.FOCUSERROR:
-            case TWCC.NOMEDIA:
-            case TWCC.PAPERDOUBLEFEED:
-            case TWCC.PAPERJAM:
-              pending = default;
-              DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
-              break;
-            case TWCC.OPERATIONERROR:
-              GetCapCurrent(CAP.CAP_INDICATORS, out TW_BOOL showIndicator);
-              if (_userInterface.ShowUI == 0 && showIndicator == TW_BOOL.False)
-              {
-                // todo: alert user and drop to S4
-              }
-              break;
-          }
-          break;
-      }
-    }
   }
 }
