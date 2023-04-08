@@ -209,7 +209,7 @@ namespace NTwain
           {
             try
             {
-              var args = new DataTransferredEventArgs(this, data, true);
+              var args = new DataTransferredEventArgs(this, true, data);
               DataTransferred?.Invoke(this, args);
             }
             catch { }

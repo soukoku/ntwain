@@ -3,6 +3,9 @@ using System;
 
 namespace NTwain
 {
+  // TODO: a 2-level dispose with end of event method
+  // and manual dispose for perf if this is not good enough.
+
   public class DataTransferredEventArgs : EventArgs
   {
     readonly TwainAppSession _twain;
@@ -12,12 +15,13 @@ namespace NTwain
     /// Ctor for array data;
     /// </summary>
     /// <param name="twain"></param>
+    /// <param name="isImage"></param>
     /// <param name="data"></param>
-    internal DataTransferredEventArgs(TwainAppSession twain, byte[] data, bool isImage)
+    internal DataTransferredEventArgs(TwainAppSession twain, bool isImage, byte[] data)
     {
-      this._twain = twain;
+      _twain = twain;
+      _isImage = isImage;
       Data = data;
-      this._isImage = isImage;
     }
 
 
@@ -30,25 +34,17 @@ namespace NTwain
     public byte[]? Data { get; }
 
 
-    TW_IMAGEINFO? _imgInfo;
-
     /// <summary>
-    /// Gets the final image information if applicable.
+    /// Gets the final image information if transfer was an image.
     /// </summary>
-    public TW_IMAGEINFO? ImageInfo
+    public TW_IMAGEINFO? GetImageInfo()
     {
-      get
+      if (_isImage && _twain.GetImageInfo(out TW_IMAGEINFO info).RC == TWRC.SUCCESS)
       {
-        if (_isImage && _imgInfo == null)
-        {
-          if (_twain.GetImageInfo(out TW_IMAGEINFO info).RC == TWRC.SUCCESS)
-          {
-            _imgInfo = info;
-          }
-        }
-        return _imgInfo;
+        return info;
       }
-    }
+      return null;
 
+    }
   }
 }

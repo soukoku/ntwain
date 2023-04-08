@@ -24,7 +24,7 @@ namespace NTwain.Native
     }
 
 
-    public static byte[]? GetBitmapData(System.Buffers.ArrayPool<byte> xferMemPool, IntPtr data)
+    public static unsafe byte[]? GetBitmapData(System.Buffers.ArrayPool<byte> xferMemPool, IntPtr data)
     {
       var infoHeader = (BITMAPINFOHEADER)Marshal.PtrToStructure(data, typeof(BITMAPINFOHEADER));
       if (infoHeader.Validate())
@@ -43,12 +43,20 @@ namespace NTwain.Native
 
         var dataCopy = xferMemPool.Rent((int)fileHeader.bfSize);// new byte[fileHeader.bfSize];
 
-        // TODO: reduce extra alloc
+        // TODO: run benchmark on which one is faster
+
         // write file header
-        IntPtr tempPtr = Marshal.AllocHGlobal(fileHeaderSize);
-        Marshal.StructureToPtr(fileHeader, tempPtr, true);
-        Marshal.Copy(tempPtr, dataCopy, 0, fileHeaderSize);
-        Marshal.FreeHGlobal(tempPtr);
+        //IntPtr tempPtr = Marshal.AllocHGlobal(fileHeaderSize);
+        //Marshal.StructureToPtr(fileHeader, tempPtr, true);
+        //Marshal.Copy(tempPtr, dataCopy, 0, fileHeaderSize);
+        //Marshal.FreeHGlobal(tempPtr);
+
+        // would this be faster?
+        fixed (byte* p = dataCopy)
+        {
+          Marshal.StructureToPtr(fileHeader, (IntPtr)p, false);
+        }
+
         // write image
         Marshal.Copy(data, dataCopy, fileHeaderSize, (int)fileHeader.bfSize - fileHeaderSize);
 
