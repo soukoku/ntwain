@@ -139,9 +139,9 @@ namespace NTwain.Data
     /// The normal get...
     /// </summary>
     /// <returns></returns>
-    public string Get()
+    public string Get(Encoding? encoding = null)
     {
-      return (GetValue(true));
+      return (GetValue(true, encoding));
     }
 
     /// <summary>
@@ -149,16 +149,16 @@ namespace NTwain.Data
     /// that doesn't include the prefix byte...
     /// </summary>
     /// <returns></returns>
-    public string GetNoPrefix()
+    public string GetNoPrefix(Encoding? encoding = null)
     {
-      return (GetValue(false));
+      return (GetValue(false, encoding));
     }
 
     /// <summary>
     /// Get our value...
     /// </summary>
     /// <returns></returns>
-    private string GetValue(bool a_blMayHavePrefix)
+    private string GetValue(bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // convert what we have into a byte array
       byte[] abyItem = new byte[34];
@@ -187,7 +187,7 @@ namespace NTwain.Data
       }
 
       // change encoding of byte array, then convert the bytes array to a string
-      string sz = Encoding.Unicode.GetString(Encoding.Convert(Language.GetEncoding(), Encoding.Unicode, abyItem));
+      string sz = Encoding.Unicode.GetString(Encoding.Convert(encoding ?? Language.GetEncoding(), Encoding.Unicode, abyItem));
 
       // If the first character is a NUL, then return the empty string...
       while ((sz.Length > 0) && (sz[0] == '\0'))
@@ -221,9 +221,9 @@ namespace NTwain.Data
     /// The normal set...
     /// </summary>
     /// <returns></returns>
-    public void Set(string a_sz)
+    public void Set(string a_sz, Encoding? encoding = null)
     {
-      SetValue(a_sz, true);
+      SetValue(a_sz, true, encoding);
     }
 
     /// <summary>
@@ -231,9 +231,9 @@ namespace NTwain.Data
     /// that doesn't include the prefix byte...
     /// </summary>
     /// <returns></returns>
-    public void SetNoPrefix(string a_sz)
+    public void SetNoPrefix(string a_sz, Encoding? encoding = null)
     {
-      SetValue(a_sz, false);
+      SetValue(a_sz, false, encoding);
     }
 
     /// <summary>
@@ -241,7 +241,7 @@ namespace NTwain.Data
     /// </summary>
     /// <param name="a_sz"></param>
     /// <param name="a_blMayHavePrefix"></param>
-    private void SetValue(string a_sz, bool a_blMayHavePrefix)
+    private void SetValue(string a_sz, bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...
       if (a_sz == null)
@@ -263,7 +263,7 @@ namespace NTwain.Data
       }
 
       // convert string to byte array, then change the encoding of the byte array
-      byte[] abyItem = Encoding.Convert(Encoding.Unicode, Language.GetEncoding(), Encoding.Unicode.GetBytes(sz));
+      byte[] abyItem = Encoding.Convert(Encoding.Unicode, encoding ?? Language.GetEncoding(), Encoding.Unicode.GetBytes(sz));
 
       // convert byte array to bytes
       if (abyItem.Length > 0)
@@ -313,9 +313,9 @@ namespace NTwain.Data
     /// The normal get...
     /// </summary>
     /// <returns></returns>
-    public string Get()
+    public string Get(Encoding? encoding = null)
     {
-      return (GetValue(true));
+      return (GetValue(true, encoding));
     }
 
     /// <summary>
@@ -323,16 +323,16 @@ namespace NTwain.Data
     /// that doesn't include the prefix byte...
     /// </summary>
     /// <returns></returns>
-    public string GetNoPrefix()
+    public string GetNoPrefix(Encoding? encoding = null)
     {
-      return (GetValue(false));
+      return (GetValue(false, encoding));
     }
 
     /// <summary>
     /// Get our value...
     /// </summary>
     /// <returns></returns>
-    private string GetValue(bool a_blMayHavePrefix)
+    private string GetValue(bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // convert what we have into a byte array
       byte[] abyItem = new byte[66];
@@ -369,7 +369,7 @@ namespace NTwain.Data
       }
 
       // change encoding of byte array, then convert the bytes array to a string
-      string sz = Encoding.Unicode.GetString(Encoding.Convert(Language.GetEncoding(), Encoding.Unicode, abyItem));
+      string sz = Encoding.Unicode.GetString(Encoding.Convert(encoding ?? Language.GetEncoding(), Encoding.Unicode, abyItem));
 
       // If the first character is a NUL, then return the empty string...
       if (sz[0] == '\0')
@@ -397,9 +397,9 @@ namespace NTwain.Data
     /// The normal set...
     /// </summary>
     /// <returns></returns>
-    public void Set(string a_sz)
+    public void Set(string a_sz, Encoding? encoding = null)
     {
-      SetValue(a_sz, true);
+      SetValue(a_sz, true, encoding);
     }
 
     /// <summary>
@@ -407,9 +407,9 @@ namespace NTwain.Data
     /// that doesn't include the prefix byte...
     /// </summary>
     /// <returns></returns>
-    public void SetNoPrefix(string a_sz)
+    public void SetNoPrefix(string a_sz, Encoding? encoding = null)
     {
-      SetValue(a_sz, false);
+      SetValue(a_sz, false, encoding);
     }
 
     /// <summary>
@@ -417,7 +417,7 @@ namespace NTwain.Data
     /// </summary>
     /// <param name="a_sz"></param>
     /// <param name="a_blMayHavePrefix"></param>
-    private void SetValue(string a_sz, bool a_blMayHavePrefix)
+    private void SetValue(string a_sz, bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...
       if (a_sz == null)
@@ -441,7 +441,7 @@ namespace NTwain.Data
       }
 
       // convert string to byte array, then change the encoding of the byte array
-      byte[] abyItem = Encoding.Convert(Encoding.Unicode, Language.GetEncoding(), Encoding.Unicode.GetBytes(sz));
+      byte[] abyItem = Encoding.Convert(Encoding.Unicode, encoding ?? Language.GetEncoding(), Encoding.Unicode.GetBytes(sz));
 
       // concert byte array to bytes
       byItem000 = abyItem[0]; byItem001 = abyItem[1]; byItem002 = abyItem[2]; byItem003 = abyItem[3];
@@ -512,9 +512,9 @@ namespace NTwain.Data
     /// The normal get...
     /// </summary>
     /// <returns></returns>
-    public string Get()
+    public string Get(Encoding? encoding = null)
     {
-      return (GetValue(true));
+      return (GetValue(true, encoding));
     }
 
     /// <summary>
@@ -522,16 +522,16 @@ namespace NTwain.Data
     /// that doesn't include the prefix byte...
     /// </summary>
     /// <returns></returns>
-    public string GetNoPrefix()
+    public string GetNoPrefix(Encoding? encoding = null)
     {
-      return (GetValue(false));
+      return (GetValue(false, encoding));
     }
 
     /// <summary>
     /// Get our value...
     /// </summary>
     /// <returns></returns>
-    private string GetValue(bool a_blMayHavePrefix)
+    private string GetValue(bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // convert what we have into a byte array
       byte[] abyItem = new byte[130];
@@ -584,7 +584,7 @@ namespace NTwain.Data
       }
 
       // change encoding of byte array, then convert the bytes array to a string
-      string sz = Encoding.Unicode.GetString(Encoding.Convert(Language.GetEncoding(), Encoding.Unicode, abyItem));
+      string sz = Encoding.Unicode.GetString(Encoding.Convert(encoding ?? Language.GetEncoding(), Encoding.Unicode, abyItem));
 
       // If the first character is a NUL, then return the empty string...
       if (sz[0] == '\0')
@@ -612,9 +612,9 @@ namespace NTwain.Data
     /// The normal set...
     /// </summary>
     /// <returns></returns>
-    public void Set(string a_sz)
+    public void Set(string a_sz, Encoding? encoding = null)
     {
-      SetValue(a_sz, true);
+      SetValue(a_sz, true, encoding);
     }
 
     /// <summary>
@@ -622,9 +622,9 @@ namespace NTwain.Data
     /// that doesn't include the prefix byte...
     /// </summary>
     /// <returns></returns>
-    public void SetNoPrefix(string a_sz)
+    public void SetNoPrefix(string a_sz, Encoding? encoding = null)
     {
-      SetValue(a_sz, false);
+      SetValue(a_sz, false, encoding);
     }
 
     /// <summary>
@@ -632,7 +632,7 @@ namespace NTwain.Data
     /// </summary>
     /// <param name="a_sz"></param>
     /// <param name="a_blMayHavePrefix"></param>
-    private void SetValue(string a_sz, bool a_blMayHavePrefix)
+    private void SetValue(string a_sz, bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...
       if (a_sz == null)
@@ -658,7 +658,7 @@ namespace NTwain.Data
       }
 
       // convert string to byte array, then change the encoding of the byte array
-      byte[] abyItem = Encoding.Convert(Encoding.Unicode, Language.GetEncoding(), Encoding.Unicode.GetBytes(sz));
+      byte[] abyItem = Encoding.Convert(Encoding.Unicode, encoding ?? Language.GetEncoding(), Encoding.Unicode.GetBytes(sz));
 
       // concert byte array to bytes
       byItem000 = abyItem[0]; byItem001 = abyItem[1]; byItem002 = abyItem[2]; byItem003 = abyItem[3];
@@ -907,9 +907,9 @@ namespace NTwain.Data
     /// The normal set...
     /// </summary>
     /// <returns></returns>
-    public void Set(string a_sz)
+    public void Set(string a_sz, Encoding? encoding = null)
     {
-      SetValue(a_sz, true);
+      SetValue(a_sz, true, encoding);
     }
 
     /// <summary>
@@ -917,9 +917,9 @@ namespace NTwain.Data
     /// that doesn't include the prefix byte...
     /// </summary>
     /// <returns></returns>
-    public void SetNoPrefix(string a_sz)
+    public void SetNoPrefix(string a_sz, Encoding? encoding = null)
     {
-      SetValue(a_sz, false);
+      SetValue(a_sz, false, encoding);
     }
 
     /// <summary>
@@ -927,7 +927,7 @@ namespace NTwain.Data
     /// </summary>
     /// <param name="a_sz"></param>
     /// <param name="a_blMayHavePrefix"></param>
-    private void SetValue(string a_sz, bool a_blMayHavePrefix)
+    private void SetValue(string a_sz, bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...
       if (a_sz == null)
@@ -956,7 +956,7 @@ namespace NTwain.Data
       }
 
       // convert string to byte array, then change the encoding of the byte array
-      byte[] abyItem = Encoding.Convert(Encoding.Unicode, Language.GetEncoding(), Encoding.Unicode.GetBytes(sz));
+      byte[] abyItem = Encoding.Convert(Encoding.Unicode, encoding ?? Language.GetEncoding(), Encoding.Unicode.GetBytes(sz));
 
       // concert byte array to bytes
       byItem000 = abyItem[0]; byItem001 = abyItem[1]; byItem002 = abyItem[2]; byItem003 = abyItem[3];
