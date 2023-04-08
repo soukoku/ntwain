@@ -161,10 +161,11 @@ namespace WinFormSample
 
         if (twain.GetCapCurrent(c, out TW_CAPABILITY twcap).RC == TWRC.SUCCESS)
         {
-          var type = twcap.DetermineValueType(twain);
-          it.SubItems.Add(type.ToString());
-          it.SubItems.Add(ReadTypedValue(c, type, forCurrent: true));
-          it.SubItems.Add(ReadTypedValue(c, type, forCurrent: false));
+          var enumType = KnownCapEnumMap.GetEnumType(c);
+          var realType = twcap.DetermineValueType(twain);
+          it.SubItems.Add(enumType?.Name.ToString() ?? realType.ToString());
+          it.SubItems.Add(ReadTypedValue(c, realType, forCurrent: true));
+          it.SubItems.Add(ReadTypedValue(c, realType, forCurrent: false));
         }
         else
         {
