@@ -8,11 +8,10 @@ namespace NTwain
 
   public class DataTransferredEventArgs : EventArgs
   {
-    public DataTransferredEventArgs(TW_AUDIOINFO info, TW_SETUPFILEXFER xfer)
+    public DataTransferredEventArgs(TW_AUDIOINFO info, TW_SETUPFILEXFER fileInfo)
     {
       AudioInfo = info;
-      File = xfer;
-      IsFile = true;
+      FileInfo = fileInfo;
     }
     public DataTransferredEventArgs(TW_AUDIOINFO info, byte[] data)
     {
@@ -20,18 +19,12 @@ namespace NTwain
       Data = data;
     }
 
-    public DataTransferredEventArgs(TW_IMAGEINFO info, TW_SETUPFILEXFER xfer)
+    public DataTransferredEventArgs(TW_IMAGEINFO info, TW_SETUPFILEXFER? fileInfo, byte[] data)
     {
       ImageInfo = info;
-      File = xfer;
+      FileInfo = fileInfo;
       IsImage = true;
-      IsFile = true;
-    }
-    public DataTransferredEventArgs(TW_IMAGEINFO info, byte[] data)
-    {
-      ImageInfo = info;
       Data = data;
-      IsImage = true;
     }
 
     /// <summary>
@@ -40,23 +33,16 @@ namespace NTwain
     public bool IsImage { get; }
 
     /// <summary>
-    /// Whether transfer was a file or memory data.
-    /// </summary>
-    public bool IsFile { get; }
-
-
-    /// <summary>
-    /// The complete file data if <see cref="IsFile"/> is false. 
-    /// IMPORTANT: The data held
-    /// in this array will no longer be valid once
+    /// The complete file data if memory was involved in the transfer. 
+    /// IMPORTANT: Content of this array may not valid once
     /// the event handler ends.
     /// </summary>
     public byte[]? Data { get; }
 
     /// <summary>
-    /// The file info if <see cref="IsFile"/> is true.
+    /// The file info if the transfer involved file information.
     /// </summary>
-    public TW_SETUPFILEXFER? File { get; }
+    public TW_SETUPFILEXFER? FileInfo { get; }
 
 
     /// <summary>
