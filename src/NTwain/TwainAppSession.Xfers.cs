@@ -147,10 +147,10 @@ namespace NTwain
       //{
       //if (_closeDsRequested)
       //{
-        _uiThreadMarshaller.BeginInvoke(() =>
-        {
-          DisableSource();
-        });
+      _uiThreadMarshaller.BeginInvoke(() =>
+      {
+        DisableSource();
+      });
       //}
     }
 
@@ -176,7 +176,39 @@ namespace NTwain
 
     private STS TransferFileImage()
     {
-      return default;
+      STS sts = default;
+      try
+      {
+        // assuming user already configured the transfer in transferready event
+        // get what will be transferred
+        DGControl.SetupFileXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPFILEXFER xfer);
+        // and just start it
+        sts = WrapInSTS(DGImage.ImageFileXfer.Get(ref _appIdentity, ref _currentDS));
+        if (sts.RC == TWRC.XFERDONE)
+        {
+          State = STATE.S7;
+
+          try
+          {
+            var args = new DataTransferredEventArgs(this, true, xfer);
+            DataTransferred?.Invoke(this, args);
+          }
+          catch { }
+        }
+        else
+        {
+          HandleNonSuccessXferCode(sts);
+        }
+      }
+      catch (Exception ex)
+      {
+        try
+        {
+          TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
+        }
+        catch { }
+      }
+      return sts;
     }
 
     private STS TransferNativeImage()
@@ -235,14 +267,8 @@ namespace NTwain
       finally
       {
         State = STATE.S6;
-        if (lockedPtr != IntPtr.Zero)
-        {
-          Unlock(dataPtr);
-        }
-        if (dataPtr != IntPtr.Zero)
-        {
-          Free(dataPtr);
-        }
+        if (lockedPtr != IntPtr.Zero) Unlock(dataPtr);
+        if (dataPtr != IntPtr.Zero) Free(dataPtr);
       }
       return sts;
     }

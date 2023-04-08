@@ -11,6 +11,14 @@ namespace NTwain
     readonly TwainAppSession _twain;
     readonly bool _isImage;
 
+
+    internal DataTransferredEventArgs(TwainAppSession twain, bool isImage, TW_SETUPFILEXFER xfer)
+    {
+      _twain = twain;
+      _isImage = isImage;
+      File = xfer;
+    }
+
     /// <summary>
     /// Ctor for array data;
     /// </summary>
@@ -32,6 +40,11 @@ namespace NTwain
     /// the event handler ends.
     /// </summary>
     public byte[]? Data { get; }
+
+    /// <summary>
+    /// The file info if this was a file transfer.
+    /// </summary>
+    public TW_SETUPFILEXFER? File { get; }
 
 
     /// <summary>

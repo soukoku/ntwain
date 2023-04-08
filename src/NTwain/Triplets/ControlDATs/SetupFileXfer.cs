@@ -8,14 +8,23 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class SetupFileXfer
   {
-    public TWRC Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_SETUPFILEXFER data)
-      => DoIt(ref app, ref ds, MSG.GET, ref data);
+    public TWRC Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_SETUPFILEXFER data)
+    {
+      data = default;
+      return DoIt(ref app, ref ds, MSG.GET, ref data);
+    }
     public TWRC Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_SETUPFILEXFER data)
       => DoIt(ref app, ref ds, MSG.SET, ref data);
-    public TWRC GetDefault(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_SETUPFILEXFER data)
-      => DoIt(ref app, ref ds, MSG.GETDEFAULT, ref data);
-    public TWRC Reset(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_SETUPFILEXFER data)
-      => DoIt(ref app, ref ds, MSG.RESET, ref data);
+    public TWRC GetDefault(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_SETUPFILEXFER data)
+    {
+      data = default;
+      return DoIt(ref app, ref ds, MSG.GETDEFAULT, ref data);
+    }
+    public TWRC Reset(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_SETUPFILEXFER data)
+    {
+      data = default;
+      return DoIt(ref app, ref ds, MSG.RESET, ref data);
+    }
 
 
     static TWRC DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, ref TW_SETUPFILEXFER data)
