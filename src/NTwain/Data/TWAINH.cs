@@ -2507,7 +2507,7 @@ namespace NTwain.Data
   /// Provides the application information about the Source’s requirements and preferences regarding allocation of transfer buffer(s).
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
-  public struct TW_SETUPMEMXFER
+  public partial struct TW_SETUPMEMXFER
   {
     public uint MinBufSize;
     public uint MaxBufSize;

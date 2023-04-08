@@ -275,7 +275,7 @@ namespace NTwain
         rc = DGControl.SetupMemXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPMEMXFER memSetup);
         if (rc == TWRC.SUCCESS)
         {
-          uint buffSize = DetermineBufferSize(memSetup);
+          uint buffSize = memSetup.DetermineBufferSize();
           var memPtr = Alloc(buffSize);
 
           TW_IMAGEMEMXFER memXfer = new()
@@ -357,20 +357,6 @@ namespace NTwain
       return WrapInSTS(rc);
     }
 
-    private static uint DetermineBufferSize(TW_SETUPMEMXFER memSetup)
-    {
-      // default to 16 kb if source doesn't really want to say what it needs
-      var buffSize = memSetup.Preferred;
-      if (buffSize != TwainConst.TWON_DONTCARE32) return buffSize;
-
-      buffSize = memSetup.MaxBufSize;
-      if (buffSize != TwainConst.TWON_DONTCARE32) return buffSize;
-
-      buffSize = memSetup.MinBufSize;
-      if (buffSize != TwainConst.TWON_DONTCARE32) return buffSize;
-
-      return 1024 * 16;
-    }
 
     private STS TransferFileImage(ref TW_PENDINGXFERS pending)
     {

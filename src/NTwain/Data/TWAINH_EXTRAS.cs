@@ -762,6 +762,23 @@ namespace NTwain.Data
     }
   }
 
+  partial struct TW_SETUPMEMXFER
+  {
+    /// <summary>
+    /// Determines the best buffer size from values
+    /// specified by source
+    /// </summary>
+    /// <returns></returns>
+    public uint DetermineBufferSize()
+    {
+      if (Preferred != TwainConst.TWON_DONTCARE32) return Preferred;
+      if (MaxBufSize != TwainConst.TWON_DONTCARE32) return MaxBufSize;
+      if (MinBufSize != TwainConst.TWON_DONTCARE32) return MinBufSize;
+      // default to 16 kb if source doesn't really want to say what it needs
+      return 1024 * 16;
+    }
+  }
+
   //partial struct TW_DEVICEEVENT
   //{
   //    public TWDE Event { get { return (TWDE)_event; } }
