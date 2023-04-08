@@ -28,6 +28,7 @@ namespace NTwain.Data
       { CAP.CAP_CAMERASIDE, typeof(TWCS) },
 
       { CAP.CAP_CLEARPAGE, typeof(TW_BOOL) },
+      { CAP.CAP_CUSTOMDSDATA, typeof(TW_BOOL) },
       { CAP.CAP_DEVICEEVENT, typeof(TWDE) },
       { CAP.CAP_DEVICEONLINE, typeof(TW_BOOL) },
 
