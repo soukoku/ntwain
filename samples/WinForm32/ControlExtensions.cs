@@ -10,12 +10,10 @@ namespace WinFormSample
 {
   static class ControlExtensions
   {
-    public static void SetDoubleBuffered(this Control control, bool value)
+    public static void SetDoubleBufferedAsNeeded(this Control control)
     {
-      if (SystemInformation.TerminalServerSession) return;
-
       var dbprop = control.GetType().GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance);
-      dbprop!.SetValue(control, value);
+      dbprop!.SetValue(control, !SystemInformation.TerminalServerSession);
     }
 
   }

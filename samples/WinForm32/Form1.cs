@@ -1,3 +1,4 @@
+using Microsoft.Win32;
 using NTwain;
 using NTwain.Data;
 using System;
@@ -34,12 +35,25 @@ namespace WinFormSample
       twain.TransferError += Twain_TransferError;
       twain.DeviceEvent += Twain_DeviceEvent;
 
-      capListView.SetDoubleBuffered(true);
+      capListView.SetDoubleBufferedAsNeeded();
+      SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
 
       saveFolder = Path.Combine(Path.GetTempPath(), "ntwain-sample");
       Directory.CreateDirectory(saveFolder);
 
       this.Disposed += Form1_Disposed;
+    }
+
+    private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
+    {
+      switch (e.Reason)
+      {
+        case SessionSwitchReason.RemoteConnect:
+        case SessionSwitchReason.SessionUnlock:
+        case SessionSwitchReason.SessionLogon:
+          capListView.SetDoubleBufferedAsNeeded();
+          break;
+      }
     }
 
     protected override void OnHandleCreated(EventArgs e)
@@ -88,7 +102,7 @@ namespace WinFormSample
 
     private void Twain_DataTransferred(TwainAppSession sender, DataTransferredEventArgs e)
     {
-      Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] data transferred with info {e.ImageInfo}");
+      Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] data transferred with info {e.GetImageInfo()}");
       if (e.Data == null) return;
       using (var stream = new MemoryStream(e.Data))
       using (var img = Image.FromStream(stream))
@@ -116,7 +130,7 @@ namespace WinFormSample
 
     private void Twain_CurrentSourceChanged(TwainAppSession sender, TW_IDENTITY_LEGACY ds)
     {
-      lblCurrent.Text = ds.ProductName;
+      lblCurrent.Text = ds.ToString();
       if (twain.State == STATE.S4)
       {
         LoadCapInfoList();
@@ -291,7 +305,7 @@ namespace WinFormSample
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-      twain.EnableSource(true, false);
+      twain.EnableSource(false, false);
     }
   }
 }
