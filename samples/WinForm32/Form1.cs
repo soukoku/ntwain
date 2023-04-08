@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -164,8 +165,8 @@ namespace WinFormSample
           var enumType = KnownCapEnumMap.GetEnumType(c);
           var realType = twcap.DetermineValueType(twain);
           it.SubItems.Add(enumType?.Name.ToString() ?? realType.ToString());
-          it.SubItems.Add(ReadTypedValue(c, realType, forCurrent: true));
-          it.SubItems.Add(ReadTypedValue(c, realType, forCurrent: false));
+          it.SubItems.Add(ReadTypedValue(c, enumType, realType, forCurrent: true));
+          it.SubItems.Add(ReadTypedValue(c, enumType, realType, forCurrent: false));
         }
         else
         {
@@ -180,8 +181,32 @@ namespace WinFormSample
     }
 
     // there may be a better way...
-    private string ReadTypedValue(CAP cap, TWTY type, bool forCurrent)
+    MethodInfo[] twainMethods = typeof(TwainAppSession).GetMethods();
+
+    private string ReadTypedValue(CAP cap, Type? enumType, TWTY type, bool forCurrent)
     {
+      if (enumType != null)
+      {
+        if (forCurrent)
+        {
+          var currentMethod = twainMethods
+            .FirstOrDefault(m => m.Name == nameof(TwainAppSession.GetCapCurrent) && m.IsGenericMethod)!
+            .MakeGenericMethod(enumType);
+          var args = new object?[] { cap, null };
+          currentMethod.Invoke(twain, args);
+          return args[1].ToString();
+        }
+        else
+        {
+          var defaultMethod = twainMethods
+            .FirstOrDefault(m => m.Name == nameof(TwainAppSession.GetCapDefault) && m.IsGenericMethod)!
+            .MakeGenericMethod(enumType);
+          var args = new object?[] { cap, null };
+          defaultMethod.Invoke(twain, args);
+          return args[1].ToString();
+        }
+      }
+
       STS sts = default;
       switch (type)
       {
