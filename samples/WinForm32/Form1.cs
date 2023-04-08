@@ -181,10 +181,11 @@ namespace WinFormSample
     // there may be a better way...
     private string ReadTypedValue(CAP cap, TWTY type, bool forCurrent)
     {
+      STS sts = default;
       switch (type)
       {
         case TWTY.UINT8:
-          var sts = forCurrent ?
+          sts = forCurrent ?
             twain.GetCapCurrent(cap, out byte ubval) :
             twain.GetCapDefault(cap, out ubval);
           return ubval.ToString();
@@ -251,6 +252,7 @@ namespace WinFormSample
         case TWTY.HANDLE:
           break;
       }
+      Debug.WriteLine($"{nameof(ReadTypedValue)}({cap}, {type}, {forCurrent}) => {sts}");
       return "";
     }
 

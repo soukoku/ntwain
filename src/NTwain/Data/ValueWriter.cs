@@ -292,7 +292,7 @@ namespace NTwain.Data
         //}
 
         // Set the Item...
-        WriteRangeValues(memMgr, lockedPtr, itemType, value);
+        WriteRangeValues(lockedPtr, itemType, value);
       }
       finally
       {
@@ -301,7 +301,7 @@ namespace NTwain.Data
       return twCap;
     }
 
-    static void WriteRangeValues<TValue>(IMemoryManager memMgr, IntPtr lockedPtr, TWTY itemType, Range<TValue> value) where TValue : struct
+    static void WriteRangeValues<TValue>(IntPtr lockedPtr, TWTY itemType, Range<TValue> value) where TValue : struct
     {
       // TODO: reduce this later
 

@@ -98,7 +98,9 @@ namespace NTwain
 
     internal IntPtr _hwnd;
     internal TW_USERINTERFACE _userInterface; // kept around for disable to use
+#if WINDOWS || NETFRAMEWORK
     TW_EVENT _procEvent; // kept here so the alloc/free only happens once
+#endif
     // test threads a bit
     readonly BlockingCollection<MSG> _bgPendingMsgs = new();
     private readonly IThreadMarshaller _uiThreadMarshaller;
@@ -165,7 +167,9 @@ namespace NTwain
           // this will end the bg thread
           _bgPendingMsgs.CompleteAdding();
         }
+#if WINDOWS || NETFRAMEWORK
         if (_procEvent.pEvent != IntPtr.Zero) Marshal.FreeHGlobal(_procEvent.pEvent);
+#endif
         disposedValue = true;
       }
     }
@@ -249,7 +253,7 @@ namespace NTwain
     protected STS WrapInSTS(TWRC rc, bool dsmOnly = false)
     {
       if (rc != TWRC.FAILURE) return new STS { RC = rc };
-      var sts = new STS { RC = rc, STATUS = GetLastStatus() };
+      var sts = new STS { RC = rc, STATUS = GetLastStatus(dsmOnly) };
       if (sts.STATUS.ConditionCode == TWCC.BADDEST)
       {
         // TODO: the current ds is bad, should assume we're back in S3?

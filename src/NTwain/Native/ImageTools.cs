@@ -26,7 +26,7 @@ namespace NTwain.Native
 
     public static unsafe byte[]? GetBitmapData(System.Buffers.ArrayPool<byte> xferMemPool, IntPtr data)
     {
-      var infoHeader = (BITMAPINFOHEADER)Marshal.PtrToStructure(data, typeof(BITMAPINFOHEADER));
+      var infoHeader = Marshal.PtrToStructure<BITMAPINFOHEADER>(data);
       if (infoHeader.Validate())
       {
         var fileHeaderSize = Marshal.SizeOf(typeof(BITMAPFILEHEADER));
@@ -75,7 +75,7 @@ namespace NTwain.Native
       for (int i = 0; i < 999; i++)
       {
         tagPtr += (tagSize * i);
-        var tag = (TIFFTAG)Marshal.PtrToStructure((IntPtr)tagPtr, typeof(TIFFTAG));
+        var tag = Marshal.PtrToStructure<TIFFTAG>((IntPtr)tagPtr);
 
         switch (tag.u16Tag)
         {
