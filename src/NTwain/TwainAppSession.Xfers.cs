@@ -275,17 +275,29 @@ namespace NTwain
         rc = DGControl.SetupMemXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPMEMXFER memSetup);
         if (rc == TWRC.SUCCESS)
         {
-          // TODO: mac version
-          var buffSize = Math.Max(memSetup.Preferred, 4096);
+          uint buffSize = DetermineBufferSize(memSetup);
+          var memPtr = Alloc(buffSize);
+
           TW_IMAGEMEMXFER memXfer = new()
           {
             Memory = new TW_MEMORY
             {
               Flags = (uint)(TWMF.APPOWNS | TWMF.POINTER),
               Length = buffSize,
-              TheMem = Alloc(buffSize)
+              TheMem = memPtr
             }
           };
+          TW_IMAGEMEMXFER_MACOSX memXferOSX = new()
+          {
+            Memory = new TW_MEMORY
+            {
+              Flags = (uint)(TWMF.APPOWNS | TWMF.POINTER),
+              Length = buffSize,
+              TheMem = memPtr
+            }
+          };
+
+
           // TODO: how to get actual file size before hand?
           // otherwise will just write to stream with lots of copies
           byte[] dotnetBuff = XferMemPool.Rent((int)buffSize);
@@ -294,25 +306,31 @@ namespace NTwain
           {
             do
             {
-              rc = DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXfer);
+              rc = TwainPlatform.IsMacOSX ?
+                DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXferOSX) :
+                DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXfer);
+
               if (rc == TWRC.SUCCESS || rc == TWRC.XFERDONE)
               {
                 try
                 {
-                  IntPtr lockedPtr = Lock(memXfer.Memory.TheMem);
-                  Marshal.Copy(lockedPtr, dotnetBuff, 0, (int)memXfer.BytesWritten);
-                  outStream.Write(dotnetBuff, 0, (int)memXfer.BytesWritten);
+                  var written = TwainPlatform.IsMacOSX ?
+                    memXferOSX.BytesWritten : memXfer.BytesWritten;
+
+                  IntPtr lockedPtr = Lock(memPtr);
+                  Marshal.Copy(lockedPtr, dotnetBuff, 0, (int)written);
+                  outStream.Write(dotnetBuff, 0, (int)written);
                 }
                 finally
                 {
-                  Unlock(memXfer.Memory.TheMem);
+                  Unlock(memPtr);
                 }
               }
             } while (rc == TWRC.SUCCESS);
           }
           finally
           {
-            if (memXfer.Memory.TheMem != IntPtr.Zero) Free(memXfer.Memory.TheMem);
+            if (memPtr != IntPtr.Zero) Free(memPtr);
             XferMemPool.Return(dotnetBuff);
           }
 
@@ -337,6 +355,21 @@ namespace NTwain
         }
       }
       return WrapInSTS(rc);
+    }
+
+    private static uint DetermineBufferSize(TW_SETUPMEMXFER memSetup)
+    {
+      // default to 16 kb if source doesn't really want to say what it needs
+      var buffSize = memSetup.Preferred;
+      if (buffSize != TwainConst.TWON_DONTCARE32) return buffSize;
+
+      buffSize = memSetup.MaxBufSize;
+      if (buffSize != TwainConst.TWON_DONTCARE32) return buffSize;
+
+      buffSize = memSetup.MinBufSize;
+      if (buffSize != TwainConst.TWON_DONTCARE32) return buffSize;
+
+      return 1024 * 16;
     }
 
     private STS TransferFileImage(ref TW_PENDINGXFERS pending)
