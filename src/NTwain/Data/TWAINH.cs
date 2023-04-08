@@ -138,6 +138,7 @@ namespace NTwain.Data
     /// <summary>
     /// The normal get...
     /// </summary>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public string Get(Encoding? encoding = null)
     {
@@ -148,6 +149,7 @@ namespace NTwain.Data
     /// Use this on Mac OS X if you have a call that uses a string
     /// that doesn't include the prefix byte...
     /// </summary>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public string GetNoPrefix(Encoding? encoding = null)
     {
@@ -157,6 +159,8 @@ namespace NTwain.Data
     /// <summary>
     /// Get our value...
     /// </summary>
+    /// <param name="a_blMayHavePrefix"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     private string GetValue(bool a_blMayHavePrefix, Encoding? encoding = null)
     {
@@ -220,6 +224,8 @@ namespace NTwain.Data
     /// <summary>
     /// The normal set...
     /// </summary>
+    /// <param name="a_sz"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public void Set(string a_sz, Encoding? encoding = null)
     {
@@ -230,6 +236,8 @@ namespace NTwain.Data
     /// Use this on Mac OS X if you have a call that uses a string
     /// that doesn't include the prefix byte...
     /// </summary>
+    /// <param name="a_sz"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public void SetNoPrefix(string a_sz, Encoding? encoding = null)
     {
@@ -241,6 +249,7 @@ namespace NTwain.Data
     /// </summary>
     /// <param name="a_sz"></param>
     /// <param name="a_blMayHavePrefix"></param>
+    /// <param name="encoding"></param>
     private void SetValue(string a_sz, bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...
@@ -312,6 +321,7 @@ namespace NTwain.Data
     /// <summary>
     /// The normal get...
     /// </summary>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public string Get(Encoding? encoding = null)
     {
@@ -322,6 +332,7 @@ namespace NTwain.Data
     /// Use this on Mac OS X if you have a call that uses a string
     /// that doesn't include the prefix byte...
     /// </summary>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public string GetNoPrefix(Encoding? encoding = null)
     {
@@ -331,6 +342,8 @@ namespace NTwain.Data
     /// <summary>
     /// Get our value...
     /// </summary>
+    /// <param name="a_blMayHavePrefix"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     private string GetValue(bool a_blMayHavePrefix, Encoding? encoding = null)
     {
@@ -396,6 +409,8 @@ namespace NTwain.Data
     /// <summary>
     /// The normal set...
     /// </summary>
+    /// <param name="a_sz"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public void Set(string a_sz, Encoding? encoding = null)
     {
@@ -406,6 +421,8 @@ namespace NTwain.Data
     /// Use this on Mac OS X if you have a call that uses a string
     /// that doesn't include the prefix byte...
     /// </summary>
+    /// <param name="a_sz"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public void SetNoPrefix(string a_sz, Encoding? encoding = null)
     {
@@ -417,6 +434,7 @@ namespace NTwain.Data
     /// </summary>
     /// <param name="a_sz"></param>
     /// <param name="a_blMayHavePrefix"></param>
+    /// <param name="encoding"></param>
     private void SetValue(string a_sz, bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...
@@ -511,6 +529,7 @@ namespace NTwain.Data
     /// <summary>
     /// The normal get...
     /// </summary>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public string Get(Encoding? encoding = null)
     {
@@ -521,6 +540,7 @@ namespace NTwain.Data
     /// Use this on Mac OS X if you have a call that uses a string
     /// that doesn't include the prefix byte...
     /// </summary>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public string GetNoPrefix(Encoding? encoding = null)
     {
@@ -530,6 +550,8 @@ namespace NTwain.Data
     /// <summary>
     /// Get our value...
     /// </summary>
+    /// <param name="a_blMayHavePrefix"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     private string GetValue(bool a_blMayHavePrefix, Encoding? encoding = null)
     {
@@ -611,6 +633,8 @@ namespace NTwain.Data
     /// <summary>
     /// The normal set...
     /// </summary>
+    /// <param name="a_sz"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public void Set(string a_sz, Encoding? encoding = null)
     {
@@ -621,6 +645,8 @@ namespace NTwain.Data
     /// Use this on Mac OS X if you have a call that uses a string
     /// that doesn't include the prefix byte...
     /// </summary>
+    /// <param name="a_sz"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public void SetNoPrefix(string a_sz, Encoding? encoding = null)
     {
@@ -632,6 +658,7 @@ namespace NTwain.Data
     /// </summary>
     /// <param name="a_sz"></param>
     /// <param name="a_blMayHavePrefix"></param>
+    /// <param name="encoding"></param>
     private void SetValue(string a_sz, bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...
@@ -775,6 +802,7 @@ namespace NTwain.Data
     /// <summary>
     /// The normal get...
     /// </summary>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public string Get(Encoding? encoding = null)
     {
@@ -785,6 +813,7 @@ namespace NTwain.Data
     /// Use this on Mac OS X if you have a call that uses a string
     /// that doesn't include the prefix byte...
     /// </summary>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public string GetNoPrefix(Encoding? encoding = null)
     {
@@ -794,6 +823,8 @@ namespace NTwain.Data
     /// <summary>
     /// Get our value...
     /// </summary>
+    /// <param name="a_blMayHavePrefix"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     private string GetValue(bool a_blMayHavePrefix, Encoding? encoding = null)
     {
@@ -906,6 +937,8 @@ namespace NTwain.Data
     /// <summary>
     /// The normal set...
     /// </summary>
+    /// <param name="a_sz"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public void Set(string a_sz, Encoding? encoding = null)
     {
@@ -916,6 +949,8 @@ namespace NTwain.Data
     /// Use this on Mac OS X if you have a call that uses a string
     /// that doesn't include the prefix byte...
     /// </summary>
+    /// <param name="a_sz"></param>
+    /// <param name="encoding"></param>
     /// <returns></returns>
     public void SetNoPrefix(string a_sz, Encoding? encoding = null)
     {
@@ -927,6 +962,7 @@ namespace NTwain.Data
     /// </summary>
     /// <param name="a_sz"></param>
     /// <param name="a_blMayHavePrefix"></param>
+    /// <param name="encoding"></param>
     private void SetValue(string a_sz, bool a_blMayHavePrefix, Encoding? encoding = null)
     {
       // If we're running on a Mac, tack on the prefix 'byte'...
