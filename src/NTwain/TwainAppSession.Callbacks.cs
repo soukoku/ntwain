@@ -2,6 +2,7 @@
 using NTwain.Triplets;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NTwain
@@ -87,11 +88,13 @@ namespace NTwain
 
     bool _closeDsRequested;
 
-    private void HandleSourceMsg(MSG msg)
+    private void HandleSourceMsg(MSG msg, [CallerMemberName] string? caller = null)
     {
+      Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] {nameof(HandleSourceMsg)} called by {caller} at state {State} with {msg}.");
+
       // the reason we post these to the background is
       // if they're coming from UI message loop then
-      // this needs to return asap
+      // this needs to return asap (?)
       switch (msg)
       {
         case MSG.XFERREADY:

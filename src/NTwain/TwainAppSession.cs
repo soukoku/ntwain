@@ -122,7 +122,7 @@ namespace NTwain
       {
         switch (msg)
         {
-          case MSG.CLOSEDS:
+          case MSG.CLOSEDSOK:
           case MSG.CLOSEDSREQ:
             // this should be done on ui thread (or same one that enabled the ds)
             _uiThreadMarshaller.BeginInvoke(() =>

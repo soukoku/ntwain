@@ -175,7 +175,7 @@ namespace NTwain
     public STS GetCapValues<TValue>(CAP cap, out IList<TValue> values) where TValue : struct
     {
       values = new List<TValue>();
-      var sts = GetCapCurrent(cap, out TW_CAPABILITY twcap);
+      var sts = GetCapValues(cap, out TW_CAPABILITY twcap);
       if (sts.RC == TWRC.SUCCESS)
       {
         switch (twcap.ConType)

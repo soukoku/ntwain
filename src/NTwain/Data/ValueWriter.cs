@@ -260,7 +260,7 @@ namespace NTwain.Data
     /// <returns></returns>
     public static TW_CAPABILITY CreateRangeCap<TValue>(this CAP cap, IMemoryManager memMgr, Range<TValue> value) where TValue : struct
     {
-      TW_CAPABILITY twCap = new() { Cap = cap, ConType = TWON.ENUMERATION };
+      TW_CAPABILITY twCap = new() { Cap = cap, ConType = TWON.RANGE };
 
       IntPtr lockedPtr = IntPtr.Zero;
       try
