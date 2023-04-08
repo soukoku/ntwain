@@ -1,6 +1,5 @@
 ﻿using NTwain.Data;
 using NTwain.Triplets;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -268,6 +267,9 @@ namespace NTwain
 
     /// <summary>
     /// Sets a CAP's current value.
+    /// An easy way to create a value is to use the 
+    /// <see cref="ValueWriter.CreateOneValueCap{TValue}(CAP, IMemoryManager, TValue)"/>
+    /// extension method (or the other container variants).
     /// Memory of the value will be freed afterwards.
     /// </summary>
     /// <param name="value"></param>
@@ -287,6 +289,9 @@ namespace NTwain
 
     /// <summary>
     /// Sets a CAP's constraint values.
+    /// An easy way to create a value is to use the 
+    /// <see cref="ValueWriter.CreateOneValueCap{TValue}(CAP, IMemoryManager, TValue)"/>
+    /// extension method (or the other container variants).
     /// Memory of the value will be freed afterwards.
     /// </summary>
     /// <param name="value"></param>

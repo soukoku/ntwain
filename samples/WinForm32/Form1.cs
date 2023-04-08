@@ -20,7 +20,7 @@ namespace WinFormSample
     public Form1()
     {
       InitializeComponent();
-      var libVer = FileVersionInfo.GetVersionInfo(typeof(TwainAppSession).Assembly.Location).FileVersion;
+      var libVer = FileVersionInfo.GetVersionInfo(typeof(TwainAppSession).Assembly.Location).ProductVersion;
       Text += $"{(TwainPlatform.Is32bit ? " 32bit" : " 64bit")} on NTwain {libVer}";
 
       TwainPlatform.PreferLegacyDSM = false;
