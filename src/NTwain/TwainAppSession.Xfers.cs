@@ -22,11 +22,6 @@ namespace NTwain
     // so the array max is made with 32 MB. Typical usage should be a lot less.
     static readonly ArrayPool<byte> XferMemPool = ArrayPool<byte>.Create(32 * 1024 * 1024, 8);
 
-    internal STS GetImageInfo(out TW_IMAGEINFO info)
-    {
-      return WrapInSTS(DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out info));
-    }
-
 
     /// <summary>
     /// Start the transfer loop.
@@ -70,7 +65,7 @@ namespace NTwain
       {
         do
         {
-          var readyArgs = new TransferReadyEventArgs(this, pending.Count, (TWEJ)pending.EOJ);
+          var readyArgs = new TransferReadyEventArgs(pending.Count, (TWEJ)pending.EOJ);
           _uiThreadMarshaller.Invoke((ref TW_PENDINGXFERS pending) =>
           {
             try
@@ -214,7 +209,9 @@ namespace NTwain
     {
       // assuming user already configured the transfer in transferready event,
       // get what will be transferred
-      DGControl.SetupFileXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPFILEXFER fileSetup);
+      var rc = DGControl.SetupFileXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPFILEXFER fileSetup);
+      if (rc != TWRC.SUCCESS) return WrapInSTS(rc);
+
       // and just start it
       var sts = WrapInSTS(DGAudio.AudioFileXfer.Get(ref _appIdentity, ref _currentDS));
       if (sts.RC == TWRC.XFERDONE)
@@ -285,84 +282,78 @@ namespace NTwain
     private STS TransferMemoryImage(ref TW_PENDINGXFERS pending)
     {
       var rc = DGControl.SetupMemXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPMEMXFER memSetup);
-      if (rc == TWRC.SUCCESS)
+      if (rc != TWRC.SUCCESS) return WrapInSTS(rc);
+      rc = DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
+      if (rc != TWRC.SUCCESS) return WrapInSTS(rc);
+      rc = DGImage.ImageLayout.Get(ref _appIdentity, ref _currentDS, out TW_IMAGELAYOUT layout);
+      if (rc != TWRC.SUCCESS) return WrapInSTS(rc);
+
+      uint buffSize = memSetup.DetermineBufferSize();
+      var memPtr = Alloc(buffSize);
+
+      TW_IMAGEMEMXFER memXfer = TW_IMAGEMEMXFER.DONTCARE();
+      TW_IMAGEMEMXFER_MACOSX memXferOSX = TW_IMAGEMEMXFER_MACOSX.DONTCARE();
+      memXfer.Memory = new TW_MEMORY
       {
-        uint buffSize = memSetup.DetermineBufferSize();
-        var memPtr = Alloc(buffSize);
+        Flags = (uint)(TWMF.APPOWNS | TWMF.POINTER),
+        Length = buffSize,
+        TheMem = memPtr
+      };
+      memXferOSX.Memory = memXfer.Memory;
 
-        TW_IMAGEMEMXFER memXfer = new()
+      byte[] dotnetBuff = XferMemPool.Rent((int)buffSize);
+      try
+      {
+        do
         {
-          Memory = new TW_MEMORY
-          {
-            Flags = (uint)(TWMF.APPOWNS | TWMF.POINTER),
-            Length = buffSize,
-            TheMem = memPtr
-          }
-        };
-        TW_IMAGEMEMXFER_MACOSX memXferOSX = new()
-        {
-          Memory = new TW_MEMORY
-          {
-            Flags = (uint)(TWMF.APPOWNS | TWMF.POINTER),
-            Length = buffSize,
-            TheMem = memPtr
-          }
-        };
+          rc = TwainPlatform.IsMacOSX ?
+            DGImage.ImageMemXfer.Get(ref _appIdentity, ref _currentDS, ref memXferOSX) :
+            DGImage.ImageMemXfer.Get(ref _appIdentity, ref _currentDS, ref memXfer);
 
-        byte[] dotnetBuff = XferMemPool.Rent((int)buffSize);
+          if (rc == TWRC.SUCCESS || rc == TWRC.XFERDONE)
+          {
+            try
+            {
+              var written = TwainPlatform.IsMacOSX ?
+                memXferOSX.BytesWritten : memXfer.BytesWritten;
+
+              IntPtr lockedPtr = Lock(memPtr);
+
+              // assemble!
+
+              //Marshal.Copy(lockedPtr, dotnetBuff, 0, (int)written);
+              //outStream.Write(dotnetBuff, 0, (int)written);
+            }
+            finally
+            {
+              Unlock(memPtr);
+            }
+          }
+        } while (rc == TWRC.SUCCESS);
+      }
+      finally
+      {
+        if (memPtr != IntPtr.Zero) Free(memPtr);
+        XferMemPool.Return(dotnetBuff);
+      }
+
+
+      if (rc == TWRC.XFERDONE)
+      {
         try
         {
-          do
-          {
-            rc = TwainPlatform.IsMacOSX ?
-              DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXferOSX) :
-              DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXfer);
-
-            if (rc == TWRC.SUCCESS || rc == TWRC.XFERDONE)
-            {
-              try
-              {
-                var written = TwainPlatform.IsMacOSX ?
-                  memXferOSX.BytesWritten : memXfer.BytesWritten;
-
-                IntPtr lockedPtr = Lock(memPtr);
-
-                // assemble!
-
-                //Marshal.Copy(lockedPtr, dotnetBuff, 0, (int)written);
-                //outStream.Write(dotnetBuff, 0, (int)written);
-              }
-              finally
-              {
-                Unlock(memPtr);
-              }
-            }
-          } while (rc == TWRC.SUCCESS);
+          DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out info);
+          //var args = new DataTransferredEventArgs(info, null, outStream.ToArray());
+          //DataTransferred?.Invoke(this, args);
         }
-        finally
+        catch { }
+
+        var sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
+        if (sts.RC == TWRC.SUCCESS)
         {
-          if (memPtr != IntPtr.Zero) Free(memPtr);
-          XferMemPool.Return(dotnetBuff);
+          State = pending.Count == 0 ? STATE.S5 : STATE.S6;
         }
-
-
-        if (rc == TWRC.XFERDONE)
-        {
-          try
-          {
-            GetImageInfo(out TW_IMAGEINFO info);
-            //var args = new DataTransferredEventArgs(info, null, outStream.ToArray());
-            //DataTransferred?.Invoke(this, args);
-          }
-          catch { }
-
-          var sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
-          if (sts.RC == TWRC.SUCCESS)
-          {
-            State = pending.Count == 0 ? STATE.S5 : STATE.S6;
-          }
-          return sts;
-        }
+        return sts;
       }
       return WrapInSTS(rc);
     }
@@ -370,93 +361,79 @@ namespace NTwain
     private STS TransferMemoryFileImage(ref TW_PENDINGXFERS pending)
     {
       var rc = DGControl.SetupFileXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPFILEXFER fileSetup);
-      if (rc == TWRC.SUCCESS)
+      if (rc != TWRC.SUCCESS) return WrapInSTS(rc);
+      rc = DGControl.SetupMemXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPMEMXFER memSetup);
+      if (rc != TWRC.SUCCESS) return WrapInSTS(rc);
+
+      uint buffSize = memSetup.DetermineBufferSize();
+      var memPtr = Alloc(buffSize);
+
+      TW_IMAGEMEMXFER memXfer = TW_IMAGEMEMXFER.DONTCARE();
+      TW_IMAGEMEMXFER_MACOSX memXferOSX = TW_IMAGEMEMXFER_MACOSX.DONTCARE();
+      memXfer.Memory = new TW_MEMORY
       {
-        rc = DGControl.SetupMemXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPMEMXFER memSetup);
-        if (rc == TWRC.SUCCESS)
+        Flags = (uint)(TWMF.APPOWNS | TWMF.POINTER),
+        Length = buffSize,
+        TheMem = memPtr
+      };
+      memXferOSX.Memory = memXfer.Memory;
+
+      // TODO: how to get actual file size before hand? Is it imagelayout?
+      // otherwise will just write to stream with lots of copies
+      byte[] dotnetBuff = XferMemPool.Rent((int)buffSize);
+      using var outStream = new MemoryStream();
+      try
+      {
+        do
         {
-          uint buffSize = memSetup.DetermineBufferSize();
-          var memPtr = Alloc(buffSize);
+          rc = TwainPlatform.IsMacOSX ?
+            DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXferOSX) :
+            DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXfer);
 
-          TW_IMAGEMEMXFER memXfer = new()
-          {
-            Memory = new TW_MEMORY
-            {
-              Flags = (uint)(TWMF.APPOWNS | TWMF.POINTER),
-              Length = buffSize,
-              TheMem = memPtr
-            }
-          };
-          TW_IMAGEMEMXFER_MACOSX memXferOSX = new()
-          {
-            Memory = new TW_MEMORY
-            {
-              Flags = (uint)(TWMF.APPOWNS | TWMF.POINTER),
-              Length = buffSize,
-              TheMem = memPtr
-            }
-          };
-
-
-          // TODO: how to get actual file size before hand?
-          // otherwise will just write to stream with lots of copies
-          byte[] dotnetBuff = XferMemPool.Rent((int)buffSize);
-          using var outStream = new MemoryStream();
-          try
-          {
-            do
-            {
-              rc = TwainPlatform.IsMacOSX ?
-                DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXferOSX) :
-                DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXfer);
-
-              if (rc == TWRC.SUCCESS || rc == TWRC.XFERDONE)
-              {
-                try
-                {
-                  var written = TwainPlatform.IsMacOSX ?
-                    memXferOSX.BytesWritten : memXfer.BytesWritten;
-
-                  IntPtr lockedPtr = Lock(memPtr);
-                  Marshal.Copy(lockedPtr, dotnetBuff, 0, (int)written);
-                  outStream.Write(dotnetBuff, 0, (int)written);
-                }
-                finally
-                {
-                  Unlock(memPtr);
-                }
-              }
-            } while (rc == TWRC.SUCCESS);
-          }
-          finally
-          {
-            if (memPtr != IntPtr.Zero) Free(memPtr);
-            XferMemPool.Return(dotnetBuff);
-          }
-
-          if (rc == TWRC.XFERDONE)
+          if (rc == TWRC.SUCCESS || rc == TWRC.XFERDONE)
           {
             try
             {
-              GetImageInfo(out TW_IMAGEINFO info);
-              // ToArray bypasses the XferMemPool but I guess this will have to do for now
-              var args = new DataTransferredEventArgs(info, fileSetup, outStream.ToArray());
-              DataTransferred?.Invoke(this, args);
-            }
-            catch { }
+              var written = TwainPlatform.IsMacOSX ?
+                memXferOSX.BytesWritten : memXfer.BytesWritten;
 
-            var sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
-            if (sts.RC == TWRC.SUCCESS)
-            {
-              State = pending.Count == 0 ? STATE.S5 : STATE.S6;
+              IntPtr lockedPtr = Lock(memPtr);
+              Marshal.Copy(lockedPtr, dotnetBuff, 0, (int)written);
+              outStream.Write(dotnetBuff, 0, (int)written);
             }
-            return sts;
+            finally
+            {
+              Unlock(memPtr);
+            }
           }
+        } while (rc == TWRC.SUCCESS);
+      }
+      finally
+      {
+        if (memPtr != IntPtr.Zero) Free(memPtr);
+        XferMemPool.Return(dotnetBuff);
+      }
+
+      if (rc == TWRC.XFERDONE)
+      {
+        try
+        {
+          DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
+          // ToArray bypasses the XferMemPool but I guess this will have to do for now
+          var args = new DataTransferredEventArgs(info, fileSetup, outStream.ToArray());
+          DataTransferred?.Invoke(this, args);
         }
+        catch { }
+
+        var sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
+        if (sts.RC == TWRC.SUCCESS)
+        {
+          State = pending.Count == 0 ? STATE.S5 : STATE.S6;
+        }
+        return sts;
       }
       return WrapInSTS(rc);
     }
-
 
     private STS TransferFileImage(ref TW_PENDINGXFERS pending)
     {
@@ -470,7 +447,7 @@ namespace NTwain
         State = STATE.S7;
         try
         {
-          GetImageInfo(out TW_IMAGEINFO info);
+          DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
           var args = new DataTransferredEventArgs(info, fileSetup, null);
           DataTransferred?.Invoke(this, args);
         }
@@ -517,7 +494,7 @@ namespace NTwain
           {
             try
             {
-              GetImageInfo(out TW_IMAGEINFO info);
+              DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
               var args = new DataTransferredEventArgs(info, null, data);
               DataTransferred?.Invoke(this, args);
             }

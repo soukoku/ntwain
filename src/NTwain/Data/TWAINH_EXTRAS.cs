@@ -274,7 +274,7 @@ namespace NTwain.Data
 
     IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
     {
-      if (!(MinValue is IConvertible))
+      if (MinValue is not IConvertible)
         throw new NotSupportedException($"The value type {typeof(TValue).Name} is not supported for range enumeration.");
 
       return new DynamicEnumerator(MinValue, MaxValue, StepSize);
@@ -776,6 +776,48 @@ namespace NTwain.Data
       if (MinBufSize != TwainConst.TWON_DONTCARE32) return MinBufSize;
       // default to 16 kb if source doesn't really want to say what it needs
       return 1024 * 16;
+    }
+  }
+
+  partial struct TW_IMAGEMEMXFER
+  {
+    /// <summary>
+    /// Get a don't care version for app use.
+    /// </summary>
+    /// <returns></returns>
+    public static TW_IMAGEMEMXFER DONTCARE()
+    {
+      return new TW_IMAGEMEMXFER
+      {
+        BytesPerRow = TwainConst.TWON_DONTCARE32,
+        BytesWritten = TwainConst.TWON_DONTCARE32,
+        Columns = TwainConst.TWON_DONTCARE32,
+        Compression = TwainConst.TWON_DONTCARE16,
+        Rows = TwainConst.TWON_DONTCARE32,
+        XOffset = TwainConst.TWON_DONTCARE32,
+        YOffset = TwainConst.TWON_DONTCARE32,
+      };
+    }
+  }
+
+  partial struct TW_IMAGEMEMXFER_MACOSX
+  {
+    /// <summary>
+    /// Get a don't care version for app use.
+    /// </summary>
+    /// <returns></returns>
+    public static TW_IMAGEMEMXFER_MACOSX DONTCARE()
+    {
+      return new TW_IMAGEMEMXFER_MACOSX
+      {
+        BytesPerRow = TwainConst.TWON_DONTCARE32,
+        BytesWritten = TwainConst.TWON_DONTCARE32,
+        Columns = TwainConst.TWON_DONTCARE32,
+        Compression = TwainConst.TWON_DONTCARE32,
+        Rows = TwainConst.TWON_DONTCARE32,
+        XOffset = TwainConst.TWON_DONTCARE32,
+        YOffset = TwainConst.TWON_DONTCARE32,
+      };
     }
   }
 

@@ -19,7 +19,7 @@ namespace NTwain
       Data = data;
     }
 
-    public DataTransferredEventArgs(TW_IMAGEINFO info, TW_SETUPFILEXFER? fileInfo, byte[] data)
+    public DataTransferredEventArgs(TW_IMAGEINFO info, TW_SETUPFILEXFER? fileInfo, byte[]? data)
     {
       ImageInfo = info;
       FileInfo = fileInfo;

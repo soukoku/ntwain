@@ -2299,7 +2299,7 @@ namespace NTwain.Data
   /// Describes the form of the acquired data being passed from the Source to the application.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
-  public struct TW_IMAGEMEMXFER
+  public partial struct TW_IMAGEMEMXFER
   {
     public ushort Compression;
     public uint BytesPerRow;
@@ -2311,7 +2311,7 @@ namespace NTwain.Data
     public TW_MEMORY Memory;
   }
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
-  public struct TW_IMAGEMEMXFER_LINUX64
+  public partial struct TW_IMAGEMEMXFER_LINUX64
   {
     public ushort Compression;
     public UInt64 BytesPerRow;
@@ -2326,7 +2326,7 @@ namespace NTwain.Data
     public IntPtr MemoryTheMem;
   }
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
-  public struct TW_IMAGEMEMXFER_MACOSX
+  public partial struct TW_IMAGEMEMXFER_MACOSX
   {
     public uint Compression;
     public uint BytesPerRow;
