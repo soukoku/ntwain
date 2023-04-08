@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Data;
+using System;
 using System.Runtime.InteropServices;
 
 namespace NTwain.Native
@@ -23,14 +24,12 @@ namespace NTwain.Native
       return test == 0x4949;
     }
 
-
-    public static unsafe byte[]? GetBitmapData(System.Buffers.ArrayPool<byte> xferMemPool, IntPtr data)
+    public static unsafe BufferedData GetBitmapData(System.Buffers.ArrayPool<byte> xferMemPool, IntPtr data)
     {
       var infoHeader = Marshal.PtrToStructure<BITMAPINFOHEADER>(data);
       if (infoHeader.Validate())
       {
         var fileHeaderSize = Marshal.SizeOf(typeof(BITMAPFILEHEADER));
-
 
         var fileHeader = new BITMAPFILEHEADER
         {
@@ -41,7 +40,7 @@ namespace NTwain.Native
         };
         fileHeader.bfSize = fileHeader.bfOffBits + infoHeader.biSizeImage;
 
-        var dataCopy = xferMemPool.Rent((int)fileHeader.bfSize);// new byte[fileHeader.bfSize];
+        var dataCopy = xferMemPool.Rent((int)fileHeader.bfSize); // new byte[fileHeader.bfSize];
 
         // TODO: run benchmark on which one is faster
 
@@ -59,13 +58,12 @@ namespace NTwain.Native
 
         // write image
         Marshal.Copy(data, dataCopy, fileHeaderSize, (int)fileHeader.bfSize - fileHeaderSize);
-
-        return dataCopy;
+        return new BufferedData { Buffer = dataCopy, Length = (int)fileHeader.bfSize };
       }
-      return null;
+      return default;
     }
 
-    public static byte[]? GetTiffData(System.Buffers.ArrayPool<byte> xferMemPool, IntPtr data)
+    public static BufferedData GetTiffData(System.Buffers.ArrayPool<byte> xferMemPool, IntPtr data)
     {
       // Find the size of the image so we can turn it into a memory stream...
       var headerSize = Marshal.SizeOf(typeof(TIFFHEADER));
@@ -91,9 +89,9 @@ namespace NTwain.Native
         var dataCopy = xferMemPool.Rent(tiffSize);// new byte[tiffSize];
         // is this optimal?
         Marshal.Copy(data, dataCopy, 0, tiffSize);
-        return dataCopy;
+        return new BufferedData { Buffer = dataCopy, Length = tiffSize };
       }
-      return null;
+      return default;
     }
 
     //internal static Bitmap ReadBitmapImage(IntPtr data)

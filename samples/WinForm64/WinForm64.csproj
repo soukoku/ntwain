@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Magick.NET-Q8-x64" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\WinForm32\**\*.cs" Exclude="..\WinForm32\**\obj\**;..\WinForm32\**\bin\**">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
@@ -26,7 +30,7 @@
     <None Update="platforms\qwindows.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="platforms\TWAINDSM.dll">
+    <None Update="runtimes\win-x64\native\TWAINDSM.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

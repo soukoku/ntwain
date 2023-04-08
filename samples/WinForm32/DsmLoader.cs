@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NTwain.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,8 +12,8 @@ namespace WinFormSample
 {
   /// <summary>
   /// For demoing loading dsm from custom path in case
-  /// it's not installed on system and can't be placed 
-  /// besides the exe.
+  /// it's not installed on system and don't want to be 
+  /// placed besides the exe.
   /// </summary>
   static class DsmLoader
   {
@@ -24,7 +25,7 @@ namespace WinFormSample
       {
         var dll = Path.Combine(
           Path.GetDirectoryName(Environment.ProcessPath ?? Assembly.GetExecutingAssembly().Location)!,
-          "platforms\\TWAINDSM.dll");
+          $@"runtimes\win-{(TwainPlatform.Is32bit ? "x86" : "x64")}\native\TWAINDSM.dll");
 
         __dllPtr = LoadLibraryW(dll);
       }

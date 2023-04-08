@@ -105,11 +105,23 @@ namespace WinFormSample
     {
       Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] data transferred with info {e.ImageInfo}");
       if (e.Data == null) return;
-      using (var stream = new MemoryStream(e.Data))
-      using (var img = Image.FromStream(stream))
+
+      // example of using some lib to handle image data
+      var saveFile = Path.Combine(saveFolder, (DateTime.Now.Ticks / 1000).ToString());
+      using (var img = new ImageMagick.MagickImage(e.Data))
       {
-        var saveFile = Path.Combine(saveFolder, (DateTime.Now.Ticks / 1000) + ".png");
-        img.Save(saveFile, ImageFormat.Png);
+        if (img.ColorType == ImageMagick.ColorType.Palette)
+        {
+          // bw or gray
+          saveFile += ".png";
+        }
+        else
+        {
+          // color
+          saveFile += ".jpg";
+          img.Quality = 75;
+        }
+        img.Write(saveFile);
         Debug.WriteLine($"Saved image to {saveFile}");
       }
     }
@@ -158,7 +170,7 @@ namespace WinFormSample
       twain.GetCapValues(CAP.CAP_EXTENDEDCAPS, out IList<CAP> extended);
       foreach (var c in caps)
       {
-        ListViewItem it = new(c.ToString());
+        ListViewItem it = new(GetFriendlyName(c));
 
         if (twain.GetCapCurrent(c, out TW_CAPABILITY twcap).RC == TWRC.SUCCESS)
         {
@@ -178,6 +190,15 @@ namespace WinFormSample
         it.SubItems.Add(twain.QueryCapSupport(c).ToString());
         capListView.Items.Add(it);
       }
+    }
+
+    private string GetFriendlyName(CAP c)
+    {
+      if (c > CAP.CAP_CUSTOMBASE)
+      {
+        return $"{CAP.CAP_CUSTOMBASE} + {c - CAP.CAP_CUSTOMBASE}";
+      }
+      return c.ToString();
     }
 
     // there may be a better way...

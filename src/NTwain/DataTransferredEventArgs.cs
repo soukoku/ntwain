@@ -13,18 +13,18 @@ namespace NTwain
       AudioInfo = info;
       FileInfo = fileInfo;
     }
-    public DataTransferredEventArgs(TW_AUDIOINFO info, byte[] data)
+    public DataTransferredEventArgs(TW_AUDIOINFO info, BufferedData data)
     {
       AudioInfo = info;
-      Data = data;
+      _data = data;
     }
 
-    public DataTransferredEventArgs(TW_IMAGEINFO info, TW_SETUPFILEXFER? fileInfo, byte[]? data)
+    public DataTransferredEventArgs(TW_IMAGEINFO info, TW_SETUPFILEXFER? fileInfo, BufferedData data)
     {
       ImageInfo = info;
       FileInfo = fileInfo;
       IsImage = true;
-      Data = data;
+      _data = data;
     }
 
     /// <summary>
@@ -32,12 +32,13 @@ namespace NTwain
     /// </summary>
     public bool IsImage { get; }
 
+    private readonly BufferedData _data;
     /// <summary>
     /// The complete file data if memory was involved in the transfer. 
     /// IMPORTANT: Content of this array may not valid once
     /// the event handler ends.
     /// </summary>
-    public byte[]? Data { get; }
+    public ReadOnlySpan<byte> Data => _data.AsSpan();
 
     /// <summary>
     /// The file info if the transfer involved file information.

@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Xml.Serialization;
+using static NTwain.Native.ImageTools;
 
 namespace NTwain
 {
@@ -66,7 +67,7 @@ namespace NTwain
         do
         {
           var readyArgs = new TransferReadyEventArgs(pending.Count, (TWEJ)pending.EOJ);
-          _uiThreadMarshaller.Invoke((ref TW_PENDINGXFERS pending) =>
+          _uiThreadMarshaller.Invoke(() =>
           {
             try
             {
@@ -159,7 +160,7 @@ namespace NTwain
 
       if (State >= STATE.S5)
       {
-        _uiThreadMarshaller.BeginInvoke((ref TW_PENDINGXFERS pending) =>
+        _uiThreadMarshaller.BeginInvoke(() =>
         {
           DisableSource();
         });
@@ -245,11 +246,11 @@ namespace NTwain
         {
           State = STATE.S7;
           lockedPtr = Lock(dataPtr);
-          byte[]? data = null;
+          BufferedData data = default;
 
           // TODO: don't know how to read wav/aiff from pointer yet
 
-          if (data != null)
+          if (data.Buffer != null)
           {
             try
             {
@@ -260,7 +261,7 @@ namespace NTwain
             catch { }
             finally
             {
-              XferMemPool.Return(data);
+              XferMemPool.Return(data.Buffer);
             }
           }
         }
@@ -420,7 +421,7 @@ namespace NTwain
         {
           DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
           // ToArray bypasses the XferMemPool but I guess this will have to do for now
-          var args = new DataTransferredEventArgs(info, fileSetup, outStream.ToArray());
+          var args = new DataTransferredEventArgs(info, fileSetup, new BufferedData { Buffer = outStream.ToArray(), Length = (int)outStream.Length });
           DataTransferred?.Invoke(this, args);
         }
         catch { }
@@ -448,7 +449,7 @@ namespace NTwain
         try
         {
           DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
-          var args = new DataTransferredEventArgs(info, fileSetup, null);
+          var args = new DataTransferredEventArgs(info, fileSetup, default);
           DataTransferred?.Invoke(this, args);
         }
         catch { }
@@ -473,8 +474,7 @@ namespace NTwain
         {
           State = STATE.S7;
           lockedPtr = Lock(dataPtr);
-          byte[]? data = null;
-
+          BufferedData data = default;
 
           if (ImageTools.IsDib(lockedPtr))
           {
@@ -490,7 +490,7 @@ namespace NTwain
             // don't support more formats :(
           }
 
-          if (data != null)
+          if (data.Buffer != null)
           {
             try
             {
@@ -501,7 +501,7 @@ namespace NTwain
             catch { }
             finally
             {
-              XferMemPool.Return(data);
+              XferMemPool.Return(data.Buffer);
             }
           }
 
