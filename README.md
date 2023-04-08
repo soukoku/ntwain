@@ -1,7 +1,7 @@
 # TWAIN dotnet library
 
-NOTE: This is a rewrite test that doesn't fully work yet.
-Use V3 branch for the current version.
+NOTE: This is a rewrite of the original NTwain lib and is still
+in early stages. Use the V3 branch for the current version.
 
 ## Info
 
@@ -10,14 +10,55 @@ This is a dotnet library created to make working with
 It internally uses some parts of the
 [twaincs](https://github.com/twain/twain-cs) code from
 the TWAIN Working Group.
+
 V4 of this lib has these features:
 
-* Targets latest TWAIN version (2.5).
-* Runs under full framework (4.6.2+) and netcore variants (6.0+).
+* Targets TWAIN version (2.5).
+* Runs under supported framework (4.6.2+) and netcore variants (6.0+).
+* Easier to use than the low-level C API with many dotnet niceties.
+* Attempt at reducing heap allocations compared to previous versions.
+
+
+## Compred to older versions
+
+These are not implemented yet in this early version:
+
+* Image memory transfer (DAT_IMAGEMEMXFER). 
+* Audio native transfer (probably never will).
+* Utility for reading out of extended image info (TW_EXTIMAGEINFO).
+
+As with previous versions, only Windows has been tested on and thus 
+supported really. Other changes include
+
+* All TWAIN data types are now struct instead of class (and they come
+from [twaincs](https://github.com/twain/twain-cs for correctness). It may have
+been easier to implement them as class when starting out this lib, but 
+it's not really ideal anymore. The change also makes them match the twain.h
+names for easier use with the spec pdf.
+
+* Caps no longer have their own wrapper properties for each type. This makes calling
+custom caps easier but you will have to consult the docs on what
+containers and values should be.
+
+* All lower-level TWAIN APIs are public instead of hidden away.
+
+* `TwainAppSession` longer hosts its own internal message pump. Apps will need to hook 
+into their UI message loop on Windows (Winform and WPF at the moment).
+
 
 ## Using the lib
 
 Before using this lib, you are required to be reasonably 
 familiar with the TWAIN spec and understand how it works in general. 
-The TWAIN spec can be downloaded from [twain.org](http://twain.org/). 
+The TWAIN spec pdf can be downloaded from [twain.org](http://twain.org/). 
+
+The main class to use is `TwainAppSession`. This is the highest abstraction level
+provided by this lib. A lower-level abstraction is the triplet calls 
+(under `NTwain.Triplets` namespace). The lowest level is the pinvoke dsm calls 
+(under `NTwain.DSM` namespace).
+
+You use `TwainAppSession` by subscribing to its events and calling methods to do TWAIN things.
+There is a sample winform projects (both 32 and 64 bit variants) on how it can be used. 
+Note that an application process should only have one active (opened) 
+`TwainAppSession` at any time.
 
