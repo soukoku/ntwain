@@ -13,7 +13,7 @@ the TWAIN Working Group.
 
 V4 of this lib has these features:
 
-* Targets TWAIN version (2.5).
+* Targets TWAIN version 2.5.
 * Runs under supported framework (4.6.2+) and netcore variants (6.0+).
 * Easier to use than the low-level C API with many dotnet niceties.
 * Attempt at reducing heap allocations compared to previous versions.
@@ -43,7 +43,7 @@ containers and values should be.
 * All lower-level TWAIN APIs are public instead of hidden away.
 
 * `TwainAppSession` longer hosts its own internal message pump. Apps will need to hook 
-into their UI message loop on Windows (Winform and WPF at the moment).
+into their UI message loop on Windows (supports Winform and WPF at the moment).
 
 
 ## Using the lib
@@ -58,7 +58,6 @@ provided by this lib. A lower-level abstraction is the triplet calls
 (under `NTwain.DSM` namespace).
 
 You use `TwainAppSession` by subscribing to its events and calling methods to do TWAIN things.
-There is a sample winform projects (both 32 and 64 bit variants) on how it can be used. 
+There is a sample winform project (both 32 and 64 bit variants) on how it can be used. 
 Note that an application process should only have one active (opened) 
 `TwainAppSession` at any time.
-
