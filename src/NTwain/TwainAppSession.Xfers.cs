@@ -6,7 +6,9 @@ using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
+using System.Xml.Serialization;
 
 namespace NTwain
 {
@@ -89,41 +91,53 @@ namespace NTwain
             DGControl.PendingXfers.StopFeeder(ref _appIdentity, ref _currentDS, ref pending);
           }
 
-          if (readyArgs.Cancel != CancelType.SkipCurrent &&
-            DataTransferred != null)
+
+          try
           {
-            // transfer normally and only if someone's listening
-            // to DataTransferred event
-            if (xferImage)
+            if (readyArgs.Cancel != CancelType.SkipCurrent &&
+              DataTransferred != null)
             {
-              switch (imgXferMech)
+              // transfer normally and only if someone's listening
+              // to DataTransferred event
+              if (xferImage)
               {
-                case TWSX.NATIVE:
-                  sts = TransferNativeImage();
-                  break;
-                case TWSX.FILE:
-                  sts = TransferFileImage();
-                  break;
-                case TWSX.MEMORY:
-                  sts = TransferMemoryImage();
-                  break;
-                case TWSX.MEMFILE:
-                  sts = TransferMemoryFileImage();
-                  break;
+                switch (imgXferMech)
+                {
+                  case TWSX.NATIVE:
+                    sts = TransferNativeImage();
+                    break;
+                  case TWSX.FILE:
+                    sts = TransferFileImage();
+                    break;
+                  case TWSX.MEMORY:
+                    sts = TransferMemoryImage();
+                    break;
+                  case TWSX.MEMFILE:
+                    sts = TransferMemoryFileImage();
+                    break;
+                }
+              }
+              else if (xferAudio)
+              {
+                switch (audXferMech)
+                {
+                  case TWSX.NATIVE:
+                    sts = TransferNativeAudio();
+                    break;
+                  case TWSX.FILE:
+                    sts = TransferFileAudio();
+                    break;
+                }
               }
             }
-            else if (xferAudio)
+          }
+          catch (Exception ex)
+          {
+            try
             {
-              switch (audXferMech)
-              {
-                case TWSX.NATIVE:
-                  sts = TransferNativeAudio();
-                  break;
-                case TWSX.FILE:
-                  sts = TransferFileAudio();
-                  break;
-              }
+              TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
             }
+            catch { }
           }
 
           sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
@@ -157,37 +171,25 @@ namespace NTwain
 
     private STS TransferFileAudio()
     {
-      STS sts = default;
-      try
+      // assuming user already configured the transfer in transferready event,
+      // get what will be transferred
+      DGControl.SetupFileXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPFILEXFER fileSetup);
+      // and just start it
+      var sts = WrapInSTS(DGAudio.AudioFileXfer.Get(ref _appIdentity, ref _currentDS));
+      if (sts.RC == TWRC.XFERDONE)
       {
-        // assuming user already configured the transfer in transferready event,
-        // get what will be transferred
-        DGControl.SetupFileXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPFILEXFER xfer);
-        // and just start it
-        sts = WrapInSTS(DGAudio.AudioFileXfer.Get(ref _appIdentity, ref _currentDS));
-        if (sts.RC == TWRC.XFERDONE)
-        {
-          State = STATE.S7;
-          try
-          {
-            DGAudio.AudioInfo.Get(ref _appIdentity, ref _currentDS, out TW_AUDIOINFO info);
-            var args = new DataTransferredEventArgs(info, xfer);
-            DataTransferred?.Invoke(this, args);
-          }
-          catch { }
-        }
-        else
-        {
-          HandleNonSuccessXferCode(sts);
-        }
-      }
-      catch (Exception ex)
-      {
+        State = STATE.S7;
         try
         {
-          TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
+          DGAudio.AudioInfo.Get(ref _appIdentity, ref _currentDS, out TW_AUDIOINFO info);
+          var args = new DataTransferredEventArgs(info, fileSetup);
+          DataTransferred?.Invoke(this, args);
         }
         catch { }
+      }
+      else
+      {
+        HandleNonSuccessXferCode(sts);
       }
       return sts;
     }
@@ -199,49 +201,76 @@ namespace NTwain
       return default;
     }
 
-    private STS TransferMemoryFileImage()
-    {
-      return default;
-    }
-
     private STS TransferMemoryImage()
     {
-      return default;
+      var rc = DGControl.SetupMemXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPMEMXFER memSetup);
+      if (rc == TWRC.SUCCESS)
+      {
+
+
+      }
+      return WrapInSTS(rc);
+    }
+
+    private STS TransferMemoryFileImage()
+    {
+      var rc = DGControl.SetupFileXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPFILEXFER fileSetup);
+      if (rc == TWRC.SUCCESS)
+      {
+        rc = DGControl.SetupMemXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPMEMXFER memSetup);
+        if (rc == TWRC.SUCCESS)
+        {
+          IntPtr dataPtr = IntPtr.Zero;
+          IntPtr lockedPtr = IntPtr.Zero;
+          try
+          {
+            // TODO: how to get actual file size before hand?
+            // otherwise will just write to temp file
+            var tempFile = Path.GetTempFileName();
+            using var outStream = File.Create(tempFile);
+
+            //TW_IMAGEMEMXFER
+
+            do
+            {
+              //rc = DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, out )
+
+            } while (rc == TWRC.SUCCESS);
+
+            //if(rc)
+          }
+          finally
+          {
+            if (lockedPtr != IntPtr.Zero) Unlock(dataPtr);
+            if (dataPtr != IntPtr.Zero) Free(dataPtr);
+          }
+
+        }
+      }
+      return WrapInSTS(rc);
     }
 
     private STS TransferFileImage()
     {
-      STS sts = default;
-      try
+      // assuming user already configured the transfer in transferready event,
+      // get what will be transferred
+      DGControl.SetupFileXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPFILEXFER fileSetup);
+      // and just start it
+      var sts = WrapInSTS(DGImage.ImageFileXfer.Get(ref _appIdentity, ref _currentDS));
+      if (sts.RC == TWRC.XFERDONE)
       {
-        // assuming user already configured the transfer in transferready event,
-        // get what will be transferred
-        DGControl.SetupFileXfer.Get(ref _appIdentity, ref _currentDS, out TW_SETUPFILEXFER xfer);
-        // and just start it
-        sts = WrapInSTS(DGImage.ImageFileXfer.Get(ref _appIdentity, ref _currentDS));
-        if (sts.RC == TWRC.XFERDONE)
-        {
-          State = STATE.S7;
-          try
-          {
-            GetImageInfo(out TW_IMAGEINFO info);
-            var args = new DataTransferredEventArgs(info, xfer);
-            DataTransferred?.Invoke(this, args);
-          }
-          catch { }
-        }
-        else
-        {
-          HandleNonSuccessXferCode(sts);
-        }
-      }
-      catch (Exception ex)
-      {
+        State = STATE.S7;
         try
         {
-          TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
+          GetImageInfo(out TW_IMAGEINFO info);
+          var args = new DataTransferredEventArgs(info, fileSetup);
+          DataTransferred?.Invoke(this, args);
         }
         catch { }
+      }
+      else
+      {
+        HandleNonSuccessXferCode(sts);
       }
       return sts;
     }
@@ -250,10 +279,9 @@ namespace NTwain
     {
       IntPtr dataPtr = IntPtr.Zero;
       IntPtr lockedPtr = IntPtr.Zero;
-      STS sts = default;
       try
       {
-        sts = WrapInSTS(DGImage.ImageNativeXfer.Get(ref _appIdentity, ref _currentDS, out dataPtr));
+        var sts = WrapInSTS(DGImage.ImageNativeXfer.Get(ref _appIdentity, ref _currentDS, out dataPtr));
         if (sts.RC == TWRC.XFERDONE)
         {
           State = STATE.S7;
@@ -296,21 +324,13 @@ namespace NTwain
         {
           HandleNonSuccessXferCode(sts);
         }
-      }
-      catch (Exception ex)
-      {
-        try
-        {
-          TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
-        }
-        catch { }
+        return sts;
       }
       finally
       {
         if (lockedPtr != IntPtr.Zero) Unlock(dataPtr);
         if (dataPtr != IntPtr.Zero) Free(dataPtr);
       }
-      return sts;
     }
 
 
@@ -323,7 +343,7 @@ namespace NTwain
         case TWRC.XFERDONE:
           // ok to keep going
           break;
-        case TWRC.CANCEL: 
+        case TWRC.CANCEL:
           TW_PENDINGXFERS pending = default;
           DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
           break;

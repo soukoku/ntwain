@@ -203,12 +203,21 @@ namespace NTwain.DSM
         DG dg, DAT dat, MSG msg, ref TW_AUDIOINFO auioinfo
     );
 
+<# if (file.className.StartsWith("OSX")) { #>
+    [DllImport(DsmName, CharSet = CharSet.Ansi)]
+    public static extern TWRC DSM_Entry
+    (
+        ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
+        DG dg, DAT dat, MSG msg, ref TW_IMAGEMEMXFER_MACOSX memxfer
+    );
+<# } else { #>
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern TWRC DSM_Entry
     (
         ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
         DG dg, DAT dat, MSG msg, ref TW_IMAGEMEMXFER memxfer
     );
+<# } #>
 
     [DllImport(DsmName, CharSet = CharSet.Ansi)]
     public static extern TWRC DSM_Entry

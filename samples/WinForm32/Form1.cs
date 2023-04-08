@@ -102,7 +102,7 @@ namespace WinFormSample
 
     private void Twain_DataTransferred(TwainAppSession sender, DataTransferredEventArgs e)
     {
-      Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] data transferred with info {e.GetImageInfo()}");
+      Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] data transferred with info {e.ImageInfo}");
       if (e.Data == null) return;
       using (var stream = new MemoryStream(e.Data))
       using (var img = Image.FromStream(stream))

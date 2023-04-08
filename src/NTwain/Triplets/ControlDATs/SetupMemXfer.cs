@@ -8,8 +8,9 @@ namespace NTwain.Triplets.ControlDATs
   /// </summary>
   public class SetupMemXfer
   {
-    public TWRC Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_SETUPMEMXFER data)
+    public TWRC Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, out TW_SETUPMEMXFER data)
     {
+      data = default;
       var rc = TWRC.FAILURE;
       if (TwainPlatform.IsWindows)
       {
