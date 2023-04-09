@@ -206,7 +206,7 @@ namespace NTwain.Data
       }
 
       // If we're running on a Mac, take off the prefix 'byte'...
-      if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         sz = sz.Remove(0, 1);
       }
@@ -257,7 +257,7 @@ namespace NTwain.Data
       {
         a_sz = "";
       }
-      else if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      else if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         a_sz = (char)a_sz.Length + a_sz;
       }
@@ -391,7 +391,7 @@ namespace NTwain.Data
       }
 
       // If we're running on a Mac, take off the prefix 'byte'...
-      if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         sz = sz.Remove(0, 1);
       }
@@ -442,7 +442,7 @@ namespace NTwain.Data
       {
         a_sz = "";
       }
-      else if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      else if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         a_sz = (char)a_sz.Length + a_sz;
       }
@@ -615,7 +615,7 @@ namespace NTwain.Data
       }
 
       // If we're running on a Mac, take off the prefix 'byte'...
-      if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         sz = sz.Remove(0, 1);
       }
@@ -666,7 +666,7 @@ namespace NTwain.Data
       {
         a_sz = "";
       }
-      else if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      else if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         a_sz = (char)a_sz.Length + a_sz;
       }
@@ -919,7 +919,7 @@ namespace NTwain.Data
       }
 
       // If we're running on a Mac, take off the prefix 'byte'...
-      if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         sz = sz.Remove(0, 1);
       }
@@ -970,7 +970,7 @@ namespace NTwain.Data
       {
         a_sz = "";
       }
-      else if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      else if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         a_sz = (char)a_sz.Length + a_sz;
       }

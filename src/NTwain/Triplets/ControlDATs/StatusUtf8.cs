@@ -23,9 +23,9 @@ namespace NTwain.Triplets.ControlDATs
     {
       extendedStatus = new TW_STATUSUTF8 { Status = status };
       var rc = TWRC.FAILURE;
-      if (TwainPlatform.IsWindows)
+      if (TWPlatform.IsWindows)
       {
-        if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
+        if (TWPlatform.Is32bit && TWPlatform.PreferLegacyDSM)
         {
           rc = WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
         }
@@ -34,10 +34,10 @@ namespace NTwain.Triplets.ControlDATs
           rc = WinNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
         }
       }
-      else if (TwainPlatform.IsMacOSX)
+      else if (TWPlatform.IsMacOSX)
       {
         TW_IDENTITY_MACOSX app2 = app;
-        if (TwainPlatform.PreferLegacyDSM)
+        if (TWPlatform.PreferLegacyDSM)
         {
           rc = OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.STATUSUTF8, MSG.GET, ref extendedStatus);
         }

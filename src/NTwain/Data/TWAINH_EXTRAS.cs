@@ -11,9 +11,9 @@ namespace NTwain.Data
   /// <summary>
   /// Contains platform info for twain use.
   /// </summary>
-  public static class TwainPlatform
+  public static class TWPlatform
   {
-    static TwainPlatform()
+    static TWPlatform()
     {
       Is32bit = IntPtr.Size == 4;
 
@@ -78,7 +78,7 @@ namespace NTwain.Data
   /// <summary>
   /// Contains value that don't fit into enums nicely.
   /// </summary>
-  public static class TwainConst
+  public static class TWConst
   {
     /// <summary>
     /// Don't care values...
@@ -86,12 +86,6 @@ namespace NTwain.Data
     public const byte TWON_DONTCARE8 = 0xff;
     public const ushort TWON_DONTCARE16 = 0xffff;
     public const uint TWON_DONTCARE32 = 0xffffffff;
-    /// <summary>
-    /// We're departing from a strict translation of H so that
-    /// we can achieve a unified status return type.  
-    /// </summary>
-    public const int STSCC = 0x10000; // get us past the custom space
-
   }
 
   /// <summary>
@@ -739,7 +733,7 @@ namespace NTwain.Data
     public TW_CAPABILITY(CAP cap)
     {
       Cap = cap;
-      ConType = (TWON)TwainConst.TWON_DONTCARE16;
+      ConType = (TWON)TWConst.TWON_DONTCARE16;
     }
 
     /// <summary>
@@ -771,9 +765,9 @@ namespace NTwain.Data
     /// <returns></returns>
     public uint DetermineBufferSize()
     {
-      if (Preferred != TwainConst.TWON_DONTCARE32) return Preferred;
-      if (MaxBufSize != TwainConst.TWON_DONTCARE32) return MaxBufSize;
-      if (MinBufSize != TwainConst.TWON_DONTCARE32) return MinBufSize;
+      if (Preferred != TWConst.TWON_DONTCARE32) return Preferred;
+      if (MaxBufSize != TWConst.TWON_DONTCARE32) return MaxBufSize;
+      if (MinBufSize != TWConst.TWON_DONTCARE32) return MinBufSize;
       // default to 16 kb if source doesn't really want to say what it needs
       return 1024 * 16;
     }
@@ -789,13 +783,13 @@ namespace NTwain.Data
     {
       return new TW_IMAGEMEMXFER
       {
-        BytesPerRow = TwainConst.TWON_DONTCARE32,
-        BytesWritten = TwainConst.TWON_DONTCARE32,
-        Columns = TwainConst.TWON_DONTCARE32,
-        Compression = TwainConst.TWON_DONTCARE16,
-        Rows = TwainConst.TWON_DONTCARE32,
-        XOffset = TwainConst.TWON_DONTCARE32,
-        YOffset = TwainConst.TWON_DONTCARE32,
+        BytesPerRow = TWConst.TWON_DONTCARE32,
+        BytesWritten = TWConst.TWON_DONTCARE32,
+        Columns = TWConst.TWON_DONTCARE32,
+        Compression = TWConst.TWON_DONTCARE16,
+        Rows = TWConst.TWON_DONTCARE32,
+        XOffset = TWConst.TWON_DONTCARE32,
+        YOffset = TWConst.TWON_DONTCARE32,
       };
     }
   }
@@ -810,13 +804,13 @@ namespace NTwain.Data
     {
       return new TW_IMAGEMEMXFER_MACOSX
       {
-        BytesPerRow = TwainConst.TWON_DONTCARE32,
-        BytesWritten = TwainConst.TWON_DONTCARE32,
-        Columns = TwainConst.TWON_DONTCARE32,
-        Compression = TwainConst.TWON_DONTCARE32,
-        Rows = TwainConst.TWON_DONTCARE32,
-        XOffset = TwainConst.TWON_DONTCARE32,
-        YOffset = TwainConst.TWON_DONTCARE32,
+        BytesPerRow = TWConst.TWON_DONTCARE32,
+        BytesWritten = TWConst.TWON_DONTCARE32,
+        Columns = TWConst.TWON_DONTCARE32,
+        Compression = TWConst.TWON_DONTCARE32,
+        Rows = TWConst.TWON_DONTCARE32,
+        XOffset = TWConst.TWON_DONTCARE32,
+        YOffset = TWConst.TWON_DONTCARE32,
       };
     }
   }

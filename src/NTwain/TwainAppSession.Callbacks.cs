@@ -39,7 +39,7 @@ namespace NTwain
     {
       IntPtr cbPtr = IntPtr.Zero;
 
-      if (TwainPlatform.IsMacOSX)
+      if (TWPlatform.IsMacOSX)
       {
         cbPtr = Marshal.GetFunctionPointerForDelegate(_osxCallbackDelegate);
       }

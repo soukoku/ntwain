@@ -25,7 +25,7 @@ namespace WinFormSample
       {
         var dll = Path.Combine(
           Path.GetDirectoryName(Environment.ProcessPath ?? Assembly.GetExecutingAssembly().Location)!,
-          $@"runtimes\win-{(TwainPlatform.Is32bit ? "x86" : "x64")}\native\TWAINDSM.dll");
+          $@"runtimes\win-{(TWPlatform.Is32bit ? "x86" : "x64")}\native\TWAINDSM.dll");
 
         __dllPtr = LoadLibraryW(dll);
       }

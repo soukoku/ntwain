@@ -59,7 +59,7 @@ namespace NTwain.Data
         TWTY itemType = GetItemType<TValue>();
 
         // Allocate the container (go for worst case, which is TW_STR255)...
-        if (TwainPlatform.IsMacOSX)
+        if (TWPlatform.IsMacOSX)
         {
           twCap.hContainer = memMgr.Alloc((uint)(Marshal.SizeOf(default(TW_ONEVALUE_MACOSX)) + Marshal.SizeOf(default(TW_STR255))));
           lockedPtr = memMgr.Lock(twCap.hContainer);
@@ -114,7 +114,7 @@ namespace NTwain.Data
         TWTY itemType = GetItemType<TValue>();
 
         // Allocate the container (go for worst case, which is TW_STR255)...
-        if (TwainPlatform.IsMacOSX)
+        if (TWPlatform.IsMacOSX)
         {
           // Allocate...
           twCap.hContainer = memMgr.Alloc((uint)(Marshal.SizeOf(default(TW_ARRAY_MACOSX)) + ((values.Length + 1) * Marshal.SizeOf(default(TW_STR255)))));
@@ -182,7 +182,7 @@ namespace NTwain.Data
         TWTY itemType = GetItemType<TValue>();
 
         // Allocate the container (go for worst case, which is TW_STR255)...
-        if (TwainPlatform.IsMacOSX)
+        if (TWPlatform.IsMacOSX)
         {
           // Allocate...
           twCap.hContainer = memMgr.Alloc((uint)(Marshal.SizeOf(default(TW_ENUMERATION_MACOSX)) + ((value.Items.Length + 1) * Marshal.SizeOf(default(TW_STR255)))));
@@ -270,7 +270,7 @@ namespace NTwain.Data
         TWTY itemType = GetItemType<TValue>();
 
         // Allocate the container (go for worst case, which is TW_STR255)...
-        if (TwainPlatform.IsMacOSX)
+        if (TWPlatform.IsMacOSX)
         {
           // Allocate...
           twCap.hContainer = memMgr.Alloc((uint)(Marshal.SizeOf(default(TW_RANGE_MACOSX))));
@@ -314,7 +314,7 @@ namespace NTwain.Data
         default:
           throw new NotSupportedException($"{itemType} is not supported for range.");
         case TWTY.INT8:
-          if (TwainPlatform.IsMacOSX)
+          if (TWPlatform.IsMacOSX)
           {
             twrangemacosx.ItemType = (uint)itemType;
             twrangemacosx.MinValue = (uint)Convert.ToSByte(value.MinValue);
@@ -346,7 +346,7 @@ namespace NTwain.Data
           //}
           break;
         case TWTY.UINT8:
-          if (TwainPlatform.IsMacOSX)
+          if (TWPlatform.IsMacOSX)
           {
             twrangemacosx.ItemType = (uint)itemType;
             twrangemacosx.MinValue = Convert.ToByte(value.MinValue);
@@ -378,7 +378,7 @@ namespace NTwain.Data
           //}
           break;
         case TWTY.INT16:
-          if (TwainPlatform.IsMacOSX)
+          if (TWPlatform.IsMacOSX)
           {
             twrangemacosx.ItemType = (uint)itemType;
             twrangemacosx.MinValue = (uint)Convert.ToInt16(value.MinValue);
@@ -411,7 +411,7 @@ namespace NTwain.Data
           break;
         case TWTY.BOOL:
         case TWTY.UINT16:
-          if (TwainPlatform.IsMacOSX)
+          if (TWPlatform.IsMacOSX)
           {
             twrangemacosx.ItemType = (uint)itemType;
             twrangemacosx.MinValue = Convert.ToUInt16(value.MinValue);
@@ -443,7 +443,7 @@ namespace NTwain.Data
           //}
           break;
         case TWTY.INT32:
-          if (TwainPlatform.IsMacOSX)
+          if (TWPlatform.IsMacOSX)
           {
             twrangemacosx.ItemType = (uint)itemType;
             twrangemacosx.MinValue = (uint)Convert.ToInt32(value.MinValue);
@@ -475,7 +475,7 @@ namespace NTwain.Data
           //}
           break;
         case TWTY.UINT32:
-          if (TwainPlatform.IsMacOSX)
+          if (TWPlatform.IsMacOSX)
           {
             twrangemacosx.ItemType = (uint)itemType;
             twrangemacosx.MinValue = Convert.ToUInt32(value.MinValue);
@@ -512,7 +512,7 @@ namespace NTwain.Data
           double step = Convert.ToDouble(value.StepSize);
           double def = Convert.ToDouble(value.DefaultValue);
           double current = Convert.ToDouble(value.CurrentValue);
-          if (TwainPlatform.IsMacOSX)
+          if (TWPlatform.IsMacOSX)
           {
             TW_RANGE_FIX32_MACOSX twrangefix32macosx = default;
             twrangefix32macosx.ItemType = (uint)itemType;

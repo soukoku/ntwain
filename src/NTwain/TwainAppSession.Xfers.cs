@@ -329,7 +329,7 @@ namespace NTwain
       {
         do
         {
-          rc = TwainPlatform.IsMacOSX ?
+          rc = TWPlatform.IsMacOSX ?
             DGImage.ImageMemXfer.Get(ref _appIdentity, ref _currentDS, ref memXferOSX) :
             DGImage.ImageMemXfer.Get(ref _appIdentity, ref _currentDS, ref memXfer);
 
@@ -337,7 +337,7 @@ namespace NTwain
           {
             try
             {
-              var written = TwainPlatform.IsMacOSX ?
+              var written = TWPlatform.IsMacOSX ?
                 memXferOSX.BytesWritten : memXfer.BytesWritten;
 
               IntPtr lockedPtr = Lock(memPtr);
@@ -409,7 +409,7 @@ namespace NTwain
       {
         do
         {
-          rc = TwainPlatform.IsMacOSX ?
+          rc = TWPlatform.IsMacOSX ?
             DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXferOSX) :
             DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXfer);
 
@@ -417,7 +417,7 @@ namespace NTwain
           {
             try
             {
-              var written = TwainPlatform.IsMacOSX ?
+              var written = TWPlatform.IsMacOSX ?
                 memXferOSX.BytesWritten : memXfer.BytesWritten;
 
               IntPtr lockedPtr = Lock(memPtr);

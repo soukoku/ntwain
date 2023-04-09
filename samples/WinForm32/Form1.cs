@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace WinFormSample
@@ -23,9 +24,9 @@ namespace WinFormSample
     {
       InitializeComponent();
       var libVer = FileVersionInfo.GetVersionInfo(typeof(TwainAppSession).Assembly.Location).ProductVersion;
-      Text += $"{(TwainPlatform.Is32bit ? " 32bit" : " 64bit")} on NTwain {libVer}";
+      Text += $"{(TWPlatform.Is32bit ? " 32bit" : " 64bit")} on NTwain {libVer}";
 
-      TwainPlatform.PreferLegacyDSM = false;
+      TWPlatform.PreferLegacyDSM = false;
 
       twain = new TwainAppSession(new WinformMarshaller(this), Assembly.GetExecutingAssembly().Location);
       twain.StateChanged += Twain_StateChanged;
@@ -148,14 +149,18 @@ namespace WinFormSample
       {
         LoadCapInfoList();
 
-        // never seen a driver support these but here it is
-        var sts = twain.GetCapLabel(CAP.ICAP_SUPPORTEDSIZES, out string? test);
-        var sts2 = twain.GetCapHelp(CAP.ICAP_SUPPORTEDSIZES, out string? test2);
-        var sts3 = twain.GetCapLabelEnum(CAP.ICAP_SUPPORTEDSIZES, out IList<string>? test3);
-
-        if (sts.RC == TWRC.SUCCESS || sts2.RC == TWRC.SUCCESS || sts3.RC == TWRC.SUCCESS)
+        // never seen a driver support these but here it is to test it
+        if (twain.GetCapLabel(CAP.ICAP_SUPPORTEDSIZES, out string? test).RC == TWRC.SUCCESS)
         {
-          Debugger.Break();
+          Debug.WriteLine($"Supported sizes label from ds = {test}");
+        }
+        if (twain.GetCapHelp(CAP.ICAP_SUPPORTEDSIZES, out string? test2).RC == TWRC.SUCCESS)
+        {
+          Debug.WriteLine($"Supported sizes help from ds = {test2}");
+        }
+        if (twain.GetCapLabelEnum(CAP.ICAP_SUPPORTEDSIZES, out IList<string>? test3).RC == TWRC.SUCCESS && test3 != null)
+        {
+          Debug.WriteLine($"Supported sizes label enum from ds = {string.Join(Environment.NewLine, test3)}");
         }
       }
       else
@@ -187,7 +192,9 @@ namespace WinFormSample
           it.SubItems.Add("");
         }
         it.SubItems.Add(extended.Contains(c).ToString());
-        it.SubItems.Add(twain.QueryCapSupport(c).ToString());
+        var supports = twain.QueryCapSupport(c);
+        it.SubItems.Add(supports.ToString());
+        if (!supports.HasFlag(TWQC.SET)) it.ForeColor = Color.Gray;
         capListView.Items.Add(it);
       }
     }

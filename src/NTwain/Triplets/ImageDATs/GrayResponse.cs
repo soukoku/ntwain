@@ -19,9 +19,9 @@ namespace NTwain.Triplets.ImageDATs
     static TWRC DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, ref TW_GRAYRESPONSE data)
     {
       var rc = TWRC.FAILURE;
-      if (TwainPlatform.IsWindows)
+      if (TWPlatform.IsWindows)
       {
-        if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
+        if (TWPlatform.Is32bit && TWPlatform.PreferLegacyDSM)
         {
           rc = WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.GRAYRESPONSE, msg, ref data);
         }
@@ -30,11 +30,11 @@ namespace NTwain.Triplets.ImageDATs
           rc = WinNewDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.GRAYRESPONSE, msg, ref data);
         }
       }
-      else if (TwainPlatform.IsMacOSX)
+      else if (TWPlatform.IsMacOSX)
       {
         TW_IDENTITY_MACOSX app2 = app;
         TW_IDENTITY_MACOSX ds2 = ds;
-        if (TwainPlatform.PreferLegacyDSM)
+        if (TWPlatform.PreferLegacyDSM)
         {
           rc = OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.GRAYRESPONSE, msg, ref data);
         }
