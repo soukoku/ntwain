@@ -361,7 +361,7 @@ namespace WinFormSample
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-      twain.EnableSource(false, false);
+      twain.EnableSource(ckShowUI.Checked, false);
     }
   }
 }

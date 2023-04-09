@@ -41,17 +41,18 @@
       lblState = new System.Windows.Forms.Label();
       label3 = new System.Windows.Forms.Label();
       btnOpenDef = new System.Windows.Forms.Button();
-      label4 = new System.Windows.Forms.Label();
-      btnStart = new System.Windows.Forms.Button();
-      btnShowSettings = new System.Windows.Forms.Button();
-      btnClose = new System.Windows.Forms.Button();
       capListView = new System.Windows.Forms.ListView();
       colCap = new System.Windows.Forms.ColumnHeader();
       colType = new System.Windows.Forms.ColumnHeader();
       colCur = new System.Windows.Forms.ColumnHeader();
       colDef = new System.Windows.Forms.ColumnHeader();
-      colSupport = new System.Windows.Forms.ColumnHeader();
       colExtended = new System.Windows.Forms.ColumnHeader();
+      colSupport = new System.Windows.Forms.ColumnHeader();
+      label4 = new System.Windows.Forms.Label();
+      btnStart = new System.Windows.Forms.Button();
+      btnShowSettings = new System.Windows.Forms.Button();
+      btnClose = new System.Windows.Forms.Button();
+      ckShowUI = new System.Windows.Forms.CheckBox();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
       splitContainer1.Panel2.SuspendLayout();
@@ -166,6 +167,7 @@
       // 
       // splitContainer1.Panel2
       // 
+      splitContainer1.Panel2.Controls.Add(ckShowUI);
       splitContainer1.Panel2.Controls.Add(capListView);
       splitContainer1.Panel2.Controls.Add(label4);
       splitContainer1.Panel2.Controls.Add(btnStart);
@@ -173,7 +175,7 @@
       splitContainer1.Panel2.Controls.Add(btnClose);
       splitContainer1.Panel2.Controls.Add(label2);
       splitContainer1.Panel2.Controls.Add(lblCurrent);
-      splitContainer1.Size = new System.Drawing.Size(1023, 564);
+      splitContainer1.Size = new System.Drawing.Size(1123, 564);
       splitContainer1.SplitterDistance = 325;
       splitContainer1.TabIndex = 9;
       // 
@@ -204,6 +206,49 @@
       btnOpenDef.Text = "Open default";
       btnOpenDef.UseVisualStyleBackColor = true;
       btnOpenDef.Click += btnOpenDef_Click;
+      // 
+      // capListView
+      // 
+      capListView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+      capListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { colCap, colType, colCur, colDef, colExtended, colSupport });
+      capListView.FullRowSelect = true;
+      capListView.Location = new System.Drawing.Point(11, 87);
+      capListView.MultiSelect = false;
+      capListView.Name = "capListView";
+      capListView.Size = new System.Drawing.Size(771, 462);
+      capListView.TabIndex = 8;
+      capListView.UseCompatibleStateImageBehavior = false;
+      capListView.View = System.Windows.Forms.View.Details;
+      // 
+      // colCap
+      // 
+      colCap.Text = "CAP";
+      colCap.Width = 230;
+      // 
+      // colType
+      // 
+      colType.Text = "Type";
+      colType.Width = 80;
+      // 
+      // colCur
+      // 
+      colCur.Text = "Current";
+      colCur.Width = 80;
+      // 
+      // colDef
+      // 
+      colDef.Text = "Default";
+      colDef.Width = 80;
+      // 
+      // colExtended
+      // 
+      colExtended.Text = "Extended";
+      colExtended.Width = 80;
+      // 
+      // colSupport
+      // 
+      colSupport.Text = "Supports";
+      colSupport.Width = 330;
       // 
       // label4
       // 
@@ -244,48 +289,17 @@
       btnClose.UseVisualStyleBackColor = true;
       btnClose.Click += btnClose_Click;
       // 
-      // capListView
+      // ckShowUI
       // 
-      capListView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-      capListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { colCap, colType, colCur, colDef, colExtended, colSupport });
-      capListView.FullRowSelect = true;
-      capListView.Location = new System.Drawing.Point(11, 87);
-      capListView.MultiSelect = false;
-      capListView.Name = "capListView";
-      capListView.Size = new System.Drawing.Size(671, 462);
-      capListView.TabIndex = 8;
-      capListView.UseCompatibleStateImageBehavior = false;
-      capListView.View = System.Windows.Forms.View.Details;
-      // 
-      // colCap
-      // 
-      colCap.Text = "CAP";
-      colCap.Width = 230;
-      // 
-      // colType
-      // 
-      colType.Text = "Type";
-      colType.Width = 80;
-      // 
-      // colCur
-      // 
-      colCur.Text = "Current";
-      colCur.Width = 80;
-      // 
-      // colDef
-      // 
-      colDef.Text = "Default";
-      colDef.Width = 80;
-      // 
-      // colSupport
-      // 
-      colSupport.Text = "Supports";
-      colSupport.Width = 330;
-      // 
-      // colExtended
-      // 
-      colExtended.Text = "Extended";
-      colExtended.Width = 80;
+      ckShowUI.AutoSize = true;
+      ckShowUI.Checked = true;
+      ckShowUI.CheckState = System.Windows.Forms.CheckState.Checked;
+      ckShowUI.Location = new System.Drawing.Point(437, 35);
+      ckShowUI.Name = "ckShowUI";
+      ckShowUI.Size = new System.Drawing.Size(69, 19);
+      ckShowUI.TabIndex = 9;
+      ckShowUI.Text = "Show UI";
+      ckShowUI.UseVisualStyleBackColor = true;
       // 
       // Form1
       // 
@@ -330,5 +344,6 @@
     private System.Windows.Forms.ColumnHeader colDef;
     private System.Windows.Forms.ColumnHeader colSupport;
     private System.Windows.Forms.ColumnHeader colExtended;
+    private System.Windows.Forms.CheckBox ckShowUI;
   }
 }
