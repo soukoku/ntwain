@@ -881,6 +881,7 @@ namespace NTwain.Data
     /// <param name="memMgr"></param>
     public void Free(IMemoryManager memMgr)
     {
+      #region don't open this
       Info_000.Free(memMgr);
       Info_001.Free(memMgr);
       Info_002.Free(memMgr);
@@ -981,42 +982,110 @@ namespace NTwain.Data
       Info_097.Free(memMgr);
       Info_098.Free(memMgr);
       Info_099.Free(memMgr);
+      #endregion
     }
 
   }
 
   partial struct TW_INFO
   {
-    //public unsafe TValue ReadTWTYData<TValue>(int itemIndex = 0) where TValue : struct
-    //{
-    //  if (ReturnCode != TWRC.SUCCESS || NumItems == 0) return default;
-
-    //  var sz = ItemType.GetItemTypeSize();
-    //  if (ItemType == TWTY.HANDLE || (sz * NumItems) > 4)
-    //  {
-    //    // read as ptr
-    //    // this is probably not correct
-    //    //((IntPtr)Item.ToPointer()).ReadTWTYData<TValue>(ItemType;
-    //  }
-    //  else
-    //  {
-    //    // read as 4 byte number
-    //  }
-    //}
+    /// <summary>
+    /// Quick check to see if the <see cref="Item"/> pointer is really
+    /// a pointer or actual data (ugh).
+    /// </summary>
+    public bool IsDataAPointer =>
+      ItemType == TWTY.HANDLE || (ItemType.GetItemTypeSize() * NumItems) > IntPtr.Size; // should it be intptr.size or just 4?
 
     /// <summary>
-    /// Frees any memory used by this if necessary.
+    /// Try to read out the item as the type specified in <see cref="ItemType"/>.
+    /// This ONLY works if the data is not a pointer (see <see cref="IsDataAPointer"/>). 
+    /// For pointers you'd read it yourself with 
+    /// <see cref="ValueReader.ReadTWTYData{TValue}(IntPtr, TWTY, int)"/>.
+    /// Unless it's a handle (<see cref="TWTY.HANDLE"/>) to non-twain-strings, then you'd use 
+    /// <see cref="ReadHandleString(int)"/>.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <typeparam name="TValue"></typeparam>
+    /// <returns></returns>
+    public unsafe TValue ReadNonPointerData<TValue>() where TValue : struct
+    {
+      if (ReturnCode != TWRC.SUCCESS || NumItems == 0 || IsDataAPointer) return default;
+
+      // we can try a trick and make a pointer to this numeric data
+      // and re-use our pointer reader. There's a good chance this is wrong in many ways.
+      // TODO: test this idea in some unit test
+      var value = TWPlatform.Is32bit ? Item.ToUInt32() : Item.ToUInt64(); // the value should be 32bit from the spec but not sure how it'll work in 64bit
+
+      var fakePtr = (IntPtr)(&value);
+
+      return fakePtr.ReadTWTYData<TValue>(ItemType, 0);
+    }
+
+    /// <summary>
+    /// Try to read a null-terminated string from the item.
+    /// </summary>
+    /// <param name="memMgr"></param>
+    /// <param name="index">If item is an array specify which string to read</param>
+    /// <returns></returns>
+    public unsafe string? ReadHandleString(IMemoryManager memMgr, int index = 0)
+    {
+      if (index < 0 || index >= NumItems || !IsDataAPointer) return default;
+
+      // why is twain being difficult and not use TW_STR* like a normal person.
+      // what even is the encoding for those things? Imma yolo it.
+      string? value;
+      var itemAsPtr = (IntPtr)Item.ToPointer(); // this is also iffy
+
+      if (NumItems == 1)
+      {
+        // if 1, item is already the pointer to the string
+        value = LockAndReadNullTerminatedString(memMgr, itemAsPtr);
+      }
+      else
+      {
+        // if more than 1, item points to an array of pointers that each points to their own string
+        var lockPtr = memMgr.Lock(itemAsPtr);
+        lockPtr += (IntPtr.Size * index);
+        // is this even correct? I hope it is
+        var subItemPtr = Marshal.PtrToStructure<IntPtr>(lockPtr);
+        value = LockAndReadNullTerminatedString(memMgr, subItemPtr);
+        memMgr.Unlock(itemAsPtr);
+      }
+      return value;
+    }
+
+    private string? LockAndReadNullTerminatedString(IMemoryManager memMgr, IntPtr data)
+    {
+      var lockPtr = memMgr.Lock(data);
+      // yolo as ansi, should work in most cases
+      var value = Marshal.PtrToStringAnsi(lockPtr);
+      memMgr.Unlock(data);
+      return value;
+    }
+
+    /// <summary>
+    /// Frees all DS-allocated memory if necessary.
     /// </summary>
     /// <param name="memMgr"></param>
     internal unsafe void Free(IMemoryManager memMgr)
     {
-      if (ReturnCode == TWRC.SUCCESS && Item != UIntPtr.Zero &&
-        (ItemType == TWTY.HANDLE || (ItemType.GetItemTypeSize() * NumItems) > 4))
+      if (ReturnCode != TWRC.SUCCESS || !IsDataAPointer) return;
+
+      var itemAsPtr = (IntPtr)Item.ToPointer(); // this is also iffy
+      if (ItemType == TWTY.HANDLE && NumItems > 1)
       {
-        // this is probably not correct
-        memMgr.Free((IntPtr)Item.ToPointer());
-        Item = UIntPtr.Zero; // this is only a copy but whatev
+        // must go into each handle in the array and free them individually :(
+        var lockPtr = memMgr.Lock(itemAsPtr);
+        for (var i = 0; i < NumItems; i++)
+        {
+          // is this even correct? I hope it is
+          var subItemPtr = Marshal.PtrToStructure<IntPtr>(lockPtr);
+          memMgr.Free(subItemPtr);
+          lockPtr += IntPtr.Size;
+        }
       }
+      memMgr.Free(itemAsPtr);
+      Item = UIntPtr.Zero;
     }
   }
 }

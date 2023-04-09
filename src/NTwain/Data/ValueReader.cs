@@ -430,7 +430,7 @@ namespace NTwain.Data
     /// <param name="type">The twain type.</param>
     /// <param name="itemIndex">Index of the item if pointer is array.</param>
     /// <returns></returns>
-    static TValue ReadTWTYData<TValue>(this IntPtr intptr, TWTY type, int itemIndex) where TValue : struct
+    public static TValue ReadTWTYData<TValue>(this IntPtr intptr, TWTY type, int itemIndex) where TValue : struct
     {
       var isEnum = typeof(TValue).IsEnum;
 

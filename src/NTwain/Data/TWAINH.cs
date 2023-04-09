@@ -1509,6 +1509,10 @@ namespace NTwain.Data
     private TW_INFO Info_097;
     private TW_INFO Info_098;
     private TW_INFO Info_099;
+
+    // 200 seems overkill for anyone to request
+    // at once so I cut it down in half
+
     //private TW_INFO Info_100;
     //private TW_INFO Info_101;
     //private TW_INFO Info_102;
