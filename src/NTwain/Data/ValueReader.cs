@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -118,7 +117,7 @@ namespace NTwain.Data
           lockedPtr += Marshal.SizeOf(onevalue);
         }
 
-        return ReadContainerData<TValue>(lockedPtr, itemType, 0);
+        return ReadTWTYData<TValue>(lockedPtr, itemType, 0);
       }
       finally
       {
@@ -188,7 +187,7 @@ namespace NTwain.Data
 
         for (var i = 0; i < count; i++)
         {
-          retVal.Items[i] = ReadContainerData<TValue>(lockedPtr, itemType, i);
+          retVal.Items[i] = ReadTWTYData<TValue>(lockedPtr, itemType, i);
         }
       }
       finally
@@ -235,7 +234,7 @@ namespace NTwain.Data
         var arr = new TValue[count];
         for (var i = 0; i < count; i++)
         {
-          arr[i] = ReadContainerData<TValue>(lockedPtr, itemType, i);
+          arr[i] = ReadTWTYData<TValue>(lockedPtr, itemType, i);
         }
         return arr;
       }
@@ -425,13 +424,13 @@ namespace NTwain.Data
 
 
     /// <summary>
-    /// Read the container pointer content.
+    /// Read the pointer content as a value specified by <see cref="TWTY"/>.
     /// </summary>
-    /// <param name="intptr">A locked pointer to the container's data pointer. If data is array this is the 0th item.</param>
+    /// <param name="intptr">A locked pointer to the data pointer. If data is array this is the 0th item.</param>
     /// <param name="type">The twain type.</param>
     /// <param name="itemIndex">Index of the item if pointer is array.</param>
     /// <returns></returns>
-    static TValue ReadContainerData<TValue>(IntPtr intptr, TWTY type, int itemIndex) where TValue : struct
+    static TValue ReadTWTYData<TValue>(this IntPtr intptr, TWTY type, int itemIndex) where TValue : struct
     {
       var isEnum = typeof(TValue).IsEnum;
 

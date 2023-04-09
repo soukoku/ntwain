@@ -3,23 +3,25 @@ using System.Collections.Generic;
 
 namespace NTwain.Data
 {
-  /// <summary>
-  /// Just an attempt for mapping <see cref="CAP"/>
-  /// type with its enum value type when applicable.
-  /// </summary>
-  public static class KnownCapEnumMap
+
+  public static class SizeAndConversionUtils
   {
+    /// <summary>
+    /// Maps <see cref="CAP"/> id with its enum 
+    /// value type when applicable 
+    /// (e.g. <see cref="CAP.ICAP_XFERMECH"/> to <see cref="TWSX"/>).
+    /// </summary>
+    /// <param name="cap"></param>
+    /// <returns></returns>
     public static Type? GetEnumType(CAP cap)
     {
       if (__map.ContainsKey(cap)) return __map[cap];
       return null;
     }
-
-    static readonly Dictionary<CAP, Type> __map = new()
+        static readonly Dictionary<CAP, Type> __map = new()
     {
       { CAP.ACAP_XFERMECH, typeof(TWSX) },
       { CAP.CAP_ALARMS, typeof(TWAL) },
-      { CAP.CAP_AUTHOR, typeof(TWSX) },
       { CAP.CAP_AUTOFEED, typeof(TW_BOOL) },
       { CAP.CAP_AUTOMATICSENSEMEDIUM, typeof(TW_BOOL) },
       { CAP.CAP_AUTOSCAN, typeof(TW_BOOL) },
@@ -149,6 +151,40 @@ namespace NTwain.Data
       { CAP.ICAP_TILES, typeof(TW_BOOL) },
       { CAP.ICAP_UNDEFINEDIMAGESIZE, typeof(TW_BOOL) },
       { CAP.ICAP_UNITS, typeof(TWUN) },
+      { CAP.ICAP_XFERMECH, typeof(TWSX) },
+    };
+
+
+    /// <summary>
+    /// Gets the byte size of the TWAIN item value type.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static int GetItemTypeSize(this TWTY type)
+    {
+      if (__sizes.TryGetValue(type, out int size))
+      {
+        return size;
+      }
+      return 0;
+    }
+    static readonly IDictionary<TWTY, int> __sizes = new Dictionary<TWTY, int>
+    {
+      {TWTY.INT8, 1},
+      {TWTY.UINT8, 1},
+      {TWTY.INT16, 2},
+      {TWTY.UINT16, 2},
+      {TWTY.BOOL, 2},
+      {TWTY.INT32, 4},
+      {TWTY.UINT32, 4},
+      {TWTY.FIX32, 4},
+      {TWTY.FRAME, 16},
+      {TWTY.STR32, TW_STR32.Size},
+      {TWTY.STR64, TW_STR64.Size},
+      {TWTY.STR128, TW_STR128.Size},
+      {TWTY.STR255, TW_STR255.Size},
+      // is it fixed 4 bytes or intptr size?
+      {TWTY.HANDLE, IntPtr.Size},
     };
   }
 }

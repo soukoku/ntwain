@@ -821,9 +821,208 @@ namespace NTwain.Data
     }
   }
 
-  //partial struct TW_DEVICEEVENT
-  //{
-  //    public TWDE Event { get { return (TWDE)_event; } }
-  //    public TWFL FlashUsed2 { get { return (TWFL)_flashUsed2; } }
-  //}
+  partial struct TW_DEVICEEVENT
+  {
+    // provide casted versions over raw value
+
+    public TWDE Event { get { return (TWDE)_Event; } }
+    public TWFL FlashUsed2 { get { return (TWFL)_FlashUsed2; } }
+  }
+
+
+  /// <summary>
+  /// Container for querying ext image info. After querying and done with
+  /// the data you must call <see cref="Free(IMemoryManager)"/> to
+  /// free the memory allocated.
+  /// </summary>
+  public partial struct TW_EXTIMAGEINFO
+  {
+    /// <summary>
+    /// A quick way to create a query object with only <see cref="TWEI"/> values.
+    /// Limit is 100 at this time.
+    /// </summary>
+    /// <param name="memMgr"></param>
+    /// <param name="infoNames"></param>
+    /// <returns></returns>
+    public static TW_EXTIMAGEINFO CreateRequest(params TWEI[] infoNames)
+    {
+      if (infoNames == null || infoNames.Length == 0) return default;
+      if (infoNames.Length > 100) throw new InvalidOperationException("Cannot query more than 100 TWEIs at this time.");
+
+      TW_EXTIMAGEINFO container = new()
+      {
+        NumInfos = (uint)infoNames.Length,
+      };
+
+      for (var i = 0; i < infoNames.Length; i++)
+      {
+        TW_INFO info = new() { InfoId = infoNames[i] };
+        container.Set(i, ref info);
+      }
+      return container;
+    }
+
+    /// <summary>
+    /// Reads the info out of this as array.
+    /// </summary>
+    /// <param name="memMgr"></param>
+    /// <returns></returns>
+    public TW_INFO[] AsInfos()
+    {
+      if (NumInfos == 0) return Array.Empty<TW_INFO>();
+
+      var arr = new TW_INFO[NumInfos];
+      for (var i = 0; i < NumInfos; i++)
+      {
+        TW_INFO blah = default;
+        Get(i, ref blah);
+        arr[i] = blah;
+      }
+      return arr;
+    }
+
+    /// <summary>
+    /// Frees all data contained here.
+    /// </summary>
+    /// <param name="memMgr"></param>
+    public void Free(IMemoryManager memMgr)
+    {
+      Info_000.Free(memMgr);
+      Info_001.Free(memMgr);
+      Info_002.Free(memMgr);
+      Info_003.Free(memMgr);
+      Info_004.Free(memMgr);
+      Info_005.Free(memMgr);
+      Info_006.Free(memMgr);
+      Info_007.Free(memMgr);
+      Info_008.Free(memMgr);
+      Info_009.Free(memMgr);
+      Info_010.Free(memMgr);
+      Info_011.Free(memMgr);
+      Info_012.Free(memMgr);
+      Info_013.Free(memMgr);
+      Info_014.Free(memMgr);
+      Info_015.Free(memMgr);
+      Info_016.Free(memMgr);
+      Info_017.Free(memMgr);
+      Info_018.Free(memMgr);
+      Info_019.Free(memMgr);
+      Info_020.Free(memMgr);
+      Info_021.Free(memMgr);
+      Info_022.Free(memMgr);
+      Info_023.Free(memMgr);
+      Info_024.Free(memMgr);
+      Info_025.Free(memMgr);
+      Info_026.Free(memMgr);
+      Info_027.Free(memMgr);
+      Info_028.Free(memMgr);
+      Info_029.Free(memMgr);
+      Info_030.Free(memMgr);
+      Info_031.Free(memMgr);
+      Info_032.Free(memMgr);
+      Info_033.Free(memMgr);
+      Info_034.Free(memMgr);
+      Info_035.Free(memMgr);
+      Info_036.Free(memMgr);
+      Info_037.Free(memMgr);
+      Info_038.Free(memMgr);
+      Info_039.Free(memMgr);
+      Info_040.Free(memMgr);
+      Info_041.Free(memMgr);
+      Info_042.Free(memMgr);
+      Info_043.Free(memMgr);
+      Info_044.Free(memMgr);
+      Info_045.Free(memMgr);
+      Info_046.Free(memMgr);
+      Info_047.Free(memMgr);
+      Info_048.Free(memMgr);
+      Info_049.Free(memMgr);
+      Info_050.Free(memMgr);
+      Info_051.Free(memMgr);
+      Info_052.Free(memMgr);
+      Info_053.Free(memMgr);
+      Info_054.Free(memMgr);
+      Info_055.Free(memMgr);
+      Info_056.Free(memMgr);
+      Info_057.Free(memMgr);
+      Info_058.Free(memMgr);
+      Info_059.Free(memMgr);
+      Info_060.Free(memMgr);
+      Info_061.Free(memMgr);
+      Info_062.Free(memMgr);
+      Info_063.Free(memMgr);
+      Info_064.Free(memMgr);
+      Info_065.Free(memMgr);
+      Info_066.Free(memMgr);
+      Info_067.Free(memMgr);
+      Info_068.Free(memMgr);
+      Info_069.Free(memMgr);
+      Info_070.Free(memMgr);
+      Info_071.Free(memMgr);
+      Info_072.Free(memMgr);
+      Info_073.Free(memMgr);
+      Info_074.Free(memMgr);
+      Info_075.Free(memMgr);
+      Info_076.Free(memMgr);
+      Info_077.Free(memMgr);
+      Info_078.Free(memMgr);
+      Info_079.Free(memMgr);
+      Info_080.Free(memMgr);
+      Info_081.Free(memMgr);
+      Info_082.Free(memMgr);
+      Info_083.Free(memMgr);
+      Info_084.Free(memMgr);
+      Info_085.Free(memMgr);
+      Info_086.Free(memMgr);
+      Info_087.Free(memMgr);
+      Info_088.Free(memMgr);
+      Info_089.Free(memMgr);
+      Info_090.Free(memMgr);
+      Info_091.Free(memMgr);
+      Info_092.Free(memMgr);
+      Info_093.Free(memMgr);
+      Info_094.Free(memMgr);
+      Info_095.Free(memMgr);
+      Info_096.Free(memMgr);
+      Info_097.Free(memMgr);
+      Info_098.Free(memMgr);
+      Info_099.Free(memMgr);
+    }
+
+  }
+
+  partial struct TW_INFO
+  {
+    //public unsafe TValue ReadTWTYData<TValue>(int itemIndex = 0) where TValue : struct
+    //{
+    //  if (ReturnCode != TWRC.SUCCESS || NumItems == 0) return default;
+
+    //  var sz = ItemType.GetItemTypeSize();
+    //  if (ItemType == TWTY.HANDLE || (sz * NumItems) > 4)
+    //  {
+    //    // read as ptr
+    //    // this is probably not correct
+    //    //((IntPtr)Item.ToPointer()).ReadTWTYData<TValue>(ItemType;
+    //  }
+    //  else
+    //  {
+    //    // read as 4 byte number
+    //  }
+    //}
+
+    /// <summary>
+    /// Frees any memory used by this if necessary.
+    /// </summary>
+    /// <param name="memMgr"></param>
+    internal unsafe void Free(IMemoryManager memMgr)
+    {
+      if (ReturnCode == TWRC.SUCCESS && Item != UIntPtr.Zero &&
+        (ItemType == TWTY.HANDLE || (ItemType.GetItemTypeSize() * NumItems) > 4))
+      {
+        // this is probably not correct
+        memMgr.Free((IntPtr)Item.ToPointer());
+        Item = UIntPtr.Zero; // this is only a copy but whatev
+      }
+    }
+  }
 }

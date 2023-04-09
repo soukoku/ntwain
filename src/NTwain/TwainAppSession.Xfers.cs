@@ -3,14 +3,8 @@ using NTwain.Native;
 using NTwain.Triplets;
 using System;
 using System.Buffers;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Xml.Serialization;
-using static NTwain.Native.ImageTools;
 
 namespace NTwain
 {
@@ -22,6 +16,17 @@ namespace NTwain
     // this can pool up to a "normal" max of legal size paper in 24 bit at 300 dpi (~31MB)
     // so the array max is made with 32 MB. Typical usage should be a lot less.
     static readonly ArrayPool<byte> XferMemPool = ArrayPool<byte>.Create(32 * 1024 * 1024, 8);
+
+    /// <summary>
+    /// Can only be called in state 7, so it's hidden here and 
+    /// only exposed in data transferred event.
+    /// </summary>
+    /// <param name="container"></param>
+    /// <returns></returns>
+    internal STS GetExtendedImageInfo(ref TW_EXTIMAGEINFO container)
+    {
+      return WrapInSTS(DGImage.ExtImageInfo.Get(ref _appIdentity, ref _currentDS, ref container));
+    }
 
 
     /// <summary>
@@ -69,14 +74,14 @@ namespace NTwain
           var readyArgs = new TransferReadyEventArgs(pending.Count, (TWEJ)pending.EOJ);
           if (TransferReady != null)
           {
-          _uiThreadMarshaller.Invoke(() =>
-          {
-            try
+            _uiThreadMarshaller.Invoke(() =>
             {
+              try
+              {
                 TransferReady.Invoke(this, readyArgs);
-            }
-            catch { } // don't let consumer kill the loop if they have exception
-          });
+              }
+              catch { } // don't let consumer kill the loop if they have exception
+            });
           }
 
           if (readyArgs.Cancel == CancelType.EndNow || _closeDsRequested)
@@ -153,14 +158,14 @@ namespace NTwain
               {
                 _uiThreadMarshaller.Invoke(() =>
                 {
-              try
-              {
-                TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
-              }
-              catch { }
+                  try
+                  {
+                    TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
+                  }
+                  catch { }
                 });
+              }
             }
-          }
           }
         } while (sts.RC == TWRC.SUCCESS && pending.Count != 0);
       }

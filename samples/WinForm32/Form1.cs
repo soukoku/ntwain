@@ -32,7 +32,7 @@ namespace WinFormSample
       twain.DefaultSourceChanged += Twain_DefaultSourceChanged;
       twain.CurrentSourceChanged += Twain_CurrentSourceChanged;
       twain.TransferReady += Twain_TransferReady;
-      twain.DataTransferred += Twain_DataTransferred;
+      twain.Transferred += Twain_DataTransferred;
       twain.TransferError += Twain_TransferError;
       twain.DeviceEvent += Twain_DeviceEvent;
 
@@ -101,7 +101,7 @@ namespace WinFormSample
 
     }
 
-    private void Twain_DataTransferred(TwainAppSession sender, DataTransferredEventArgs e)
+    private void Twain_DataTransferred(TwainAppSession sender, TransferredEventArgs e)
     {
       Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] data transferred with info {e.ImageInfo}");
       if (e.Data == null) return;
@@ -174,7 +174,7 @@ namespace WinFormSample
 
         if (twain.GetCapCurrent(c, out TW_CAPABILITY twcap).RC == TWRC.SUCCESS)
         {
-          var enumType = KnownCapEnumMap.GetEnumType(c);
+          var enumType = SizeAndConversionUtils.GetEnumType(c);
           var realType = twcap.DetermineValueType(twain);
           it.SubItems.Add(enumType?.Name.ToString() ?? realType.ToString());
           it.SubItems.Add(ReadTypedValue(c, enumType, realType, forCurrent: true));

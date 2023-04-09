@@ -148,7 +148,7 @@ namespace NTwain
           case MSG.XFERREADY:
             //_uiThreadMarshaller.Invoke(() =>
             //{
-              State = STATE.S6;
+            State = STATE.S6;
             //});
             EnterTransferRoutine();
             break;

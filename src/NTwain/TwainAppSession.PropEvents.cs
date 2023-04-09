@@ -61,11 +61,11 @@ namespace NTwain
           {
             _uiThreadMarshaller.Invoke(() =>
             {
-          try
-          {
+              try
+              {
                 StateChanged.Invoke(this, value);
-          }
-          catch { }
+              }
+              catch { }
             });
           }
         }
@@ -127,7 +127,7 @@ namespace NTwain
 
 
     /// <summary>
-    /// Fires when <see cref="State"/> changes. 
+    /// Fires when <see cref="State"/> changes.
     /// </summary>
     public event TwainEventDelegate<STATE>? StateChanged;
 
