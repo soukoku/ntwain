@@ -157,6 +157,11 @@ namespace NTwain
     public event TwainEventDelegate<TransferReadyEventArgs>? TransferReady;
 
     /// <summary>
+    /// Fires when there's a transfer cancellation, e.g. if the user pressed the "Cancel" button.
+    /// </summary>
+    public event TwainEventDelegate<TransferCanceledEventArgs>? TransferCanceled;
+
+    /// <summary>
     /// Fires when transferred data is available for app to use.
     /// </summary>
     public event TwainEventDelegate<DataTransferredEventArgs>? DataTransferred;

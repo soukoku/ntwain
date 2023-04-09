@@ -176,6 +176,14 @@ namespace NTwain
           // ok to keep going
           break;
         case TWRC.CANCEL:
+          // might eventually have option to cancel this or all like transfer ready
+          if (TransferCanceled != null)
+          {
+            _uiThreadMarshaller.Invoke(() =>
+            {
+              TransferCanceled.Invoke(this, new TransferCanceledEventArgs());
+            });
+          };
           TW_PENDINGXFERS pending = default;
           DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
           // todo: also reset?
