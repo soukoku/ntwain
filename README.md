@@ -25,7 +25,6 @@ These are not implemented yet in this early version:
 
 * Image memory transfer (DAT_IMAGEMEMXFER). 
 * Audio native transfer (probably never will).
-* Utility for reading out of extended image info (TW_EXTIMAGEINFO).
 
 As with previous versions, only Windows has been tested on and thus 
 supported really. Other changes include
