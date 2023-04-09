@@ -133,23 +133,23 @@ namespace NTwain
             });
             break;
           case MSG.DEVICEEVENT:
-            if (DGControl.DeviceEvent.Get(ref _appIdentity, ref _currentDS, out TW_DEVICEEVENT de) == TWRC.SUCCESS)
+            if (DeviceEvent != null && DGControl.DeviceEvent.Get(ref _appIdentity, ref _currentDS, out TW_DEVICEEVENT de) == TWRC.SUCCESS)
             {
               _uiThreadMarshaller.BeginInvoke(() =>
               {
                 try
                 {
-                  DeviceEvent?.Invoke(this, de);
+                  DeviceEvent.Invoke(this, de);
                 }
                 catch { }
               });
             }
             break;
           case MSG.XFERREADY:
-            _uiThreadMarshaller.Invoke(() =>
-            {
-              State = STATE.S6;
-            });
+            //_uiThreadMarshaller.Invoke(() =>
+            //{
+            State = STATE.S6;
+            //});
             EnterTransferRoutine();
             break;
         }

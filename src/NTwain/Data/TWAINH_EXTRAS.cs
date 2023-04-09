@@ -11,9 +11,9 @@ namespace NTwain.Data
   /// <summary>
   /// Contains platform info for twain use.
   /// </summary>
-  public static class TwainPlatform
+  public static class TWPlatform
   {
-    static TwainPlatform()
+    static TWPlatform()
     {
       Is32bit = IntPtr.Size == 4;
 
@@ -78,7 +78,7 @@ namespace NTwain.Data
   /// <summary>
   /// Contains value that don't fit into enums nicely.
   /// </summary>
-  public static class TwainConst
+  public static class TWConst
   {
     /// <summary>
     /// Don't care values...
@@ -86,12 +86,6 @@ namespace NTwain.Data
     public const byte TWON_DONTCARE8 = 0xff;
     public const ushort TWON_DONTCARE16 = 0xffff;
     public const uint TWON_DONTCARE32 = 0xffffffff;
-    /// <summary>
-    /// We're departing from a strict translation of H so that
-    /// we can achieve a unified status return type.  
-    /// </summary>
-    public const int STSCC = 0x10000; // get us past the custom space
-
   }
 
   /// <summary>
@@ -739,7 +733,7 @@ namespace NTwain.Data
     public TW_CAPABILITY(CAP cap)
     {
       Cap = cap;
-      ConType = (TWON)TwainConst.TWON_DONTCARE16;
+      ConType = (TWON)TWConst.TWON_DONTCARE16;
     }
 
     /// <summary>
@@ -771,9 +765,9 @@ namespace NTwain.Data
     /// <returns></returns>
     public uint DetermineBufferSize()
     {
-      if (Preferred != TwainConst.TWON_DONTCARE32) return Preferred;
-      if (MaxBufSize != TwainConst.TWON_DONTCARE32) return MaxBufSize;
-      if (MinBufSize != TwainConst.TWON_DONTCARE32) return MinBufSize;
+      if (Preferred != TWConst.TWON_DONTCARE32) return Preferred;
+      if (MaxBufSize != TWConst.TWON_DONTCARE32) return MaxBufSize;
+      if (MinBufSize != TWConst.TWON_DONTCARE32) return MinBufSize;
       // default to 16 kb if source doesn't really want to say what it needs
       return 1024 * 16;
     }
@@ -789,13 +783,13 @@ namespace NTwain.Data
     {
       return new TW_IMAGEMEMXFER
       {
-        BytesPerRow = TwainConst.TWON_DONTCARE32,
-        BytesWritten = TwainConst.TWON_DONTCARE32,
-        Columns = TwainConst.TWON_DONTCARE32,
-        Compression = TwainConst.TWON_DONTCARE16,
-        Rows = TwainConst.TWON_DONTCARE32,
-        XOffset = TwainConst.TWON_DONTCARE32,
-        YOffset = TwainConst.TWON_DONTCARE32,
+        BytesPerRow = TWConst.TWON_DONTCARE32,
+        BytesWritten = TWConst.TWON_DONTCARE32,
+        Columns = TWConst.TWON_DONTCARE32,
+        Compression = TWConst.TWON_DONTCARE16,
+        Rows = TWConst.TWON_DONTCARE32,
+        XOffset = TWConst.TWON_DONTCARE32,
+        YOffset = TWConst.TWON_DONTCARE32,
       };
     }
   }
@@ -810,20 +804,288 @@ namespace NTwain.Data
     {
       return new TW_IMAGEMEMXFER_MACOSX
       {
-        BytesPerRow = TwainConst.TWON_DONTCARE32,
-        BytesWritten = TwainConst.TWON_DONTCARE32,
-        Columns = TwainConst.TWON_DONTCARE32,
-        Compression = TwainConst.TWON_DONTCARE32,
-        Rows = TwainConst.TWON_DONTCARE32,
-        XOffset = TwainConst.TWON_DONTCARE32,
-        YOffset = TwainConst.TWON_DONTCARE32,
+        BytesPerRow = TWConst.TWON_DONTCARE32,
+        BytesWritten = TWConst.TWON_DONTCARE32,
+        Columns = TWConst.TWON_DONTCARE32,
+        Compression = TWConst.TWON_DONTCARE32,
+        Rows = TWConst.TWON_DONTCARE32,
+        XOffset = TWConst.TWON_DONTCARE32,
+        YOffset = TWConst.TWON_DONTCARE32,
       };
     }
   }
 
-  //partial struct TW_DEVICEEVENT
-  //{
-  //    public TWDE Event { get { return (TWDE)_event; } }
-  //    public TWFL FlashUsed2 { get { return (TWFL)_flashUsed2; } }
-  //}
+  partial struct TW_DEVICEEVENT
+  {
+    // provide casted versions over raw value
+
+    public TWDE Event { get { return (TWDE)_Event; } }
+    public TWFL FlashUsed2 { get { return (TWFL)_FlashUsed2; } }
+  }
+
+
+  /// <summary>
+  /// Container for querying ext image info. After querying and done with
+  /// the data you must call <see cref="Free(IMemoryManager)"/> to
+  /// free the memory allocated.
+  /// </summary>
+  public partial struct TW_EXTIMAGEINFO
+  {
+    /// <summary>
+    /// A quick way to create a query object with only <see cref="TWEI"/> values.
+    /// Limit is 100 at this time.
+    /// </summary>
+    /// <param name="memMgr"></param>
+    /// <param name="infoNames"></param>
+    /// <returns></returns>
+    public static TW_EXTIMAGEINFO CreateRequest(params TWEI[] infoNames)
+    {
+      if (infoNames == null || infoNames.Length == 0) return default;
+      if (infoNames.Length > 100) throw new InvalidOperationException("Cannot query more than 100 TWEIs at this time.");
+
+      TW_EXTIMAGEINFO container = new()
+      {
+        NumInfos = (uint)infoNames.Length,
+      };
+
+      for (var i = 0; i < infoNames.Length; i++)
+      {
+        TW_INFO info = new() { InfoId = infoNames[i] };
+        container.Set(i, ref info);
+      }
+      return container;
+    }
+
+    /// <summary>
+    /// Reads the info out of this as array.
+    /// </summary>
+    /// <param name="memMgr"></param>
+    /// <returns></returns>
+    public TW_INFO[] AsInfos()
+    {
+      if (NumInfos == 0) return Array.Empty<TW_INFO>();
+
+      var arr = new TW_INFO[NumInfos];
+      for (var i = 0; i < NumInfos; i++)
+      {
+        TW_INFO blah = default;
+        Get(i, ref blah);
+        arr[i] = blah;
+      }
+      return arr;
+    }
+
+    /// <summary>
+    /// Frees all data contained here.
+    /// </summary>
+    /// <param name="memMgr"></param>
+    public void Free(IMemoryManager memMgr)
+    {
+      #region don't open this
+      Info_000.Free(memMgr);
+      Info_001.Free(memMgr);
+      Info_002.Free(memMgr);
+      Info_003.Free(memMgr);
+      Info_004.Free(memMgr);
+      Info_005.Free(memMgr);
+      Info_006.Free(memMgr);
+      Info_007.Free(memMgr);
+      Info_008.Free(memMgr);
+      Info_009.Free(memMgr);
+      Info_010.Free(memMgr);
+      Info_011.Free(memMgr);
+      Info_012.Free(memMgr);
+      Info_013.Free(memMgr);
+      Info_014.Free(memMgr);
+      Info_015.Free(memMgr);
+      Info_016.Free(memMgr);
+      Info_017.Free(memMgr);
+      Info_018.Free(memMgr);
+      Info_019.Free(memMgr);
+      Info_020.Free(memMgr);
+      Info_021.Free(memMgr);
+      Info_022.Free(memMgr);
+      Info_023.Free(memMgr);
+      Info_024.Free(memMgr);
+      Info_025.Free(memMgr);
+      Info_026.Free(memMgr);
+      Info_027.Free(memMgr);
+      Info_028.Free(memMgr);
+      Info_029.Free(memMgr);
+      Info_030.Free(memMgr);
+      Info_031.Free(memMgr);
+      Info_032.Free(memMgr);
+      Info_033.Free(memMgr);
+      Info_034.Free(memMgr);
+      Info_035.Free(memMgr);
+      Info_036.Free(memMgr);
+      Info_037.Free(memMgr);
+      Info_038.Free(memMgr);
+      Info_039.Free(memMgr);
+      Info_040.Free(memMgr);
+      Info_041.Free(memMgr);
+      Info_042.Free(memMgr);
+      Info_043.Free(memMgr);
+      Info_044.Free(memMgr);
+      Info_045.Free(memMgr);
+      Info_046.Free(memMgr);
+      Info_047.Free(memMgr);
+      Info_048.Free(memMgr);
+      Info_049.Free(memMgr);
+      Info_050.Free(memMgr);
+      Info_051.Free(memMgr);
+      Info_052.Free(memMgr);
+      Info_053.Free(memMgr);
+      Info_054.Free(memMgr);
+      Info_055.Free(memMgr);
+      Info_056.Free(memMgr);
+      Info_057.Free(memMgr);
+      Info_058.Free(memMgr);
+      Info_059.Free(memMgr);
+      Info_060.Free(memMgr);
+      Info_061.Free(memMgr);
+      Info_062.Free(memMgr);
+      Info_063.Free(memMgr);
+      Info_064.Free(memMgr);
+      Info_065.Free(memMgr);
+      Info_066.Free(memMgr);
+      Info_067.Free(memMgr);
+      Info_068.Free(memMgr);
+      Info_069.Free(memMgr);
+      Info_070.Free(memMgr);
+      Info_071.Free(memMgr);
+      Info_072.Free(memMgr);
+      Info_073.Free(memMgr);
+      Info_074.Free(memMgr);
+      Info_075.Free(memMgr);
+      Info_076.Free(memMgr);
+      Info_077.Free(memMgr);
+      Info_078.Free(memMgr);
+      Info_079.Free(memMgr);
+      Info_080.Free(memMgr);
+      Info_081.Free(memMgr);
+      Info_082.Free(memMgr);
+      Info_083.Free(memMgr);
+      Info_084.Free(memMgr);
+      Info_085.Free(memMgr);
+      Info_086.Free(memMgr);
+      Info_087.Free(memMgr);
+      Info_088.Free(memMgr);
+      Info_089.Free(memMgr);
+      Info_090.Free(memMgr);
+      Info_091.Free(memMgr);
+      Info_092.Free(memMgr);
+      Info_093.Free(memMgr);
+      Info_094.Free(memMgr);
+      Info_095.Free(memMgr);
+      Info_096.Free(memMgr);
+      Info_097.Free(memMgr);
+      Info_098.Free(memMgr);
+      Info_099.Free(memMgr);
+      #endregion
+    }
+
+  }
+
+  partial struct TW_INFO
+  {
+    /// <summary>
+    /// Quick check to see if the <see cref="Item"/> pointer is really
+    /// a pointer or actual data (ugh).
+    /// </summary>
+    public bool IsDataAPointer =>
+      ItemType == TWTY.HANDLE || (ItemType.GetItemTypeSize() * NumItems) > IntPtr.Size; // should it be intptr.size or just 4?
+
+    /// <summary>
+    /// Try to read out the item as the type specified in <see cref="ItemType"/>.
+    /// This ONLY works if the data is not a pointer (see <see cref="IsDataAPointer"/>). 
+    /// For pointers you'd read it yourself with 
+    /// <see cref="ValueReader.ReadTWTYData{TValue}(IntPtr, TWTY, int)"/>.
+    /// Unless it's a handle (<see cref="TWTY.HANDLE"/>) to non-twain-strings, then you'd use 
+    /// <see cref="ReadHandleString(int)"/>.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <typeparam name="TValue"></typeparam>
+    /// <returns></returns>
+    public unsafe TValue ReadNonPointerData<TValue>() where TValue : struct
+    {
+      if (ReturnCode != TWRC.SUCCESS || NumItems == 0 || IsDataAPointer) return default;
+
+      // we can try a trick and make a pointer to this numeric data
+      // and re-use our pointer reader. There's a good chance this is wrong in many ways.
+      // TODO: test this idea in some unit test
+      var value = TWPlatform.Is32bit ? Item.ToUInt32() : Item.ToUInt64(); // the value should be 32bit from the spec but not sure how it'll work in 64bit
+
+      var fakePtr = (IntPtr)(&value);
+
+      return fakePtr.ReadTWTYData<TValue>(ItemType, 0);
+    }
+
+    /// <summary>
+    /// Try to read a null-terminated string from the item.
+    /// </summary>
+    /// <param name="memMgr"></param>
+    /// <param name="index">If item is an array specify which string to read</param>
+    /// <returns></returns>
+    public unsafe string? ReadHandleString(IMemoryManager memMgr, int index = 0)
+    {
+      if (index < 0 || index >= NumItems || !IsDataAPointer) return default;
+
+      // why is twain being difficult and not use TW_STR* like a normal person.
+      // what even is the encoding for those things? Imma yolo it.
+      string? value;
+      var itemAsPtr = (IntPtr)Item.ToPointer(); // this is also iffy
+
+      if (NumItems == 1)
+      {
+        // if 1, item is already the pointer to the string
+        value = LockAndReadNullTerminatedString(memMgr, itemAsPtr);
+      }
+      else
+      {
+        // if more than 1, item points to an array of pointers that each points to their own string
+        var lockPtr = memMgr.Lock(itemAsPtr);
+        lockPtr += (IntPtr.Size * index);
+        // is this even correct? I hope it is
+        var subItemPtr = Marshal.PtrToStructure<IntPtr>(lockPtr);
+        value = LockAndReadNullTerminatedString(memMgr, subItemPtr);
+        memMgr.Unlock(itemAsPtr);
+      }
+      return value;
+    }
+
+    private string? LockAndReadNullTerminatedString(IMemoryManager memMgr, IntPtr data)
+    {
+      var lockPtr = memMgr.Lock(data);
+      // yolo as ansi, should work in most cases
+      var value = Marshal.PtrToStringAnsi(lockPtr);
+      memMgr.Unlock(data);
+      return value;
+    }
+
+    /// <summary>
+    /// Frees all DS-allocated memory if necessary.
+    /// </summary>
+    /// <param name="memMgr"></param>
+    internal unsafe void Free(IMemoryManager memMgr)
+    {
+      if (ReturnCode != TWRC.SUCCESS || !IsDataAPointer) return;
+
+      var itemAsPtr = (IntPtr)Item.ToPointer(); // this is also iffy
+      if (ItemType == TWTY.HANDLE && NumItems > 1)
+      {
+        // must go into each handle in the array and free them individually :(
+        var lockPtr = memMgr.Lock(itemAsPtr);
+        for (var i = 0; i < NumItems; i++)
+        {
+          // is this even correct? I hope it is
+          var subItemPtr = Marshal.PtrToStructure<IntPtr>(lockPtr);
+          memMgr.Free(subItemPtr);
+          lockPtr += IntPtr.Size;
+        }
+      }
+      memMgr.Free(itemAsPtr);
+      Item = UIntPtr.Zero;
+    }
+  }
 }

@@ -3,14 +3,8 @@ using NTwain.Native;
 using NTwain.Triplets;
 using System;
 using System.Buffers;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Xml.Serialization;
-using static NTwain.Native.ImageTools;
 
 namespace NTwain
 {
@@ -22,6 +16,17 @@ namespace NTwain
     // this can pool up to a "normal" max of legal size paper in 24 bit at 300 dpi (~31MB)
     // so the array max is made with 32 MB. Typical usage should be a lot less.
     static readonly ArrayPool<byte> XferMemPool = ArrayPool<byte>.Create(32 * 1024 * 1024, 8);
+
+    /// <summary>
+    /// Can only be called in state 7, so it's hidden here and 
+    /// only exposed in data transferred event.
+    /// </summary>
+    /// <param name="container"></param>
+    /// <returns></returns>
+    internal STS GetExtendedImageInfo(ref TW_EXTIMAGEINFO container)
+    {
+      return WrapInSTS(DGImage.ExtImageInfo.Get(ref _appIdentity, ref _currentDS, ref container));
+    }
 
 
     /// <summary>
@@ -67,14 +72,17 @@ namespace NTwain
         do
         {
           var readyArgs = new TransferReadyEventArgs(pending.Count, (TWEJ)pending.EOJ);
-          _uiThreadMarshaller.Invoke(() =>
+          if (TransferReady != null)
           {
-            try
+            _uiThreadMarshaller.Invoke(() =>
             {
-              TransferReady?.Invoke(this, readyArgs);
-            }
-            catch { } // don't let consumer kill the loop if they have exception
-          });
+              try
+              {
+                TransferReady.Invoke(this, readyArgs);
+              }
+              catch { } // don't let consumer kill the loop if they have exception
+            });
+          }
 
           if (readyArgs.Cancel == CancelType.EndNow || _closeDsRequested)
           {
@@ -108,7 +116,7 @@ namespace NTwain
             try
             {
               if (readyArgs.Cancel != CancelType.SkipCurrent &&
-                DataTransferred != null)
+                Transferred != null)
               {
                 // transfer normally and only if someone's listening
                 // to DataTransferred event
@@ -146,11 +154,17 @@ namespace NTwain
             }
             catch (Exception ex)
             {
-              try
+              if (TransferError != null)
               {
-                TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
+                _uiThreadMarshaller.Invoke(() =>
+                {
+                  try
+                  {
+                    TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
+                  }
+                  catch { }
+                });
               }
-              catch { }
             }
           }
         } while (sts.RC == TWRC.SUCCESS && pending.Count != 0);
@@ -176,6 +190,14 @@ namespace NTwain
           // ok to keep going
           break;
         case TWRC.CANCEL:
+          // might eventually have option to cancel this or all like transfer ready
+          if (TransferCanceled != null)
+          {
+            _uiThreadMarshaller.Invoke(() =>
+            {
+              TransferCanceled.Invoke(this, new TransferCanceledEventArgs());
+            });
+          };
           TW_PENDINGXFERS pending = default;
           DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
           // todo: also reset?
@@ -221,8 +243,8 @@ namespace NTwain
         try
         {
           DGAudio.AudioInfo.Get(ref _appIdentity, ref _currentDS, out TW_AUDIOINFO info);
-          var args = new DataTransferredEventArgs(info, fileSetup);
-          DataTransferred?.Invoke(this, args);
+          var args = new TransferredEventArgs(info, fileSetup);
+          Transferred?.Invoke(this, args);
         }
         catch { }
 ;
@@ -255,8 +277,8 @@ namespace NTwain
             try
             {
               DGAudio.AudioInfo.Get(ref _appIdentity, ref _currentDS, out TW_AUDIOINFO info);
-              var args = new DataTransferredEventArgs(info, data);
-              DataTransferred?.Invoke(this, args);
+              var args = new TransferredEventArgs(info, data);
+              Transferred?.Invoke(this, args);
             }
             catch { }
             finally
@@ -307,7 +329,7 @@ namespace NTwain
       {
         do
         {
-          rc = TwainPlatform.IsMacOSX ?
+          rc = TWPlatform.IsMacOSX ?
             DGImage.ImageMemXfer.Get(ref _appIdentity, ref _currentDS, ref memXferOSX) :
             DGImage.ImageMemXfer.Get(ref _appIdentity, ref _currentDS, ref memXfer);
 
@@ -315,7 +337,7 @@ namespace NTwain
           {
             try
             {
-              var written = TwainPlatform.IsMacOSX ?
+              var written = TWPlatform.IsMacOSX ?
                 memXferOSX.BytesWritten : memXfer.BytesWritten;
 
               IntPtr lockedPtr = Lock(memPtr);
@@ -387,7 +409,7 @@ namespace NTwain
       {
         do
         {
-          rc = TwainPlatform.IsMacOSX ?
+          rc = TWPlatform.IsMacOSX ?
             DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXferOSX) :
             DGImage.ImageMemFileXfer.Get(ref _appIdentity, ref _currentDS, ref memXfer);
 
@@ -395,7 +417,7 @@ namespace NTwain
           {
             try
             {
-              var written = TwainPlatform.IsMacOSX ?
+              var written = TWPlatform.IsMacOSX ?
                 memXferOSX.BytesWritten : memXfer.BytesWritten;
 
               IntPtr lockedPtr = Lock(memPtr);
@@ -421,8 +443,8 @@ namespace NTwain
         {
           DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
           // ToArray bypasses the XferMemPool but I guess this will have to do for now
-          var args = new DataTransferredEventArgs(info, fileSetup, new BufferedData { Buffer = outStream.ToArray(), Length = (int)outStream.Length });
-          DataTransferred?.Invoke(this, args);
+          var args = new TransferredEventArgs(this, info, fileSetup, new BufferedData { Buffer = outStream.ToArray(), Length = (int)outStream.Length });
+          Transferred?.Invoke(this, args);
         }
         catch { }
 
@@ -449,8 +471,8 @@ namespace NTwain
         try
         {
           DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
-          var args = new DataTransferredEventArgs(info, fileSetup, default);
-          DataTransferred?.Invoke(this, args);
+          var args = new TransferredEventArgs(this, info, fileSetup, default);
+          Transferred?.Invoke(this, args);
         }
         catch { }
 
@@ -495,8 +517,8 @@ namespace NTwain
             try
             {
               DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
-              var args = new DataTransferredEventArgs(info, null, data);
-              DataTransferred?.Invoke(this, args);
+              var args = new TransferredEventArgs(this, info, null, data);
+              Transferred?.Invoke(this, args);
             }
             catch { }
             finally

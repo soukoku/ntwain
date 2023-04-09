@@ -17,15 +17,15 @@ namespace NTwain
       {
         return _entryPoint.DSM_MemAllocate(size);
       }
-      else if (TwainPlatform.IsWindows)
+      else if (TWPlatform.IsWindows)
       {
         return NativeMemoryMethods.WinGlobalAlloc(NativeMemoryMethods.AllocFlag.GHND, (UIntPtr)size);
       }
-      else if (TwainPlatform.IsLinux)
+      else if (TWPlatform.IsLinux)
       {
         return Marshal.AllocHGlobal((int)size);
       }
-      else if (TwainPlatform.IsMacOSX)
+      else if (TWPlatform.IsMacOSX)
       {
         return Marshal.AllocHGlobal((int)size);
       }
@@ -43,15 +43,15 @@ namespace NTwain
       {
         _entryPoint.DSM_MemFree(handle);
       }
-      else if (TwainPlatform.IsWindows)
+      else if (TWPlatform.IsWindows)
       {
         NativeMemoryMethods.WinGlobalFree(handle);
       }
-      else if (TwainPlatform.IsLinux)
+      else if (TWPlatform.IsLinux)
       {
         Marshal.FreeHGlobal(handle);
       }
-      else if (TwainPlatform.IsMacOSX)
+      else if (TWPlatform.IsMacOSX)
       {
         Marshal.FreeHGlobal(handle);
       }
@@ -69,15 +69,15 @@ namespace NTwain
       {
         return _entryPoint.DSM_MemLock(handle);
       }
-      else if (TwainPlatform.IsWindows)
+      else if (TWPlatform.IsWindows)
       {
         return NativeMemoryMethods.WinGlobalLock(handle);
       }
-      else if (TwainPlatform.IsLinux)
+      else if (TWPlatform.IsLinux)
       {
         return handle;
       }
-      else if (TwainPlatform.IsMacOSX)
+      else if (TWPlatform.IsMacOSX)
       {
         return handle;
       }
@@ -95,14 +95,14 @@ namespace NTwain
       {
         _entryPoint.DSM_MemUnlock(handle);
       }
-      else if (TwainPlatform.IsWindows)
+      else if (TWPlatform.IsWindows)
       {
         NativeMemoryMethods.WinGlobalUnlock(handle);
       }
-      else if (TwainPlatform.IsLinux)
+      else if (TWPlatform.IsLinux)
       {
       }
-      else if (TwainPlatform.IsMacOSX)
+      else if (TWPlatform.IsMacOSX)
       {
       }
       else

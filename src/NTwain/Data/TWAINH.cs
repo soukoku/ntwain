@@ -206,7 +206,7 @@ namespace NTwain.Data
       }
 
       // If we're running on a Mac, take off the prefix 'byte'...
-      if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         sz = sz.Remove(0, 1);
       }
@@ -257,7 +257,7 @@ namespace NTwain.Data
       {
         a_sz = "";
       }
-      else if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      else if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         a_sz = (char)a_sz.Length + a_sz;
       }
@@ -391,7 +391,7 @@ namespace NTwain.Data
       }
 
       // If we're running on a Mac, take off the prefix 'byte'...
-      if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         sz = sz.Remove(0, 1);
       }
@@ -442,7 +442,7 @@ namespace NTwain.Data
       {
         a_sz = "";
       }
-      else if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      else if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         a_sz = (char)a_sz.Length + a_sz;
       }
@@ -615,7 +615,7 @@ namespace NTwain.Data
       }
 
       // If we're running on a Mac, take off the prefix 'byte'...
-      if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         sz = sz.Remove(0, 1);
       }
@@ -666,7 +666,7 @@ namespace NTwain.Data
       {
         a_sz = "";
       }
-      else if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      else if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         a_sz = (char)a_sz.Length + a_sz;
       }
@@ -919,7 +919,7 @@ namespace NTwain.Data
       }
 
       // If we're running on a Mac, take off the prefix 'byte'...
-      if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         sz = sz.Remove(0, 1);
       }
@@ -970,7 +970,7 @@ namespace NTwain.Data
       {
         a_sz = "";
       }
-      else if (a_blMayHavePrefix && TwainPlatform.IsMacOSX)
+      else if (a_blMayHavePrefix && TWPlatform.IsMacOSX)
       {
         a_sz = (char)a_sz.Length + a_sz;
       }
@@ -1241,16 +1241,16 @@ namespace NTwain.Data
   /// Provides information about the Event that was raised by the Source.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
-  public struct TW_DEVICEEVENT
+  public partial struct TW_DEVICEEVENT
   {
-    public uint Event;
+    private uint _Event;
     public TW_STR255 DeviceName;
     public uint BatteryMinutes;
     public short BatteryPercentage;
     public int PowerSupply;
     public TW_FIX32 XResolution;
     public TW_FIX32 YResolution;
-    public uint FlashUsed2;
+    private uint _FlashUsed2;
     public uint AutomaticCapture;
     public uint TimeBeforeFirstCapture;
     public uint TimeBetweenCaptures;
@@ -1395,225 +1395,226 @@ namespace NTwain.Data
   /// This structure is used to pass specific information between the data source and the application.
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
-  public struct TW_INFO
+  public partial struct TW_INFO
   {
-    public ushort InfoId;
-    public ushort ItemType;
+    public TWEI InfoId;
+    public TWTY ItemType;
     public ushort NumItems;
-    public ushort ReturnCode;
+    public TWRC ReturnCode;
     [SuppressMessage("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
     public UIntPtr Item;
   }
 
-  /// <summary>
-  /// This structure is used to pass specific information between the data source and the application.
-  /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
-  public struct TW_EXTIMAGEINFO
+  public partial struct TW_EXTIMAGEINFO
   {
-    public uint NumInfos;
-    public TW_INFO Info_000;
-    public TW_INFO Info_001;
-    public TW_INFO Info_002;
-    public TW_INFO Info_003;
-    public TW_INFO Info_004;
-    public TW_INFO Info_005;
-    public TW_INFO Info_006;
-    public TW_INFO Info_007;
-    public TW_INFO Info_008;
-    public TW_INFO Info_009;
-    public TW_INFO Info_010;
-    public TW_INFO Info_011;
-    public TW_INFO Info_012;
-    public TW_INFO Info_013;
-    public TW_INFO Info_014;
-    public TW_INFO Info_015;
-    public TW_INFO Info_016;
-    public TW_INFO Info_017;
-    public TW_INFO Info_018;
-    public TW_INFO Info_019;
-    public TW_INFO Info_020;
-    public TW_INFO Info_021;
-    public TW_INFO Info_022;
-    public TW_INFO Info_023;
-    public TW_INFO Info_024;
-    public TW_INFO Info_025;
-    public TW_INFO Info_026;
-    public TW_INFO Info_027;
-    public TW_INFO Info_028;
-    public TW_INFO Info_029;
-    public TW_INFO Info_030;
-    public TW_INFO Info_031;
-    public TW_INFO Info_032;
-    public TW_INFO Info_033;
-    public TW_INFO Info_034;
-    public TW_INFO Info_035;
-    public TW_INFO Info_036;
-    public TW_INFO Info_037;
-    public TW_INFO Info_038;
-    public TW_INFO Info_039;
-    public TW_INFO Info_040;
-    public TW_INFO Info_041;
-    public TW_INFO Info_042;
-    public TW_INFO Info_043;
-    public TW_INFO Info_044;
-    public TW_INFO Info_045;
-    public TW_INFO Info_046;
-    public TW_INFO Info_047;
-    public TW_INFO Info_048;
-    public TW_INFO Info_049;
-    public TW_INFO Info_050;
-    public TW_INFO Info_051;
-    public TW_INFO Info_052;
-    public TW_INFO Info_053;
-    public TW_INFO Info_054;
-    public TW_INFO Info_055;
-    public TW_INFO Info_056;
-    public TW_INFO Info_057;
-    public TW_INFO Info_058;
-    public TW_INFO Info_059;
-    public TW_INFO Info_060;
-    public TW_INFO Info_061;
-    public TW_INFO Info_062;
-    public TW_INFO Info_063;
-    public TW_INFO Info_064;
-    public TW_INFO Info_065;
-    public TW_INFO Info_066;
-    public TW_INFO Info_067;
-    public TW_INFO Info_068;
-    public TW_INFO Info_069;
-    public TW_INFO Info_070;
-    public TW_INFO Info_071;
-    public TW_INFO Info_072;
-    public TW_INFO Info_073;
-    public TW_INFO Info_074;
-    public TW_INFO Info_075;
-    public TW_INFO Info_076;
-    public TW_INFO Info_077;
-    public TW_INFO Info_078;
-    public TW_INFO Info_079;
-    public TW_INFO Info_080;
-    public TW_INFO Info_081;
-    public TW_INFO Info_082;
-    public TW_INFO Info_083;
-    public TW_INFO Info_084;
-    public TW_INFO Info_085;
-    public TW_INFO Info_086;
-    public TW_INFO Info_087;
-    public TW_INFO Info_088;
-    public TW_INFO Info_089;
-    public TW_INFO Info_090;
-    public TW_INFO Info_091;
-    public TW_INFO Info_092;
-    public TW_INFO Info_093;
-    public TW_INFO Info_094;
-    public TW_INFO Info_095;
-    public TW_INFO Info_096;
-    public TW_INFO Info_097;
-    public TW_INFO Info_098;
-    public TW_INFO Info_099;
-    public TW_INFO Info_100;
-    public TW_INFO Info_101;
-    public TW_INFO Info_102;
-    public TW_INFO Info_103;
-    public TW_INFO Info_104;
-    public TW_INFO Info_105;
-    public TW_INFO Info_106;
-    public TW_INFO Info_107;
-    public TW_INFO Info_108;
-    public TW_INFO Info_109;
-    public TW_INFO Info_110;
-    public TW_INFO Info_111;
-    public TW_INFO Info_112;
-    public TW_INFO Info_113;
-    public TW_INFO Info_114;
-    public TW_INFO Info_115;
-    public TW_INFO Info_116;
-    public TW_INFO Info_117;
-    public TW_INFO Info_118;
-    public TW_INFO Info_119;
-    public TW_INFO Info_120;
-    public TW_INFO Info_121;
-    public TW_INFO Info_122;
-    public TW_INFO Info_123;
-    public TW_INFO Info_124;
-    public TW_INFO Info_125;
-    public TW_INFO Info_126;
-    public TW_INFO Info_127;
-    public TW_INFO Info_128;
-    public TW_INFO Info_129;
-    public TW_INFO Info_130;
-    public TW_INFO Info_131;
-    public TW_INFO Info_132;
-    public TW_INFO Info_133;
-    public TW_INFO Info_134;
-    public TW_INFO Info_135;
-    public TW_INFO Info_136;
-    public TW_INFO Info_137;
-    public TW_INFO Info_138;
-    public TW_INFO Info_139;
-    public TW_INFO Info_140;
-    public TW_INFO Info_141;
-    public TW_INFO Info_142;
-    public TW_INFO Info_143;
-    public TW_INFO Info_144;
-    public TW_INFO Info_145;
-    public TW_INFO Info_146;
-    public TW_INFO Info_147;
-    public TW_INFO Info_148;
-    public TW_INFO Info_149;
-    public TW_INFO Info_150;
-    public TW_INFO Info_151;
-    public TW_INFO Info_152;
-    public TW_INFO Info_153;
-    public TW_INFO Info_154;
-    public TW_INFO Info_155;
-    public TW_INFO Info_156;
-    public TW_INFO Info_157;
-    public TW_INFO Info_158;
-    public TW_INFO Info_159;
-    public TW_INFO Info_160;
-    public TW_INFO Info_161;
-    public TW_INFO Info_162;
-    public TW_INFO Info_163;
-    public TW_INFO Info_164;
-    public TW_INFO Info_165;
-    public TW_INFO Info_166;
-    public TW_INFO Info_167;
-    public TW_INFO Info_168;
-    public TW_INFO Info_169;
-    public TW_INFO Info_170;
-    public TW_INFO Info_171;
-    public TW_INFO Info_172;
-    public TW_INFO Info_173;
-    public TW_INFO Info_174;
-    public TW_INFO Info_175;
-    public TW_INFO Info_176;
-    public TW_INFO Info_177;
-    public TW_INFO Info_178;
-    public TW_INFO Info_179;
-    public TW_INFO Info_180;
-    public TW_INFO Info_181;
-    public TW_INFO Info_182;
-    public TW_INFO Info_183;
-    public TW_INFO Info_184;
-    public TW_INFO Info_185;
-    public TW_INFO Info_186;
-    public TW_INFO Info_187;
-    public TW_INFO Info_188;
-    public TW_INFO Info_189;
-    public TW_INFO Info_190;
-    public TW_INFO Info_191;
-    public TW_INFO Info_192;
-    public TW_INFO Info_193;
-    public TW_INFO Info_194;
-    public TW_INFO Info_195;
-    public TW_INFO Info_196;
-    public TW_INFO Info_197;
-    public TW_INFO Info_198;
-    public TW_INFO Info_199;
+    private uint NumInfos;
+    private TW_INFO Info_000;
+    private TW_INFO Info_001;
+    private TW_INFO Info_002;
+    private TW_INFO Info_003;
+    private TW_INFO Info_004;
+    private TW_INFO Info_005;
+    private TW_INFO Info_006;
+    private TW_INFO Info_007;
+    private TW_INFO Info_008;
+    private TW_INFO Info_009;
+    private TW_INFO Info_010;
+    private TW_INFO Info_011;
+    private TW_INFO Info_012;
+    private TW_INFO Info_013;
+    private TW_INFO Info_014;
+    private TW_INFO Info_015;
+    private TW_INFO Info_016;
+    private TW_INFO Info_017;
+    private TW_INFO Info_018;
+    private TW_INFO Info_019;
+    private TW_INFO Info_020;
+    private TW_INFO Info_021;
+    private TW_INFO Info_022;
+    private TW_INFO Info_023;
+    private TW_INFO Info_024;
+    private TW_INFO Info_025;
+    private TW_INFO Info_026;
+    private TW_INFO Info_027;
+    private TW_INFO Info_028;
+    private TW_INFO Info_029;
+    private TW_INFO Info_030;
+    private TW_INFO Info_031;
+    private TW_INFO Info_032;
+    private TW_INFO Info_033;
+    private TW_INFO Info_034;
+    private TW_INFO Info_035;
+    private TW_INFO Info_036;
+    private TW_INFO Info_037;
+    private TW_INFO Info_038;
+    private TW_INFO Info_039;
+    private TW_INFO Info_040;
+    private TW_INFO Info_041;
+    private TW_INFO Info_042;
+    private TW_INFO Info_043;
+    private TW_INFO Info_044;
+    private TW_INFO Info_045;
+    private TW_INFO Info_046;
+    private TW_INFO Info_047;
+    private TW_INFO Info_048;
+    private TW_INFO Info_049;
+    private TW_INFO Info_050;
+    private TW_INFO Info_051;
+    private TW_INFO Info_052;
+    private TW_INFO Info_053;
+    private TW_INFO Info_054;
+    private TW_INFO Info_055;
+    private TW_INFO Info_056;
+    private TW_INFO Info_057;
+    private TW_INFO Info_058;
+    private TW_INFO Info_059;
+    private TW_INFO Info_060;
+    private TW_INFO Info_061;
+    private TW_INFO Info_062;
+    private TW_INFO Info_063;
+    private TW_INFO Info_064;
+    private TW_INFO Info_065;
+    private TW_INFO Info_066;
+    private TW_INFO Info_067;
+    private TW_INFO Info_068;
+    private TW_INFO Info_069;
+    private TW_INFO Info_070;
+    private TW_INFO Info_071;
+    private TW_INFO Info_072;
+    private TW_INFO Info_073;
+    private TW_INFO Info_074;
+    private TW_INFO Info_075;
+    private TW_INFO Info_076;
+    private TW_INFO Info_077;
+    private TW_INFO Info_078;
+    private TW_INFO Info_079;
+    private TW_INFO Info_080;
+    private TW_INFO Info_081;
+    private TW_INFO Info_082;
+    private TW_INFO Info_083;
+    private TW_INFO Info_084;
+    private TW_INFO Info_085;
+    private TW_INFO Info_086;
+    private TW_INFO Info_087;
+    private TW_INFO Info_088;
+    private TW_INFO Info_089;
+    private TW_INFO Info_090;
+    private TW_INFO Info_091;
+    private TW_INFO Info_092;
+    private TW_INFO Info_093;
+    private TW_INFO Info_094;
+    private TW_INFO Info_095;
+    private TW_INFO Info_096;
+    private TW_INFO Info_097;
+    private TW_INFO Info_098;
+    private TW_INFO Info_099;
 
-    public void Get(uint a_uIndex, ref TW_INFO a_twinfo)
+    // 200 seems overkill for anyone to request
+    // at once so I cut it down in half
+
+    //private TW_INFO Info_100;
+    //private TW_INFO Info_101;
+    //private TW_INFO Info_102;
+    //private TW_INFO Info_103;
+    //private TW_INFO Info_104;
+    //private TW_INFO Info_105;
+    //private TW_INFO Info_106;
+    //private TW_INFO Info_107;
+    //private TW_INFO Info_108;
+    //private TW_INFO Info_109;
+    //private TW_INFO Info_110;
+    //private TW_INFO Info_111;
+    //private TW_INFO Info_112;
+    //private TW_INFO Info_113;
+    //private TW_INFO Info_114;
+    //private TW_INFO Info_115;
+    //private TW_INFO Info_116;
+    //private TW_INFO Info_117;
+    //private TW_INFO Info_118;
+    //private TW_INFO Info_119;
+    //private TW_INFO Info_120;
+    //private TW_INFO Info_121;
+    //private TW_INFO Info_122;
+    //private TW_INFO Info_123;
+    //private TW_INFO Info_124;
+    //private TW_INFO Info_125;
+    //private TW_INFO Info_126;
+    //private TW_INFO Info_127;
+    //private TW_INFO Info_128;
+    //private TW_INFO Info_129;
+    //private TW_INFO Info_130;
+    //private TW_INFO Info_131;
+    //private TW_INFO Info_132;
+    //private TW_INFO Info_133;
+    //private TW_INFO Info_134;
+    //private TW_INFO Info_135;
+    //private TW_INFO Info_136;
+    //private TW_INFO Info_137;
+    //private TW_INFO Info_138;
+    //private TW_INFO Info_139;
+    //private TW_INFO Info_140;
+    //private TW_INFO Info_141;
+    //private TW_INFO Info_142;
+    //private TW_INFO Info_143;
+    //private TW_INFO Info_144;
+    //private TW_INFO Info_145;
+    //private TW_INFO Info_146;
+    //private TW_INFO Info_147;
+    //private TW_INFO Info_148;
+    //private TW_INFO Info_149;
+    //private TW_INFO Info_150;
+    //private TW_INFO Info_151;
+    //private TW_INFO Info_152;
+    //private TW_INFO Info_153;
+    //private TW_INFO Info_154;
+    //private TW_INFO Info_155;
+    //private TW_INFO Info_156;
+    //private TW_INFO Info_157;
+    //private TW_INFO Info_158;
+    //private TW_INFO Info_159;
+    //private TW_INFO Info_160;
+    //private TW_INFO Info_161;
+    //private TW_INFO Info_162;
+    //private TW_INFO Info_163;
+    //private TW_INFO Info_164;
+    //private TW_INFO Info_165;
+    //private TW_INFO Info_166;
+    //private TW_INFO Info_167;
+    //private TW_INFO Info_168;
+    //private TW_INFO Info_169;
+    //private TW_INFO Info_170;
+    //private TW_INFO Info_171;
+    //private TW_INFO Info_172;
+    //private TW_INFO Info_173;
+    //private TW_INFO Info_174;
+    //private TW_INFO Info_175;
+    //private TW_INFO Info_176;
+    //private TW_INFO Info_177;
+    //private TW_INFO Info_178;
+    //private TW_INFO Info_179;
+    //private TW_INFO Info_180;
+    //private TW_INFO Info_181;
+    //private TW_INFO Info_182;
+    //private TW_INFO Info_183;
+    //private TW_INFO Info_184;
+    //private TW_INFO Info_185;
+    //private TW_INFO Info_186;
+    //private TW_INFO Info_187;
+    //private TW_INFO Info_188;
+    //private TW_INFO Info_189;
+    //private TW_INFO Info_190;
+    //private TW_INFO Info_191;
+    //private TW_INFO Info_192;
+    //private TW_INFO Info_193;
+    //private TW_INFO Info_194;
+    //private TW_INFO Info_195;
+    //private TW_INFO Info_196;
+    //private TW_INFO Info_197;
+    //private TW_INFO Info_198;
+    //private TW_INFO Info_199;
+
+    public void Get(int a_uIndex, ref TW_INFO a_twinfo)
     {
       switch (a_uIndex)
       {
@@ -1718,110 +1719,110 @@ namespace NTwain.Data
         case 97: a_twinfo = Info_097; return;
         case 98: a_twinfo = Info_098; return;
         case 99: a_twinfo = Info_099; return;
-        case 100: a_twinfo = Info_100; return;
-        case 101: a_twinfo = Info_101; return;
-        case 102: a_twinfo = Info_102; return;
-        case 103: a_twinfo = Info_103; return;
-        case 104: a_twinfo = Info_104; return;
-        case 105: a_twinfo = Info_105; return;
-        case 106: a_twinfo = Info_106; return;
-        case 107: a_twinfo = Info_107; return;
-        case 108: a_twinfo = Info_108; return;
-        case 109: a_twinfo = Info_109; return;
-        case 110: a_twinfo = Info_110; return;
-        case 111: a_twinfo = Info_111; return;
-        case 112: a_twinfo = Info_112; return;
-        case 113: a_twinfo = Info_113; return;
-        case 114: a_twinfo = Info_114; return;
-        case 115: a_twinfo = Info_115; return;
-        case 116: a_twinfo = Info_116; return;
-        case 117: a_twinfo = Info_117; return;
-        case 118: a_twinfo = Info_118; return;
-        case 119: a_twinfo = Info_119; return;
-        case 120: a_twinfo = Info_120; return;
-        case 121: a_twinfo = Info_121; return;
-        case 122: a_twinfo = Info_122; return;
-        case 123: a_twinfo = Info_123; return;
-        case 124: a_twinfo = Info_124; return;
-        case 125: a_twinfo = Info_125; return;
-        case 126: a_twinfo = Info_126; return;
-        case 127: a_twinfo = Info_127; return;
-        case 128: a_twinfo = Info_128; return;
-        case 129: a_twinfo = Info_129; return;
-        case 130: a_twinfo = Info_130; return;
-        case 131: a_twinfo = Info_131; return;
-        case 132: a_twinfo = Info_132; return;
-        case 133: a_twinfo = Info_133; return;
-        case 134: a_twinfo = Info_134; return;
-        case 135: a_twinfo = Info_135; return;
-        case 136: a_twinfo = Info_136; return;
-        case 137: a_twinfo = Info_137; return;
-        case 138: a_twinfo = Info_138; return;
-        case 139: a_twinfo = Info_139; return;
-        case 140: a_twinfo = Info_140; return;
-        case 141: a_twinfo = Info_141; return;
-        case 142: a_twinfo = Info_142; return;
-        case 143: a_twinfo = Info_143; return;
-        case 144: a_twinfo = Info_144; return;
-        case 145: a_twinfo = Info_145; return;
-        case 146: a_twinfo = Info_146; return;
-        case 147: a_twinfo = Info_147; return;
-        case 148: a_twinfo = Info_148; return;
-        case 149: a_twinfo = Info_149; return;
-        case 150: a_twinfo = Info_150; return;
-        case 151: a_twinfo = Info_151; return;
-        case 152: a_twinfo = Info_152; return;
-        case 153: a_twinfo = Info_153; return;
-        case 154: a_twinfo = Info_154; return;
-        case 155: a_twinfo = Info_155; return;
-        case 156: a_twinfo = Info_156; return;
-        case 157: a_twinfo = Info_157; return;
-        case 158: a_twinfo = Info_158; return;
-        case 159: a_twinfo = Info_159; return;
-        case 160: a_twinfo = Info_160; return;
-        case 161: a_twinfo = Info_161; return;
-        case 162: a_twinfo = Info_162; return;
-        case 163: a_twinfo = Info_163; return;
-        case 164: a_twinfo = Info_164; return;
-        case 165: a_twinfo = Info_165; return;
-        case 166: a_twinfo = Info_166; return;
-        case 167: a_twinfo = Info_167; return;
-        case 168: a_twinfo = Info_168; return;
-        case 169: a_twinfo = Info_169; return;
-        case 170: a_twinfo = Info_170; return;
-        case 171: a_twinfo = Info_171; return;
-        case 172: a_twinfo = Info_172; return;
-        case 173: a_twinfo = Info_173; return;
-        case 174: a_twinfo = Info_174; return;
-        case 175: a_twinfo = Info_175; return;
-        case 176: a_twinfo = Info_176; return;
-        case 177: a_twinfo = Info_177; return;
-        case 178: a_twinfo = Info_178; return;
-        case 179: a_twinfo = Info_179; return;
-        case 180: a_twinfo = Info_180; return;
-        case 181: a_twinfo = Info_181; return;
-        case 182: a_twinfo = Info_182; return;
-        case 183: a_twinfo = Info_183; return;
-        case 184: a_twinfo = Info_184; return;
-        case 185: a_twinfo = Info_185; return;
-        case 186: a_twinfo = Info_186; return;
-        case 187: a_twinfo = Info_187; return;
-        case 188: a_twinfo = Info_188; return;
-        case 189: a_twinfo = Info_189; return;
-        case 190: a_twinfo = Info_190; return;
-        case 191: a_twinfo = Info_191; return;
-        case 192: a_twinfo = Info_192; return;
-        case 193: a_twinfo = Info_193; return;
-        case 194: a_twinfo = Info_194; return;
-        case 195: a_twinfo = Info_195; return;
-        case 196: a_twinfo = Info_196; return;
-        case 197: a_twinfo = Info_197; return;
-        case 198: a_twinfo = Info_198; return;
-        case 199: a_twinfo = Info_199; return;
+        //case 100: a_twinfo = Info_100; return;
+        //case 101: a_twinfo = Info_101; return;
+        //case 102: a_twinfo = Info_102; return;
+        //case 103: a_twinfo = Info_103; return;
+        //case 104: a_twinfo = Info_104; return;
+        //case 105: a_twinfo = Info_105; return;
+        //case 106: a_twinfo = Info_106; return;
+        //case 107: a_twinfo = Info_107; return;
+        //case 108: a_twinfo = Info_108; return;
+        //case 109: a_twinfo = Info_109; return;
+        //case 110: a_twinfo = Info_110; return;
+        //case 111: a_twinfo = Info_111; return;
+        //case 112: a_twinfo = Info_112; return;
+        //case 113: a_twinfo = Info_113; return;
+        //case 114: a_twinfo = Info_114; return;
+        //case 115: a_twinfo = Info_115; return;
+        //case 116: a_twinfo = Info_116; return;
+        //case 117: a_twinfo = Info_117; return;
+        //case 118: a_twinfo = Info_118; return;
+        //case 119: a_twinfo = Info_119; return;
+        //case 120: a_twinfo = Info_120; return;
+        //case 121: a_twinfo = Info_121; return;
+        //case 122: a_twinfo = Info_122; return;
+        //case 123: a_twinfo = Info_123; return;
+        //case 124: a_twinfo = Info_124; return;
+        //case 125: a_twinfo = Info_125; return;
+        //case 126: a_twinfo = Info_126; return;
+        //case 127: a_twinfo = Info_127; return;
+        //case 128: a_twinfo = Info_128; return;
+        //case 129: a_twinfo = Info_129; return;
+        //case 130: a_twinfo = Info_130; return;
+        //case 131: a_twinfo = Info_131; return;
+        //case 132: a_twinfo = Info_132; return;
+        //case 133: a_twinfo = Info_133; return;
+        //case 134: a_twinfo = Info_134; return;
+        //case 135: a_twinfo = Info_135; return;
+        //case 136: a_twinfo = Info_136; return;
+        //case 137: a_twinfo = Info_137; return;
+        //case 138: a_twinfo = Info_138; return;
+        //case 139: a_twinfo = Info_139; return;
+        //case 140: a_twinfo = Info_140; return;
+        //case 141: a_twinfo = Info_141; return;
+        //case 142: a_twinfo = Info_142; return;
+        //case 143: a_twinfo = Info_143; return;
+        //case 144: a_twinfo = Info_144; return;
+        //case 145: a_twinfo = Info_145; return;
+        //case 146: a_twinfo = Info_146; return;
+        //case 147: a_twinfo = Info_147; return;
+        //case 148: a_twinfo = Info_148; return;
+        //case 149: a_twinfo = Info_149; return;
+        //case 150: a_twinfo = Info_150; return;
+        //case 151: a_twinfo = Info_151; return;
+        //case 152: a_twinfo = Info_152; return;
+        //case 153: a_twinfo = Info_153; return;
+        //case 154: a_twinfo = Info_154; return;
+        //case 155: a_twinfo = Info_155; return;
+        //case 156: a_twinfo = Info_156; return;
+        //case 157: a_twinfo = Info_157; return;
+        //case 158: a_twinfo = Info_158; return;
+        //case 159: a_twinfo = Info_159; return;
+        //case 160: a_twinfo = Info_160; return;
+        //case 161: a_twinfo = Info_161; return;
+        //case 162: a_twinfo = Info_162; return;
+        //case 163: a_twinfo = Info_163; return;
+        //case 164: a_twinfo = Info_164; return;
+        //case 165: a_twinfo = Info_165; return;
+        //case 166: a_twinfo = Info_166; return;
+        //case 167: a_twinfo = Info_167; return;
+        //case 168: a_twinfo = Info_168; return;
+        //case 169: a_twinfo = Info_169; return;
+        //case 170: a_twinfo = Info_170; return;
+        //case 171: a_twinfo = Info_171; return;
+        //case 172: a_twinfo = Info_172; return;
+        //case 173: a_twinfo = Info_173; return;
+        //case 174: a_twinfo = Info_174; return;
+        //case 175: a_twinfo = Info_175; return;
+        //case 176: a_twinfo = Info_176; return;
+        //case 177: a_twinfo = Info_177; return;
+        //case 178: a_twinfo = Info_178; return;
+        //case 179: a_twinfo = Info_179; return;
+        //case 180: a_twinfo = Info_180; return;
+        //case 181: a_twinfo = Info_181; return;
+        //case 182: a_twinfo = Info_182; return;
+        //case 183: a_twinfo = Info_183; return;
+        //case 184: a_twinfo = Info_184; return;
+        //case 185: a_twinfo = Info_185; return;
+        //case 186: a_twinfo = Info_186; return;
+        //case 187: a_twinfo = Info_187; return;
+        //case 188: a_twinfo = Info_188; return;
+        //case 189: a_twinfo = Info_189; return;
+        //case 190: a_twinfo = Info_190; return;
+        //case 191: a_twinfo = Info_191; return;
+        //case 192: a_twinfo = Info_192; return;
+        //case 193: a_twinfo = Info_193; return;
+        //case 194: a_twinfo = Info_194; return;
+        //case 195: a_twinfo = Info_195; return;
+        //case 196: a_twinfo = Info_196; return;
+        //case 197: a_twinfo = Info_197; return;
+        //case 198: a_twinfo = Info_198; return;
+        //case 199: a_twinfo = Info_199; return;
       }
     }
 
-    public void Set(uint a_uIndex, ref TW_INFO a_twinfo)
+    public void Set(int a_uIndex, ref TW_INFO a_twinfo)
     {
       switch (a_uIndex)
       {
@@ -1926,106 +1927,106 @@ namespace NTwain.Data
         case 97: Info_097 = a_twinfo; return;
         case 98: Info_098 = a_twinfo; return;
         case 99: Info_099 = a_twinfo; return;
-        case 100: Info_100 = a_twinfo; return;
-        case 101: Info_101 = a_twinfo; return;
-        case 102: Info_102 = a_twinfo; return;
-        case 103: Info_103 = a_twinfo; return;
-        case 104: Info_104 = a_twinfo; return;
-        case 105: Info_105 = a_twinfo; return;
-        case 106: Info_106 = a_twinfo; return;
-        case 107: Info_107 = a_twinfo; return;
-        case 108: Info_108 = a_twinfo; return;
-        case 109: Info_109 = a_twinfo; return;
-        case 110: Info_110 = a_twinfo; return;
-        case 111: Info_111 = a_twinfo; return;
-        case 112: Info_112 = a_twinfo; return;
-        case 113: Info_113 = a_twinfo; return;
-        case 114: Info_114 = a_twinfo; return;
-        case 115: Info_115 = a_twinfo; return;
-        case 116: Info_116 = a_twinfo; return;
-        case 117: Info_117 = a_twinfo; return;
-        case 118: Info_118 = a_twinfo; return;
-        case 119: Info_119 = a_twinfo; return;
-        case 120: Info_120 = a_twinfo; return;
-        case 121: Info_121 = a_twinfo; return;
-        case 122: Info_122 = a_twinfo; return;
-        case 123: Info_123 = a_twinfo; return;
-        case 124: Info_124 = a_twinfo; return;
-        case 125: Info_125 = a_twinfo; return;
-        case 126: Info_126 = a_twinfo; return;
-        case 127: Info_127 = a_twinfo; return;
-        case 128: Info_128 = a_twinfo; return;
-        case 129: Info_129 = a_twinfo; return;
-        case 130: Info_130 = a_twinfo; return;
-        case 131: Info_131 = a_twinfo; return;
-        case 132: Info_132 = a_twinfo; return;
-        case 133: Info_133 = a_twinfo; return;
-        case 134: Info_134 = a_twinfo; return;
-        case 135: Info_135 = a_twinfo; return;
-        case 136: Info_136 = a_twinfo; return;
-        case 137: Info_137 = a_twinfo; return;
-        case 138: Info_138 = a_twinfo; return;
-        case 139: Info_139 = a_twinfo; return;
-        case 140: Info_140 = a_twinfo; return;
-        case 141: Info_141 = a_twinfo; return;
-        case 142: Info_142 = a_twinfo; return;
-        case 143: Info_143 = a_twinfo; return;
-        case 144: Info_144 = a_twinfo; return;
-        case 145: Info_145 = a_twinfo; return;
-        case 146: Info_146 = a_twinfo; return;
-        case 147: Info_147 = a_twinfo; return;
-        case 148: Info_148 = a_twinfo; return;
-        case 149: Info_149 = a_twinfo; return;
-        case 150: Info_150 = a_twinfo; return;
-        case 151: Info_151 = a_twinfo; return;
-        case 152: Info_152 = a_twinfo; return;
-        case 153: Info_153 = a_twinfo; return;
-        case 154: Info_154 = a_twinfo; return;
-        case 155: Info_155 = a_twinfo; return;
-        case 156: Info_156 = a_twinfo; return;
-        case 157: Info_157 = a_twinfo; return;
-        case 158: Info_158 = a_twinfo; return;
-        case 159: Info_159 = a_twinfo; return;
-        case 160: Info_160 = a_twinfo; return;
-        case 161: Info_161 = a_twinfo; return;
-        case 162: Info_162 = a_twinfo; return;
-        case 163: Info_163 = a_twinfo; return;
-        case 164: Info_164 = a_twinfo; return;
-        case 165: Info_165 = a_twinfo; return;
-        case 166: Info_166 = a_twinfo; return;
-        case 167: Info_167 = a_twinfo; return;
-        case 168: Info_168 = a_twinfo; return;
-        case 169: Info_169 = a_twinfo; return;
-        case 170: Info_170 = a_twinfo; return;
-        case 171: Info_171 = a_twinfo; return;
-        case 172: Info_172 = a_twinfo; return;
-        case 173: Info_173 = a_twinfo; return;
-        case 174: Info_174 = a_twinfo; return;
-        case 175: Info_175 = a_twinfo; return;
-        case 176: Info_176 = a_twinfo; return;
-        case 177: Info_177 = a_twinfo; return;
-        case 178: Info_178 = a_twinfo; return;
-        case 179: Info_179 = a_twinfo; return;
-        case 180: Info_180 = a_twinfo; return;
-        case 181: Info_181 = a_twinfo; return;
-        case 182: Info_182 = a_twinfo; return;
-        case 183: Info_183 = a_twinfo; return;
-        case 184: Info_184 = a_twinfo; return;
-        case 185: Info_185 = a_twinfo; return;
-        case 186: Info_186 = a_twinfo; return;
-        case 187: Info_187 = a_twinfo; return;
-        case 188: Info_188 = a_twinfo; return;
-        case 189: Info_189 = a_twinfo; return;
-        case 190: Info_190 = a_twinfo; return;
-        case 191: Info_191 = a_twinfo; return;
-        case 192: Info_192 = a_twinfo; return;
-        case 193: Info_193 = a_twinfo; return;
-        case 194: Info_194 = a_twinfo; return;
-        case 195: Info_195 = a_twinfo; return;
-        case 196: Info_196 = a_twinfo; return;
-        case 197: Info_197 = a_twinfo; return;
-        case 198: Info_198 = a_twinfo; return;
-        case 199: Info_199 = a_twinfo; return;
+        //case 100: Info_100 = a_twinfo; return;
+        //case 101: Info_101 = a_twinfo; return;
+        //case 102: Info_102 = a_twinfo; return;
+        //case 103: Info_103 = a_twinfo; return;
+        //case 104: Info_104 = a_twinfo; return;
+        //case 105: Info_105 = a_twinfo; return;
+        //case 106: Info_106 = a_twinfo; return;
+        //case 107: Info_107 = a_twinfo; return;
+        //case 108: Info_108 = a_twinfo; return;
+        //case 109: Info_109 = a_twinfo; return;
+        //case 110: Info_110 = a_twinfo; return;
+        //case 111: Info_111 = a_twinfo; return;
+        //case 112: Info_112 = a_twinfo; return;
+        //case 113: Info_113 = a_twinfo; return;
+        //case 114: Info_114 = a_twinfo; return;
+        //case 115: Info_115 = a_twinfo; return;
+        //case 116: Info_116 = a_twinfo; return;
+        //case 117: Info_117 = a_twinfo; return;
+        //case 118: Info_118 = a_twinfo; return;
+        //case 119: Info_119 = a_twinfo; return;
+        //case 120: Info_120 = a_twinfo; return;
+        //case 121: Info_121 = a_twinfo; return;
+        //case 122: Info_122 = a_twinfo; return;
+        //case 123: Info_123 = a_twinfo; return;
+        //case 124: Info_124 = a_twinfo; return;
+        //case 125: Info_125 = a_twinfo; return;
+        //case 126: Info_126 = a_twinfo; return;
+        //case 127: Info_127 = a_twinfo; return;
+        //case 128: Info_128 = a_twinfo; return;
+        //case 129: Info_129 = a_twinfo; return;
+        //case 130: Info_130 = a_twinfo; return;
+        //case 131: Info_131 = a_twinfo; return;
+        //case 132: Info_132 = a_twinfo; return;
+        //case 133: Info_133 = a_twinfo; return;
+        //case 134: Info_134 = a_twinfo; return;
+        //case 135: Info_135 = a_twinfo; return;
+        //case 136: Info_136 = a_twinfo; return;
+        //case 137: Info_137 = a_twinfo; return;
+        //case 138: Info_138 = a_twinfo; return;
+        //case 139: Info_139 = a_twinfo; return;
+        //case 140: Info_140 = a_twinfo; return;
+        //case 141: Info_141 = a_twinfo; return;
+        //case 142: Info_142 = a_twinfo; return;
+        //case 143: Info_143 = a_twinfo; return;
+        //case 144: Info_144 = a_twinfo; return;
+        //case 145: Info_145 = a_twinfo; return;
+        //case 146: Info_146 = a_twinfo; return;
+        //case 147: Info_147 = a_twinfo; return;
+        //case 148: Info_148 = a_twinfo; return;
+        //case 149: Info_149 = a_twinfo; return;
+        //case 150: Info_150 = a_twinfo; return;
+        //case 151: Info_151 = a_twinfo; return;
+        //case 152: Info_152 = a_twinfo; return;
+        //case 153: Info_153 = a_twinfo; return;
+        //case 154: Info_154 = a_twinfo; return;
+        //case 155: Info_155 = a_twinfo; return;
+        //case 156: Info_156 = a_twinfo; return;
+        //case 157: Info_157 = a_twinfo; return;
+        //case 158: Info_158 = a_twinfo; return;
+        //case 159: Info_159 = a_twinfo; return;
+        //case 160: Info_160 = a_twinfo; return;
+        //case 161: Info_161 = a_twinfo; return;
+        //case 162: Info_162 = a_twinfo; return;
+        //case 163: Info_163 = a_twinfo; return;
+        //case 164: Info_164 = a_twinfo; return;
+        //case 165: Info_165 = a_twinfo; return;
+        //case 166: Info_166 = a_twinfo; return;
+        //case 167: Info_167 = a_twinfo; return;
+        //case 168: Info_168 = a_twinfo; return;
+        //case 169: Info_169 = a_twinfo; return;
+        //case 170: Info_170 = a_twinfo; return;
+        //case 171: Info_171 = a_twinfo; return;
+        //case 172: Info_172 = a_twinfo; return;
+        //case 173: Info_173 = a_twinfo; return;
+        //case 174: Info_174 = a_twinfo; return;
+        //case 175: Info_175 = a_twinfo; return;
+        //case 176: Info_176 = a_twinfo; return;
+        //case 177: Info_177 = a_twinfo; return;
+        //case 178: Info_178 = a_twinfo; return;
+        //case 179: Info_179 = a_twinfo; return;
+        //case 180: Info_180 = a_twinfo; return;
+        //case 181: Info_181 = a_twinfo; return;
+        //case 182: Info_182 = a_twinfo; return;
+        //case 183: Info_183 = a_twinfo; return;
+        //case 184: Info_184 = a_twinfo; return;
+        //case 185: Info_185 = a_twinfo; return;
+        //case 186: Info_186 = a_twinfo; return;
+        //case 187: Info_187 = a_twinfo; return;
+        //case 188: Info_188 = a_twinfo; return;
+        //case 189: Info_189 = a_twinfo; return;
+        //case 190: Info_190 = a_twinfo; return;
+        //case 191: Info_191 = a_twinfo; return;
+        //case 192: Info_192 = a_twinfo; return;
+        //case 193: Info_193 = a_twinfo; return;
+        //case 194: Info_194 = a_twinfo; return;
+        //case 195: Info_195 = a_twinfo; return;
+        //case 196: Info_196 = a_twinfo; return;
+        //case 197: Info_197 = a_twinfo; return;
+        //case 198: Info_198 = a_twinfo; return;
+        //case 199: Info_199 = a_twinfo; return;
       }
     }
   }

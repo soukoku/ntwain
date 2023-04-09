@@ -42,9 +42,9 @@ namespace NTwain.Triplets.ControlDATs
     static TWRC DoIt(ref TW_IDENTITY_LEGACY app, MSG msg, ref TW_ENTRYPOINT entry)
     {
       var rc = TWRC.FAILURE;
-      if (TwainPlatform.IsWindows)
+      if (TWPlatform.IsWindows)
       {
-        if (TwainPlatform.Is32bit && TwainPlatform.PreferLegacyDSM)
+        if (TWPlatform.Is32bit && TWPlatform.PreferLegacyDSM)
         {
           rc = WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }
@@ -57,10 +57,10 @@ namespace NTwain.Triplets.ControlDATs
       //{
       //  var app = Session._appIdentity;
       //}
-      else if (TwainPlatform.IsMacOSX)
+      else if (TWPlatform.IsMacOSX)
       {
         TW_IDENTITY_MACOSX app2 = app;
-        if (TwainPlatform.PreferLegacyDSM)
+        if (TWPlatform.PreferLegacyDSM)
         {
           rc = OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.ENTRYPOINT, msg, ref entry);
         }

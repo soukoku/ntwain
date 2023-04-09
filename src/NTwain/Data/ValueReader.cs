@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -61,7 +60,7 @@ namespace NTwain.Data
 
       try
       {
-        if (TwainPlatform.IsMacOSX)
+        if (TWPlatform.IsMacOSX)
         {
           type = (TWTY)(ushort)(uint)Marshal.ReadInt32(lockedPtr);
 
@@ -103,7 +102,7 @@ namespace NTwain.Data
       {
         TWTY itemType;
         // Mac has a level of indirection and a different structure (ick)...
-        if (TwainPlatform.IsMacOSX)
+        if (TWPlatform.IsMacOSX)
         {
           // Crack the container...
           var onevalue = MarshalTo<TW_ONEVALUE_MACOSX>(lockedPtr);
@@ -118,7 +117,7 @@ namespace NTwain.Data
           lockedPtr += Marshal.SizeOf(onevalue);
         }
 
-        return ReadContainerData<TValue>(lockedPtr, itemType, 0);
+        return ReadTWTYData<TValue>(lockedPtr, itemType, 0);
       }
       finally
       {
@@ -145,7 +144,7 @@ namespace NTwain.Data
         int count = 0;
 
         // Mac has a level of indirection and a different structure (ick)...
-        if (TwainPlatform.IsMacOSX)
+        if (TWPlatform.IsMacOSX)
         {
           // Crack the container...
           var twenumerationmacosx = MarshalTo<TW_ENUMERATION_MACOSX>(lockedPtr);
@@ -188,7 +187,7 @@ namespace NTwain.Data
 
         for (var i = 0; i < count; i++)
         {
-          retVal.Items[i] = ReadContainerData<TValue>(lockedPtr, itemType, i);
+          retVal.Items[i] = ReadTWTYData<TValue>(lockedPtr, itemType, i);
         }
       }
       finally
@@ -215,7 +214,7 @@ namespace NTwain.Data
         uint count;
 
         // Mac has a level of indirection and a different structure (ick)...
-        if (TwainPlatform.IsMacOSX)
+        if (TWPlatform.IsMacOSX)
         {
           // Crack the container...
           var twarraymacosx = MarshalTo<TW_ARRAY_MACOSX>(lockedPtr);
@@ -235,7 +234,7 @@ namespace NTwain.Data
         var arr = new TValue[count];
         for (var i = 0; i < count; i++)
         {
-          arr[i] = ReadContainerData<TValue>(lockedPtr, itemType, i);
+          arr[i] = ReadTWTYData<TValue>(lockedPtr, itemType, i);
         }
         return arr;
       }
@@ -264,7 +263,7 @@ namespace NTwain.Data
         TW_RANGE_FIX32 twrangefix32 = default;
 
         // Mac has a level of indirection and a different structure (ick)...
-        if (TwainPlatform.IsMacOSX)
+        if (TWPlatform.IsMacOSX)
         {
           var twrangemacosx = MarshalTo<TW_RANGE_MACOSX>(lockedPtr);
           var twrangefix32macosx = MarshalTo<TW_RANGE_FIX32_MACOSX>(lockedPtr);
@@ -366,7 +365,7 @@ namespace NTwain.Data
         {
           TWTY itemType;
           // Mac has a level of indirection and a different structure (ick)...
-          if (TwainPlatform.IsMacOSX)
+          if (TWPlatform.IsMacOSX)
           {
             // Crack the container...
             var onevalue = MarshalTo<TW_ONEVALUE_MACOSX>(lockedPtr);
@@ -425,13 +424,13 @@ namespace NTwain.Data
 
 
     /// <summary>
-    /// Read the container pointer content.
+    /// Read the pointer content as a value specified by <see cref="TWTY"/>, except <see cref="TWTY.HANDLE"/>.
     /// </summary>
-    /// <param name="intptr">A locked pointer to the container's data pointer. If data is array this is the 0th item.</param>
+    /// <param name="intptr">A locked pointer to the data pointer. If data is array this is the 0th item.</param>
     /// <param name="type">The twain type.</param>
     /// <param name="itemIndex">Index of the item if pointer is array.</param>
     /// <returns></returns>
-    static TValue ReadContainerData<TValue>(IntPtr intptr, TWTY type, int itemIndex) where TValue : struct
+    public static TValue ReadTWTYData<TValue>(this IntPtr intptr, TWTY type, int itemIndex) where TValue : struct
     {
       var isEnum = typeof(TValue).IsEnum;
 
