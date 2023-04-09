@@ -67,14 +67,17 @@ namespace NTwain
         do
         {
           var readyArgs = new TransferReadyEventArgs(pending.Count, (TWEJ)pending.EOJ);
+          if (TransferReady != null)
+          {
           _uiThreadMarshaller.Invoke(() =>
           {
             try
             {
-              TransferReady?.Invoke(this, readyArgs);
+                TransferReady.Invoke(this, readyArgs);
             }
             catch { } // don't let consumer kill the loop if they have exception
           });
+          }
 
           if (readyArgs.Cancel == CancelType.EndNow || _closeDsRequested)
           {
@@ -108,7 +111,7 @@ namespace NTwain
             try
             {
               if (readyArgs.Cancel != CancelType.SkipCurrent &&
-                DataTransferred != null)
+                Transferred != null)
               {
                 // transfer normally and only if someone's listening
                 // to DataTransferred event
@@ -146,12 +149,18 @@ namespace NTwain
             }
             catch (Exception ex)
             {
+              if (TransferError != null)
+              {
+                _uiThreadMarshaller.Invoke(() =>
+                {
               try
               {
                 TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
               }
               catch { }
+                });
             }
+          }
           }
         } while (sts.RC == TWRC.SUCCESS && pending.Count != 0);
       }
@@ -229,8 +238,8 @@ namespace NTwain
         try
         {
           DGAudio.AudioInfo.Get(ref _appIdentity, ref _currentDS, out TW_AUDIOINFO info);
-          var args = new DataTransferredEventArgs(info, fileSetup);
-          DataTransferred?.Invoke(this, args);
+          var args = new TransferredEventArgs(info, fileSetup);
+          Transferred?.Invoke(this, args);
         }
         catch { }
 ;
@@ -263,8 +272,8 @@ namespace NTwain
             try
             {
               DGAudio.AudioInfo.Get(ref _appIdentity, ref _currentDS, out TW_AUDIOINFO info);
-              var args = new DataTransferredEventArgs(info, data);
-              DataTransferred?.Invoke(this, args);
+              var args = new TransferredEventArgs(info, data);
+              Transferred?.Invoke(this, args);
             }
             catch { }
             finally
@@ -429,8 +438,8 @@ namespace NTwain
         {
           DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
           // ToArray bypasses the XferMemPool but I guess this will have to do for now
-          var args = new DataTransferredEventArgs(info, fileSetup, new BufferedData { Buffer = outStream.ToArray(), Length = (int)outStream.Length });
-          DataTransferred?.Invoke(this, args);
+          var args = new TransferredEventArgs(this, info, fileSetup, new BufferedData { Buffer = outStream.ToArray(), Length = (int)outStream.Length });
+          Transferred?.Invoke(this, args);
         }
         catch { }
 
@@ -457,8 +466,8 @@ namespace NTwain
         try
         {
           DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
-          var args = new DataTransferredEventArgs(info, fileSetup, default);
-          DataTransferred?.Invoke(this, args);
+          var args = new TransferredEventArgs(this, info, fileSetup, default);
+          Transferred?.Invoke(this, args);
         }
         catch { }
 
@@ -503,8 +512,8 @@ namespace NTwain
             try
             {
               DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
-              var args = new DataTransferredEventArgs(info, null, data);
-              DataTransferred?.Invoke(this, args);
+              var args = new TransferredEventArgs(this, info, null, data);
+              Transferred?.Invoke(this, args);
             }
             catch { }
             finally

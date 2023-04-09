@@ -15,10 +15,6 @@ namespace NTwain
     public TW_IDENTITY_LEGACY AppIdentity
     {
       get => _appIdentity;
-      internal set
-      {
-        _appIdentity = value;
-      }
     }
     TW_IDENTITY_LEGACY _appIdentity;
 
@@ -28,7 +24,7 @@ namespace NTwain
     public TW_IDENTITY_LEGACY CurrentSource
     {
       get => _currentDS;
-      internal set
+      protected set
       {
         _currentDS = value;
         try
@@ -56,16 +52,22 @@ namespace NTwain
     public STATE State
     {
       get => _state;
-      internal set
+      protected set
       {
         if (_state != value)
         {
           _state = value;
+          if (StateChanged != null)
+          {
+            _uiThreadMarshaller.Invoke(() =>
+            {
           try
           {
-            StateChanged?.Invoke(this, value); // TODO: should care about thread
+                StateChanged.Invoke(this, value);
           }
           catch { }
+            });
+          }
         }
       }
     }
@@ -126,7 +128,6 @@ namespace NTwain
 
     /// <summary>
     /// Fires when <see cref="State"/> changes. 
-    /// This is not guaranteed to be raised on the UI thread.
     /// </summary>
     public event TwainEventDelegate<STATE>? StateChanged;
 
@@ -163,7 +164,8 @@ namespace NTwain
 
     /// <summary>
     /// Fires when transferred data is available for app to use.
+    /// This is NOT raised on the UI thread for reasons.
     /// </summary>
-    public event TwainEventDelegate<DataTransferredEventArgs>? DataTransferred;
+    public event TwainEventDelegate<TransferredEventArgs>? Transferred;
   }
 }
