@@ -142,6 +142,7 @@ namespace NTwain
       if (rc == TWRC.SUCCESS)
       {
         State = STATE.S4;
+        SourceDisabled?.Invoke(this, _currentDS);
       }
       return WrapInSTS(rc);
     }

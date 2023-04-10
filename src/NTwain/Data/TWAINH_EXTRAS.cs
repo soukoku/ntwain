@@ -227,6 +227,16 @@ namespace NTwain.Data
     //  return new STS { RC = rc };
     //}
 
+    /// <summary>
+    /// Quick check if the RC is success.
+    /// </summary>
+    public bool IsSuccess => RC == TWRC.SUCCESS;
+
+    /// <summary>
+    /// Quick access to condition code.
+    /// </summary>
+    public TWCC ConditionCode => STATUS.ConditionCode;
+
     public override string ToString()
     {
       return $"{RC} - {STATUS.ConditionCode}";
@@ -647,10 +657,16 @@ namespace NTwain.Data
   }
   partial struct TW_IDENTITY_LEGACY
   {
+    /// <summary>
+    /// A simplified check on whether this has valid data from DSM.
+    /// </summary>
+    public bool HasValue => Id == 0 && ProtocolMajor == 0 && ProtocolMinor == 0;
+
     public override string ToString()
     {
       return $"{Manufacturer} - {ProductName} v{Version.MajorNum}.{Version.MinorNum} (TWAIN {ProtocolMajor}.{ProtocolMinor})";
     }
+
     public static implicit operator TW_IDENTITY(TW_IDENTITY_LEGACY value) => new()
     {
       Id = value.Id,
@@ -820,6 +836,7 @@ namespace NTwain.Data
     // provide casted versions over raw value
 
     public TWDE Event { get { return (TWDE)_Event; } }
+
     public TWFL FlashUsed2 { get { return (TWFL)_FlashUsed2; } }
   }
 

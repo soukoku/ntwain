@@ -228,12 +228,13 @@ namespace NTwain
     }
 
     /// <summary>
-    /// Wraps return code with additional status if not successful.
+    /// Wraps a return code with additional status if not successful.
+    /// Use this right after an API call to get its condition code.
     /// </summary>
     /// <param name="rc"></param>
     /// <param name="dsmOnly">true to get status for dsm operation error, false to get status for ds operation error,</param>
     /// <returns></returns>
-    protected STS WrapInSTS(TWRC rc, bool dsmOnly = false)
+    public STS WrapInSTS(TWRC rc, bool dsmOnly = false)
     {
       if (rc != TWRC.FAILURE) return new STS { RC = rc };
       var sts = new STS { RC = rc, STATUS = GetLastStatus(dsmOnly) };

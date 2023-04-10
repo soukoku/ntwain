@@ -134,9 +134,14 @@ namespace NTwain
     public event TwainEventDelegate<TW_IDENTITY_LEGACY>? DefaultSourceChanged;
 
     /// <summary>
-    /// Fires when <see cref="CurrentSource"/> changes.
+    /// Fires when <see cref="CurrentSource"/> changes (opened and closed).
     /// </summary>
     public event TwainEventDelegate<TW_IDENTITY_LEGACY>? CurrentSourceChanged;
+
+    /// <summary>
+    /// Fires when source has moved from enabled to disabled state.
+    /// </summary>
+    public event TwainEventDelegate<TW_IDENTITY_LEGACY>? SourceDisabled;
 
     /// <summary>
     /// Fires when the source has some device event happening.

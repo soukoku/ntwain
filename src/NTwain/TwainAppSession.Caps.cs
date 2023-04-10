@@ -288,6 +288,20 @@ namespace NTwain
     }
 
     /// <summary>
+    /// A simpler cap value setter for common one-value scenarios
+    /// that's easier to use. Not for other container type sets.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="cap"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public STS SetCap<TValue>(CAP cap, TValue value) where TValue : struct
+    {
+      var twcap = ValueWriter.CreateOneValueCap(cap, this, value);
+      return SetCap(ref twcap);
+    }
+
+    /// <summary>
     /// Sets a CAP's constraint values.
     /// An easy way to create a value is to use the 
     /// <see cref="ValueWriter.CreateOneValueCap{TValue}(CAP, IMemoryManager, TValue)"/>
