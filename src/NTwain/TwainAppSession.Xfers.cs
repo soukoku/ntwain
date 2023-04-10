@@ -171,7 +171,7 @@ namespace NTwain
       }
 
       HandleXferCode(sts);
-
+      _inTransfer = false;
       if (State >= STATE.S5)
       {
         _uiThreadMarshaller.BeginInvoke(() =>
@@ -491,6 +491,7 @@ namespace NTwain
       IntPtr lockedPtr = IntPtr.Zero;
       try
       {
+        DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
         var sts = WrapInSTS(DGImage.ImageNativeXfer.Get(ref _appIdentity, ref _currentDS, out dataPtr));
         if (sts.RC == TWRC.XFERDONE)
         {
@@ -516,7 +517,8 @@ namespace NTwain
           {
             try
             {
-              DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
+              // some sources do not support getting image info in state 7 so
+              // it's up there in the beginning now.
               var args = new TransferredEventArgs(this, info, null, data);
               Transferred?.Invoke(this, args);
             }

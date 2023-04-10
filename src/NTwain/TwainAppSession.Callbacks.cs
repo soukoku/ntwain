@@ -87,6 +87,7 @@ namespace NTwain
     }
 
     bool _closeDsRequested;
+    bool _inTransfer;
 
     private void HandleSourceMsg(MSG msg, [CallerMemberName] string? caller = null)
     {
@@ -95,16 +96,27 @@ namespace NTwain
       // the reason we post these to the background is
       // if they're coming from UI message loop then
       // this needs to return asap (?)
+
       switch (msg)
       {
         case MSG.XFERREADY:
+          // some sources spam this even during transfer so we gate it
+          if (!_inTransfer)
+          {
+            _inTransfer = true;
+            _bgPendingMsgs.Add(msg);
+          }
+          break;
         case MSG.DEVICEEVENT:
         case MSG.CLOSEDSOK:
           _bgPendingMsgs.Add(msg);
           break;
         case MSG.CLOSEDSREQ:
           _closeDsRequested = true;
-          _bgPendingMsgs.Add(msg);
+          if (!_inTransfer)
+          {
+            _bgPendingMsgs.Add(msg);
+          }
           break;
       }
     }
