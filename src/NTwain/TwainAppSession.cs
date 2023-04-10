@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Xml;
 
 namespace NTwain
 {
@@ -93,7 +94,7 @@ namespace NTwain
       _osxCallbackDelegate = OSXCallbackHandler;
 
       _uiThreadMarshaller = uiThreadMarshaller;
-      StartBackgroundThread();
+      StartTransferThread();
     }
 
     internal IntPtr _hwnd;
@@ -102,13 +103,16 @@ namespace NTwain
     TW_EVENT _procEvent; // kept here so the alloc/free only happens once
 #endif
     // test threads a bit
-    readonly BlockingCollection<MSG> _bgPendingMsgs = new();
+    //readonly BlockingCollection<MSG> _bgPendingMsgs = new();
     private readonly IThreadMarshaller _uiThreadMarshaller;
+    bool _closeDsRequested;
+    bool _inTransfer;
+    readonly AutoResetEvent _xferReady = new(false);
     private bool disposedValue;
 
-    void StartBackgroundThread()
+    void StartTransferThread()
     {
-      Thread t = new(BackgroundThreadLoop)
+      Thread t = new(TransferLoopLoop)
       {
         IsBackground = true
       };
@@ -118,44 +122,21 @@ namespace NTwain
       t.Start();
     }
 
-    private void BackgroundThreadLoop(object? obj)
+    private void TransferLoopLoop(object? obj)
     {
-      foreach (var msg in _bgPendingMsgs.GetConsumingEnumerable())
+      while (!disposedValue)
       {
-        switch (msg)
+        try
         {
-          case MSG.CLOSEDSOK:
-          case MSG.CLOSEDSREQ:
-            // this should be done on ui thread (or same one that enabled the ds)
-            _uiThreadMarshaller.BeginInvoke(() =>
-            {
-              DisableSource();
-            });
-            break;
-          case MSG.DEVICEEVENT:
-            if (DeviceEvent != null && DGControl.DeviceEvent.Get(ref _appIdentity, ref _currentDS, out TW_DEVICEEVENT de) == TWRC.SUCCESS)
-            {
-              _uiThreadMarshaller.BeginInvoke(() =>
-              {
-                try
-                {
-                  DeviceEvent.Invoke(this, de);
-                }
-                catch { }
-              });
-            }
-            break;
-          case MSG.XFERREADY:
-            //_uiThreadMarshaller.Invoke(() =>
-            //{
-            State = STATE.S6;
-            //});
-            EnterTransferRoutine();
-            break;
+          _xferReady.WaitOne();
         }
-
+        catch (ObjectDisposedException) { break; }
+        try
+        {
+          EnterTransferRoutine();
+        }
+        catch { }
       }
-      Debug.WriteLine("Ending BackgroundThreadLoop...");
     }
 
     protected virtual void Dispose(bool disposing)
@@ -165,7 +146,9 @@ namespace NTwain
         if (disposing)
         {
           // this will end the bg thread
-          _bgPendingMsgs.CompleteAdding();
+          _xferReady.Dispose();
+
+          //_bgPendingMsgs.CompleteAdding();
         }
 #if WINDOWS || NETFRAMEWORK
         if (_procEvent.pEvent != IntPtr.Zero) Marshal.FreeHGlobal(_procEvent.pEvent);

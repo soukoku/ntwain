@@ -86,8 +86,6 @@ namespace NTwain
       return (ushort)TWRC.SUCCESS;
     }
 
-    bool _closeDsRequested;
-    bool _inTransfer;
 
     private void HandleSourceMsg(MSG msg, [CallerMemberName] string? caller = null)
     {
@@ -95,7 +93,7 @@ namespace NTwain
 
       // the reason we post these to the background is
       // if they're coming from UI message loop then
-      // this needs to return asap (?)
+      // this needs to return asap
 
       switch (msg)
       {
@@ -104,18 +102,33 @@ namespace NTwain
           if (!_inTransfer)
           {
             _inTransfer = true;
-            _bgPendingMsgs.Add(msg);
+            _xferReady.Set();
+            //_bgPendingMsgs.Add(msg);
           }
           break;
-        case MSG.DEVICEEVENT:
         case MSG.CLOSEDSOK:
-          _bgPendingMsgs.Add(msg);
-          break;
         case MSG.CLOSEDSREQ:
           _closeDsRequested = true;
           if (!_inTransfer)
           {
-            _bgPendingMsgs.Add(msg);
+            // this should be done on ui thread (or same one that enabled the ds)
+            _uiThreadMarshaller.BeginInvoke(() =>
+            {
+              DisableSource();
+            });
+          }
+          break;
+        case MSG.DEVICEEVENT:
+          if (DeviceEvent != null && DGControl.DeviceEvent.Get(ref _appIdentity, ref _currentDS, out TW_DEVICEEVENT de) == TWRC.SUCCESS)
+          {
+            _uiThreadMarshaller.BeginInvoke(() =>
+            {
+              try
+              {
+                DeviceEvent.Invoke(this, de);
+              }
+              catch { }
+            });
           }
           break;
       }

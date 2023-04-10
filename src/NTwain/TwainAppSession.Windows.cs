@@ -87,12 +87,15 @@ namespace NTwain
           _procEvent.pEvent = Marshal.AllocHGlobal(Marshal.SizeOf(winMsg));
         Marshal.StructureToPtr(winMsg, _procEvent.pEvent, true);
 
-        var rc = DGControl.Event.ProcessEvent(ref _appIdentity, ref _currentDS, ref _procEvent);
-        handled = rc == TWRC.DSEVENT;
-        if (_procEvent.TWMessage != 0 && (handled || rc == TWRC.NOTDSEVENT))
+        if (!_closeDsRequested)
         {
-          //Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] CheckIfTwainMessage at state {State} with MSG={_procEvent.TWMessage}.");
-          HandleSourceMsg((MSG)_procEvent.TWMessage);
+          var rc = DGControl.Event.ProcessEvent(ref _appIdentity, ref _currentDS, ref _procEvent);
+          handled = rc == TWRC.DSEVENT;
+          if (_procEvent.TWMessage != 0 && (handled || rc == TWRC.NOTDSEVENT))
+          {
+            //Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] CheckIfTwainMessage at state {State} with MSG={_procEvent.TWMessage}.");
+            HandleSourceMsg((MSG)_procEvent.TWMessage);
+          }
         }
       }
       return handled;

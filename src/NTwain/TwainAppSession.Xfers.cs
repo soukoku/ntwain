@@ -171,14 +171,14 @@ namespace NTwain
       }
 
       HandleXferCode(sts);
-      _inTransfer = false;
       if (State >= STATE.S5)
       {
-        _uiThreadMarshaller.BeginInvoke(() =>
+        _uiThreadMarshaller.Invoke(() =>
         {
           DisableSource();
         });
       }
+      _inTransfer = false;
     }
 
     private void HandleXferCode(STS sts)

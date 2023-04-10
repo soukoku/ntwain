@@ -137,6 +137,7 @@ namespace NTwain
     /// <returns></returns>
     public STS DisableSource()
     {
+      _closeDsRequested = true;
       var rc = DGControl.UserInterface.DisableDS(ref _appIdentity, ref _currentDS, ref _userInterface);
       if (rc == TWRC.SUCCESS)
       {
