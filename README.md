@@ -30,14 +30,14 @@ As with previous versions, only Windows has been tested on and thus
 supported really. Other changes include
 
 * All TWAIN data types are now struct instead of class (and they come
-from [twaincs](https://github.com/twain/twain-cs for correctness). It may have
-been easier to implement them as class when starting out this lib, but 
+from [twaincs](https://github.com/twain/twain-cs) for correctness. It may have
+been easier to implement them as classes when starting out this lib, but 
 it's not really ideal anymore. The change also makes them match the twain.h
-names for easier use with the spec pdf.
+names and the spec pdf.
 
-* Caps no longer have their own wrapper properties for each type. This makes calling
-custom caps easier but you will have to consult the docs on what
-containers and values should be.
+* Caps no longer have their own wrapper properties for each type, though common
+helpers are provided. This makes calling custom caps possible but you will have to 
+consult the docs on what containers and values they should be.
 
 * All lower-level TWAIN APIs are public instead of hidden away.
 
