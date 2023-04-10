@@ -19,7 +19,7 @@ namespace NTwain
       }
       else if (TWPlatform.IsWindows)
       {
-        return NativeMemoryMethods.WinGlobalAlloc(NativeMemoryMethods.AllocFlag.GHND, (UIntPtr)size);
+        return WinNativeMethods.GlobalAlloc(WinNativeMethods.AllocFlag.GHND, (UIntPtr)size);
       }
       else if (TWPlatform.IsLinux)
       {
@@ -45,7 +45,7 @@ namespace NTwain
       }
       else if (TWPlatform.IsWindows)
       {
-        NativeMemoryMethods.WinGlobalFree(handle);
+        WinNativeMethods.GlobalFree(handle);
       }
       else if (TWPlatform.IsLinux)
       {
@@ -71,7 +71,7 @@ namespace NTwain
       }
       else if (TWPlatform.IsWindows)
       {
-        return NativeMemoryMethods.WinGlobalLock(handle);
+        return WinNativeMethods.GlobalLock(handle);
       }
       else if (TWPlatform.IsLinux)
       {
@@ -97,7 +97,7 @@ namespace NTwain
       }
       else if (TWPlatform.IsWindows)
       {
-        NativeMemoryMethods.WinGlobalUnlock(handle);
+        WinNativeMethods.GlobalUnlock(handle);
       }
       else if (TWPlatform.IsLinux)
       {

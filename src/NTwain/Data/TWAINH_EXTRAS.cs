@@ -835,7 +835,6 @@ namespace NTwain.Data
     /// A quick way to create a query object with only <see cref="TWEI"/> values.
     /// Limit is 100 at this time.
     /// </summary>
-    /// <param name="memMgr"></param>
     /// <param name="infoNames"></param>
     /// <returns></returns>
     public static TW_EXTIMAGEINFO CreateRequest(params TWEI[] infoNames)
@@ -859,7 +858,6 @@ namespace NTwain.Data
     /// <summary>
     /// Reads the info out of this as array.
     /// </summary>
-    /// <param name="memMgr"></param>
     /// <returns></returns>
     public TW_INFO[] AsInfos()
     {
@@ -1002,9 +1000,8 @@ namespace NTwain.Data
     /// For pointers you'd read it yourself with 
     /// <see cref="ValueReader.ReadTWTYData{TValue}(IntPtr, TWTY, int)"/>.
     /// Unless it's a handle (<see cref="TWTY.HANDLE"/>) to non-twain-strings, then you'd use 
-    /// <see cref="ReadHandleString(int)"/>.
+    /// <see cref="ReadHandleString(IMemoryManager, int)"/>.
     /// </summary>
-    /// <param name="type"></param>
     /// <typeparam name="TValue"></typeparam>
     /// <returns></returns>
     public unsafe TValue ReadNonPointerData<TValue>() where TValue : struct
