@@ -112,23 +112,24 @@ namespace NTwain
           if (!_inTransfer)
           {
             // this should be done on ui thread (or same one that enabled the ds)
-            _uiThreadMarshaller.BeginInvoke(() =>
+            _uiThreadMarshaller.Post(obj =>
             {
-              DisableSource();
-            });
+              ((TwainAppSession)obj!).DisableSource();
+            }, this);
           }
           break;
         case MSG.DEVICEEVENT:
           if (DeviceEvent != null && DGControl.DeviceEvent.Get(ref _appIdentity, ref _currentDS, out TW_DEVICEEVENT de) == TWRC.SUCCESS)
           {
-            _uiThreadMarshaller.BeginInvoke(() =>
+            _uiThreadMarshaller.Post(obj =>
             {
               try
               {
-                DeviceEvent.Invoke(this, de);
+                var twain = (TwainAppSession)obj!;
+                twain.DeviceEvent!.Invoke(twain, de);
               }
               catch { }
-            });
+            }, this);
           }
           break;
       }

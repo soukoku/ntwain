@@ -74,14 +74,15 @@ namespace NTwain
           var readyArgs = new TransferReadyEventArgs(pending.Count, (TWEJ)pending.EOJ);
           if (TransferReady != null)
           {
-            _uiThreadMarshaller.Invoke(() =>
+            _uiThreadMarshaller.Send(_ =>
             {
               try
               {
+
                 TransferReady.Invoke(this, readyArgs);
               }
               catch { } // don't let consumer kill the loop if they have exception
-            });
+            }, null);
           }
 
           if (readyArgs.Cancel == CancelType.EndNow || _closeDsRequested)
@@ -154,17 +155,15 @@ namespace NTwain
             }
             catch (Exception ex)
             {
-              if (TransferError != null)
+              _uiThreadMarshaller.Send(obj =>
               {
-                _uiThreadMarshaller.Invoke(() =>
+                try
                 {
-                  try
-                  {
-                    TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
-                  }
-                  catch { }
-                });
-              }
+                  var twain = ((TwainAppSession)obj!);
+                  twain.TransferError?.Invoke(twain, new TransferErrorEventArgs(ex));
+                }
+                catch { }
+              }, this);
             }
           }
         } while (sts.RC == TWRC.SUCCESS && pending.Count != 0);
@@ -173,10 +172,10 @@ namespace NTwain
       HandleXferCode(sts);
       if (State >= STATE.S5)
       {
-        _uiThreadMarshaller.Invoke(() =>
+        _uiThreadMarshaller.Send(obj =>
         {
-          DisableSource();
-        });
+          ((TwainAppSession)obj!).DisableSource();
+        }, this);
       }
       _inTransfer = false;
     }
@@ -191,13 +190,11 @@ namespace NTwain
           break;
         case TWRC.CANCEL:
           // might eventually have option to cancel this or all like transfer ready
-          if (TransferCanceled != null)
+          _uiThreadMarshaller.Send(obj =>
           {
-            _uiThreadMarshaller.Invoke(() =>
-            {
-              TransferCanceled.Invoke(this, new TransferCanceledEventArgs());
-            });
-          };
+            var twain = ((TwainAppSession)obj!);
+            twain.TransferCanceled?.Invoke(twain, new TransferCanceledEventArgs());
+          }, this);
           TW_PENDINGXFERS pending = default;
           DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
           // todo: also reset?

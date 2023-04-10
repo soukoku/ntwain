@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace WinFormSample
@@ -28,7 +29,7 @@ namespace WinFormSample
 
       TWPlatform.PreferLegacyDSM = false;
 
-      twain = new TwainAppSession(new WinformMarshaller(this), Assembly.GetExecutingAssembly().Location);
+      twain = new TwainAppSession(SynchronizationContext.Current!, Assembly.GetExecutingAssembly().Location);
       twain.StateChanged += Twain_StateChanged;
       twain.DefaultSourceChanged += Twain_DefaultSourceChanged;
       twain.CurrentSourceChanged += Twain_CurrentSourceChanged;

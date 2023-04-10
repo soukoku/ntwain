@@ -60,16 +60,16 @@ namespace NTwain
 
     bool IMessageFilter.PreFilterMessage(ref Message m)
     {
-      return CheckIfTwainMessage(m.HWnd, m.Msg, m.WParam, m.LParam);
+      return WndProc(m.HWnd, m.Msg, m.WParam, m.LParam);
     }
 
     IntPtr WpfHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-      handled = CheckIfTwainMessage(hwnd, msg, wParam, lParam);
+      handled = WndProc(hwnd, msg, wParam, lParam);
       return IntPtr.Zero;
     }
 
-    private bool CheckIfTwainMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
+    private bool WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
     {
       // this handles the message from a typical WndProc message loop and checks if it's for the TWAIN source.
       bool handled = false;

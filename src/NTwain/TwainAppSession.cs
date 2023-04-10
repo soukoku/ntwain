@@ -23,7 +23,7 @@ namespace NTwain
     /// <param name="exeFilePath"></param>
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
-    public TwainAppSession(IThreadMarshaller uiThreadMarshaller,
+    public TwainAppSession(SynchronizationContext uiThreadMarshaller,
       string exeFilePath,
       TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
       this(uiThreadMarshaller, FileVersionInfo.GetVersionInfo(exeFilePath), appLanguage, appCountry)
@@ -35,7 +35,7 @@ namespace NTwain
     /// <param name="appInfo"></param>
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
-    public TwainAppSession(IThreadMarshaller uiThreadMarshaller,
+    public TwainAppSession(SynchronizationContext uiThreadMarshaller,
         FileVersionInfo appInfo,
         TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
         this(uiThreadMarshaller,
@@ -57,7 +57,7 @@ namespace NTwain
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
     /// <param name="supportedTypes"></param>
-    public TwainAppSession(IThreadMarshaller uiThreadMarshaller,
+    public TwainAppSession(SynchronizationContext uiThreadMarshaller,
         string companyName, string productFamily, string productName,
         Version productVersion, string productDescription = "",
         TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA,
@@ -104,7 +104,7 @@ namespace NTwain
 #endif
     // test threads a bit
     //readonly BlockingCollection<MSG> _bgPendingMsgs = new();
-    private readonly IThreadMarshaller _uiThreadMarshaller;
+    private readonly SynchronizationContext _uiThreadMarshaller;
     bool _closeDsRequested;
     bool _inTransfer;
     readonly AutoResetEvent _xferReady = new(false);
