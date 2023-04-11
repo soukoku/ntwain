@@ -41,6 +41,9 @@
       lblState = new System.Windows.Forms.Label();
       label3 = new System.Windows.Forms.Label();
       btnOpenDef = new System.Windows.Forms.Button();
+      btnOpenFolder = new System.Windows.Forms.Button();
+      ckSystemDrawing = new System.Windows.Forms.CheckBox();
+      ckBgImageHandling = new System.Windows.Forms.CheckBox();
       ckShowUI = new System.Windows.Forms.CheckBox();
       capListView = new System.Windows.Forms.ListView();
       colCap = new System.Windows.Forms.ColumnHeader();
@@ -53,7 +56,7 @@
       btnStart = new System.Windows.Forms.Button();
       btnShowSettings = new System.Windows.Forms.Button();
       btnClose = new System.Windows.Forms.Button();
-      ckBgImageHandling = new System.Windows.Forms.CheckBox();
+      ckSaveDisk = new System.Windows.Forms.CheckBox();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
       splitContainer1.Panel2.SuspendLayout();
@@ -168,6 +171,9 @@
       // 
       // splitContainer1.Panel2
       // 
+      splitContainer1.Panel2.Controls.Add(ckSaveDisk);
+      splitContainer1.Panel2.Controls.Add(btnOpenFolder);
+      splitContainer1.Panel2.Controls.Add(ckSystemDrawing);
       splitContainer1.Panel2.Controls.Add(ckBgImageHandling);
       splitContainer1.Panel2.Controls.Add(ckShowUI);
       splitContainer1.Panel2.Controls.Add(capListView);
@@ -209,6 +215,38 @@
       btnOpenDef.UseVisualStyleBackColor = true;
       btnOpenDef.Click += btnOpenDef_Click;
       // 
+      // btnOpenFolder
+      // 
+      btnOpenFolder.Location = new System.Drawing.Point(512, 106);
+      btnOpenFolder.Name = "btnOpenFolder";
+      btnOpenFolder.Size = new System.Drawing.Size(147, 23);
+      btnOpenFolder.TabIndex = 13;
+      btnOpenFolder.Text = "Open saved folder";
+      btnOpenFolder.UseVisualStyleBackColor = true;
+      btnOpenFolder.Click += btnOpenFolder_Click;
+      // 
+      // ckSystemDrawing
+      // 
+      ckSystemDrawing.AutoSize = true;
+      ckSystemDrawing.Location = new System.Drawing.Point(512, 58);
+      ckSystemDrawing.Name = "ckSystemDrawing";
+      ckSystemDrawing.Size = new System.Drawing.Size(209, 19);
+      ckSystemDrawing.TabIndex = 11;
+      ckSystemDrawing.Text = "Use System.Drawing to save image";
+      ckSystemDrawing.UseVisualStyleBackColor = true;
+      // 
+      // ckBgImageHandling
+      // 
+      ckBgImageHandling.AutoSize = true;
+      ckBgImageHandling.Checked = true;
+      ckBgImageHandling.CheckState = System.Windows.Forms.CheckState.Checked;
+      ckBgImageHandling.Location = new System.Drawing.Point(512, 35);
+      ckBgImageHandling.Name = "ckBgImageHandling";
+      ckBgImageHandling.Size = new System.Drawing.Size(220, 19);
+      ckBgImageHandling.TabIndex = 10;
+      ckBgImageHandling.Text = "Handle image data in another thread";
+      ckBgImageHandling.UseVisualStyleBackColor = true;
+      // 
       // ckShowUI
       // 
       ckShowUI.AutoSize = true;
@@ -226,10 +264,10 @@
       capListView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
       capListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { colCap, colType, colCur, colDef, colExtended, colSupport });
       capListView.FullRowSelect = true;
-      capListView.Location = new System.Drawing.Point(11, 87);
+      capListView.Location = new System.Drawing.Point(11, 135);
       capListView.MultiSelect = false;
       capListView.Name = "capListView";
-      capListView.Size = new System.Drawing.Size(771, 462);
+      capListView.Size = new System.Drawing.Size(771, 414);
       capListView.TabIndex = 8;
       capListView.UseCompatibleStateImageBehavior = false;
       capListView.View = System.Windows.Forms.View.Details;
@@ -267,7 +305,7 @@
       // label4
       // 
       label4.AutoSize = true;
-      label4.Location = new System.Drawing.Point(13, 62);
+      label4.Location = new System.Drawing.Point(11, 110);
       label4.Name = "label4";
       label4.Size = new System.Drawing.Size(91, 15);
       label4.TabIndex = 7;
@@ -303,17 +341,15 @@
       btnClose.UseVisualStyleBackColor = true;
       btnClose.Click += btnClose_Click;
       // 
-      // ckBgImageHandling
+      // ckSaveDisk
       // 
-      ckBgImageHandling.AutoSize = true;
-      ckBgImageHandling.Checked = true;
-      ckBgImageHandling.CheckState = System.Windows.Forms.CheckState.Checked;
-      ckBgImageHandling.Location = new System.Drawing.Point(512, 35);
-      ckBgImageHandling.Name = "ckBgImageHandling";
-      ckBgImageHandling.Size = new System.Drawing.Size(220, 19);
-      ckBgImageHandling.TabIndex = 10;
-      ckBgImageHandling.Text = "Handle image data in another thread";
-      ckBgImageHandling.UseVisualStyleBackColor = true;
+      ckSaveDisk.AutoSize = true;
+      ckSaveDisk.Location = new System.Drawing.Point(512, 83);
+      ckSaveDisk.Name = "ckSaveDisk";
+      ckSaveDisk.Size = new System.Drawing.Size(88, 19);
+      ckSaveDisk.TabIndex = 12;
+      ckSaveDisk.Text = "Save to disk";
+      ckSaveDisk.UseVisualStyleBackColor = true;
       // 
       // Form1
       // 
@@ -360,5 +396,8 @@
     private System.Windows.Forms.ColumnHeader colExtended;
     private System.Windows.Forms.CheckBox ckShowUI;
     private System.Windows.Forms.CheckBox ckBgImageHandling;
+    private System.Windows.Forms.CheckBox ckSystemDrawing;
+    private System.Windows.Forms.Button btnOpenFolder;
+    private System.Windows.Forms.CheckBox ckSaveDisk;
   }
 }

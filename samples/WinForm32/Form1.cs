@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,10 +18,15 @@ namespace WinFormSample
 {
   public partial class Form1 : Form
   {
-    private TwainAppSession twain;
-    private readonly string saveFolder;
+    TwainAppSession twain;
+    readonly string saveFolder;
     readonly Stopwatch watch = new();
-    private bool _useThreadForImag;
+    readonly ImageCodecInfo _jpegEncoder;
+    readonly EncoderParameters _jpegParameters;
+    readonly int _jpegQuality = 75;
+    bool _useThreadForImag;
+    bool _useSystemDrawing;
+    bool _saveDisk;
 
     public Form1()
     {
@@ -43,10 +49,15 @@ namespace WinFormSample
       capListView.SetDoubleBufferedAsNeeded();
       SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
 
-      saveFolder = Path.Combine(Path.GetTempPath(), "ntwain-sample");
+      saveFolder = Path.Combine(Path.GetTempPath(), "ntwain-sample" + Path.DirectorySeparatorChar);
       Directory.CreateDirectory(saveFolder);
 
       this.Disposed += Form1_Disposed;
+
+
+      _jpegParameters = new EncoderParameters(1);
+      _jpegParameters.Param[0] = new EncoderParameter(Encoder.Quality, (long)_jpegQuality);
+      _jpegEncoder = ImageCodecInfo.GetImageEncoders().First(enc => enc.FormatID == ImageFormat.Jpeg.Guid);
     }
 
     private void Twain_SourceDisabled(TwainAppSession sender, TW_IDENTITY_LEGACY e)
@@ -137,31 +148,62 @@ namespace WinFormSample
 
     private void HandleTransferredData(TransferredEventArgs e)
     {
-      try
+      if (e.Data != null)
       {
-        // example of using some lib to handle image data
-        var saveFile = Path.Combine(saveFolder, (DateTime.Now.Ticks / 1000).ToString());
-        using (var img = new ImageMagick.MagickImage(e.Data))
+        try
         {
-          if (img.ColorType == ImageMagick.ColorType.Palette)
+          // example of using some lib to handle image data
+          var saveFile = Path.Combine(saveFolder, (DateTime.Now.Ticks / 1000).ToString());
+
+          if (_useSystemDrawing)
           {
-            // bw or gray
-            saveFile += ".png";
+            using (var img = Image.FromStream(e.Data.AsStream()))
+            {
+              if (img.PixelFormat == System.Drawing.Imaging.PixelFormat.Format1bppIndexed ||
+                img.PixelFormat == System.Drawing.Imaging.PixelFormat.Format8bppIndexed)
+              {
+                // bw or gray
+                saveFile += ".png";
+                if (_saveDisk) img.Save(saveFile, ImageFormat.Png);
+                else img.Save(new NoOpStream(), ImageFormat.Png);
+              }
+              else
+              {
+                // color
+                saveFile += ".jpg";
+                if (_saveDisk) img.Save(saveFile, _jpegEncoder, _jpegParameters);
+                else img.Save(new NoOpStream(), _jpegEncoder, _jpegParameters);
+              }
+            }
           }
           else
           {
-            // color
-            saveFile += ".jpg";
-            img.Quality = 75;
+            using (var img = new ImageMagick.MagickImage(e.Data.AsSpan()))
+            {
+              var format = ImageMagick.MagickFormat.Png;
+              if (img.ColorType == ImageMagick.ColorType.Palette)
+              {
+                // bw or gray
+                saveFile += ".png";
+              }
+              else
+              {
+                // color
+                saveFile += ".jpg";
+                format = ImageMagick.MagickFormat.Jpeg;
+                img.Quality = _jpegQuality;
+              }
+              if (_saveDisk) img.Write(saveFile);
+              else img.Write(new NoOpStream(), format);
+            }
+            Debug.WriteLine($"Saved image to {saveFile}");
           }
-          img.Write(saveFile);
-          Debug.WriteLine($"Saved image to {saveFile}");
         }
-      }
-      catch { }
-      finally
-      {
-        e.Dispose();
+        catch { }
+        finally
+        {
+          e.Dispose();
+        }
       }
     }
 
@@ -402,8 +444,20 @@ namespace WinFormSample
       if (twain.EnableSource(ckShowUI.Checked, false).IsSuccess)
       {
         _useThreadForImag = ckBgImageHandling.Checked;
+        _useSystemDrawing = ckSystemDrawing.Checked;
+        _saveDisk = ckSaveDisk.Checked;
         watch.Restart();
       }
+    }
+
+    private void btnOpenFolder_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        if (!Directory.Exists(saveFolder)) Directory.CreateDirectory(saveFolder);
+        using (Process.Start(new ProcessStartInfo { FileName = saveFolder, UseShellExecute = true })) { }
+      }
+      catch { }
     }
   }
 }

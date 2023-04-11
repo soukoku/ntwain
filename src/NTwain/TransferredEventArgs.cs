@@ -39,7 +39,7 @@ namespace NTwain
     /// IMPORTANT: Content of this array will not be valid once
     /// this event arg has been disposed.
     /// </summary>
-    public ReadOnlySpan<byte> Data => _data == null ? ReadOnlySpan<byte>.Empty : _data.AsSpan();
+    public BufferedData? Data => _data;
 
     /// <summary>
     /// The file info if the transfer involved file information.

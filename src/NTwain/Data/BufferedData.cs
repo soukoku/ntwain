@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.IO;
 
 namespace NTwain.Data
 {
@@ -13,7 +14,7 @@ namespace NTwain.Data
     // so the array max is made with 32 MB. Typical usage should be a lot less.
     internal static readonly ArrayPool<byte> MemPool = ArrayPool<byte>.Create(32 * 1024 * 1024, 8);
 
-    public BufferedData(int size)
+    internal BufferedData(int size)
     {
       _buffer = MemPool.Rent(size);
       _length = size;
@@ -27,14 +28,14 @@ namespace NTwain.Data
       _fromPool = fromPool;
     }
 
+    bool _disposed;
     bool _fromPool;
 
     /// <summary>
     /// Bytes buffer. This may be bigger than the data size
     /// and contain invalid data.
     /// </summary>
-    byte[]? _buffer;
-    public byte[]? Buffer { get; }
+    byte[] _buffer;
 
     /// <summary>
     /// Actual usable data length in the buffer.
@@ -45,19 +46,47 @@ namespace NTwain.Data
     /// As a span of usable data.
     /// </summary>
     /// <returns></returns>
+    /// <exception cref="ObjectDisposedException"></exception>
     public ReadOnlySpan<byte> AsSpan()
     {
-      if (_buffer != null) return _buffer.AsSpan(0, _length);
-      return Span<byte>.Empty;
+      if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+      return _buffer.AsSpan(0, _length);
+    }
+
+    /// <summary>
+    /// As a span of usable data.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ObjectDisposedException"></exception>
+    public ReadOnlyMemory<byte> AsMemory()
+    {
+      if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+      return _buffer.AsMemory(0, _length);
+    }
+
+    /// <summary>
+    /// As a readonly stream.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ObjectDisposedException"></exception>
+    public Stream AsStream()
+    {
+      if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+      return new MemoryStream(_buffer, 0, _length, false);
     }
 
     public void Dispose()
     {
-      if (_fromPool && _buffer != null)
+      if (_fromPool && _disposed)
       {
         MemPool.Return(_buffer);
-        _buffer = null;
+        _disposed = true;
       }
     }
+
+    public static implicit operator ReadOnlySpan<byte>(BufferedData value) => value.AsSpan();
+    public static implicit operator ReadOnlyMemory<byte>(BufferedData value) => value.AsMemory();
+    public static implicit operator Stream(BufferedData value) => value.AsStream();
+
   }
 }
