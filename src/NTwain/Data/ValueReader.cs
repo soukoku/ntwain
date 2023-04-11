@@ -439,6 +439,9 @@ namespace NTwain.Data
         default:
           throw new NotSupportedException($"Unsupported item type {type} for reading.");
         // TODO: verify if needs to read int32 for small types
+        case TWTY.HANDLE:
+          intptr += IntPtr.Size * itemIndex;
+          return MarshalTo<TValue>(intptr);
         case TWTY.INT8:
           intptr += 1 * itemIndex;
           if (isEnum)

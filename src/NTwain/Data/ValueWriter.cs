@@ -548,6 +548,8 @@ namespace NTwain.Data
       if (type == typeof(TW_STR128)) return TWTY.STR128;
       if (type == typeof(TW_STR255)) return TWTY.STR255;
       if (type == typeof(TW_FRAME)) return TWTY.FRAME;
+      if (type == typeof(IntPtr)) return TWTY.HANDLE;
+      if (type == typeof(UIntPtr)) return TWTY.HANDLE;
 
       if (type.IsEnum)
       {
@@ -579,6 +581,10 @@ namespace NTwain.Data
         default:
           throw new NotSupportedException($"Unsupported item type {type} for writing.");
         // TODO: for small types needs to fill whole int32 before writing?
+        case TWTY.HANDLE:
+          intptr += IntPtr.Size * itemIndex;
+          Marshal.StructureToPtr(value, intptr, false);
+          break;
         case TWTY.INT8:
           intptr += 1 * itemIndex;
           //int intval = Convert.ToSByte(value);
