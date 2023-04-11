@@ -6,12 +6,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Versioning;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinFormSample
@@ -20,6 +19,8 @@ namespace WinFormSample
   {
     private TwainAppSession twain;
     private readonly string saveFolder;
+    readonly Stopwatch watch = new();
+    private bool _useThreadForImag;
 
     public Form1()
     {
@@ -33,8 +34,9 @@ namespace WinFormSample
       twain.StateChanged += Twain_StateChanged;
       twain.DefaultSourceChanged += Twain_DefaultSourceChanged;
       twain.CurrentSourceChanged += Twain_CurrentSourceChanged;
+      twain.SourceDisabled += Twain_SourceDisabled;
       twain.TransferReady += Twain_TransferReady;
-      twain.Transferred += Twain_DataTransferred;
+      twain.Transferred += Twain_Transferred;
       twain.TransferError += Twain_TransferError;
       twain.DeviceEvent += Twain_DeviceEvent;
 
@@ -45,6 +47,15 @@ namespace WinFormSample
       Directory.CreateDirectory(saveFolder);
 
       this.Disposed += Form1_Disposed;
+    }
+
+    private void Twain_SourceDisabled(TwainAppSession sender, TW_IDENTITY_LEGACY e)
+    {
+      if (watch.IsRunning)
+      {
+        watch.Stop();
+        MessageBox.Show($"Took {watch.Elapsed} to finish that transfer.");
+      }
     }
 
     private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
@@ -103,28 +114,54 @@ namespace WinFormSample
 
     }
 
-    private void Twain_DataTransferred(TwainAppSession sender, TransferredEventArgs e)
+    private void Twain_Transferred(TwainAppSession sender, TransferredEventArgs e)
     {
       Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] data transferred with info {e.ImageInfo}");
-      if (e.Data == null) return;
+      // if using a high-speed scanner, imaging handling could be a bottleneck
+      // so it's possible to pass the data to another thread while the scanning
+      // loop happens. Just remember to dispose it after.
 
-      // example of using some lib to handle image data
-      var saveFile = Path.Combine(saveFolder, (DateTime.Now.Ticks / 1000).ToString());
-      using (var img = new ImageMagick.MagickImage(e.Data))
+      if (_useThreadForImag)
       {
-        if (img.ColorType == ImageMagick.ColorType.Palette)
+        // bad thread example but whatev. should use a dedicated thread of some sort for real
+        Task.Run(() =>
         {
-          // bw or gray
-          saveFile += ".png";
-        }
-        else
+          HandleTransferredData(e);
+        });
+      }
+      else
+      {
+        HandleTransferredData(e);
+      }
+    }
+
+    private void HandleTransferredData(TransferredEventArgs e)
+    {
+      try
+      {
+        // example of using some lib to handle image data
+        var saveFile = Path.Combine(saveFolder, (DateTime.Now.Ticks / 1000).ToString());
+        using (var img = new ImageMagick.MagickImage(e.Data))
         {
-          // color
-          saveFile += ".jpg";
-          img.Quality = 75;
+          if (img.ColorType == ImageMagick.ColorType.Palette)
+          {
+            // bw or gray
+            saveFile += ".png";
+          }
+          else
+          {
+            // color
+            saveFile += ".jpg";
+            img.Quality = 75;
+          }
+          img.Write(saveFile);
+          Debug.WriteLine($"Saved image to {saveFile}");
         }
-        img.Write(saveFile);
-        Debug.WriteLine($"Saved image to {saveFile}");
+      }
+      catch { }
+      finally
+      {
+        e.Dispose();
       }
     }
 
@@ -362,7 +399,11 @@ namespace WinFormSample
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-      twain.EnableSource(ckShowUI.Checked, false);
+      if (twain.EnableSource(ckShowUI.Checked, false).IsSuccess)
+      {
+        _useThreadForImag = ckBgImageHandling.Checked;
+        watch.Restart();
+      }
     }
   }
 }

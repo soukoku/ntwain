@@ -15,13 +15,6 @@ namespace NTwain
       EndOfJobFlag = endOfJobFlag;
     }
 
-
-    /// <summary>
-    /// Gets or sets whether the current transfer should be skipped
-    /// and continue next transfer if there are more data.
-    /// </summary>
-    public bool SkipCurrent { get; set; }
-
     /// <summary>
     /// Gets or sets whether to cancel the capture phase.
     /// </summary>

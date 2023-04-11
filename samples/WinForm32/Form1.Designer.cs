@@ -41,6 +41,7 @@
       lblState = new System.Windows.Forms.Label();
       label3 = new System.Windows.Forms.Label();
       btnOpenDef = new System.Windows.Forms.Button();
+      ckShowUI = new System.Windows.Forms.CheckBox();
       capListView = new System.Windows.Forms.ListView();
       colCap = new System.Windows.Forms.ColumnHeader();
       colType = new System.Windows.Forms.ColumnHeader();
@@ -52,7 +53,7 @@
       btnStart = new System.Windows.Forms.Button();
       btnShowSettings = new System.Windows.Forms.Button();
       btnClose = new System.Windows.Forms.Button();
-      ckShowUI = new System.Windows.Forms.CheckBox();
+      ckBgImageHandling = new System.Windows.Forms.CheckBox();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
       splitContainer1.Panel2.SuspendLayout();
@@ -167,6 +168,7 @@
       // 
       // splitContainer1.Panel2
       // 
+      splitContainer1.Panel2.Controls.Add(ckBgImageHandling);
       splitContainer1.Panel2.Controls.Add(ckShowUI);
       splitContainer1.Panel2.Controls.Add(capListView);
       splitContainer1.Panel2.Controls.Add(label4);
@@ -206,6 +208,18 @@
       btnOpenDef.Text = "Open default";
       btnOpenDef.UseVisualStyleBackColor = true;
       btnOpenDef.Click += btnOpenDef_Click;
+      // 
+      // ckShowUI
+      // 
+      ckShowUI.AutoSize = true;
+      ckShowUI.Checked = true;
+      ckShowUI.CheckState = System.Windows.Forms.CheckState.Checked;
+      ckShowUI.Location = new System.Drawing.Point(437, 35);
+      ckShowUI.Name = "ckShowUI";
+      ckShowUI.Size = new System.Drawing.Size(69, 19);
+      ckShowUI.TabIndex = 9;
+      ckShowUI.Text = "Show UI";
+      ckShowUI.UseVisualStyleBackColor = true;
       // 
       // capListView
       // 
@@ -289,17 +303,17 @@
       btnClose.UseVisualStyleBackColor = true;
       btnClose.Click += btnClose_Click;
       // 
-      // ckShowUI
+      // ckBgImageHandling
       // 
-      ckShowUI.AutoSize = true;
-      ckShowUI.Checked = true;
-      ckShowUI.CheckState = System.Windows.Forms.CheckState.Checked;
-      ckShowUI.Location = new System.Drawing.Point(437, 35);
-      ckShowUI.Name = "ckShowUI";
-      ckShowUI.Size = new System.Drawing.Size(69, 19);
-      ckShowUI.TabIndex = 9;
-      ckShowUI.Text = "Show UI";
-      ckShowUI.UseVisualStyleBackColor = true;
+      ckBgImageHandling.AutoSize = true;
+      ckBgImageHandling.Checked = true;
+      ckBgImageHandling.CheckState = System.Windows.Forms.CheckState.Checked;
+      ckBgImageHandling.Location = new System.Drawing.Point(512, 35);
+      ckBgImageHandling.Name = "ckBgImageHandling";
+      ckBgImageHandling.Size = new System.Drawing.Size(220, 19);
+      ckBgImageHandling.TabIndex = 10;
+      ckBgImageHandling.Text = "Handle image data in another thread";
+      ckBgImageHandling.UseVisualStyleBackColor = true;
       // 
       // Form1
       // 
@@ -345,5 +359,6 @@
     private System.Windows.Forms.ColumnHeader colSupport;
     private System.Windows.Forms.ColumnHeader colExtended;
     private System.Windows.Forms.CheckBox ckShowUI;
+    private System.Windows.Forms.CheckBox ckBgImageHandling;
   }
 }

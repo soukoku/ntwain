@@ -24,7 +24,7 @@ namespace NTwain.Native
       return test == 0x4949;
     }
 
-    public static unsafe BufferedData GetBitmapData(System.Buffers.ArrayPool<byte> xferMemPool, IntPtr data)
+    public static unsafe BufferedData? GetBitmapData(IntPtr data)
     {
       var infoHeader = Marshal.PtrToStructure<BITMAPINFOHEADER>(data);
       if (infoHeader.Validate())
@@ -40,7 +40,7 @@ namespace NTwain.Native
         };
         fileHeader.bfSize = fileHeader.bfOffBits + infoHeader.biSizeImage;
 
-        var dataCopy = xferMemPool.Rent((int)fileHeader.bfSize); // new byte[fileHeader.bfSize];
+        var dataCopy = BufferedData.MemPool.Rent((int)fileHeader.bfSize); // new byte[fileHeader.bfSize];
 
         // TODO: run benchmark on which one is faster
 
@@ -58,12 +58,12 @@ namespace NTwain.Native
 
         // write image
         Marshal.Copy(data, dataCopy, fileHeaderSize, (int)fileHeader.bfSize - fileHeaderSize);
-        return new BufferedData { Buffer = dataCopy, Length = (int)fileHeader.bfSize };
+        return new BufferedData(dataCopy, (int)fileHeader.bfSize, true);
       }
       return default;
     }
 
-    public static BufferedData GetTiffData(System.Buffers.ArrayPool<byte> xferMemPool, IntPtr data)
+    public static BufferedData? GetTiffData(IntPtr data)
     {
       // Find the size of the image so we can turn it into a memory stream...
       var headerSize = Marshal.SizeOf(typeof(TIFFHEADER));
@@ -86,10 +86,9 @@ namespace NTwain.Native
 
       if (tiffSize > 0)
       {
-        var dataCopy = xferMemPool.Rent(tiffSize);// new byte[tiffSize];
-        // is this optimal?
+        var dataCopy = BufferedData.MemPool.Rent(tiffSize);// new byte[tiffSize];
         Marshal.Copy(data, dataCopy, 0, tiffSize);
-        return new BufferedData { Buffer = dataCopy, Length = tiffSize };
+        return new BufferedData(dataCopy, tiffSize, true);
       }
       return default;
     }

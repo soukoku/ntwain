@@ -3,10 +3,8 @@ using System;
 
 namespace NTwain
 {
-  // TODO: maybe a 2-level "dispose" with end of event being 1
-  // and manual dispose 2 for perf if this is not good enough.
 
-  public class TransferredEventArgs : EventArgs
+  public class TransferredEventArgs : EventArgs, IDisposable
   {
     public TransferredEventArgs(TW_AUDIOINFO info, TW_SETUPFILEXFER fileInfo)
     {
@@ -19,7 +17,7 @@ namespace NTwain
       _data = data;
     }
 
-    public TransferredEventArgs(TwainAppSession twain, TW_IMAGEINFO info, TW_SETUPFILEXFER? fileInfo, BufferedData data)
+    public TransferredEventArgs(TwainAppSession twain, TW_IMAGEINFO info, TW_SETUPFILEXFER? fileInfo, BufferedData? data)
     {
       ImageInfo = info;
       FileInfo = fileInfo;
@@ -35,13 +33,13 @@ namespace NTwain
     /// </summary>
     public bool IsImage { get; }
 
-    private readonly BufferedData _data;
+    private readonly BufferedData? _data;
     /// <summary>
     /// The complete file data if memory was involved in the transfer. 
-    /// IMPORTANT: Content of this array may not valid once
-    /// the event handler ends.
+    /// IMPORTANT: Content of this array will not be valid once
+    /// this event arg has been disposed.
     /// </summary>
-    public ReadOnlySpan<byte> Data => _data.AsSpan();
+    public ReadOnlySpan<byte> Data => _data == null ? ReadOnlySpan<byte>.Empty : _data.AsSpan();
 
     /// <summary>
     /// The file info if the transfer involved file information.
@@ -73,5 +71,9 @@ namespace NTwain
       return _twain.GetExtendedImageInfo(ref container);
     }
 
+    public void Dispose()
+    {
+      _data?.Dispose();
+    }
   }
 }
