@@ -12,11 +12,6 @@ namespace NTwain
 
   partial class TwainAppSession
   {
-    // experiment using array pool for things transferred in memory.
-    // this can pool up to a "normal" max of legal size paper in 24 bit at 300 dpi (~31MB)
-    // so the array max is made with 32 MB. Typical usage should be a lot less.
-    static readonly ArrayPool<byte> XferMemPool = ArrayPool<byte>.Create(32 * 1024 * 1024, 8);
-
     /// <summary>
     /// Can only be called in state 7, so it's hidden here and 
     /// only exposed in data transferred event.
@@ -265,11 +260,11 @@ namespace NTwain
         {
           State = STATE.S7;
           lockedPtr = Lock(dataPtr);
-          BufferedData data = default;
+          BufferedData? data = default;
 
           // TODO: don't know how to read wav/aiff from pointer yet
 
-          if (data.Buffer != null)
+          if (data != null)
           {
             try
             {
@@ -277,10 +272,9 @@ namespace NTwain
               var args = new TransferredEventArgs(info, data);
               Transferred?.Invoke(this, args);
             }
-            catch { }
-            finally
+            catch
             {
-              XferMemPool.Return(data.Buffer);
+              data.Dispose();
             }
           }
         }
@@ -321,7 +315,7 @@ namespace NTwain
       };
       memXferOSX.Memory = memXfer.Memory;
 
-      byte[] dotnetBuff = XferMemPool.Rent((int)buffSize);
+      byte[] dotnetBuff = BufferedData.MemPool.Rent((int)buffSize);
       try
       {
         do
@@ -354,7 +348,7 @@ namespace NTwain
       finally
       {
         if (memPtr != IntPtr.Zero) Free(memPtr);
-        XferMemPool.Return(dotnetBuff);
+        BufferedData.MemPool.Return(dotnetBuff);
       }
 
 
@@ -400,7 +394,7 @@ namespace NTwain
 
       // TODO: how to get actual file size before hand? Is it imagelayout?
       // otherwise will just write to stream with lots of copies
-      byte[] dotnetBuff = XferMemPool.Rent((int)buffSize);
+      byte[] dotnetBuff = BufferedData.MemPool.Rent((int)buffSize);
       using var outStream = new MemoryStream();
       try
       {
@@ -431,7 +425,7 @@ namespace NTwain
       finally
       {
         if (memPtr != IntPtr.Zero) Free(memPtr);
-        XferMemPool.Return(dotnetBuff);
+        BufferedData.MemPool.Return(dotnetBuff);
       }
 
       if (rc == TWRC.XFERDONE)
@@ -440,7 +434,7 @@ namespace NTwain
         {
           DGImage.ImageInfo.Get(ref _appIdentity, ref _currentDS, out TW_IMAGEINFO info);
           // ToArray bypasses the XferMemPool but I guess this will have to do for now
-          var args = new TransferredEventArgs(this, info, fileSetup, new BufferedData { Buffer = outStream.ToArray(), Length = (int)outStream.Length });
+          var args = new TransferredEventArgs(this, info, fileSetup, new BufferedData(outStream.ToArray(), (int)outStream.Length, false));
           Transferred?.Invoke(this, args);
         }
         catch { }
@@ -494,15 +488,15 @@ namespace NTwain
         {
           State = STATE.S7;
           lockedPtr = Lock(dataPtr);
-          BufferedData data = default;
+          BufferedData? data = default;
 
           if (ImageTools.IsDib(lockedPtr))
           {
-            data = ImageTools.GetBitmapData(XferMemPool, lockedPtr);
+            data = ImageTools.GetBitmapData(lockedPtr);
           }
           else if (ImageTools.IsTiff(lockedPtr))
           {
-            data = ImageTools.GetTiffData(XferMemPool, lockedPtr);
+            data = ImageTools.GetTiffData(lockedPtr);
           }
           else
           {
@@ -510,7 +504,7 @@ namespace NTwain
             // don't support more formats :(
           }
 
-          if (data.Buffer != null)
+          if (data != null)
           {
             try
             {
@@ -519,10 +513,9 @@ namespace NTwain
               var args = new TransferredEventArgs(this, info, null, data);
               Transferred?.Invoke(this, args);
             }
-            catch { }
-            finally
+            catch
             {
-              XferMemPool.Return(data.Buffer);
+              data.Dispose();
             }
           }
 
