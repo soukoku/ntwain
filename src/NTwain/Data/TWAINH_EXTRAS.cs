@@ -1040,8 +1040,9 @@ namespace NTwain.Data
     /// </summary>
     /// <param name="memMgr"></param>
     /// <param name="index">If item is an array specify which string to read</param>
+    /// <param name="lengthHint">Pass a value if you know how long it should be.</param>
     /// <returns></returns>
-    public unsafe string? ReadHandleString(IMemoryManager memMgr, int index = 0)
+    public unsafe string? ReadHandleString(IMemoryManager memMgr, int index = 0, int lengthHint = -1)
     {
       if (index < 0 || index >= NumItems || !IsDataAPointer) return default;
 
@@ -1053,7 +1054,7 @@ namespace NTwain.Data
       if (NumItems == 1)
       {
         // if 1, item is already the pointer to the string
-        value = LockAndReadNullTerminatedString(memMgr, itemAsPtr);
+        value = LockAndReadNullTerminatedString(memMgr, itemAsPtr, lengthHint);
       }
       else
       {
@@ -1062,17 +1063,17 @@ namespace NTwain.Data
         lockPtr += (IntPtr.Size * index);
         // is this even correct? I hope it is
         var subItemPtr = Marshal.PtrToStructure<IntPtr>(lockPtr);
-        value = LockAndReadNullTerminatedString(memMgr, subItemPtr);
+        value = LockAndReadNullTerminatedString(memMgr, subItemPtr, lengthHint);
         memMgr.Unlock(itemAsPtr);
       }
       return value;
     }
 
-    private string? LockAndReadNullTerminatedString(IMemoryManager memMgr, IntPtr data)
+    private string? LockAndReadNullTerminatedString(IMemoryManager memMgr, IntPtr data, int lengthHint = -1)
     {
       var lockPtr = memMgr.Lock(data);
       // yolo as ansi, should work in most cases
-      var value = Marshal.PtrToStringAnsi(lockPtr);
+      var value = lengthHint > 0 ? Marshal.PtrToStringAnsi(lockPtr, lengthHint) : Marshal.PtrToStringAnsi(lockPtr);
       memMgr.Unlock(data);
       return value;
     }
