@@ -1,5 +1,7 @@
-﻿using NTwain.Data;
+﻿using NTwain.Caps;
+using NTwain.Data;
 using NTwain.Triplets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,20 +12,16 @@ namespace NTwain
 
   partial class TwainAppSession
   {
-    ///// <summary>
-    ///// Gets all the supported caps for the current source.
-    ///// </summary>
-    ///// <returns></returns>
-    //public IList<CAP> GetAllCaps()
-    //{
-    //  // just as a sample of how to read cap values
+    private KnownCaps? _knownCaps;
 
-    //  if (GetCapValues(CAP.CAP_SUPPORTEDCAPS, out TW_CAPABILITY value).RC == TWRC.SUCCESS)
-    //  {
-    //    return value.ReadArray<CAP>(this);
-    //  }
-    //  return Array.Empty<CAP>();
-    //}
+    /// <summary>
+    /// Access the known and pre-defined caps as properties.
+    /// </summary>
+    public KnownCaps Caps
+    {
+      get { return _knownCaps ??= new KnownCaps(this); }
+    }
+
 
     /// <summary>
     /// Gets a CAP's actual supported operations. 
@@ -251,9 +249,9 @@ namespace NTwain
     /// <param name="cap"></param>
     /// <param name="labels"></param>
     /// <returns></returns>
-    public STS GetCapLabelEnum(CAP cap, out IList<string>? labels)
+    public STS GetCapLabelEnum(CAP cap, out IList<string> labels)
     {
-      labels = null;
+      labels = Array.Empty<string>();
       var value = new TW_CAPABILITY(cap);
       var rc = DGControl.Capability.GetLabelEnum(ref _appIdentity, ref _currentDS, ref value);
       if (rc == TWRC.SUCCESS)
