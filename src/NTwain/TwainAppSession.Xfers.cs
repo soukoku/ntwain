@@ -2,7 +2,6 @@
 using NTwain.Native;
 using NTwain.Triplets;
 using System;
-using System.Buffers;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -111,8 +110,7 @@ namespace NTwain
 
             try
             {
-              if (readyArgs.Cancel != CancelType.SkipCurrent &&
-                Transferred != null)
+              if (readyArgs.Cancel != CancelType.SkipCurrent)
               {
                 // transfer normally and only if someone's listening
                 // to DataTransferred event
@@ -146,6 +144,7 @@ namespace NTwain
                       break;
                   }
                 }
+                HandleXferCode(ref sts, ref pending);
               }
             }
             catch (Exception ex)
@@ -164,7 +163,7 @@ namespace NTwain
         } while (sts.RC == TWRC.SUCCESS && pending.Count != 0);
       }
 
-      HandleXferCode(sts);
+      HandleXferCode(ref sts, ref pending);
       if (State >= STATE.S5)
       {
         _uiThreadMarshaller.Send(obj =>
@@ -175,7 +174,7 @@ namespace NTwain
       _inTransfer = false;
     }
 
-    private void HandleXferCode(STS sts)
+    private void HandleXferCode(ref STS sts, ref TW_PENDINGXFERS pending)
     {
       switch (sts.RC)
       {
@@ -190,9 +189,9 @@ namespace NTwain
             var twain = ((TwainAppSession)obj!);
             twain.TransferCanceled?.Invoke(twain, new TransferCanceledEventArgs());
           }, this);
-          TW_PENDINGXFERS pending = default;
-          DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
-          // todo: also reset?
+          sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
+          sts = WrapInSTS(DGControl.PendingXfers.Reset(ref _appIdentity, ref _currentDS, ref pending));
+          if (sts.RC == TWRC.SUCCESS) State = STATE.S5;
           break;
         default:
           // TODO: raise error event
@@ -206,13 +205,15 @@ namespace NTwain
             case TWCC.PAPERDOUBLEFEED:
             case TWCC.PAPERJAM:
               pending = default;
-              DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
+              sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
               break;
             case TWCC.OPERATIONERROR:
               GetCapCurrent(CAP.CAP_INDICATORS, out TW_BOOL showIndicator);
               if (_userInterface.ShowUI == 0 && showIndicator == TW_BOOL.False)
               {
                 // todo: alert user and drop to S4
+                sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
+                sts = WrapInSTS(DGControl.PendingXfers.Reset(ref _appIdentity, ref _currentDS, ref pending));
               }
               break;
           }
