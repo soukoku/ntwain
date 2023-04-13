@@ -4,19 +4,32 @@ using System.Collections.Generic;
 
 namespace NTwain.Caps
 {
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <typeparam name="TValue"></typeparam>
   public class CapReader<TValue> where TValue : struct
   {
-    readonly TwainAppSession _twain;
+    protected readonly TwainAppSession _twain;
 
-    public CapReader(TwainAppSession twain, CAP cap)
+    public CapReader(TwainAppSession twain, CAP cap, float introducedVersion = 1)
     {
       _twain = twain;
       Cap = cap;
+      Introduced = introducedVersion;
     }
 
     public CAP Cap { get; }
 
-    public STS LastSTS { get; private set; }
+    /// <summary>
+    /// When this was introduced in TWAIN.
+    /// </summary>
+    public float Introduced { get; }
+
+    /// <summary>
+    /// The STS result from the most recent call with this cap wrapper.
+    /// </summary>
+    public STS LastSTS { get; protected set; }
 
     TWQC? _qc;
     public TWQC Supports
@@ -38,24 +51,24 @@ namespace NTwain.Caps
       return Array.Empty<TValue>();
     }
 
-    public TValue GetCurrent()
+    public IList<TValue> GetCurrent()
     {
-      LastSTS = _twain.GetCapCurrent(Cap, out TValue value);
+      LastSTS = _twain.GetCapCurrent(Cap, out List<TValue> value);
       if (LastSTS.IsSuccess)
       {
         return value;
       };
-      return default;
+      return Array.Empty<TValue>();
     }
 
-    public TValue GetDefault()
+    public IList<TValue> GetDefault()
     {
-      LastSTS = _twain.GetCapDefault(Cap, out TValue value);
+      LastSTS = _twain.GetCapDefault(Cap, out List<TValue> value);
       if (LastSTS.IsSuccess)
       {
         return value;
       };
-      return default;
+      return Array.Empty<TValue>();
     }
 
     public string? GetLabel()

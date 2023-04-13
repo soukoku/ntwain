@@ -60,31 +60,30 @@ namespace NTwain
     /// <param name="cap"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public STS GetCapCurrent<TValue>(CAP cap, out TValue value) where TValue : struct
+    public STS GetCapCurrent<TValue>(CAP cap, out List<TValue> value) where TValue : struct
     {
-      value = default;
+      value = new List<TValue>();
       var sts = GetCapCurrent(cap, out TW_CAPABILITY twcap);
       if (sts.RC == TWRC.SUCCESS)
       {
         switch (twcap.ConType)
         {
           case TWON.ONEVALUE:
-            value = twcap.ReadOneValue<TValue>(this);
+            value.Add(twcap.ReadOneValue<TValue>(this));
             break;
           case TWON.ENUMERATION:
             var twenum = twcap.ReadEnumeration<TValue>(this);
             if (twenum.Items != null && twenum.CurrentIndex < twenum.Items.Length)
             {
-              value = twenum.Items[twenum.CurrentIndex];
+              value.Add(twenum.Items[twenum.CurrentIndex]);
             }
             break;
           case TWON.RANGE:
-            value = twcap.ReadRange<TValue>(this).CurrentValue;
+            value.Add(twcap.ReadRange<TValue>(this).CurrentValue);
             break;
           case TWON.ARRAY:
-            // no source should ever return an array but anyway
             var twarr = twcap.ReadArray<TValue>(this);
-            if (twarr != null && twarr.Count > 0) value = twarr[0];
+            if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
             break;
           default:
             twcap.Free(this); break;
@@ -115,31 +114,30 @@ namespace NTwain
     /// <param name="cap"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public STS GetCapDefault<TValue>(CAP cap, out TValue value) where TValue : struct
+    public STS GetCapDefault<TValue>(CAP cap, out List<TValue> value) where TValue : struct
     {
-      value = default;
+      value = new List<TValue>();
       var sts = GetCapDefault(cap, out TW_CAPABILITY twcap);
       if (sts.RC == TWRC.SUCCESS)
       {
         switch (twcap.ConType)
         {
           case TWON.ONEVALUE:
-            value = twcap.ReadOneValue<TValue>(this);
+            value.Add(twcap.ReadOneValue<TValue>(this));
             break;
           case TWON.ENUMERATION:
             var twenum = twcap.ReadEnumeration<TValue>(this);
             if (twenum.Items != null && twenum.DefaultIndex < twenum.Items.Length)
             {
-              value = twenum.Items[twenum.DefaultIndex];
+              value.Add(twenum.Items[twenum.DefaultIndex]);
             }
             break;
           case TWON.RANGE:
-            value = twcap.ReadRange<TValue>(this).DefaultValue;
+            value.Add(twcap.ReadRange<TValue>(this).DefaultValue);
             break;
           case TWON.ARRAY:
-            // no source should ever return an array but anyway
             var twarr = twcap.ReadArray<TValue>(this);
-            if (twarr != null && twarr.Count > 0) value = twarr[0];
+            if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
             break;
           default:
             twcap.Free(this); break;
@@ -394,10 +392,10 @@ namespace NTwain
 
     private void RefreshCapLanguage()
     {
-      var rc2 = GetCapCurrent(CAP.CAP_LANGUAGE, out TWLG lang);
-      if (rc2.RC == TWRC.SUCCESS)
+      var rc2 = GetCapCurrent(CAP.CAP_LANGUAGE, out List<TWLG> lang);
+      if (rc2.RC == TWRC.SUCCESS && lang.Count > 0)
       {
-        Language.Set(lang);
+        Language.Set(lang.First());
       }
     }
   }

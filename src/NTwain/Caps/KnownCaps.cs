@@ -1,9 +1,4 @@
 ﻿using NTwain.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NTwain.Caps
 {
@@ -12,7 +7,7 @@ namespace NTwain.Caps
   /// </summary>
   public partial class KnownCaps
   {
-    private readonly TwainAppSession _twain;
+    protected readonly TwainAppSession _twain;
 
     public KnownCaps(TwainAppSession twain)
     {

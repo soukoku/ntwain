@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -100,7 +101,7 @@ namespace NTwain.Data
     /// <param name="memMgr"></param>
     /// <param name="values"></param>
     /// <returns></returns>
-    public static TW_CAPABILITY CreateArrayCap<TValue>(this CAP cap, IMemoryManager memMgr, params TValue[] values) where TValue : struct
+    public static TW_CAPABILITY CreateArrayCap<TValue>(this CAP cap, IMemoryManager memMgr, IList<TValue> values) where TValue : struct
     {
       if (values == null) throw new ArgumentNullException(nameof(values));
 
@@ -117,13 +118,13 @@ namespace NTwain.Data
         if (TWPlatform.IsMacOSX)
         {
           // Allocate...
-          twCap.hContainer = memMgr.Alloc((uint)(Marshal.SizeOf(default(TW_ARRAY_MACOSX)) + ((values.Length + 1) * Marshal.SizeOf(default(TW_STR255)))));
+          twCap.hContainer = memMgr.Alloc((uint)(Marshal.SizeOf(default(TW_ARRAY_MACOSX)) + ((values.Count + 1) * Marshal.SizeOf(default(TW_STR255)))));
           lockedPtr = memMgr.Lock(twCap.hContainer);
 
           // Set the meta data...
           TW_ARRAY_MACOSX twarraymacosx = default;
           twarraymacosx.ItemType = (uint)itemType;
-          twarraymacosx.NumItems = (uint)values.Length;
+          twarraymacosx.NumItems = (uint)values.Count;
           Marshal.StructureToPtr(twarraymacosx, lockedPtr, false);
 
           // Get the pointer to the ItemList...
@@ -132,13 +133,13 @@ namespace NTwain.Data
         else
         {
           // Allocate...
-          twCap.hContainer = memMgr.Alloc((uint)(Marshal.SizeOf(default(TW_ARRAY)) + ((values.Length + 1) * Marshal.SizeOf(default(TW_STR255)))));
+          twCap.hContainer = memMgr.Alloc((uint)(Marshal.SizeOf(default(TW_ARRAY)) + ((values.Count + 1) * Marshal.SizeOf(default(TW_STR255)))));
           lockedPtr = memMgr.Lock(twCap.hContainer);
 
           // Set the meta data...
           TW_ARRAY twarray = default;
           twarray.ItemType = itemType;
-          twarray.NumItems = (uint)values.Length;
+          twarray.NumItems = (uint)values.Count;
           Marshal.StructureToPtr(twarray, lockedPtr, false);
 
           // Get the pointer to the ItemList...
@@ -146,7 +147,7 @@ namespace NTwain.Data
         }
 
         // Set the ItemList...
-        for (var i = 0; i < values.Length; i++)
+        for (var i = 0; i < values.Count; i++)
         {
           WriteContainerData(lockedPtr, itemType, values[i], i);
         }
