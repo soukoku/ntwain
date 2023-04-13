@@ -35,10 +35,6 @@ been easier to implement them as classes when starting out this lib, but
 it's not really ideal anymore. The change also makes them match the twain.h
 names and the spec pdf.
 
-* Caps no longer have their own wrapper properties for each type, though common
-helpers are provided. This makes calling custom caps possible but you will have to 
-consult the docs on what containers and values they should be.
-
 * All lower-level TWAIN APIs are public instead of hidden away.
 
 * `TwainAppSession` longer hosts its own internal message pump. Apps will need to hook 

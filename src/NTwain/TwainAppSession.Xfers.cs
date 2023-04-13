@@ -3,6 +3,7 @@ using NTwain.Native;
 using NTwain.Triplets;
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace NTwain
@@ -56,8 +57,8 @@ namespace NTwain
 
       var imgXferMech = TWSX.NATIVE;
       var audXferMech = TWSX.NATIVE;
-      if (xferImage) GetCapCurrent(CAP.ICAP_XFERMECH, out imgXferMech);
-      else if (xferAudio) GetCapCurrent(CAP.ACAP_XFERMECH, out audXferMech);
+      if (xferImage) imgXferMech = Caps.ICAP_XFERMECH.GetCurrent().FirstOrDefault();
+      else if (xferAudio) audXferMech = Caps.ACAP_XFERMECH.GetCurrent().FirstOrDefault();
 
       TW_PENDINGXFERS pending = default;
       var sts = WrapInSTS(DGControl.PendingXfers.Get(ref _appIdentity, ref _currentDS, ref pending));
@@ -208,8 +209,8 @@ namespace NTwain
               sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
               break;
             case TWCC.OPERATIONERROR:
-              GetCapCurrent(CAP.CAP_INDICATORS, out TW_BOOL showIndicator);
-              if (_userInterface.ShowUI == 0 && showIndicator == TW_BOOL.False)
+              var indicators = Caps.CAP_INDICATORS.GetCurrent().FirstOrDefault();
+              if (_userInterface.ShowUI == 0 && indicators == TW_BOOL.False)
               {
                 // todo: alert user and drop to S4
                 sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));

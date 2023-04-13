@@ -302,7 +302,16 @@ namespace WinFormSample
             .MakeGenericMethod(enumType);
           var args = new object?[] { cap, null };
           currentMethod.Invoke(twain, args);
-          return args[1].ToString();
+          var values = (System.Collections.IList)args[1]!;
+          if (values.Count == 1)
+          {
+            return values[0]!.ToString()!;
+          }
+          else if (values.Count > 1)
+          {
+            return string.Join(", ", values);
+          }
+          return "";
         }
         else
         {
@@ -311,7 +320,16 @@ namespace WinFormSample
             .MakeGenericMethod(enumType);
           var args = new object?[] { cap, null };
           defaultMethod.Invoke(twain, args);
-          return args[1].ToString();
+          var values = (System.Collections.IList)args[1]!;
+          if (values.Count == 1)
+          {
+            return values[0]!.ToString()!;
+          }
+          else if (values.Count > 1)
+          {
+            return string.Join(", ", values);
+          }
+          return "";
         }
       }
 
@@ -320,69 +338,69 @@ namespace WinFormSample
       {
         case TWTY.UINT8:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out byte ubval) :
+            twain.GetCapCurrent(cap, out List<byte> ubval) :
             twain.GetCapDefault(cap, out ubval);
-          return ubval.ToString();
+          return ubval.FirstOrDefault().ToString();
         case TWTY.INT8:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out sbyte sbval) :
+            twain.GetCapCurrent(cap, out List<sbyte> sbval) :
             twain.GetCapDefault(cap, out sbval);
-          return sbval.ToString();
+          return sbval.FirstOrDefault().ToString();
         case TWTY.UINT16:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out ushort usval) :
+            twain.GetCapCurrent(cap, out List<ushort> usval) :
             twain.GetCapDefault(cap, out usval);
-          return usval.ToString();
+          return usval.FirstOrDefault().ToString();
         case TWTY.INT16:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out short ssval) :
+            twain.GetCapCurrent(cap, out List<short> ssval) :
             twain.GetCapDefault(cap, out ssval);
-          return ssval.ToString();
+          return ssval.FirstOrDefault().ToString();
         case TWTY.UINT32:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out uint uival) :
+            twain.GetCapCurrent(cap, out List<uint> uival) :
             twain.GetCapDefault(cap, out uival);
-          return uival.ToString();
+          return uival.FirstOrDefault().ToString();
         case TWTY.INT32:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out int sival) :
+            twain.GetCapCurrent(cap, out List<int> sival) :
             twain.GetCapDefault(cap, out sival);
-          return sival.ToString();
+          return sival.FirstOrDefault().ToString();
         case TWTY.BOOL:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out TW_BOOL tbval) :
+            twain.GetCapCurrent(cap, out List<TW_BOOL> tbval) :
             twain.GetCapDefault(cap, out tbval);
-          return tbval.ToString();
+          return tbval.FirstOrDefault().ToString();
         case TWTY.FIX32:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out TW_FIX32 fxval) :
+            twain.GetCapCurrent(cap, out List<TW_FIX32> fxval) :
             twain.GetCapDefault(cap, out fxval);
-          return fxval.ToString();
+          return fxval.FirstOrDefault().ToString();
         case TWTY.FRAME:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out TW_FRAME frval) :
+            twain.GetCapCurrent(cap, out List<TW_FRAME> frval) :
             twain.GetCapDefault(cap, out frval);
-          return frval.ToString();
+          return frval.FirstOrDefault().ToString();
         case TWTY.STR32:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out TW_STR32 s32val) :
+            twain.GetCapCurrent(cap, out List<TW_STR32> s32val) :
             twain.GetCapDefault(cap, out s32val);
-          return s32val.ToString();
+          return s32val.FirstOrDefault().ToString();
         case TWTY.STR64:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out TW_STR64 s64val) :
+            twain.GetCapCurrent(cap, out List<TW_STR64> s64val) :
             twain.GetCapDefault(cap, out s64val);
-          return s64val.ToString();
+          return s64val.FirstOrDefault().ToString();
         case TWTY.STR128:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out TW_STR128 s128val) :
+            twain.GetCapCurrent(cap, out List<TW_STR128> s128val) :
             twain.GetCapDefault(cap, out s128val);
-          return s128val.ToString();
+          return s128val.FirstOrDefault().ToString();
         case TWTY.STR255:
           sts = forCurrent ?
-            twain.GetCapCurrent(cap, out TW_STR255 s255val) :
+            twain.GetCapCurrent(cap, out List<TW_STR255> s255val) :
             twain.GetCapDefault(cap, out s255val);
-          return s255val.ToString();
+          return s255val.FirstOrDefault().ToString();
         case TWTY.HANDLE:
           break;
       }
