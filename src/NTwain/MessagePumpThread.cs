@@ -38,22 +38,32 @@ namespace NTwain
 
       while (_dummyForm == null || !_dummyForm.IsHandleCreated)
       {
-        await Task.Delay(100);
+        await Task.Delay(50);
       }
 
       STS sts = default;
-      ManualResetEventSlim evt = new();
+      TaskCompletionSource<bool> tcs = new();
       _dummyForm.BeginInvoke(() =>
       {
-        sts = twain.OpenDSM(_dummyForm.Handle, SynchronizationContext.Current!);
-        if (sts.IsSuccess)
+        try
         {
-          twain.AddWinformFilter();
-          _twain = twain;
+          sts = twain.OpenDSM(_dummyForm.Handle, SynchronizationContext.Current!);
+          if (sts.IsSuccess)
+          {
+            twain.AddWinformFilter();
+            _twain = twain;
+          }
+          else
+          {
+            _dummyForm.Close();
+          }
         }
-        evt.Set();
+        finally
+        {
+          tcs.TrySetResult(true);
+        }
       });
-      evt.Wait();
+      await tcs.Task;
       return sts;
     }
 
