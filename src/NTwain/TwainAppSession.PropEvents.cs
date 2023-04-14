@@ -57,14 +57,11 @@ namespace NTwain
         if (_state != value)
         {
           _state = value;
-          _uiThreadMarshaller.Send(obj =>
+          try
           {
-            try
-            {
-              ((TwainAppSession)obj!).StateChanged?.Invoke(this, value);
-            }
-            catch { }
-          }, this);
+            StateChanged?.Invoke(this, value);
+          }
+          catch { }
         }
       }
     }

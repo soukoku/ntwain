@@ -19,26 +19,24 @@ namespace NTwain
     /// <summary>
     /// Creates TWAIN session with app info derived an executable file.
     /// </summary>
-    /// <param name="uiThreadMarshaller"></param>
     /// <param name="exeFilePath"></param>
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
-    public TwainAppSession(SynchronizationContext uiThreadMarshaller,
+    public TwainAppSession(
       string exeFilePath,
       TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
-      this(uiThreadMarshaller, FileVersionInfo.GetVersionInfo(exeFilePath), appLanguage, appCountry)
+      this(FileVersionInfo.GetVersionInfo(exeFilePath), appLanguage, appCountry)
     { }
     /// <summary>
     /// Creates TWAIN session with app info derived from a <see cref="FileVersionInfo"/> object.
     /// </summary>
-    /// <param name="uiThreadMarshaller"></param>
     /// <param name="appInfo"></param>
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
-    public TwainAppSession(SynchronizationContext uiThreadMarshaller,
+    public TwainAppSession(
         FileVersionInfo appInfo,
         TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
-        this(uiThreadMarshaller,
+        this(
           appInfo.CompanyName ?? "",
           appInfo.ProductName ?? "",
           appInfo.ProductName ?? "",
@@ -48,7 +46,6 @@ namespace NTwain
     /// <summary>
     /// Creates TWAIN session with explicit app info.
     /// </summary>
-    /// <param name="uiThreadMarshaller"></param>
     /// <param name="companyName"></param>
     /// <param name="productFamily"></param>
     /// <param name="productName"></param>
@@ -57,12 +54,15 @@ namespace NTwain
     /// <param name="appLanguage"></param>
     /// <param name="appCountry"></param>
     /// <param name="supportedTypes"></param>
-    public TwainAppSession(SynchronizationContext uiThreadMarshaller,
+    public TwainAppSession(
         string companyName, string productFamily, string productName,
         Version productVersion, string productDescription = "",
         TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA,
         DG supportedTypes = DG.IMAGE)
     {
+#if WINDOWS || NETFRAMEWORK
+      DSM.DsmLoader.TryLoadCustomDSM();
+#endif
       // todo: find a better place for this
       if (!__encodingRegistered)
       {
@@ -93,7 +93,6 @@ namespace NTwain
       _legacyCallbackDelegate = LegacyCallbackHandler;
       _osxCallbackDelegate = OSXCallbackHandler;
 
-      _uiThreadMarshaller = uiThreadMarshaller;
       StartTransferThread();
     }
 
@@ -104,7 +103,7 @@ namespace NTwain
 #endif
     // test threads a bit
     //readonly BlockingCollection<MSG> _bgPendingMsgs = new();
-    private readonly SynchronizationContext _uiThreadMarshaller;
+    SynchronizationContext? _pumpThreadMarshaller;
     bool _closeDsRequested;
     bool _inTransfer;
     readonly AutoResetEvent _xferReady = new(false);
@@ -176,13 +175,15 @@ namespace NTwain
     /// Loads and opens the TWAIN data source manager.
     /// </summary>
     /// <param name="hwnd">Required if on Windows.</param>
+    /// <param name="uiThreadMarshaller">Context for TWAIN to invoke certain actions on the thread that the hwnd lives on.</param>
     /// <returns></returns>
-    public STS OpenDSM(IntPtr hwnd)
+    public STS OpenDSM(IntPtr hwnd, SynchronizationContext uiThreadMarshaller)
     {
       var rc = DGControl.Parent.OpenDSM(ref _appIdentity, hwnd);
       if (rc == TWRC.SUCCESS)
       {
         _hwnd = hwnd;
+        _pumpThreadMarshaller = uiThreadMarshaller;
         State = STATE.S3;
         // get default source
         if (DGControl.Identity.GetDefault(ref _appIdentity, out TW_IDENTITY_LEGACY ds) == TWRC.SUCCESS)
@@ -223,6 +224,7 @@ namespace NTwain
         }
         catch { }
         _hwnd = IntPtr.Zero;
+        _pumpThreadMarshaller = null;
       }
       return WrapInSTS(rc, true);
     }

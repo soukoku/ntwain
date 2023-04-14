@@ -55,5 +55,43 @@ namespace NTwain.Native
       GPTR = GMEM_FIXED | GMEM_ZEROINIT,
       GHND = GMEM_MOVEABLE | GMEM_ZEROINIT
     }
+
+//    [Flags]
+//    public enum PEEK_MESSAGE_REMOVE_TYPE : uint
+//    {
+//      PM_NOREMOVE = 0x00000000,
+//      PM_REMOVE = 0x00000001,
+//      PM_NOYIELD = 0x00000002,
+//      PM_QS_INPUT = 0x04070000,
+//      PM_QS_POSTMESSAGE = 0x00980000,
+//      PM_QS_PAINT = 0x00200000,
+//      PM_QS_SENDMESSAGE = 0x00400000,
+//    }
+
+//#if NET7_0_OR_GREATER
+//    [LibraryImport("USER32.dll")]
+//    public static partial int PeekMessageW(ref WIN_MESSAGE lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, PEEK_MESSAGE_REMOVE_TYPE wRemoveMsg);
+
+//    [LibraryImport("USER32.dll", SetLastError = true)]
+//    public static partial int GetMessageW(ref WIN_MESSAGE lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+//    [LibraryImport("USER32.dll")]
+//    public static partial int TranslateMessage(ref WIN_MESSAGE lpMsg);
+
+//    [LibraryImport("USER32.dll")]
+//    public static partial nint DispatchMessageW(ref WIN_MESSAGE lpMsg);
+//#else
+//    [DllImport("USER32.dll")]
+//    public static extern int PeekMessageW(ref WIN_MESSAGE lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, PEEK_MESSAGE_REMOVE_TYPE wRemoveMsg);
+
+//    [DllImport("USER32.dll", SetLastError = true)]
+//    public static extern int GetMessageW(ref WIN_MESSAGE lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+//    [DllImport("USER32.dll")]
+//    public static extern int TranslateMessage(ref WIN_MESSAGE lpMsg);
+
+//    [DllImport("USER32.dll")]
+//    public static extern nint DispatchMessageW(ref WIN_MESSAGE lpMsg);
+//#endif
   }
 }

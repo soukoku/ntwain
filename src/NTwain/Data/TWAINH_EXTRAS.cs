@@ -660,7 +660,7 @@ namespace NTwain.Data
     /// <summary>
     /// A simplified check on whether this has valid data from DSM.
     /// </summary>
-    public bool HasValue => Id == 0 && ProtocolMajor == 0 && ProtocolMinor == 0;
+    public bool HasValue => Id != 0 && ProtocolMajor != 0 && ProtocolMinor != 0;
 
     public override string ToString()
     {

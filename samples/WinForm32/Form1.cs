@@ -18,6 +18,8 @@ namespace WinFormSample
 {
   public partial class Form1 : Form
   {
+    bool useDiyPump = true;
+    MessagePumpThread pump;
     TwainAppSession twain;
     readonly string saveFolder;
     readonly Stopwatch watch = new();
@@ -34,9 +36,10 @@ namespace WinFormSample
       var libVer = FileVersionInfo.GetVersionInfo(typeof(TwainAppSession).Assembly.Location).ProductVersion;
       Text += $"{(TWPlatform.Is32bit ? " 32bit" : " 64bit")} on NTwain {libVer}";
 
+      pump = new MessagePumpThread();
       TWPlatform.PreferLegacyDSM = false;
 
-      twain = new TwainAppSession(SynchronizationContext.Current!, Assembly.GetExecutingAssembly().Location);
+      twain = new TwainAppSession(Assembly.GetExecutingAssembly().Location);
       twain.StateChanged += Twain_StateChanged;
       twain.DefaultSourceChanged += Twain_DefaultSourceChanged;
       twain.CurrentSourceChanged += Twain_CurrentSourceChanged;
@@ -62,11 +65,14 @@ namespace WinFormSample
 
     private void Twain_SourceDisabled(TwainAppSession sender, TW_IDENTITY_LEGACY e)
     {
-      if (watch.IsRunning)
+      BeginInvoke(() =>
       {
-        watch.Stop();
-        MessageBox.Show($"Took {watch.Elapsed} to finish that transfer.");
-      }
+        if (watch.IsRunning)
+        {
+          watch.Stop();
+          MessageBox.Show($"Took {watch.Elapsed} to finish that transfer.");
+        }
+      });
     }
 
     private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
@@ -85,18 +91,31 @@ namespace WinFormSample
     {
       base.OnHandleCreated(e);
 
-
-      var hwnd = this.Handle;
-      var rc = twain.OpenDSM(hwnd);
-      twain.AddWinformFilter();
-      Debug.WriteLine($"OpenDSM={rc}");
+      if (useDiyPump)
+      {
+        _ = pump.AttachAsync(twain);
+      }
+      else
+      {
+        var hwnd = this.Handle;
+        var rc = twain.OpenDSM(hwnd, SynchronizationContext.Current!);
+        twain.AddWinformFilter();
+        Debug.WriteLine($"OpenDSM={rc}");
+      }
     }
 
     protected override void OnClosing(CancelEventArgs e)
     {
-      var finalState = twain.TryStepdown(STATE.S2);
-      Debug.WriteLine($"Stepdown result state={finalState}");
-      twain.RemoveWinformFilter();
+      if (useDiyPump)
+      {
+        pump.Detatch();
+      }
+      else
+      {
+        var finalState = twain.TryStepdown(STATE.S2);
+        Debug.WriteLine($"Stepdown result state={finalState}");
+        twain.RemoveWinformFilter();
+      }
       base.OnClosing(e);
     }
 
@@ -214,39 +233,42 @@ namespace WinFormSample
 
     private void Twain_DefaultSourceChanged(TwainAppSession sender, TW_IDENTITY_LEGACY ds)
     {
-      lblDefault.Text = ds.ProductName;
+      BeginInvoke(() => lblDefault.Text = ds.ProductName);
     }
 
     private void Twain_StateChanged(TwainAppSession sender, STATE state)
     {
-      Invoke(() => lblState.Text = state.ToString());
+      BeginInvoke(() => lblState.Text = state.ToString());
     }
 
     private void Twain_CurrentSourceChanged(TwainAppSession sender, TW_IDENTITY_LEGACY ds)
     {
-      lblCurrent.Text = ds.ToString();
-      if (twain.State == STATE.S4)
+      BeginInvoke(() =>
       {
-        LoadCapInfoList();
+        lblCurrent.Text = ds.ToString();
+        if (twain.State == STATE.S4)
+        {
+          LoadCapInfoList();
 
-        // never seen a driver support these but here it is to test it
-        if (twain.GetCapLabel(CAP.ICAP_SUPPORTEDSIZES, out string? test).RC == TWRC.SUCCESS)
-        {
-          Debug.WriteLine($"Supported sizes label from ds = {test}");
+          // never seen a driver support these but here it is to test it
+          if (twain.GetCapLabel(CAP.ICAP_SUPPORTEDSIZES, out string? test).RC == TWRC.SUCCESS)
+          {
+            Debug.WriteLine($"Supported sizes label from ds = {test}");
+          }
+          if (twain.GetCapHelp(CAP.ICAP_SUPPORTEDSIZES, out string? test2).RC == TWRC.SUCCESS)
+          {
+            Debug.WriteLine($"Supported sizes help from ds = {test2}");
+          }
+          if (twain.GetCapLabelEnum(CAP.ICAP_SUPPORTEDSIZES, out IList<string>? test3).RC == TWRC.SUCCESS && test3 != null)
+          {
+            Debug.WriteLine($"Supported sizes label enum from ds = {string.Join(Environment.NewLine, test3)}");
+          }
         }
-        if (twain.GetCapHelp(CAP.ICAP_SUPPORTEDSIZES, out string? test2).RC == TWRC.SUCCESS)
+        else
         {
-          Debug.WriteLine($"Supported sizes help from ds = {test2}");
+          capListView.Items.Clear();
         }
-        if (twain.GetCapLabelEnum(CAP.ICAP_SUPPORTEDSIZES, out IList<string>? test3).RC == TWRC.SUCCESS && test3 != null)
-        {
-          Debug.WriteLine($"Supported sizes label enum from ds = {string.Join(Environment.NewLine, test3)}");
-        }
-      }
-      else
-      {
-        capListView.Items.Clear();
-      }
+      });
     }
 
     private void LoadCapInfoList()

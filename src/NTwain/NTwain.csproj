@@ -21,6 +21,18 @@
   <ItemGroup Condition=" '$(TargetFramework)' != 'net462'">
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="runtimes\win-x64\native\TWAINDSM.dll" />
+    <None Remove="runtimes\win-x86\native\TWAINDSM.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="runtimes\win-x64\native\TWAINDSM.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="runtimes\win-x86\native\TWAINDSM.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   
   <ItemGroup>
     <None Update="DSM\DSMGenerator.dummy">

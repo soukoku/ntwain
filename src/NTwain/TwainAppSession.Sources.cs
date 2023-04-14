@@ -106,6 +106,18 @@ namespace NTwain
     /// <returns></returns>
     public STS EnableSource(bool showUI, bool uiOnly)
     {
+      if (_pumpThreadMarshaller == null) return EnableSourceReal(showUI, uiOnly);
+
+      var sts = default(STS);
+      _pumpThreadMarshaller.Send(_ =>
+      {
+        sts = EnableSourceReal(showUI, uiOnly);
+      }, null);
+      return sts;
+    }
+
+    private STS EnableSourceReal(bool showUI, bool uiOnly)
+    {
       if (State > STATE.S4)
       {
         // already enabled :(
@@ -136,6 +148,17 @@ namespace NTwain
     /// </summary>
     /// <returns></returns>
     public STS DisableSource()
+    {
+      if (_pumpThreadMarshaller == null) return DisableSourceReal();
+
+      var sts = default(STS);
+      _pumpThreadMarshaller.Send(_ =>
+      {
+        sts = DisableSourceReal();
+      }, null);
+      return sts;
+    }
+    STS DisableSourceReal()
     {
       _closeDsRequested = true;
       var rc = DGControl.UserInterface.DisableDS(ref _appIdentity, ref _currentDS, ref _userInterface);
