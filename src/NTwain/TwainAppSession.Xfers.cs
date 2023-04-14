@@ -67,18 +67,11 @@ namespace NTwain
         do
         {
           var readyArgs = new TransferReadyEventArgs(pending.Count, (TWEJ)pending.EOJ);
-          if (TransferReady != null)
+          try
           {
-            _uiThreadMarshaller.Send(_ =>
-            {
-              try
-              {
-
-                TransferReady.Invoke(this, readyArgs);
-              }
-              catch { } // don't let consumer kill the loop if they have exception
-            }, null);
+            TransferReady?.Invoke(this, readyArgs);
           }
+          catch { } // don't let consumer kill the loop if they have exception
 
           if (readyArgs.Cancel == CancelType.EndNow || _closeDsRequested)
           {
@@ -150,27 +143,21 @@ namespace NTwain
             }
             catch (Exception ex)
             {
-              _uiThreadMarshaller.Send(obj =>
+              try
               {
-                try
-                {
-                  var twain = ((TwainAppSession)obj!);
-                  twain.TransferError?.Invoke(twain, new TransferErrorEventArgs(ex));
-                }
-                catch { }
-              }, this);
+                TransferError?.Invoke(this, new TransferErrorEventArgs(ex));
+              }
+              catch { }
             }
           }
         } while (sts.RC == TWRC.SUCCESS && pending.Count != 0);
       }
 
       HandleXferCode(ref sts, ref pending);
+
       if (State >= STATE.S5)
       {
-        _uiThreadMarshaller.Send(obj =>
-        {
-          ((TwainAppSession)obj!).DisableSource();
-        }, this);
+        DisableSource();
       }
       _inTransfer = false;
     }
@@ -185,11 +172,11 @@ namespace NTwain
           break;
         case TWRC.CANCEL:
           // might eventually have option to cancel this or all like transfer ready
-          _uiThreadMarshaller.Send(obj =>
+          try
           {
-            var twain = ((TwainAppSession)obj!);
-            twain.TransferCanceled?.Invoke(twain, new TransferCanceledEventArgs());
-          }, this);
+            TransferCanceled?.Invoke(this, new TransferCanceledEventArgs());
+          }
+          catch { }
           sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
           sts = WrapInSTS(DGControl.PendingXfers.Reset(ref _appIdentity, ref _currentDS, ref pending));
           if (sts.RC == TWRC.SUCCESS) State = STATE.S5;
