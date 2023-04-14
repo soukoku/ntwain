@@ -37,10 +37,6 @@ names and the spec pdf.
 
 * All lower-level TWAIN APIs are public instead of hidden away.
 
-* `TwainAppSession` longer hosts its own internal message pump. Apps will need to hook 
-into their UI message loop on Windows (supports Winform and WPF at the moment).
-
-
 ## Using the lib
 
 Before using this lib, you are required to be reasonably 
