@@ -21,11 +21,11 @@
   <ItemGroup Condition=" '$(TargetFramework)' != 'net462'">
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'!='Release'">
     <None Remove="runtimes\win-x64\native\TWAINDSM.dll" />
     <None Remove="runtimes\win-x86\native\TWAINDSM.dll" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'!='Release'">
     <Content Include="runtimes\win-x64\native\TWAINDSM.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

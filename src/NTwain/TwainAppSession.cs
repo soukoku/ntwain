@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace NTwain
@@ -99,6 +100,7 @@ namespace NTwain
     internal IntPtr _hwnd;
     internal TW_USERINTERFACE _userInterface; // kept around for disable to use
 #if WINDOWS || NETFRAMEWORK
+    MessagePumpThread? _selfPump;
     TW_EVENT _procEvent; // kept here so the alloc/free only happens once
 #endif
     // test threads a bit
@@ -146,7 +148,6 @@ namespace NTwain
         {
           // this will end the bg thread
           _xferReady.Dispose();
-
           //_bgPendingMsgs.CompleteAdding();
         }
 #if WINDOWS || NETFRAMEWORK
@@ -170,6 +171,45 @@ namespace NTwain
       GC.SuppressFinalize(this);
     }
 
+#if WINDOWS || NETFRAMEWORK
+    /// <summary>
+    /// Loads and opens the TWAIN data source manager in a self-hosted message queue thread.
+    /// Highly experimental and only use if necessary. Must close with <see cref="CloseDSMAsync"/>
+    /// if used.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<STS> OpenDSMAsync()
+    {
+      if (_selfPump == null)
+      {
+        var pump = new MessagePumpThread();
+        var sts = await pump.AttachAsync(this);
+        if (sts.IsSuccess)
+        {
+          _selfPump = pump;
+        }
+        return sts;
+      }
+      return new STS { RC = TWRC.FAILURE, STATUS = new TW_STATUS { ConditionCode = TWCC.SEQERROR } };
+    }
+
+    /// <summary>
+    /// Closes the TWAIN data source manager if opened with <see cref="OpenDSMAsync"/>.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public async Task<STS> CloseDSMAsync()
+    {
+      if (_selfPump == null) throw new InvalidOperationException($"Cannot close if not opened with {nameof(OpenDSMAsync)}().");
+
+      var sts = await _selfPump.DetatchAsync();
+      if (sts.IsSuccess)
+      {
+        _selfPump = null;
+      }
+      return sts;
+    }
+#endif
 
     /// <summary>
     /// Loads and opens the TWAIN data source manager.
@@ -210,7 +250,20 @@ namespace NTwain
     /// Closes the TWAIN data source manager.
     /// </summary>
     /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public STS CloseDSM()
+    {
+#if WINDOWS || NETFRAMEWORK
+      if (_selfPump != null) throw new InvalidOperationException($"Cannot close if opened with {nameof(OpenDSMAsync)}().");
+#endif
+      return CloseDSMReal();
+    }
+
+    /// <summary>
+    /// Closes the TWAIN data source manager.
+    /// </summary>
+    /// <returns></returns>
+    internal STS CloseDSMReal()
     {
       var rc = DGControl.Parent.CloseDSM(ref _appIdentity, _hwnd);
       if (rc == TWRC.SUCCESS)
@@ -312,7 +365,29 @@ namespace NTwain
             CloseSource();
             break;
           case STATE.S3:
+#if WINDOWS || NETFRAMEWORK
+            if (_selfPump != null)
+            {
+              try
+              {
+                _ = CloseDSMAsync();
+              }
+              catch (InvalidOperationException) { }
+            }
+            else
+            {
+              CloseDSM();
+            }
+#else
             CloseDSM();
+#endif
+            break;
+          case STATE.S2:
+            // can't really go lower
+            if (targetState < STATE.S2)
+            {
+              return State;
+            }
             break;
         }
         if (oldState == State)

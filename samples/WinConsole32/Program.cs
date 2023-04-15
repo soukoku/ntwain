@@ -11,14 +11,13 @@ namespace WinConsole32
       var libVer = FileVersionInfo.GetVersionInfo(typeof(TwainAppSession).Assembly.Location).ProductVersion;
       Console.WriteLine($"Console sample {(TWPlatform.Is32bit ? " 32bit" : " 64bit")} on NTwain {libVer}");
 
-      MessagePumpThread pump = new MessagePumpThread();
       TwainAppSession session = new TwainAppSession(Environment.ProcessPath!);
 
       session.StateChanged += Session_StateChanged;
       session.SourceDisabled += Session_SourceDisabled1;
       session.Transferred += Session_Transferred;
 
-      var sts = await pump.AttachAsync(session);
+      var sts = await session.OpenDSMAsync();
 
       if (sts.IsSuccess)
       {

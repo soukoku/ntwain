@@ -19,7 +19,6 @@ namespace WinFormSample
   public partial class Form1 : Form
   {
     bool useDiyPump = true;
-    MessagePumpThread pump;
     TwainAppSession twain;
     readonly string saveFolder;
     readonly Stopwatch watch = new();
@@ -36,7 +35,6 @@ namespace WinFormSample
       var libVer = FileVersionInfo.GetVersionInfo(typeof(TwainAppSession).Assembly.Location).ProductVersion;
       Text += $"{(TWPlatform.Is32bit ? " 32bit" : " 64bit")} on NTwain {libVer}";
 
-      pump = new MessagePumpThread();
       TWPlatform.PreferLegacyDSM = false;
 
       twain = new TwainAppSession(Assembly.GetExecutingAssembly().Location);
@@ -87,35 +85,29 @@ namespace WinFormSample
       }
     }
 
-    protected override void OnHandleCreated(EventArgs e)
+    protected override async void OnHandleCreated(EventArgs e)
     {
       base.OnHandleCreated(e);
 
       if (useDiyPump)
       {
-        _ = pump.AttachAsync(twain);
+        var sts = await twain.OpenDSMAsync();
+        Debug.WriteLine($"OpenDSMAsync={sts}");
       }
       else
       {
         var hwnd = this.Handle;
-        var rc = twain.OpenDSM(hwnd, SynchronizationContext.Current!);
+        var sts = twain.OpenDSM(hwnd, SynchronizationContext.Current!);
         twain.AddWinformFilter();
-        Debug.WriteLine($"OpenDSM={rc}");
+        Debug.WriteLine($"OpenDSM={sts}");
       }
     }
 
     protected override void OnClosing(CancelEventArgs e)
     {
-      if (useDiyPump)
-      {
-        pump.Detatch();
-      }
-      else
-      {
-        var finalState = twain.TryStepdown(STATE.S2);
-        Debug.WriteLine($"Stepdown result state={finalState}");
-        twain.RemoveWinformFilter();
-      }
+      var finalState = twain.TryStepdown(STATE.S2);
+      Debug.WriteLine($"Stepdown result state={finalState}");
+      twain.RemoveWinformFilter();
       base.OnClosing(e);
     }
 

@@ -1017,7 +1017,7 @@ namespace NTwain.Data
     /// For pointers you'd read it yourself with 
     /// <see cref="ValueReader.ReadTWTYData{TValue}(IntPtr, TWTY, int)"/>.
     /// Unless it's a handle (<see cref="TWTY.HANDLE"/>) to non-twain-strings, then you'd use 
-    /// <see cref="ReadHandleString(IMemoryManager, int)"/>.
+    /// <see cref="ReadHandleString"/>.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
     /// <returns></returns>
