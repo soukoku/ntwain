@@ -12,7 +12,7 @@ namespace NTwain
   /// For use under Windows to host a message pump in non-winform/wpf apps.
   /// This is highly experimental.
   /// </summary>
-  public class MessagePumpThread
+  class MessagePumpThread
   {
     DummyForm? _dummyForm;
     TwainAppSession? _twain;
@@ -70,11 +70,32 @@ namespace NTwain
     /// <summary>
     /// Detatches a previously attached session and stops the thread.
     /// </summary>
-    public void Detatch()
+    public async Task<STS> DetatchAsync()
     {
+      STS sts = default;
       if (_dummyForm != null && _twain != null)
       {
-        _dummyForm.BeginInvoke(_dummyForm.Close);
+        TaskCompletionSource<bool> tcs = new();
+        _dummyForm.BeginInvoke(() =>
+        {
+          sts = _twain.CloseDSMReal();
+          if (sts.IsSuccess)
+          {
+            _twain.RemoveWinformFilter();
+            _dummyForm.Close();
+            _twain = null;
+          }
+        });
+        await tcs.Task;
+      }
+      return sts;
+    }
+
+    public void BringWindowToFront()
+    {
+      if (_dummyForm != null)
+      {
+        _dummyForm.BeginInvoke(_dummyForm.BringToFront);
       }
     }
 
@@ -84,13 +105,6 @@ namespace NTwain
       _dummyForm = new DummyForm();
       _dummyForm.FormClosed += (s, e) =>
       {
-        if (_twain != null)
-        {
-          _twain.TryStepdown(STATE.S4);
-          _twain.RemoveWinformFilter();
-          _twain.CloseDSM();
-          _twain = null;
-        }
         _dummyForm = null;
       };
       Application.Run(_dummyForm);
@@ -103,6 +117,12 @@ namespace NTwain
       {
         ShowInTaskbar = false;
         WindowState = FormWindowState.Minimized;
+      }
+
+      protected override void OnShown(EventArgs e)
+      {
+        BringToFront();
+        base.OnShown(e);
       }
     }
   }

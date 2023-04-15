@@ -35,7 +35,7 @@ namespace NTwain
 
     /// <summary>
     /// Registers this session for use in a WPF UI thread.
-    /// This requires the hwnd used in <see cref="OpenDSM(IntPtr)"/>
+    /// This requires the hwnd used in <see cref="OpenDSM"/>
     /// be a valid WPF window handle.
     /// </summary>
     public void AddWpfHook()
