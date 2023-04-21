@@ -37,7 +37,7 @@ namespace WinFormSample
 
       TWPlatform.PreferLegacyDSM = false;
 
-      twain = new TwainAppSession(Assembly.GetExecutingAssembly().Location);
+      twain = new TwainAppSession(new TW_IDENTITY_LEGACY(Assembly.GetExecutingAssembly().Location));
       twain.StateChanged += Twain_StateChanged;
       twain.DefaultSourceChanged += Twain_DefaultSourceChanged;
       twain.CurrentSourceChanged += Twain_CurrentSourceChanged;

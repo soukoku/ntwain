@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace NTwain.Data
 {
@@ -32,6 +34,7 @@ namespace NTwain.Data
       }
 
 #else
+      Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
       if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
       {
         IsWindows = true;
@@ -657,6 +660,68 @@ namespace NTwain.Data
   }
   partial struct TW_IDENTITY_LEGACY
   {
+    /// <summary>
+    /// Creates app info derived an executable file.
+    /// </summary>
+    /// <param name="exeFilePath"></param>
+    /// <param name="appLanguage"></param>
+    /// <param name="appCountry"></param>
+    public TW_IDENTITY_LEGACY(
+      string exeFilePath,
+      TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
+      this(FileVersionInfo.GetVersionInfo(exeFilePath), appLanguage, appCountry)
+    { }
+    /// <summary>
+    /// Creates app info derived from a <see cref="FileVersionInfo"/> object.
+    /// </summary>
+    /// <param name="appInfo"></param>
+    /// <param name="appLanguage"></param>
+    /// <param name="appCountry"></param>
+    public TW_IDENTITY_LEGACY(
+        FileVersionInfo appInfo,
+        TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA) :
+        this(
+          appInfo.CompanyName ?? "",
+          appInfo.ProductName ?? "",
+          appInfo.ProductName ?? "",
+          new Version(appInfo.FileVersion ?? "1.0"),
+          appInfo.FileDescription ?? "", appLanguage, appCountry)
+    { }
+    /// <summary>
+    /// Creates id with explicit app info.
+    /// </summary>
+    /// <param name="companyName"></param>
+    /// <param name="productFamily"></param>
+    /// <param name="productName"></param>
+    /// <param name="productVersion"></param>
+    /// <param name="productDescription"></param>
+    /// <param name="appLanguage"></param>
+    /// <param name="appCountry"></param>
+    /// <param name="supportedTypes"></param>
+    public TW_IDENTITY_LEGACY(
+        string companyName, string productFamily, string productName,
+        Version productVersion, string productDescription = "",
+        TWLG appLanguage = TWLG.ENGLISH_USA, TWCY appCountry = TWCY.USA,
+        DG supportedTypes = DG.IMAGE)
+    {
+      Manufacturer = companyName;
+      ProductFamily = productFamily;
+      ProductName = productName;
+      ProtocolMajor = (ushort)TWON_PROTOCOL.MAJOR;
+      ProtocolMinor = (ushort)TWON_PROTOCOL.MINOR;
+      SupportedGroups = (uint)(supportedTypes | DG.CONTROL | DG.APP2);
+      Version = new TW_VERSION
+      {
+        Country = appCountry,
+        Info = productDescription,
+        Language = appLanguage,
+        MajorNum = (ushort)productVersion.Major,
+        MinorNum = (ushort)productVersion.Minor,
+      };
+    }
+
+
+
     /// <summary>
     /// A simplified check on whether this has valid data from DSM.
     /// </summary>
