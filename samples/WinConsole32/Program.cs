@@ -11,7 +11,7 @@ namespace WinConsole32
       var libVer = FileVersionInfo.GetVersionInfo(typeof(TwainAppSession).Assembly.Location).ProductVersion;
       Console.WriteLine($"Console sample {(TWPlatform.Is32bit ? " 32bit" : " 64bit")} on NTwain {libVer}");
 
-      TwainAppSession session = new TwainAppSession(new TW_IDENTITY_LEGACY(Environment.ProcessPath!));
+      TwainAppSession session = new TwainAppSession();
 
       session.StateChanged += Session_StateChanged;
       session.SourceDisabled += Session_SourceDisabled1;

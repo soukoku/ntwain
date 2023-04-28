@@ -1,6 +1,7 @@
 ﻿using NTwain.Data;
 using NTwain.Triplets;
 using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -12,6 +13,12 @@ namespace NTwain
 
   public partial class TwainAppSession : IDisposable
   {
+    /// <summary>
+    /// Creates TWAIN session with current app info.
+    /// </summary>
+    public TwainAppSession()
+      : this(new TW_IDENTITY_LEGACY(Environment.GetCommandLineArgs()[0])) { }
+
     /// <summary>
     /// Creates TWAIN session with explicit app info.
     /// </summary>
