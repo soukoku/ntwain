@@ -21,6 +21,7 @@ namespace NTwain
         {
             if (source == null) { throw new ArgumentNullException("source"); }
             _source = source;
+
         }
 
 
@@ -37,7 +38,9 @@ namespace NTwain
             using (TWCapability cap = new TWCapability(capabilityId))
             {
                 cap.ContainerType = ContainerType.OneValue;
+
                 var rc = _source.DGControl.Capability.QuerySupport(cap);
+                
                 if (rc == ReturnCode.Success)
                 {
                     var read = CapabilityReader.ReadValue(cap);
@@ -46,6 +49,8 @@ namespace NTwain
                     {
                         retVal = read.OneValue.ConvertToEnum<QuerySupports>();
                     }
+
+                    //ICapWrapper<Int64> cw = new CapWrapper<Int64>(_source, capabilityId, ValueExtensions.ConvertToEnum<Int64>, false);
                 }
             }
             return retVal;
