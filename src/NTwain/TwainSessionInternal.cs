@@ -96,6 +96,10 @@ namespace NTwain
         {
             SafeSyncableRaiseOnEvent(OnDataTransferred, DataTransferred, e);
         }
+        void ITwainSessionInternal.SafeSyncableRaiseEvent(TransferCanceledEventArgs e)
+        {
+            SafeSyncableRaiseOnEvent(OnTransferCanceled, TransferCanceled, e);
+        }
         void ITwainSessionInternal.SafeSyncableRaiseEvent(TransferErrorEventArgs e)
         {
             SafeSyncableRaiseOnEvent(OnTransferError, TransferError, e);
