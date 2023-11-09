@@ -255,7 +255,7 @@ namespace NTwain
         //    }
         //}
 
-        private Capabilities _caps;
+        private CapabilitiesExt _caps;
 
         /// <summary>
         /// Gets the capabilities for this data source.
@@ -265,7 +265,7 @@ namespace NTwain
         /// </value>
         public ICapabilities Capabilities
         {
-            get { return _caps ?? (_caps = new Capabilities(this)); }
+            get { return _caps ?? (_caps = new CapabilitiesExt(this)); }
         }
 
 
