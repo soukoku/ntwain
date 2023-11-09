@@ -15,8 +15,8 @@
     <!--<SignAssembly>true</SignAssembly>-->
     <!--<AssemblyOriginatorKeyFile>Sign.snk</AssemblyOriginatorKeyFile>-->
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>3.7.2</FileVersion>
-    <Version>3.7.2</Version>
+    <FileVersion>3.7.3</FileVersion>
+    <Version>3.7.3</Version>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
