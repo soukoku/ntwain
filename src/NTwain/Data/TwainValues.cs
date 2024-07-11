@@ -1103,7 +1103,7 @@ namespace NTwain.Data
         IsoB5 = 29,
         IsoB7 = 30,
         IsoB8 = 31,
-        IsoB9 = 31,
+        IsoB9 = 32,
         IsoB10 = 33,
         JisB0 = 34,
         JisB1 = 35,
