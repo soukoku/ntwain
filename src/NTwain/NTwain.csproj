@@ -15,8 +15,8 @@
     <!--<SignAssembly>true</SignAssembly>-->
     <!--<AssemblyOriginatorKeyFile>Sign.snk</AssemblyOriginatorKeyFile>-->
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>3.7.4</FileVersion>
-    <Version>3.7.4</Version>
+    <FileVersion>3.7.5</FileVersion>
+    <Version>3.7.5</Version>
     <LangVersion>7.1</LangVersion>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\release-build\strong-name.snk</AssemblyOriginatorKeyFile>
