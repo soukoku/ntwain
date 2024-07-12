@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>NTwain</PackageId>
     <Description>Library containing the TWAIN API for dotnet.</Description>
-    <TargetFrameworks>net6.0;net6.0-windows;net7.0;net7.0-windows;net462;</TargetFrameworks>
+    <TargetFrameworks>net6.0;net6.0-windows;net8.0;net8.0-windows;net462;</TargetFrameworks>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -19,7 +19,7 @@
     <PackageReference Include="System.Memory" Version="4.5.5" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' != 'net462'">
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'!='Release'">
     <None Remove="runtimes\win-x64\native\TWAINDSM.dll" />
