@@ -54,7 +54,16 @@ namespace NTwain.Internals
             #endregion
 
             var pending = new TWPendingXfers();
-            var rc = session.DGControl.PendingXfers.Get(pending);
+            ReturnCode rc;
+            if (xferImage)
+            {
+                rc = ReturnCode.Success;
+            }
+            else
+            {
+                rc = session.DGControl.PendingXfers.Get(pending);
+            }
+
             if (rc == ReturnCode.Success)
             {
                 do
