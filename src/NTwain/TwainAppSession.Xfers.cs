@@ -60,7 +60,7 @@ namespace NTwain
             if (xferImage) imgXferMech = Caps.ICAP_XFERMECH.GetCurrent().FirstOrDefault();
             else if (xferAudio) audXferMech = Caps.ACAP_XFERMECH.GetCurrent().FirstOrDefault();
 
-            TW_PENDINGXFERS pending = new TW_PENDINGXFERS();
+            TW_PENDINGXFERS pending = TW_PENDINGXFERS.DONTCARE();
             var sts = WrapInSTS(DGControl.PendingXfers.Get(ref _appIdentity, ref _currentDS, ref pending));
             if (sts.RC == TWRC.SUCCESS)
             {
@@ -76,13 +76,13 @@ namespace NTwain
                     if (readyArgs.Cancel == CancelType.EndNow || _closeDsRequested)
                     {
                         // TODO: need to call EndXfer first?
-                        pending = new TW_PENDINGXFERS();
+                        pending = TW_PENDINGXFERS.DONTCARE();
                         sts = WrapInSTS(DGControl.PendingXfers.Reset(ref _appIdentity, ref _currentDS, ref pending));
                         if (sts.RC == TWRC.SUCCESS && xferImage) State = STATE.S5;
                     }
                     else if (readyArgs.Cancel == CancelType.SkipCurrent)
                     {
-                        pending = new TW_PENDINGXFERS();
+                        pending = TW_PENDINGXFERS.DONTCARE();
                         sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
                         if (sts.RC == TWRC.SUCCESS)
                         {
@@ -101,7 +101,7 @@ namespace NTwain
                         if (readyArgs.Cancel == CancelType.Graceful)
                         {
                             // ignore rc in this and continue transfer as normal
-                            pending = new TW_PENDINGXFERS();
+                            pending = TW_PENDINGXFERS.DONTCARE();
                             DGControl.PendingXfers.StopFeeder(ref _appIdentity, ref _currentDS, ref pending);
                         }
 
@@ -180,9 +180,9 @@ namespace NTwain
                         TransferCanceled?.Invoke(this, new TransferCanceledEventArgs());
                     }
                     catch { }
-                    pending = new TW_PENDINGXFERS();
+                    pending = TW_PENDINGXFERS.DONTCARE();
                     sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
-                    pending = new TW_PENDINGXFERS();
+                    pending = TW_PENDINGXFERS.DONTCARE();
                     sts = WrapInSTS(DGControl.PendingXfers.Reset(ref _appIdentity, ref _currentDS, ref pending));
                     if (sts.RC == TWRC.SUCCESS) State = STATE.S5;
                     break;
@@ -197,7 +197,7 @@ namespace NTwain
                         case TWCC.NOMEDIA:
                         case TWCC.PAPERDOUBLEFEED:
                         case TWCC.PAPERJAM:
-                            pending = new TW_PENDINGXFERS();
+                            pending = TW_PENDINGXFERS.DONTCARE();
                             sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
                             break;
                         case TWCC.OPERATIONERROR:
@@ -205,9 +205,9 @@ namespace NTwain
                             if (_userInterface.ShowUI == 0 && indicators == TW_BOOL.False)
                             {
                                 // todo: alert user and drop to S4
-                                pending = new TW_PENDINGXFERS();
+                                pending = TW_PENDINGXFERS.DONTCARE();
                                 sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
-                                pending = new TW_PENDINGXFERS();
+                                pending = TW_PENDINGXFERS.DONTCARE();
                                 sts = WrapInSTS(DGControl.PendingXfers.Reset(ref _appIdentity, ref _currentDS, ref pending));
                             }
                             break;
@@ -236,7 +236,7 @@ namespace NTwain
                 }
                 catch { }
 
-                pending = new TW_PENDINGXFERS();
+                pending = TW_PENDINGXFERS.DONTCARE();
                 sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
                 if (sts.RC == TWRC.SUCCESS)
                 {
@@ -276,7 +276,7 @@ namespace NTwain
                     }
                 }
 
-                pending = new TW_PENDINGXFERS();
+                pending = TW_PENDINGXFERS.DONTCARE();
                 sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
                 if (sts.RC == TWRC.SUCCESS)
                 {
@@ -360,7 +360,7 @@ namespace NTwain
                 }
                 catch { }
 
-                pending = new TW_PENDINGXFERS();
+                pending = TW_PENDINGXFERS.DONTCARE();
                 var sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
                 if (sts.RC == TWRC.SUCCESS)
                 {
@@ -438,7 +438,7 @@ namespace NTwain
                 }
                 catch { }
 
-                pending = new TW_PENDINGXFERS();
+                pending = TW_PENDINGXFERS.DONTCARE();
                 var sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
                 if (sts.RC == TWRC.SUCCESS)
                 {
@@ -467,7 +467,7 @@ namespace NTwain
                 }
                 catch { }
 
-                pending = new TW_PENDINGXFERS();
+                pending = TW_PENDINGXFERS.DONTCARE();
                 sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
                 if (sts.RC == TWRC.SUCCESS)
                 {
@@ -521,7 +521,7 @@ namespace NTwain
                     }
 
 
-                    pending = new TW_PENDINGXFERS();
+                    pending = TW_PENDINGXFERS.DONTCARE();
                     sts = WrapInSTS(DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending));
                     if (sts.RC == TWRC.SUCCESS)
                     {

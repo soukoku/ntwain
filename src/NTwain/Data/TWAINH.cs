@@ -2426,9 +2426,9 @@ namespace NTwain.Data
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     public struct TW_PENDINGXFERS
     {
-        public TW_PENDINGXFERS()
+        public static TW_PENDINGXFERS DONTCARE()
         {
-            Count = -1;
+            return new TW_PENDINGXFERS { Count = -1 };
         }
 
         public short Count;
