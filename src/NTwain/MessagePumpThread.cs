@@ -69,12 +69,12 @@ namespace NTwain
     /// <summary>
     /// Detatches a previously attached session and stops the thread.
     /// </summary>
-    public async Task<STS> DetatchAsync()
+    public async Task<STS> DetachAsync()
     {
       STS sts = default;
       if (_dummyForm != null && _twain != null)
       {
-        TaskCompletionSource<bool> tcs = new();
+        TaskCompletionSource<STS> tcs = new();
         _dummyForm.BeginInvoke(() =>
         {
           sts = _twain.CloseDSMReal();
@@ -84,6 +84,7 @@ namespace NTwain
             _dummyForm.Close();
             _twain = null;
           }
+          tcs.SetResult(sts);
         });
         await tcs.Task;
       }

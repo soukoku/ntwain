@@ -144,7 +144,7 @@ namespace NTwain
         {
             if (_selfPump == null) throw new InvalidOperationException($"Cannot close if not opened with {nameof(OpenDSMAsync)}().");
 
-            var sts = await _selfPump.DetatchAsync();
+            var sts = await _selfPump.DetachAsync();
             if (sts.IsSuccess)
             {
                 _selfPump = null;
