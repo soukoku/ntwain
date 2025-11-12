@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Interop;
+using Windows.Win32.Foundation;
 using MSG = NTwain.Data.MSG;
 
 namespace NTwain
@@ -83,11 +84,11 @@ namespace NTwain
             bool handled = false;
             if (_state >= STATE.S5)
             {
-                WIN_MESSAGE winMsg = new()
+                Windows.Win32.UI.WindowsAndMessaging.MSG winMsg = new()
                 {
-                    hwnd = hWnd,
+                    hwnd = (HWND)hWnd,
                     message = (uint)msg,
-                    wParam = wParam,
+                    wParam = (UIntPtr)wParam.ToInt64(),
                     lParam = lParam
                 };
                 // no need to do another lock call when using marshal alloc

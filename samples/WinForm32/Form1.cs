@@ -202,7 +202,7 @@ namespace WinFormSample
                 // color
                 saveFile += ".jpg";
                 format = ImageMagick.MagickFormat.Jpeg;
-                img.Quality = _jpegQuality;
+                img.Quality = (uint)_jpegQuality;
               }
               if (_saveDisk) img.Write(saveFile);
               else img.Write(new NoOpStream(), format);

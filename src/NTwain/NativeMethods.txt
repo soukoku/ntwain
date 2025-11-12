@@ -1,0 +1,8 @@
+MSG
+GlobalAlloc
+GlobalFree
+GlobalLock
+GlobalUnlock
+BITMAPINFOHEADER
+BITMAPINFO
+BITMAPFILEHEADER

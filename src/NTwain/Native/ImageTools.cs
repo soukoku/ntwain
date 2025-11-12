@@ -1,6 +1,7 @@
 ﻿using NTwain.Data;
 using System;
 using System.Runtime.InteropServices;
+using Windows.Win32.Graphics.Gdi;
 
 namespace NTwain.Native
 {
