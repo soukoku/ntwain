@@ -187,12 +187,7 @@ namespace Windows.Win32.Graphics.Gdi
             return strideTest;
         }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
-        /// </returns>
+        /// <inheritdoc/>
         public override string ToString()
         {
             return new StringBuilder().Append("BitmapInfoHeader:")
@@ -201,7 +196,7 @@ namespace Windows.Win32.Graphics.Gdi
                 .Append("\r\n\tHeight = " + biHeight)
                 .Append("\r\n\tPlanes = " + biPlanes)
                 .Append("\r\n\tBitCount = " + biBitCount)
-                .Append("\r\n\tCompression = " + biCompression)
+                .Append("\r\n\tCompression = " + Compression)
                 .Append("\r\n\tSizeImage = " + biSizeImage)
                 .Append("\r\n\tXPixelsPerMeter = " + biXPelsPerMeter)
                 .Append("\r\n\tYPixelsPerMeter = " + biYPelsPerMeter)
@@ -209,37 +204,42 @@ namespace Windows.Win32.Graphics.Gdi
                 .Append("\r\n\tColorImportant = " + biClrImportant).ToString();
         }
 
-        ///// <summary>
-        ///// Indicates the bitmap compression of <seealso cref="BITMAPINFOHEADER"/>.
-        ///// </summary>
-        //public enum CompressionType : uint
-        //{
-        //    /// <summary>
-        //    /// An uncompressed format.
-        //    /// </summary>
-        //    BI_RGB = 0,
-        //    /// <summary>
-        //    ///  A run-length encoded (RLE) format for bitmaps with 8 bpp. The compression format is a 2-byte format consisting of a count byte followed by a byte containing a color index. For more information, see Bitmap Compression. 
-        //    /// </summary>
-        //    BI_RLE8 = 1,
-        //    /// <summary>
-        //    ///  An RLE, format for bitmaps with 4 bpp. The compression format is a 2-byte format consisting of a count byte followed by two word-length color indexes. For more information, see Bitmap Compression. 
-        //    /// </summary>
-        //    BI_RLE4 = 2,
-        //    /// <summary>
-        //    /// Specifies that the bitmap is not compressed and that the color table consists of three DWORD color masks that specify the red, green, and blue components of each pixel. 
-        //    /// This is valid when used with 16- and 32-bpp bitmaps. 
-        //    /// </summary>
-        //    BI_BITFIELDS = 3,
-        //    /// <summary>
-        //    /// Indicates that the image is a JPEG image.
-        //    /// </summary>
-        //    BI_JPEG = 4,
-        //    /// <summary>
-        //    /// Indicates that the image is a PNG image.
-        //    /// </summary>
-        //    BI_PNG = 5
-        //}
+        /// <summary>
+        /// Gets the bitmap compression type.
+        /// </summary>
+        public CompressionType Compression { get { return (CompressionType)biCompression; } }
+
+        /// <summary>
+        /// Indicates the bitmap compression of <seealso cref="BITMAPINFOHEADER"/>.
+        /// </summary>
+        public enum CompressionType : uint
+        {
+            /// <summary>
+            /// An uncompressed format.
+            /// </summary>
+            BI_RGB = 0,
+            /// <summary>
+            ///  A run-length encoded (RLE) format for bitmaps with 8 bpp. The compression format is a 2-byte format consisting of a count byte followed by a byte containing a color index. For more information, see Bitmap Compression. 
+            /// </summary>
+            BI_RLE8 = 1,
+            /// <summary>
+            ///  An RLE, format for bitmaps with 4 bpp. The compression format is a 2-byte format consisting of a count byte followed by two word-length color indexes. For more information, see Bitmap Compression. 
+            /// </summary>
+            BI_RLE4 = 2,
+            /// <summary>
+            /// Specifies that the bitmap is not compressed and that the color table consists of three DWORD color masks that specify the red, green, and blue components of each pixel. 
+            /// This is valid when used with 16- and 32-bpp bitmaps. 
+            /// </summary>
+            BI_BITFIELDS = 3,
+            /// <summary>
+            /// Indicates that the image is a JPEG image.
+            /// </summary>
+            BI_JPEG = 4,
+            /// <summary>
+            /// Indicates that the image is a PNG image.
+            /// </summary>
+            BI_PNG = 5
+        }
     }
 
     //[StructLayout(LayoutKind.Sequential, Pack = 1)]
