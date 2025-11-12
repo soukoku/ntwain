@@ -88,7 +88,7 @@ namespace NTwain
                 {
                     hwnd = (HWND)hWnd,
                     message = (uint)msg,
-                    wParam = (UIntPtr)wParam.ToInt64(),
+                    wParam = TWPlatform.Is32bit ? new UIntPtr((uint)wParam.ToInt32()) : new UIntPtr((ulong)wParam.ToInt64()),
                     lParam = lParam
                 };
                 // no need to do another lock call when using marshal alloc
