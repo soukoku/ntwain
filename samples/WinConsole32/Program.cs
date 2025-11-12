@@ -127,13 +127,13 @@ namespace WinConsole32
         }
 
         static int xferCount = 0;
-        static Stopwatch watch;
+        static Stopwatch watch = new Stopwatch();
         private static void Session_Transferred(TwainAppSession twain, TransferredEventArgs e)
         {
             if (e.Data != null)
             {
                 var saveFile = $"twain_{DateTime.Now:yyyyMMdd_HHmmss}_{xferCount}";
-                Console.WriteLine("SUCCESS! Got twain memory data #{0} on thread {1}, saving to {saveFile}.", ++xferCount, Environment.CurrentManagedThreadId, saveFile);
+                Console.WriteLine($"SUCCESS! Got twain memory data #{++xferCount} on thread {Environment.CurrentManagedThreadId}, saving to {saveFile}.");
 
                 using (var img = new ImageMagick.MagickImage(e.Data.AsStream()))
                 {
@@ -157,11 +157,11 @@ namespace WinConsole32
             else if (e.FileInfo != null)
             {
                 var fi = e.FileInfo.Value;
-                Console.WriteLine("SUCCESS! Got twain file data #{0} on thread {1} as {saveFile}.", ++xferCount, Environment.CurrentManagedThreadId, fi.FileName);
+                Console.WriteLine($"SUCCESS! Got twain file data #{++xferCount} on thread {Environment.CurrentManagedThreadId} as {fi.FileName}.");
             }
             else
             {
-                Console.WriteLine("BUMMER! No twain data #{0} on thread {1}.", ++xferCount, Environment.CurrentManagedThreadId);
+                Console.WriteLine($"BUMMER! No twain data #{++xferCount} on thread {Environment.CurrentManagedThreadId}.");
             }
             e.Dispose();
         }
@@ -199,10 +199,10 @@ namespace WinConsole32
                 twain.Caps.ICAP_PIXELTYPE.Set(TWPT.RGB);
                 twain.Caps.ICAP_XRESOLUTION.Set(300f);
                 twain.Caps.ICAP_YRESOLUTION.Set(300f);
-                twain.Caps.CAP_XFERCOUNT.Set(100);
+                twain.Caps.CAP_XFERCOUNT.Set(4);
 
                 xferCount = 0;
-                watch = Stopwatch.StartNew();
+                watch.Restart();
                 var rc = twain.EnableSource(true, false);
             }
         }
