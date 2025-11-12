@@ -34,7 +34,7 @@ namespace Windows.Win32.Graphics.Gdi
         /// <returns></returns>
         public static uint GetByteSize()
         {
-            return (uint)Marshal.SizeOf(typeof(BITMAPINFOHEADER));
+            return (uint)Marshal.SizeOf<BITMAPINFOHEADER>();
         }
         /// <summary>
         /// Checks to see if this structure contain valid data.
