@@ -21,7 +21,9 @@ namespace NTwain
             }
             else if (TWPlatform.IsWindows)
             {
+#pragma warning disable CA1416 // Validate platform compatibility
                 return PInvoke.GlobalAlloc(GLOBAL_ALLOC_FLAGS.GHND, size);
+#pragma warning restore CA1416 // Validate platform compatibility
                 //return WinNativeMethods.GlobalAlloc(WinNativeMethods.AllocFlag.GHND, (UIntPtr)size);
             }
             else if (TWPlatform.IsLinux)
@@ -48,7 +50,9 @@ namespace NTwain
             }
             else if (TWPlatform.IsWindows)
             {
+#pragma warning disable CA1416 // Validate platform compatibility
                 PInvoke.GlobalFree((HGLOBAL)handle);
+#pragma warning restore CA1416 // Validate platform compatibility
                 //WinNativeMethods.GlobalFree(handle);
             }
             else if (TWPlatform.IsLinux)
@@ -77,7 +81,9 @@ namespace NTwain
             {
                 unsafe
                 {
+#pragma warning disable CA1416 // Validate platform compatibility
                     return (IntPtr)PInvoke.GlobalLock((HGLOBAL)handle);
+#pragma warning restore CA1416 // Validate platform compatibility
                 }
                 //return WinNativeMethods.GlobalLock(handle);
             }
@@ -105,7 +111,9 @@ namespace NTwain
             }
             else if (TWPlatform.IsWindows)
             {
+#pragma warning disable CA1416 // Validate platform compatibility
                 PInvoke.GlobalUnlock((HGLOBAL)handle);
+#pragma warning restore CA1416 // Validate platform compatibility
                 //WinNativeMethods.GlobalUnlock(handle);
             }
             else if (TWPlatform.IsLinux)
