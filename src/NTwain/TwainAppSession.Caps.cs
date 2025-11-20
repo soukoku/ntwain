@@ -1,7 +1,6 @@
 ﻿using NTwain.Caps;
 using NTwain.Data;
 using NTwain.Triplets;
-using NTwain.Triplets.ControlDATs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -178,31 +177,47 @@ namespace NTwain
         /// <param name="cap"></param>
         /// <param name="values"></param>
         /// <returns></returns>
-        public STS GetCapValues<TValue>(CAP cap, out IList<TValue> values) where TValue : struct
+        public STS GetCapValues<TValue>(CAP cap, out ValueContainer<TValue> value) where TValue : struct
         {
-            values = new List<TValue>();
-            var sts = GetCapValues(cap, out TW_CAPABILITY twcap);
+            value = new ValueContainer<TValue> { ContainerType = TWON.DONTCARE };
+            var sts = GetCapCurrent(cap, out TW_CAPABILITY twcap);
             if (sts.RC == TWRC.SUCCESS)
             {
+                value.ContainerType = twcap.ConType;
                 switch (twcap.ConType)
                 {
                     case TWON.ONEVALUE:
-                        values.Add(twcap.ReadOneValue<TValue>(this));
+                        value.OneValue = twcap.ReadOneValue<TValue>(this);
                         break;
                     case TWON.ENUMERATION:
                         var twenum = twcap.ReadEnumeration<TValue>(this);
-                        if (twenum.Items != null && twenum.Items.Length > 0)
-                            ((List<TValue>)values).AddRange(twenum.Items);
+                        if (twenum.Items != null)
+                        {
+                            value.EnumValue = new EnumValue<TValue>
+                            {
+                                CurrentIndex = twenum.CurrentIndex,
+                                DefaultIndex = twenum.DefaultIndex,
+                                Items = twenum.Items
+                            };
+                        }
                         break;
                     case TWON.RANGE:
-                        // This can be slow
-                        var twrange = twcap.ReadRange<TValue>(this);
-                        ((List<TValue>)values).AddRange(twrange);
+                        var range = twcap.ReadRange<TValue>(this);
+                        value.RangeValue = new RangeValue<TValue>
+                        {
+                            Min = range.MinValue,
+                            Max = range.MaxValue,
+                            Step = range.StepSize,
+                            DefaultValue = range.DefaultValue,
+                            CurrentValue = range.CurrentValue
+                        };
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
-                        if (twarr != null && twarr.Count > 0)
-                            ((List<TValue>)values).AddRange(twarr);
+                        if (twarr != null)
+                        {
+                            value.ArrayValue = twarr;
+                        }
                         break;
                     default:
                         twcap.Free(this); break;

@@ -284,57 +284,12 @@ namespace NTwain.Data
             if (MinValue is not IConvertible)
                 throw new NotSupportedException($"The value type {typeof(TValue).Name} is not supported for range enumeration.");
 
-            return new DynamicEnumerator(MinValue, MaxValue, StepSize);
+            return new DynamicEnumerator<TValue>(MinValue, MaxValue, StepSize);
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return ((IEnumerable<TValue>)this).GetEnumerator();
-        }
-
-        // dynamic is a cheap hack to sidestep the compiler restrictions if I know TValue is numeric
-        class DynamicEnumerator : IEnumerator<TValue>
-        {
-            private readonly TValue _min;
-            private readonly TValue _max;
-            private readonly TValue _step;
-            private TValue _cur;
-            bool started = false;
-
-            public DynamicEnumerator(TValue min, TValue max, TValue step)
-            {
-                _min = min;
-                _max = max;
-                _step = step;
-                _cur = min;
-            }
-
-            public TValue Current => _cur;
-
-            object System.Collections.IEnumerator.Current => this.Current;
-
-            public void Dispose() { }
-
-            public bool MoveNext()
-            {
-                if (!started)
-                {
-                    started = true;
-                    return true;
-                }
-
-                var next = _cur + (dynamic)_step;
-                if (next == _cur || next < _min || next > _max) return false;
-
-                _cur = next;
-                return true;
-            }
-
-            public void Reset()
-            {
-                _cur = _min;
-                started = false;
-            }
         }
     }
 

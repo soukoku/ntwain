@@ -2590,7 +2590,9 @@ namespace NTwain.Data
 
         ICONID = 962,
         DSMID = 461,
-        DSMCODEID = 63
+        DSMCODEID = 63,
+
+        DONTCARE = 0xffff
     }
 
     ///// <summary>
