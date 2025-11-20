@@ -117,4 +117,190 @@ partial class KdsCaps
     public CapWriter<TWCBR> ICAP_COLORBRIGHTNESSMODE =>
         _ICAP_COLORBRIGHTNESSMODE ??= new(_twain, (CAP)KDS_CAP.ICAP_COLORBRIGHTNESSMODE, 2);
 
+    // TODO: verify data types below
+
+    CapWriter<TW_BOOL>? _ICAP_LAMPSAVER;
+    public CapWriter<TW_BOOL> ICAP_LAMPSAVER =>
+        _ICAP_LAMPSAVER ??= new(_twain, (CAP)KDS_CAP.ICAP_LAMPSAVER, 2);
+
+
+    CapWriter<TW_FIX32>? _ICAP_OVERSCANX;
+    public CapWriter<TW_FIX32> ICAP_OVERSCANX =>
+        _ICAP_OVERSCANX ??= new(_twain, (CAP)KDS_CAP.ICAP_OVERSCANX, 2);
+
+
+    CapWriter<TW_FIX32>? _ICAP_OVERSCANY;
+    public CapWriter<TW_FIX32> ICAP_OVERSCANY =>
+        _ICAP_OVERSCANY ??= new(_twain, (CAP)KDS_CAP.ICAP_OVERSCANY, 2);
+
+
+    CapWriter<ushort>? _ICAP_FORCECOMPRESSION;
+    public CapWriter<ushort> ICAP_FORCECOMPRESSION =>
+        _ICAP_FORCECOMPRESSION ??= new(_twain, (CAP)KDS_CAP.ICAP_FORCECOMPRESSION, 2);
+
+
+    CapWriter<ushort>? _ICAP_HALFTONESQUALITY;
+    public CapWriter<ushort> ICAP_HALFTONESQUALITY =>
+        _ICAP_HALFTONESQUALITY ??= new(_twain, (CAP)KDS_CAP.ICAP_HALFTONESQUALITY, 2);
+
+
+    CapWriter<ushort>? _ICAP_COLORTABLE;
+    public CapWriter<ushort> ICAP_COLORTABLE =>
+        _ICAP_COLORTABLE ??= new(_twain, (CAP)KDS_CAP.ICAP_COLORTABLE, 2);
+
+
+    CapWriter<TW_BOOL>? _ICAP_VERTICALBLACKLINEREMOVAL;
+    public CapWriter<TW_BOOL> ICAP_VERTICALBLACKLINEREMOVAL =>
+        _ICAP_VERTICALBLACKLINEREMOVAL ??= new(_twain, (CAP)KDS_CAP.ICAP_VERTICALBLACKLINEREMOVAL, 2);
+
+
+    CapWriter<TW_BOOL>? _ICAP_ADDBORDER;
+    public CapWriter<TW_BOOL> ICAP_ADDBORDER =>
+        _ICAP_ADDBORDER ??= new(_twain, (CAP)KDS_CAP.ICAP_ADDBORDER, 2);
+
+
+    CapWriter<ushort>? _ICAP_FILTERENUM;
+    public CapWriter<ushort> ICAP_FILTERENUM =>
+        _ICAP_FILTERENUM ??= new(_twain, (CAP)KDS_CAP.ICAP_FILTERENUM, 2);
+
+
+    CapWriter<ushort>? _ICAP_FILTERTHRESHOLD;
+    public CapWriter<ushort> ICAP_FILTERTHRESHOLD =>
+        _ICAP_FILTERTHRESHOLD ??= new(_twain, (CAP)KDS_CAP.ICAP_FILTERTHRESHOLD, 2);
+
+
+    CapWriter<ushort>? _ICAP_FILTERBACKGROUND;
+    public CapWriter<ushort> ICAP_FILTERBACKGROUND =>
+        _ICAP_FILTERBACKGROUND ??= new(_twain, (CAP)KDS_CAP.ICAP_FILTERBACKGROUND, 2);
+
+
+    CapWriter<ushort>? _ICAP_LAMPTIMEOUT;
+    public CapWriter<ushort> ICAP_LAMPTIMEOUT =>
+        _ICAP_LAMPTIMEOUT ??= new(_twain, (CAP)KDS_CAP.ICAP_LAMPTIMEOUT, 2);
+
+
+    CapWriter<TW_BOOL>? _ICAP_GRAYSCALE;
+    public CapWriter<TW_BOOL> ICAP_GRAYSCALE =>
+        _ICAP_GRAYSCALE ??= new(_twain, (CAP)KDS_CAP.ICAP_GRAYSCALE, 2);
+
+
+    CapWriter<int>? _ICAP_COLORSHARPENING;
+    public CapWriter<int> ICAP_COLORSHARPENING =>
+        _ICAP_COLORSHARPENING ??= new(_twain, (CAP)KDS_CAP.ICAP_COLORSHARPENING, 2);
+
+
+    CapWriter<TW_BOOL>? _ICAP_FRAMELENGTHCONTROL;
+    public CapWriter<TW_BOOL> ICAP_FRAMELENGTHCONTROL =>
+        _ICAP_FRAMELENGTHCONTROL ??= new(_twain, (CAP)KDS_CAP.ICAP_FRAMELENGTHCONTROL, 2);
+
+
+    CapWriter<TW_BOOL>? _ICAP_FLIPBACKGROUNDCOLOR;
+    public CapWriter<TW_BOOL> ICAP_FLIPBACKGROUNDCOLOR =>
+        _ICAP_FLIPBACKGROUNDCOLOR ??= new(_twain, (CAP)KDS_CAP.ICAP_FLIPBACKGROUNDCOLOR, 2);
+
+
+    CapWriter<TW_BOOL>? _ICAP_GAMMAENABLED;
+    public CapWriter<TW_BOOL> ICAP_GAMMAENABLED =>
+        _ICAP_GAMMAENABLED ??= new(_twain, (CAP)KDS_CAP.ICAP_GAMMAENABLED, 2);
+
+
+    CapWriter<ushort>? _ICAP_FILTERPROCESSING;
+    public CapWriter<ushort> ICAP_FILTERPROCESSING =>
+        _ICAP_FILTERPROCESSING ??= new(_twain, (CAP)KDS_CAP.ICAP_FILTERPROCESSING, 2);
+
+
+    CapWriter<int>? _ICAP_AUTOCOLORAMOUNT;
+    public CapWriter<int> ICAP_AUTOCOLORAMOUNT =>
+        _ICAP_AUTOCOLORAMOUNT ??= new(_twain, (CAP)KDS_CAP.ICAP_AUTOCOLORAMOUNT, 2);
+
+
+    CapWriter<ushort>? _ICAP_AUTOCOLORCONTENT;
+    public CapWriter<ushort> ICAP_AUTOCOLORCONTENT =>
+        _ICAP_AUTOCOLORCONTENT ??= new(_twain, (CAP)KDS_CAP.ICAP_AUTOCOLORCONTENT, 2);
+
+
+    CapWriter<int>? _ICAP_AUTOCOLORTHRESHOLD;
+    public CapWriter<int> ICAP_AUTOCOLORTHRESHOLD =>
+        _ICAP_AUTOCOLORTHRESHOLD ??= new(_twain, (CAP)KDS_CAP.ICAP_AUTOCOLORTHRESHOLD, 2);
+
+
+    CapWriter<ushort>? _ICAP_PADDING;
+    public CapWriter<ushort> ICAP_PADDING =>
+        _ICAP_PADDING ??= new(_twain, (CAP)KDS_CAP.ICAP_PADDING, 2);
+
+
+    CapWriter<ushort>? _ICAP_NEWWINDOWSIZE;
+    public CapWriter<ushort> ICAP_NEWWINDOWSIZE =>
+        _ICAP_NEWWINDOWSIZE ??= new(_twain, (CAP)KDS_CAP.ICAP_NEWWINDOWSIZE, 2);
+
+
+    CapWriter<ushort>? _ICAP_DOCUMENTTYPE;
+    public CapWriter<ushort> ICAP_DOCUMENTTYPE =>
+        _ICAP_DOCUMENTTYPE ??= new(_twain, (CAP)KDS_CAP.ICAP_DOCUMENTTYPE, 2);
+
+
+    CapWriter<ushort>? _ICAP_SKEWANGLE;
+    public CapWriter<ushort> ICAP_SKEWANGLE =>
+        _ICAP_SKEWANGLE ??= new(_twain, (CAP)KDS_CAP.ICAP_SKEWANGLE, 2);
+
+
+    CapWriter<ushort>? _ICAP_MEDIATYPE;
+    public CapWriter<ushort> ICAP_MEDIATYPE =>
+        _ICAP_MEDIATYPE ??= new(_twain, (CAP)KDS_CAP.ICAP_MEDIATYPE, 2);
+
+
+    CapWriter<ushort>? _ICAP_ECDO;
+    public CapWriter<ushort> ICAP_ECDO =>
+        _ICAP_ECDO ??= new(_twain, (CAP)KDS_CAP.ICAP_ECDO, 2);
+
+
+    CapWriter<TW_BOOL>? _ICAP_ECDOTREATASCOLOR;
+    public CapWriter<TW_BOOL> ICAP_ECDOTREATASCOLOR =>
+        _ICAP_ECDOTREATASCOLOR ??= new(_twain, (CAP)KDS_CAP.ICAP_ECDOTREATASCOLOR, 2);
+
+
+    CapWriter<TW_FIX32>? _ICAP_PHYSICALHEIGHTADJUST;
+    public CapWriter<TW_FIX32> ICAP_PHYSICALHEIGHTADJUST =>
+        _ICAP_PHYSICALHEIGHTADJUST ??= new(_twain, (CAP)KDS_CAP.ICAP_PHYSICALHEIGHTADJUST, 2);
+
+
+    CapWriter<uint>? _ICAP_COLORSHARPEN;
+    public CapWriter<uint> ICAP_COLORSHARPEN =>
+        _ICAP_COLORSHARPEN ??= new(_twain, (CAP)KDS_CAP.ICAP_COLORSHARPEN, 2);
+
+
+    CapWriter<int>? _ICAP_ECDOAGGRESSIVENESS;
+    public CapWriter<int> ICAP_ECDOAGGRESSIVENESS =>
+        _ICAP_ECDOAGGRESSIVENESS ??= new(_twain, (CAP)KDS_CAP.ICAP_ECDOAGGRESSIVENESS, 2);
+
+
+    CapWriter<int>? _ICAP_FOREGROUNDBOLDNESSAGGRESSIVENESS;
+    public CapWriter<int> ICAP_FOREGROUNDBOLDNESSAGGRESSIVENESS =>
+        _ICAP_FOREGROUNDBOLDNESSAGGRESSIVENESS ??= new(_twain, (CAP)KDS_CAP.ICAP_FOREGROUNDBOLDNESSAGGRESSIVENESS, 2);
+
+
+    CapWriter<ushort>? _ICAP_FOREGROUNDBOLDNESSMODE;
+    public CapWriter<ushort> ICAP_FOREGROUNDBOLDNESSMODE =>
+        _ICAP_FOREGROUNDBOLDNESSMODE ??= new(_twain, (CAP)KDS_CAP.ICAP_FOREGROUNDBOLDNESSMODE, 2);
+
+
+    CapWriter<TW_BOOL>? _ICAP_TEXTENHANCEMENT;
+    public CapWriter<TW_BOOL> ICAP_TEXTENHANCEMENT =>
+        _ICAP_TEXTENHANCEMENT ??= new(_twain, (CAP)KDS_CAP.ICAP_TEXTENHANCEMENT, 2);
+
+
+    CapWriter<int>? _ICAP_THINTHICKENAMOUNT;
+    public CapWriter<int> ICAP_THINTHICKENAMOUNT =>
+        _ICAP_THINTHICKENAMOUNT ??= new(_twain, (CAP)KDS_CAP.ICAP_THINTHICKENAMOUNT, 2);
+
+
+    CapWriter<TW_BOOL>? _ICAP_ECDOINCLUDENONDROPPED;
+    public CapWriter<TW_BOOL> ICAP_ECDOINCLUDENONDROPPED =>
+        _ICAP_ECDOINCLUDENONDROPPED ??= new(_twain, (CAP)KDS_CAP.ICAP_ECDOINCLUDENONDROPPED, 2);
+
+
+    CapWriter<TW_BOOL>? _ICAP_AUTOCOLORIGNOREBACKGROUND;
+    public CapWriter<TW_BOOL> ICAP_AUTOCOLORIGNOREBACKGROUND =>
+        _ICAP_AUTOCOLORIGNOREBACKGROUND ??= new(_twain, (CAP)KDS_CAP.ICAP_AUTOCOLORIGNOREBACKGROUND, 2);
+
 }
