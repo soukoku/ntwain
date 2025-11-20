@@ -239,8 +239,8 @@ partial class KdsCaps
         _ICAP_DOCUMENTTYPE ??= new(_twain, (CAP)KDS_CAP.ICAP_DOCUMENTTYPE, 2);
 
 
-    CapWriter<ushort>? _ICAP_SKEWANGLE;
-    public CapWriter<ushort> ICAP_SKEWANGLE =>
+    CapWriter<int>? _ICAP_SKEWANGLE;
+    public CapWriter<int> ICAP_SKEWANGLE =>
         _ICAP_SKEWANGLE ??= new(_twain, (CAP)KDS_CAP.ICAP_SKEWANGLE, 2);
 
 
