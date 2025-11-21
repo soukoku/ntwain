@@ -258,7 +258,7 @@ namespace NTwain.Data
     /// A more dotnet-friendly representation of <see cref="TW_ENUMERATION"/>.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public class Enumeration<TValue> where TValue : struct
+    public class Enumeration<TValue>
     {
         public int CurrentIndex;
 
