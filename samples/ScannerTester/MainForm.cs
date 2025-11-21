@@ -36,11 +36,11 @@ namespace ScannerTester
             //_ = _twain.OpenDSMAsync();
         }
 
-        protected override void OnClosed(EventArgs e)
+        protected override void OnFormClosed(FormClosedEventArgs e)
         {
             _twain.CloseDSM();
             //_ = _twain.CloseDSMAsync();
-            base.OnClosed(e);
+            base.OnFormClosed(e);
         }
 
         private void _twain_Transferred(TwainAppSession sender, TransferredEventArgs e)
@@ -196,14 +196,14 @@ namespace ScannerTester
             });
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
             if (_twain.State > STATE.S5)
             {
                 e.Cancel = true;
             }
             _twain.TryStepdown(STATE.S2);
-            base.OnClosing(e);
+            base.OnFormClosing(e);
         }
 
         private void btnSelectScanner_Click(object sender, EventArgs e)
@@ -247,7 +247,7 @@ namespace ScannerTester
 
         private void LoadSettings()
         {
-            var mechs = _twain.Caps.ICAP_XFERMECH.Get();
+            var mechs = _twain.Caps.ICAP_XFERMECH.Get().GetValues();
 
             if (!mechs.Contains(TWSX.FILE))
             {
@@ -263,7 +263,7 @@ namespace ScannerTester
                 LogIt("Set unit to inches", sts);
             }
 
-            var dpis = _twain.Caps.ICAP_XRESOLUTION.Get();
+            var dpis = _twain.Caps.ICAP_XRESOLUTION.Get().GetValues();
             listDpi.Items.Clear();
             if (dpis.Contains(200))
             {
@@ -284,7 +284,7 @@ namespace ScannerTester
                 LogIt("300 DPI doesn't appear to be supported.");
             }
 
-            var formats = _twain.Caps.ICAP_IMAGEFILEFORMAT.Get();
+            var formats = _twain.Caps.ICAP_IMAGEFILEFORMAT.Get().GetValues();
             listFormat.Items.Clear();
             foreach (var format in formats)
             {

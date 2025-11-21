@@ -1,37 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows7.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <PlatformTarget>x64</PlatformTarget>
-    <RootNamespace>WinFormSample</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<PlatformTarget>x64</PlatformTarget>
+		<RootNamespace>WinFormSample</RootNamespace>
+		<ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+		<ApplicationVisualStyles>true</ApplicationVisualStyles>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\NTwain\NTwain.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\NTwain\NTwain.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Magick.NET-Q8-x64" Version="14.9.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Magick.NET-Q8-x64" Version="14.9.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\WinForm32\**\*.cs" Exclude="..\WinForm32\**\obj\**;..\WinForm32\**\bin\**">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </Compile>
-    <EmbeddedResource Include="..\WinForm32\**\*.resx" Exclude="..\WinForm32\**\obj\**;..\WinForm32\**\bin\**">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\WinForm32\**\*.cs" Exclude="..\WinForm32\**\obj\**;..\WinForm32\**\bin\**">
+			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
+		<EmbeddedResource Include="..\WinForm32\**\*.resx" Exclude="..\WinForm32\**\obj\**;..\WinForm32\**\bin\**">
+			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</EmbeddedResource>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="platforms\qwindows.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="runtimes\win-x64\native\TWAINDSM.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="platforms\qwindows.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\win-x64\native\TWAINDSM.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 </Project>

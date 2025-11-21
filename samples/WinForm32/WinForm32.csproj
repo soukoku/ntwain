@@ -6,24 +6,26 @@
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<PlatformTarget>x86</PlatformTarget>
-    <RootNamespace>WinFormSample</RootNamespace>
+		<RootNamespace>WinFormSample</RootNamespace>
+		<ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+		<ApplicationVisualStyles>true</ApplicationVisualStyles>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Magick.NET-Q8-x86" Version="14.9.1" />
+		<PackageReference Include="Magick.NET-Q8-x86" Version="14.9.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\NTwain\NTwain.csproj" />
+		<ProjectReference Include="..\..\src\NTwain\NTwain.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="platforms\qwindows.dll">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="runtimes\win-x86\native\TWAINDSM.dll">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Update="platforms\qwindows.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\win-x86\native\TWAINDSM.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>

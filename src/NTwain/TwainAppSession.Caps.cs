@@ -175,7 +175,7 @@ namespace NTwain
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="cap"></param>
-        /// <param name="values"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
         public STS GetCapValues<TValue>(CAP cap, out ValueContainer<TValue> value) where TValue : struct
         {
