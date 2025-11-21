@@ -292,6 +292,17 @@ namespace NTwain.Data
             return ((IEnumerable<TValue>)this).GetEnumerator();
         }
     }
+    /// <summary>
+    /// A more dotnet-friendly representation of <see cref="TW_RANGE"/> with boxed values.
+    /// </summary>
+    public partial class RangeBoxed 
+    {
+        public object MinValue;
+        public object MaxValue;
+        public object StepSize;
+        public object DefaultValue;
+        public object CurrentValue;
+    }
 
     partial struct TW_FIX32 : IEquatable<TW_FIX32>, IConvertible
     {

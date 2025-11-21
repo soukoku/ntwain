@@ -102,6 +102,46 @@ namespace NTwain
         }
 
         /// <summary>
+        /// Gets a CAP's current value as boxed values. This is a simplified version that doesn't require
+        /// manual reading, but may or may not work.
+        /// </summary>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS GetCapCurrentBoxed(CAP cap, out List<object> value) 
+        {
+            value = new List<object>();
+            var sts = GetCapCurrent(cap, out TW_CAPABILITY twcap);
+            if (sts.RC == TWRC.SUCCESS)
+            {
+                switch (twcap.ConType)
+                {
+                    case TWON.ONEVALUE:
+                        var read = twcap.ReadOneValueBoxed(this);
+                        if (read != null) value.Add(read);
+                        break;
+                    case TWON.ENUMERATION:
+                        var twenum = twcap.ReadEnumerationBoxed(this);
+                        if (twenum.Items != null && twenum.CurrentIndex < twenum.Items.Length)
+                        {
+                            value.Add(twenum.Items[twenum.CurrentIndex]);
+                        }
+                        break;
+                    case TWON.RANGE:
+                        value.Add(twcap.ReadRangeBoxed(this).CurrentValue);
+                        break;
+                    case TWON.ARRAY:
+                        var twarr = twcap.ReadArrayBoxed(this);
+                        if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
+                        break;
+                    default:
+                        twcap.Free(this); break;
+                }
+            }
+            return sts;
+        }
+
+        /// <summary>
         /// Gets a CAP's raw default value.
         /// Caller will need to manually read and free the memory.
         /// </summary>
@@ -146,6 +186,46 @@ namespace NTwain
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
+                        if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
+                        break;
+                    default:
+                        twcap.Free(this); break;
+                }
+            }
+            return sts;
+        }
+
+        /// <summary>
+        /// Gets a CAP's default value. This is a simplified version that doesn't require
+        /// manual reading, but may or may not work.
+        /// </summary>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS GetCapDefaultBoxed(CAP cap, out List<object> value) 
+        {
+            value = new List<object>();
+            var sts = GetCapDefault(cap, out TW_CAPABILITY twcap);
+            if (sts.RC == TWRC.SUCCESS)
+            {
+                switch (twcap.ConType)
+                {
+                    case TWON.ONEVALUE:
+                        var read = twcap.ReadOneValueBoxed(this);
+                        if (read != null) value.Add(read);
+                        break;
+                    case TWON.ENUMERATION:
+                        var twenum = twcap.ReadEnumerationBoxed(this);
+                        if (twenum.Items != null && twenum.DefaultIndex < twenum.Items.Length)
+                        {
+                            value.Add(twenum.Items[twenum.DefaultIndex]);
+                        }
+                        break;
+                    case TWON.RANGE:
+                        value.Add(twcap.ReadRangeBoxed(this).DefaultValue);
+                        break;
+                    case TWON.ARRAY:
+                        var twarr = twcap.ReadArrayBoxed(this);
                         if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
                         break;
                     default:
@@ -214,6 +294,63 @@ namespace NTwain
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
+                        if (twarr != null)
+                        {
+                            value.ArrayValue = twarr;
+                        }
+                        break;
+                    default:
+                        twcap.Free(this); break;
+                }
+            }
+            return sts;
+        }
+
+
+        /// <summary>
+        /// Gets a CAP's supported values. This is a simplified version that doesn't require
+        /// manual reading, but may or may not work.
+        /// </summary>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS GetCapValuesBoxed(CAP cap, out ValueContainer<object> value) 
+        {
+            value = new ValueContainer<object> { ContainerType = TWON.DONTCARE };
+            var sts = GetCapValues(cap, out TW_CAPABILITY twcap);
+            if (sts.RC == TWRC.SUCCESS)
+            {
+                value.ContainerType = twcap.ConType;
+                switch (twcap.ConType)
+                {
+                    case TWON.ONEVALUE:
+                        value.OneValue = twcap.ReadOneValueBoxed(this);
+                        break;
+                    case TWON.ENUMERATION:
+                        var twenum = twcap.ReadEnumerationBoxed(this);
+                        if (twenum.Items != null)
+                        {
+                            value.EnumValue = new EnumValue<object>
+                            {
+                                CurrentIndex = twenum.CurrentIndex,
+                                DefaultIndex = twenum.DefaultIndex,
+                                Items = twenum.Items
+                            };
+                        }
+                        break;
+                    case TWON.RANGE:
+                        var range = twcap.ReadRangeBoxed(this);
+                        value.RangeValue = new RangeValue<object>
+                        {
+                            Min = range.MinValue,
+                            Max = range.MaxValue,
+                            Step = range.StepSize,
+                            DefaultValue = range.DefaultValue,
+                            CurrentValue = range.CurrentValue
+                        };
+                        break;
+                    case TWON.ARRAY:
+                        var twarr = twcap.ReadArrayBoxed(this);
                         if (twarr != null)
                         {
                             value.ArrayValue = twarr;

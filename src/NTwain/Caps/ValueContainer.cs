@@ -1,10 +1,11 @@
 ﻿using NTwain.Data;
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace NTwain.Caps;
 
-public record ValueContainer<TValue> where TValue : struct
+public record ValueContainer<TValue>
 {
     public TWON ContainerType { get; set; }
 
@@ -20,7 +21,7 @@ public record ValueContainer<TValue> where TValue : struct
     {
         return ContainerType switch
         {
-            TWON.ONEVALUE => OneValue.HasValue ? ToEnumerable(OneValue.Value) : [],
+            TWON.ONEVALUE => ToEnumerable(OneValue),
             TWON.ARRAY => ArrayValue ?? [],
             TWON.ENUMERATION => EnumValue?.Items ?? [],
             TWON.RANGE => RangeValue != null ? GenerateRangeValues(RangeValue) : [],
@@ -28,22 +29,27 @@ public record ValueContainer<TValue> where TValue : struct
         };
     }
 
-    private IEnumerable<TValue> ToEnumerable(TValue value)
+    private IEnumerable<TValue> ToEnumerable(TValue? value)
     {
+        if (value == null) yield break;
         yield return value;
     }
 
     private IEnumerable<TValue> GenerateRangeValues(RangeValue<TValue> range)
     {
-        var de = new DynamicEnumerator<TValue>(range.Min, range.Max, range.Step);
+        var dynamicType = typeof(DynamicEnumerator<>);
+        var genericType = dynamicType.MakeGenericType(typeof(TValue));
+
+        var de = Activator.CreateInstance(genericType, range.Min, range.Max, range.Step) as IEnumerator;
+        if (de == null) yield break;
         while (de.MoveNext())
         {
-            yield return de.Current;
+            yield return (TValue)de.Current;
         }
     }
 }
 
-public record EnumValue<TValue> where TValue : struct
+public record EnumValue<TValue>
 {
     public TValue[] Items { get; set; } = [];
 
@@ -52,7 +58,7 @@ public record EnumValue<TValue> where TValue : struct
     public int DefaultIndex { get; set; }
 }
 
-public record RangeValue<TValue> where TValue : struct
+public record RangeValue<TValue>
 {
     public TValue Min { get; set; }
 

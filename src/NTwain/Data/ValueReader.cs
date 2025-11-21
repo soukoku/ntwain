@@ -87,7 +87,6 @@ namespace NTwain.Data
         /// <summary>
         /// Reads a boxed one value out of a cap. This can only be done once if memory is freed.
         /// </summary>
-        /// <typeparam name="TValue"></typeparam>
         /// <param name="cap"></param>
         /// <param name="memMgr"></param>
         /// <param name="freeMemory"></param>
@@ -402,6 +401,52 @@ namespace NTwain.Data
                     arr[i] = ReadTWTYData<TValue>(lockedPtr, itemType, i);
                 }
                 return arr;
+            }
+            finally
+            {
+                if (lockedPtr != IntPtr.Zero) memMgr.Unlock(cap.hContainer);
+                if (freeMemory)
+                {
+                    memMgr.Free(cap.hContainer);
+                    cap.hContainer = IntPtr.Zero;
+                }
+            }
+        }
+
+        public static RangeBoxed ReadRangeBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) 
+        {
+            var retVal = new RangeBoxed();
+
+            if (cap.ConType != TWON.RANGE || cap.hContainer == IntPtr.Zero) return retVal;
+
+            var lockedPtr = memMgr.Lock(cap.hContainer);
+
+            try
+            {
+                TWTY itemType;
+                // Mac has a level of indirection and a different structure (ick)...
+                if (TWPlatform.IsMacOSX)
+                {
+                    itemType = (TWTY)Marshal.ReadInt32(lockedPtr);
+                    lockedPtr += 4;
+                }
+                else
+                {
+                    // Windows or the 2.4+ Linux DSM...
+                    itemType = (TWTY)Marshal.ReadInt16(lockedPtr);
+                    lockedPtr += 2;
+                }
+                retVal.MinValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
+                lockedPtr += 4;
+                retVal.MaxValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
+                lockedPtr += 4;
+                retVal.StepSize = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
+                lockedPtr += 4;
+                retVal.CurrentValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
+                lockedPtr += 4;
+                retVal.DefaultValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
+                lockedPtr += 4;
+                return retVal;
             }
             finally
             {
