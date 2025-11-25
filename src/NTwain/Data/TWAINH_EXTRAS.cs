@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -258,33 +260,37 @@ namespace NTwain.Data
     /// A more dotnet-friendly representation of <see cref="TW_ENUMERATION"/>.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public class Enumeration<TValue>
+    public record Enumeration<TValue>
     {
-        public int CurrentIndex;
+        public int CurrentIndex { get; set; }
 
-        public int DefaultIndex;
+        public int DefaultIndex { get; set; }
 
-        public TValue[]? Items;
+        public TValue[] Items { get; set; } = [];
     }
 
     /// <summary>
     /// A more dotnet-friendly representation of <see cref="TW_RANGE"/>.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public partial class Range<TValue> : IEnumerable<TValue> where TValue : struct
+    public partial record Range<TValue> : IEnumerable<TValue>
     {
-        public TValue MinValue;
-        public TValue MaxValue;
-        public TValue StepSize;
-        public TValue DefaultValue;
-        public TValue CurrentValue;
+        public TValue MinValue { get; set; }
+        public TValue MaxValue { get; set; }
+        public TValue StepSize { get; set; }
+        public TValue DefaultValue { get; set; }
+        public TValue CurrentValue { get; set; }
 
         IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
         {
             if (MinValue is not IConvertible)
                 throw new NotSupportedException($"The value type {typeof(TValue).Name} is not supported for range enumeration.");
 
-            return new DynamicEnumerator<TValue>(MinValue, MaxValue, StepSize);
+            var dynamicType = typeof(DynamicEnumerator<>);
+            var genericType = dynamicType.MakeGenericType(typeof(TValue));
+
+            var de = (IEnumerator<TValue>)Activator.CreateInstance(genericType, MinValue, MaxValue, StepSize)!;
+            return de;
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -292,16 +298,40 @@ namespace NTwain.Data
             return ((IEnumerable<TValue>)this).GetEnumerator();
         }
     }
+
     /// <summary>
-    /// A more dotnet-friendly representation of <see cref="TW_RANGE"/> with boxed values.
+    /// A more dotnet-friendly container of CAP value.
     /// </summary>
-    public partial class RangeBoxed 
+    /// <typeparam name="TValue"></typeparam>
+    public record ValueContainer<TValue>
     {
-        public object MinValue;
-        public object MaxValue;
-        public object StepSize;
-        public object DefaultValue;
-        public object CurrentValue;
+        public TWON ContainerType { get; set; }
+
+        public TValue? OneValue { get; set; }
+
+        public IList<TValue>? ArrayValue { get; set; }
+
+        public Enumeration<TValue>? EnumValue { get; set; }
+
+        public Range<TValue>? RangeValue { get; set; }
+
+        public IEnumerable<TValue> GetValues()
+        {
+            return ContainerType switch
+            {
+                TWON.ONEVALUE => ToEnumerable(OneValue),
+                TWON.ARRAY => ArrayValue ?? [],
+                TWON.ENUMERATION => EnumValue?.Items ?? [],
+                TWON.RANGE => RangeValue != null ? RangeValue.ToArray() : [],
+                _ => [],
+            };
+        }
+
+        private IEnumerable<TValue> ToEnumerable(TValue? value)
+        {
+            if (value == null) yield break;
+            yield return value;
+        }
     }
 
     partial struct TW_FIX32 : IEquatable<TW_FIX32>, IConvertible

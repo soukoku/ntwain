@@ -413,9 +413,9 @@ namespace NTwain.Data
             }
         }
 
-        public static RangeBoxed ReadRangeBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) 
+        public static Range<object> ReadRangeBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) 
         {
-            var retVal = new RangeBoxed();
+            var retVal = new Range<object>();
 
             if (cap.ConType != TWON.RANGE || cap.hContainer == IntPtr.Zero) return retVal;
 

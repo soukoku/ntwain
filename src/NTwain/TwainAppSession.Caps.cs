@@ -108,7 +108,7 @@ namespace NTwain
         /// <param name="cap"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public STS GetCapCurrentBoxed(CAP cap, out List<object> value) 
+        public STS GetCapCurrentBoxed(CAP cap, out List<object> value)
         {
             value = new List<object>();
             var sts = GetCapCurrent(cap, out TW_CAPABILITY twcap);
@@ -202,7 +202,7 @@ namespace NTwain
         /// <param name="cap"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public STS GetCapDefaultBoxed(CAP cap, out List<object> value) 
+        public STS GetCapDefaultBoxed(CAP cap, out List<object> value)
         {
             value = new List<object>();
             var sts = GetCapDefault(cap, out TW_CAPABILITY twcap);
@@ -273,24 +273,12 @@ namespace NTwain
                         var twenum = twcap.ReadEnumeration<TValue>(this);
                         if (twenum.Items != null)
                         {
-                            value.EnumValue = new EnumValue<TValue>
-                            {
-                                CurrentIndex = twenum.CurrentIndex,
-                                DefaultIndex = twenum.DefaultIndex,
-                                Items = twenum.Items
-                            };
+                            value.EnumValue = twenum;
                         }
                         break;
                     case TWON.RANGE:
                         var range = twcap.ReadRange<TValue>(this);
-                        value.RangeValue = new RangeValue<TValue>
-                        {
-                            Min = range.MinValue,
-                            Max = range.MaxValue,
-                            Step = range.StepSize,
-                            DefaultValue = range.DefaultValue,
-                            CurrentValue = range.CurrentValue
-                        };
+                        value.RangeValue = range;
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
@@ -314,7 +302,7 @@ namespace NTwain
         /// <param name="cap"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public STS GetCapValuesBoxed(CAP cap, out ValueContainer<object> value) 
+        public STS GetCapValuesBoxed(CAP cap, out ValueContainer<object> value)
         {
             value = new ValueContainer<object> { ContainerType = TWON.DONTCARE };
             var sts = GetCapValues(cap, out TW_CAPABILITY twcap);
@@ -330,24 +318,12 @@ namespace NTwain
                         var twenum = twcap.ReadEnumerationBoxed(this);
                         if (twenum.Items != null)
                         {
-                            value.EnumValue = new EnumValue<object>
-                            {
-                                CurrentIndex = twenum.CurrentIndex,
-                                DefaultIndex = twenum.DefaultIndex,
-                                Items = twenum.Items
-                            };
+                            value.EnumValue = twenum;
                         }
                         break;
                     case TWON.RANGE:
                         var range = twcap.ReadRangeBoxed(this);
-                        value.RangeValue = new RangeValue<object>
-                        {
-                            Min = range.MinValue,
-                            Max = range.MaxValue,
-                            Step = range.StepSize,
-                            DefaultValue = range.DefaultValue,
-                            CurrentValue = range.CurrentValue
-                        };
+                        value.RangeValue = range;
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArrayBoxed(this);
@@ -457,6 +433,48 @@ namespace NTwain
         {
             var twcap = ValueWriter.CreateOneValueCap(cap, this, value);
             return SetCap(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap value setter for all kinds of container types.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetCap<TValue>(CAP cap, ValueContainer<TValue> value) where TValue : struct
+        {
+            switch (value.ContainerType)
+            {
+                case TWON.ONEVALUE:
+                    {
+                        var twcap = ValueWriter.CreateOneValueCap(cap, this, value.OneValue);
+                        return SetCap(ref twcap);
+                    }
+                case TWON.ENUMERATION:
+                    {
+                        if (value.EnumValue == null)
+                            throw new ArgumentException("EnumValue cannot be null when ContainerType is ENUMERATION.", nameof(value));
+                        var twcap = ValueWriter.CreateEnumCap(cap, this, value.EnumValue);
+                        return SetCap(ref twcap);
+                    }
+                case TWON.RANGE:
+                    {
+                        if (value.RangeValue == null)
+                            throw new ArgumentException("RangeValue cannot be null when ContainerType is RANGE.", nameof(value));
+                        var twcap = ValueWriter.CreateRangeCap(cap, this, value.RangeValue);
+                        return SetCap(ref twcap);
+                    }
+                case TWON.ARRAY:
+                    {
+                        if (value.ArrayValue == null)
+                            throw new ArgumentException("ArrayValue cannot be null when ContainerType is ARRAY.", nameof(value));
+                        var twcap = ValueWriter.CreateArrayCap(cap, this, value.ArrayValue);
+                        return SetCap(ref twcap);
+                    }
+                default:
+                    throw new ArgumentException("Unsupported ContainerType for setting CAP.", nameof(value));
+            }
         }
 
         /// <summary>
