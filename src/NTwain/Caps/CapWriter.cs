@@ -1,10 +1,10 @@
 ﻿using NTwain.Data;
 using System.Collections.Generic;
 
-namespace NTwain.Caps
+namespace NTwain.Caps;
+
+public class CapWriter<TValue> : CapReader<TValue> where TValue : struct
 {
-  public class CapWriter<TValue> : CapReader<TValue> where TValue : struct
-  {
     public CapWriter(TwainAppSession twain, CAP cap, float introducedVersion = 1)
       : base(twain, cap, introducedVersion)
     {
@@ -17,7 +17,7 @@ namespace NTwain.Caps
     /// <returns></returns>
     public STS Set(TValue value)
     {
-      return LastSTS = _twain.SetCap(Cap, value);
+        return LastSTS = _twain.SetCap(Cap, value);
     }
 
     /// <summary>
@@ -27,8 +27,7 @@ namespace NTwain.Caps
     /// <returns></returns>
     public STS Set(IList<TValue> values)
     {
-      var twcap = ValueWriter.CreateArrayCap(Cap, _twain, values);
-      return LastSTS = _twain.SetCap(ref twcap);
+        return LastSTS = _twain.SetCap(Cap, values);
     }
 
     /// <summary>
@@ -38,8 +37,7 @@ namespace NTwain.Caps
     /// <returns></returns>
     public STS Set(Enumeration<TValue> values)
     {
-      var twcap = ValueWriter.CreateEnumCap(Cap, _twain, values);
-      return LastSTS = _twain.SetCap(ref twcap);
+        return LastSTS = _twain.SetCap(Cap, values);
     }
 
     /// <summary>
@@ -49,8 +47,7 @@ namespace NTwain.Caps
     /// <returns></returns>
     public STS Set(Range<TValue> values)
     {
-      var twcap = ValueWriter.CreateRangeCap(Cap, _twain, values);
-      return LastSTS = _twain.SetCap(ref twcap);
+        return LastSTS = _twain.SetCap(Cap, values);
     }
 
 
@@ -61,8 +58,7 @@ namespace NTwain.Caps
     /// <returns></returns>
     public STS SetConstraint(TValue value)
     {
-      var twcap = ValueWriter.CreateOneValueCap(Cap, _twain, value);
-      return LastSTS = _twain.SetConstraint(ref twcap);
+        return LastSTS = _twain.SetConstraint(Cap, value);
     }
 
     /// <summary>
@@ -72,8 +68,7 @@ namespace NTwain.Caps
     /// <returns></returns>
     public STS SetConstraint(IList<TValue> values)
     {
-      var twcap = ValueWriter.CreateArrayCap(Cap, _twain, values);
-      return LastSTS = _twain.SetConstraint(ref twcap);
+        return LastSTS = _twain.SetConstraint(Cap, values);
     }
 
     /// <summary>
@@ -83,8 +78,7 @@ namespace NTwain.Caps
     /// <returns></returns>
     public STS SetConstraint(Enumeration<TValue> values)
     {
-      var twcap = ValueWriter.CreateEnumCap(Cap, _twain, values);
-      return LastSTS = _twain.SetConstraint(ref twcap);
+        return LastSTS = _twain.SetConstraint(Cap, values);
     }
 
     /// <summary>
@@ -94,19 +88,17 @@ namespace NTwain.Caps
     /// <returns></returns>
     public STS SetConstraint(Range<TValue> values)
     {
-      var twcap = ValueWriter.CreateRangeCap(Cap, _twain, values);
-      return LastSTS = _twain.SetConstraint(ref twcap);
+        return LastSTS = _twain.SetConstraint(Cap, values);
     }
 
     /// <summary>
     /// Resets this cap to power-on default.
     /// </summary>
+    /// <param name="value">The current value after reset.</param>
     /// <returns></returns>
-    public STS Reset()
+    public STS Reset(out List<TValue> value)
     {
-      LastSTS = _twain.ResetCap(Cap, out TW_CAPABILITY twcap);
-      twcap.Free(_twain);
-      return LastSTS;
+        LastSTS = _twain.ResetCap(Cap, out value);
+        return LastSTS;
     }
-  }
 }

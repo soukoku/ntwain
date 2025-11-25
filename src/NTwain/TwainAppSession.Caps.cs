@@ -71,7 +71,7 @@ namespace NTwain
         /// <returns></returns>
         public STS GetCapCurrent<TValue>(CAP cap, out List<TValue> value) where TValue : struct
         {
-            value = new List<TValue>();
+            value = [];
             var sts = GetCapCurrent(cap, out TW_CAPABILITY twcap);
             if (sts.RC == TWRC.SUCCESS)
             {
@@ -422,8 +422,7 @@ namespace NTwain
         }
 
         /// <summary>
-        /// A simpler cap value setter for common one-value scenarios
-        /// that's easier to use. Not for other container type sets.
+        /// A simpler cap value setter for one-value type.
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="cap"></param>
@@ -436,42 +435,70 @@ namespace NTwain
         }
 
         /// <summary>
+        /// A cap value setter for enumeration container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetCap<TValue>(CAP cap, Enumeration<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateEnumCap(cap, this, value);
+            return SetCap(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap value setter for range container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetCap<TValue>(CAP cap, Range<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateRangeCap(cap, this, value);
+            return SetCap(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap value setter for array container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetCap<TValue>(CAP cap, IList<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateArrayCap(cap, this, value);
+            return SetCap(ref twcap);
+        }
+
+        /// <summary>
         /// A cap value setter for all kinds of container types.
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="cap"></param>
         /// <param name="value"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public STS SetCap<TValue>(CAP cap, ValueContainer<TValue> value) where TValue : struct
         {
             switch (value.ContainerType)
             {
                 case TWON.ONEVALUE:
-                    {
-                        var twcap = ValueWriter.CreateOneValueCap(cap, this, value.OneValue);
-                        return SetCap(ref twcap);
-                    }
+                    return SetCap(cap, value.OneValue);
                 case TWON.ENUMERATION:
-                    {
-                        if (value.EnumValue == null)
-                            throw new ArgumentException("EnumValue cannot be null when ContainerType is ENUMERATION.", nameof(value));
-                        var twcap = ValueWriter.CreateEnumCap(cap, this, value.EnumValue);
-                        return SetCap(ref twcap);
-                    }
+                    if (value.EnumValue == null)
+                        throw new ArgumentException("EnumValue cannot be null when ContainerType is ENUMERATION.", nameof(value));
+                    return SetCap(cap, value.EnumValue);
                 case TWON.RANGE:
-                    {
-                        if (value.RangeValue == null)
-                            throw new ArgumentException("RangeValue cannot be null when ContainerType is RANGE.", nameof(value));
-                        var twcap = ValueWriter.CreateRangeCap(cap, this, value.RangeValue);
-                        return SetCap(ref twcap);
-                    }
+                    if (value.RangeValue == null)
+                        throw new ArgumentException("RangeValue cannot be null when ContainerType is RANGE.", nameof(value));
+                    return SetCap(cap, value.RangeValue);
                 case TWON.ARRAY:
-                    {
-                        if (value.ArrayValue == null)
-                            throw new ArgumentException("ArrayValue cannot be null when ContainerType is ARRAY.", nameof(value));
-                        var twcap = ValueWriter.CreateArrayCap(cap, this, value.ArrayValue);
-                        return SetCap(ref twcap);
-                    }
+                    if (value.ArrayValue == null)
+                        throw new ArgumentException("ArrayValue cannot be null when ContainerType is ARRAY.", nameof(value));
+                    return SetCap(cap, value.ArrayValue);
                 default:
                     throw new ArgumentException("Unsupported ContainerType for setting CAP.", nameof(value));
             }
@@ -491,6 +518,90 @@ namespace NTwain
             var rc = DGControl.Capability.SetConstraint(ref _appIdentity, ref _currentDS, ref value);
             value.Free(this);
             return WrapInSTS(rc);
+        }
+
+
+        /// <summary>
+        /// A simpler cap constraint setter for one-value type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetConstraint<TValue>(CAP cap, TValue value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateOneValueCap(cap, this, value);
+            return SetConstraint(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap constraint setter for enumeration container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetConstraint<TValue>(CAP cap, Enumeration<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateEnumCap(cap, this, value);
+            return SetConstraint(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap constraint setter for range container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetConstraint<TValue>(CAP cap, Range<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateRangeCap(cap, this, value);
+            return SetConstraint(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap constraint setter for array container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetConstraint<TValue>(CAP cap, IList<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateArrayCap(cap, this, value);
+            return SetConstraint(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap constraint setter for all kinds of container types.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public STS SetConstraint<TValue>(CAP cap, ValueContainer<TValue> value) where TValue : struct
+        {
+            switch (value.ContainerType)
+            {
+                case TWON.ONEVALUE:
+                    return SetConstraint(cap, value.OneValue);
+                case TWON.ENUMERATION:
+                    if (value.EnumValue == null)
+                        throw new ArgumentException("EnumValue cannot be null when ContainerType is ENUMERATION.", nameof(value));
+                    return SetConstraint(cap, value.EnumValue);
+                case TWON.RANGE:
+                    if (value.RangeValue == null)
+                        throw new ArgumentException("RangeValue cannot be null when ContainerType is RANGE.", nameof(value));
+                    return SetConstraint(cap, value.RangeValue);
+                case TWON.ARRAY:
+                    if (value.ArrayValue == null)
+                        throw new ArgumentException("ArrayValue cannot be null when ContainerType is ARRAY.", nameof(value));
+                    return SetConstraint(cap, value.ArrayValue);
+                default:
+                    throw new ArgumentException("Unsupported ContainerType for setting CAP constraint.", nameof(value));
+            }
         }
 
         /// <summary>
@@ -520,30 +631,31 @@ namespace NTwain
         /// <param name="cap"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public STS ResetCap<TValue>(CAP cap, out TValue value) where TValue : struct
+        public STS ResetCap<TValue>(CAP cap, out List<TValue> value) where TValue : struct
         {
-            value = default;
+            value = [];
             var sts = ResetCap(cap, out TW_CAPABILITY twcap);
+
             if (sts.RC == TWRC.SUCCESS)
             {
                 switch (twcap.ConType)
                 {
                     case TWON.ONEVALUE:
-                        value = twcap.ReadOneValue<TValue>(this);
+                        value.Add(twcap.ReadOneValue<TValue>(this));
                         break;
                     case TWON.ENUMERATION:
                         var twenum = twcap.ReadEnumeration<TValue>(this);
                         if (twenum.Items != null && twenum.CurrentIndex < twenum.Items.Length)
                         {
-                            value = twenum.Items[twenum.CurrentIndex];
+                            value.Add(twenum.Items[twenum.CurrentIndex]);
                         }
                         break;
                     case TWON.RANGE:
-                        value = twcap.ReadRange<TValue>(this).CurrentValue;
+                        value.Add(twcap.ReadRange<TValue>(this).CurrentValue);
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
-                        if (twarr != null && twarr.Count > 0) value = twarr[0];
+                        if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
                         break;
                     default:
                         twcap.Free(this); break;
