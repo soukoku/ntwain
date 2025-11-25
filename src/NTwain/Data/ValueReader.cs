@@ -175,7 +175,7 @@ namespace NTwain.Data
             }
         }
 
-        public static Enumeration<object> ReadEnumerationBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) 
+        public static Enumeration<object> ReadEnumerationBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true)
         {
             Enumeration<object> retVal = new();
 
@@ -319,7 +319,7 @@ namespace NTwain.Data
             return retVal;
         }
 
-        public static IList<object> ReadArrayBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) 
+        public static IList<object> ReadArrayBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true)
         {
             if (cap.ConType != TWON.ARRAY || cap.hContainer == IntPtr.Zero) return Array.Empty<object>();
 
@@ -413,11 +413,9 @@ namespace NTwain.Data
             }
         }
 
-        public static Range<object> ReadRangeBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) 
+        public static Range<object>? ReadRangeBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true)
         {
-            var retVal = new Range<object>();
-
-            if (cap.ConType != TWON.RANGE || cap.hContainer == IntPtr.Zero) return retVal;
+            if (cap.ConType != TWON.RANGE || cap.hContainer == IntPtr.Zero) return null;
 
             var lockedPtr = memMgr.Lock(cap.hContainer);
 
@@ -436,17 +434,24 @@ namespace NTwain.Data
                     itemType = (TWTY)Marshal.ReadInt16(lockedPtr);
                     lockedPtr += 2;
                 }
-                retVal.MinValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
+                var minValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.MaxValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
+                var maxValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.StepSize = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
+                var stepSize = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.CurrentValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
+                var currentValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.DefaultValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
+                var defaultValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                return retVal;
+                return new Range<object>
+                {
+                    MinValue = minValue,
+                    MaxValue = maxValue,
+                    StepSize = stepSize,
+                    CurrentValue = currentValue,
+                    DefaultValue = defaultValue
+                };
             }
             finally
             {
@@ -459,11 +464,9 @@ namespace NTwain.Data
             }
         }
 
-        public static Range<TValue> ReadRange<TValue>(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) where TValue : struct
+        public static Range<TValue>? ReadRange<TValue>(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) where TValue : struct
         {
-            var retVal = new Range<TValue>();
-
-            if (cap.ConType != TWON.RANGE || cap.hContainer == IntPtr.Zero) return retVal;
+            if (cap.ConType != TWON.RANGE || cap.hContainer == IntPtr.Zero) return null;
 
             var lockedPtr = memMgr.Lock(cap.hContainer);
 
@@ -482,17 +485,24 @@ namespace NTwain.Data
                     itemType = (TWTY)Marshal.ReadInt16(lockedPtr);
                     lockedPtr += 2;
                 }
-                retVal.MinValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                var minValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.MaxValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                var maxValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.StepSize = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                var stepSize = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.CurrentValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                var currentValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.DefaultValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                var defaultValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                return retVal;
+                return new Range<TValue>
+                {
+                    MinValue = minValue,
+                    MaxValue = maxValue,
+                    StepSize = stepSize,
+                    CurrentValue = currentValue,
+                    DefaultValue = defaultValue
+                };
             }
             finally
             {

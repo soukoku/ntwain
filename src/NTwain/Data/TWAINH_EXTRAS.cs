@@ -273,15 +273,20 @@ namespace NTwain.Data
     /// A more dotnet-friendly representation of <see cref="TW_RANGE"/>.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public partial record Range<TValue> : IEnumerable<TValue>
+    public partial record Range<TValue>
     {
-        public TValue MinValue { get; set; }
-        public TValue MaxValue { get; set; }
-        public TValue StepSize { get; set; }
-        public TValue DefaultValue { get; set; }
-        public TValue CurrentValue { get; set; }
+        public required TValue MinValue { get; set; }
+        public required TValue MaxValue { get; set; }
+        public required TValue StepSize { get; set; }
+        public required TValue DefaultValue { get; set; }
+        public required TValue CurrentValue { get; set; }
 
-        IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
+        /// <summary>
+        /// Tries to enumerate the range values.
+        /// This could be expensive depending on the range size.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<TValue> Enumerate()
         {
             if (MinValue is not IConvertible)
                 throw new NotSupportedException($"The value type {typeof(TValue).Name} is not supported for range enumeration.");
@@ -290,12 +295,10 @@ namespace NTwain.Data
             var genericType = dynamicType.MakeGenericType(typeof(TValue));
 
             var de = (IEnumerator<TValue>)Activator.CreateInstance(genericType, MinValue, MaxValue, StepSize)!;
-            return de;
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable<TValue>)this).GetEnumerator();
+            while (de.MoveNext())
+            {
+                yield return de.Current;
+            }
         }
     }
 
@@ -322,7 +325,7 @@ namespace NTwain.Data
                 TWON.ONEVALUE => ToEnumerable(OneValue),
                 TWON.ARRAY => ArrayValue ?? [],
                 TWON.ENUMERATION => EnumValue?.Items ?? [],
-                TWON.RANGE => RangeValue != null ? RangeValue.ToArray() : [],
+                TWON.RANGE => RangeValue != null ? RangeValue.Enumerate() : [],
                 _ => [],
             };
         }

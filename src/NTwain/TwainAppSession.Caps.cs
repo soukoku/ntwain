@@ -88,7 +88,8 @@ namespace NTwain
                         }
                         break;
                     case TWON.RANGE:
-                        value.Add(twcap.ReadRange<TValue>(this).CurrentValue);
+                        var range = twcap.ReadRange<TValue>(this);
+                        if (range != null) value.Add(range.CurrentValue);
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
@@ -110,7 +111,7 @@ namespace NTwain
         /// <returns></returns>
         public STS GetCapCurrentBoxed(CAP cap, out List<object> value)
         {
-            value = new List<object>();
+            value = [];
             var sts = GetCapCurrent(cap, out TW_CAPABILITY twcap);
             if (sts.RC == TWRC.SUCCESS)
             {
@@ -128,7 +129,8 @@ namespace NTwain
                         }
                         break;
                     case TWON.RANGE:
-                        value.Add(twcap.ReadRangeBoxed(this).CurrentValue);
+                        var range = twcap.ReadRangeBoxed(this);
+                        if (range != null) value.Add(range.CurrentValue);
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArrayBoxed(this);
@@ -165,7 +167,7 @@ namespace NTwain
         /// <returns></returns>
         public STS GetCapDefault<TValue>(CAP cap, out List<TValue> value) where TValue : struct
         {
-            value = new List<TValue>();
+            value = [];
             var sts = GetCapDefault(cap, out TW_CAPABILITY twcap);
             if (sts.RC == TWRC.SUCCESS)
             {
@@ -182,7 +184,8 @@ namespace NTwain
                         }
                         break;
                     case TWON.RANGE:
-                        value.Add(twcap.ReadRange<TValue>(this).DefaultValue);
+                        var range = twcap.ReadRange<TValue>(this);
+                        if (range != null) value.Add(range.DefaultValue);
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
@@ -204,7 +207,7 @@ namespace NTwain
         /// <returns></returns>
         public STS GetCapDefaultBoxed(CAP cap, out List<object> value)
         {
-            value = new List<object>();
+            value = [];
             var sts = GetCapDefault(cap, out TW_CAPABILITY twcap);
             if (sts.RC == TWRC.SUCCESS)
             {
@@ -222,7 +225,8 @@ namespace NTwain
                         }
                         break;
                     case TWON.RANGE:
-                        value.Add(twcap.ReadRangeBoxed(this).DefaultValue);
+                        var range = twcap.ReadRangeBoxed(this);
+                        if (range != null) value.Add(range.DefaultValue);
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArrayBoxed(this);
@@ -651,10 +655,52 @@ namespace NTwain
                         }
                         break;
                     case TWON.RANGE:
-                        value.Add(twcap.ReadRange<TValue>(this).CurrentValue);
+                        var range = twcap.ReadRange<TValue>(this);
+                        if (range != null) value.Add(range.CurrentValue);
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
+                        if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
+                        break;
+                    default:
+                        twcap.Free(this); break;
+                }
+            }
+            return sts;
+        }
+
+        /// <summary>
+        /// Resets a CAP's current value to power-on default.
+        /// </summary>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS ResetCapBoxed(CAP cap, out List<object> value)
+        {
+            value = [];
+            var sts = ResetCap(cap, out TW_CAPABILITY twcap);
+
+            if (sts.RC == TWRC.SUCCESS)
+            {
+                switch (twcap.ConType)
+                {
+                    case TWON.ONEVALUE:
+                        var read = twcap.ReadOneValueBoxed(this);
+                        if (read != null) value.Add(read);
+                        break;
+                    case TWON.ENUMERATION:
+                        var twenum = twcap.ReadEnumerationBoxed(this);
+                        if (twenum.Items != null && twenum.CurrentIndex < twenum.Items.Length)
+                        {
+                            value.Add(twenum.Items[twenum.CurrentIndex]);
+                        }
+                        break;
+                    case TWON.RANGE:
+                        var range = twcap.ReadRangeBoxed(this);
+                        if (range != null) value.Add(range.CurrentValue);
+                        break;
+                    case TWON.ARRAY:
+                        var twarr = twcap.ReadArrayBoxed(this);
                         if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
                         break;
                     default:
