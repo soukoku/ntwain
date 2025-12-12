@@ -8,123 +8,134 @@ using System.Windows.Forms;
 
 namespace NTwain
 {
-  /// <summary>
-  /// For use under Windows to host a message pump.
-  /// </summary>
-  class MessagePumpThread
-  {
-    DummyForm? _dummyForm;
-    TwainAppSession? _twain;
-
-    public bool IsRunning => _dummyForm != null && _dummyForm.IsHandleCreated;
-
     /// <summary>
-    /// Starts the thread, attaches a twain session to it,
-    /// and opens the DSM.
+    /// For use under Windows to host a message pump.
     /// </summary>
-    /// <param name="twain"></param>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public async Task<STS> AttachAsync(TwainAppSession twain)
+    class MessagePumpThread
     {
-      if (twain.State > STATE.S2) throw new InvalidOperationException("Cannot attach to an opened TWAIN session.");
-      if (_twain != null || _dummyForm != null) throw new InvalidOperationException("Already attached previously.");
+        DummyForm? _dummyForm;
+        TwainAppSession? _twain;
 
-      Thread t = new(RunMessagePump);
-      t.IsBackground = true;
-      t.SetApartmentState(ApartmentState.STA);
-      t.Start();
+        public bool IsRunning => _dummyForm != null && _dummyForm.IsHandleCreated;
 
-      while (_dummyForm == null || !_dummyForm.IsHandleCreated)
-      {
-        await Task.Delay(50);
-      }
-
-      STS sts = default;
-      TaskCompletionSource<bool> tcs = new();
-      _dummyForm.BeginInvoke(() =>
-      {
-        try
+        /// <summary>
+        /// Starts the thread, attaches a twain session to it,
+        /// and opens the DSM.
+        /// </summary>
+        /// <param name="twain"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async Task<STS> AttachAsync(TwainAppSession twain)
         {
-          sts = twain.OpenDSM(_dummyForm.Handle, SynchronizationContext.Current!);
-          if (sts.IsSuccess)
-          {
-            twain.AddWinformFilter();
-            _twain = twain;
-          }
-          else
-          {
-            _dummyForm.Close();
-          }
+            if (twain.State > STATE.S2) throw new InvalidOperationException("Cannot attach to an opened TWAIN session.");
+            if (_twain != null || _dummyForm != null) throw new InvalidOperationException("Already attached previously.");
+
+            Thread t = new(RunMessagePump);
+            t.IsBackground = true;
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+
+            while (_dummyForm == null || !_dummyForm.IsHandleCreated)
+            {
+                await Task.Delay(50);
+            }
+
+            STS sts = default;
+            TaskCompletionSource<bool> tcs = new();
+            _dummyForm.BeginInvoke(() =>
+            {
+                try
+                {
+                    sts = twain.OpenDSM(_dummyForm.Handle, SynchronizationContext.Current!);
+                    if (sts.IsSuccess)
+                    {
+                        twain.AddWinformFilter();
+                        _twain = twain;
+                    }
+                    else
+                    {
+                        _dummyForm.Close();
+                    }
+                }
+                finally
+                {
+                    tcs.TrySetResult(true);
+                }
+            });
+            await tcs.Task;
+            return sts;
         }
-        finally
+
+        /// <summary>
+        /// Detatches a previously attached session and stops the thread.
+        /// </summary>
+        public async Task<STS> DetachAsync()
         {
-          tcs.TrySetResult(true);
+            STS sts = default;
+            if (_dummyForm != null && _twain != null)
+            {
+                TaskCompletionSource<STS> tcs = new();
+                _dummyForm.BeginInvoke(() =>
+                {
+                    sts = _twain.CloseDSMReal();
+                    if (sts.IsSuccess)
+                    {
+                        _twain.RemoveWinformFilter();
+                        _dummyForm.Close();
+                        _twain = null;
+                    }
+                    tcs.SetResult(sts);
+                });
+                await tcs.Task;
+            }
+            return sts;
         }
-      });
-      await tcs.Task;
-      return sts;
-    }
 
-    /// <summary>
-    /// Detatches a previously attached session and stops the thread.
-    /// </summary>
-    public async Task<STS> DetachAsync()
-    {
-      STS sts = default;
-      if (_dummyForm != null && _twain != null)
-      {
-        TaskCompletionSource<STS> tcs = new();
-        _dummyForm.BeginInvoke(() =>
+        public void BringWindowToFront()
         {
-          sts = _twain.CloseDSMReal();
-          if (sts.IsSuccess)
-          {
-            _twain.RemoveWinformFilter();
-            _dummyForm.Close();
-            _twain = null;
-          }
-          tcs.SetResult(sts);
-        });
-        await tcs.Task;
-      }
-      return sts;
-    }
+            if (_dummyForm != null)
+            {
+                _dummyForm.BeginInvoke(_dummyForm.BringToFront);
+            }
+        }
 
-    public void BringWindowToFront()
-    {
-      if (_dummyForm != null)
-      {
-        _dummyForm.BeginInvoke(_dummyForm.BringToFront);
-      }
-    }
+        void RunMessagePump()
+        {
+            Debug.WriteLine("TWAIN pump thread starting");
+            _dummyForm = new DummyForm();
+            _dummyForm.FormClosed += (s, e) =>
+            {
+                _dummyForm = null;
+            };
+            Application.Run(_dummyForm);
+            Debug.WriteLine("TWAIN pump thread ended");
+        }
 
-    void RunMessagePump()
-    {
-      Debug.WriteLine("TWAIN pump thread starting");
-      _dummyForm = new DummyForm();
-      _dummyForm.FormClosed += (s, e) =>
-      {
-        _dummyForm = null;
-      };
-      Application.Run(_dummyForm);
-      Debug.WriteLine("TWAIN pump thread ended");
-    }
+        class DummyForm : Form
+        {
+            public DummyForm()
+            {
+                ShowInTaskbar = false;
+                WindowState = FormWindowState.Minimized;
+                Text = "NTwain Internal Loop";
+            }
 
-    class DummyForm : Form
-    {
-      public DummyForm()
-      {
-        ShowInTaskbar = false;
-        WindowState = FormWindowState.Minimized;
-      }
+            protected override CreateParams CreateParams
+            {
+                get
+                {
+                    CreateParams cp = base.CreateParams;
+                    cp.ExStyle |= 0x80; // WS_EX_TOOLWINDOW
+                    return cp;
+                }
+            }
 
-      protected override void OnShown(EventArgs e)
-      {
-        BringToFront();
-        base.OnShown(e);
-      }
+            protected override void OnShown(EventArgs e)
+            {
+                BringToFront();
+                base.OnShown(e);
+            }
+        }
     }
-  }
 }
 #endif

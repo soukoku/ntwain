@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -258,38 +260,80 @@ namespace NTwain.Data
     /// A more dotnet-friendly representation of <see cref="TW_ENUMERATION"/>.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public class Enumeration<TValue> where TValue : struct
+    public record Enumeration<TValue>
     {
-        public int CurrentIndex;
+        public int CurrentIndex { get; set; }
 
-        public int DefaultIndex;
+        public int DefaultIndex { get; set; }
 
-        public TValue[]? Items;
+        public TValue[] Items { get; set; } = [];
     }
 
     /// <summary>
     /// A more dotnet-friendly representation of <see cref="TW_RANGE"/>.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public partial class Range<TValue> : IEnumerable<TValue> where TValue : struct
+    public partial record Range<TValue>
     {
-        public TValue MinValue;
-        public TValue MaxValue;
-        public TValue StepSize;
-        public TValue DefaultValue;
-        public TValue CurrentValue;
+        public required TValue MinValue { get; set; }
+        public required TValue MaxValue { get; set; }
+        public required TValue StepSize { get; set; }
+        public required TValue DefaultValue { get; set; }
+        public required TValue CurrentValue { get; set; }
 
-        IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
+        /// <summary>
+        /// Tries to enumerate the range values.
+        /// This could be expensive depending on the range size.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<TValue> Enumerate()
         {
             if (MinValue is not IConvertible)
                 throw new NotSupportedException($"The value type {typeof(TValue).Name} is not supported for range enumeration.");
 
-            return new DynamicEnumerator<TValue>(MinValue, MaxValue, StepSize);
+            var dynamicType = typeof(DynamicEnumerator<>);
+            var genericType = dynamicType.MakeGenericType(typeof(TValue));
+
+            var de = (IEnumerator<TValue>)Activator.CreateInstance(genericType, MinValue, MaxValue, StepSize)!;
+            while (de.MoveNext())
+            {
+                yield return de.Current;
+            }
+        }
+    }
+
+    /// <summary>
+    /// A more dotnet-friendly container of CAP value.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    public record ValueContainer<TValue>
+    {
+        public TWON ContainerType { get; set; }
+
+        public TValue? OneValue { get; set; }
+
+        public IList<TValue>? ArrayValue { get; set; }
+
+        public Enumeration<TValue>? EnumValue { get; set; }
+
+        public Range<TValue>? RangeValue { get; set; }
+
+        public IEnumerable<TValue> GetValues()
+        {
+            return ContainerType switch
+            {
+                TWON.ONEVALUE => ToEnumerable(OneValue),
+                TWON.ARRAY => ArrayValue ?? [],
+                TWON.ENUMERATION => EnumValue?.Items ?? [],
+                TWON.RANGE => RangeValue != null ? RangeValue.Enumerate() : [],
+                _ => [],
+            };
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        private IEnumerable<TValue> ToEnumerable(TValue? value)
         {
-            return ((IEnumerable<TValue>)this).GetEnumerator();
+            if (value == null) yield break;
+            yield return value;
         }
     }
 

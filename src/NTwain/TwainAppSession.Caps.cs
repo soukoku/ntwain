@@ -71,7 +71,7 @@ namespace NTwain
         /// <returns></returns>
         public STS GetCapCurrent<TValue>(CAP cap, out List<TValue> value) where TValue : struct
         {
-            value = new List<TValue>();
+            value = [];
             var sts = GetCapCurrent(cap, out TW_CAPABILITY twcap);
             if (sts.RC == TWRC.SUCCESS)
             {
@@ -88,10 +88,52 @@ namespace NTwain
                         }
                         break;
                     case TWON.RANGE:
-                        value.Add(twcap.ReadRange<TValue>(this).CurrentValue);
+                        var range = twcap.ReadRange<TValue>(this);
+                        if (range != null) value.Add(range.CurrentValue);
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
+                        if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
+                        break;
+                    default:
+                        twcap.Free(this); break;
+                }
+            }
+            return sts;
+        }
+
+        /// <summary>
+        /// Gets a CAP's current value as boxed values. This is a simplified version that doesn't require
+        /// manual reading, but may or may not work.
+        /// </summary>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS GetCapCurrentBoxed(CAP cap, out List<object> value)
+        {
+            value = [];
+            var sts = GetCapCurrent(cap, out TW_CAPABILITY twcap);
+            if (sts.RC == TWRC.SUCCESS)
+            {
+                switch (twcap.ConType)
+                {
+                    case TWON.ONEVALUE:
+                        var read = twcap.ReadOneValueBoxed(this);
+                        if (read != null) value.Add(read);
+                        break;
+                    case TWON.ENUMERATION:
+                        var twenum = twcap.ReadEnumerationBoxed(this);
+                        if (twenum.Items != null && twenum.CurrentIndex < twenum.Items.Length)
+                        {
+                            value.Add(twenum.Items[twenum.CurrentIndex]);
+                        }
+                        break;
+                    case TWON.RANGE:
+                        var range = twcap.ReadRangeBoxed(this);
+                        if (range != null) value.Add(range.CurrentValue);
+                        break;
+                    case TWON.ARRAY:
+                        var twarr = twcap.ReadArrayBoxed(this);
                         if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
                         break;
                     default:
@@ -125,7 +167,7 @@ namespace NTwain
         /// <returns></returns>
         public STS GetCapDefault<TValue>(CAP cap, out List<TValue> value) where TValue : struct
         {
-            value = new List<TValue>();
+            value = [];
             var sts = GetCapDefault(cap, out TW_CAPABILITY twcap);
             if (sts.RC == TWRC.SUCCESS)
             {
@@ -142,10 +184,52 @@ namespace NTwain
                         }
                         break;
                     case TWON.RANGE:
-                        value.Add(twcap.ReadRange<TValue>(this).DefaultValue);
+                        var range = twcap.ReadRange<TValue>(this);
+                        if (range != null) value.Add(range.DefaultValue);
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
+                        if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
+                        break;
+                    default:
+                        twcap.Free(this); break;
+                }
+            }
+            return sts;
+        }
+
+        /// <summary>
+        /// Gets a CAP's default value. This is a simplified version that doesn't require
+        /// manual reading, but may or may not work.
+        /// </summary>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS GetCapDefaultBoxed(CAP cap, out List<object> value)
+        {
+            value = [];
+            var sts = GetCapDefault(cap, out TW_CAPABILITY twcap);
+            if (sts.RC == TWRC.SUCCESS)
+            {
+                switch (twcap.ConType)
+                {
+                    case TWON.ONEVALUE:
+                        var read = twcap.ReadOneValueBoxed(this);
+                        if (read != null) value.Add(read);
+                        break;
+                    case TWON.ENUMERATION:
+                        var twenum = twcap.ReadEnumerationBoxed(this);
+                        if (twenum.Items != null && twenum.DefaultIndex < twenum.Items.Length)
+                        {
+                            value.Add(twenum.Items[twenum.DefaultIndex]);
+                        }
+                        break;
+                    case TWON.RANGE:
+                        var range = twcap.ReadRangeBoxed(this);
+                        if (range != null) value.Add(range.DefaultValue);
+                        break;
+                    case TWON.ARRAY:
+                        var twarr = twcap.ReadArrayBoxed(this);
                         if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
                         break;
                     default:
@@ -193,27 +277,60 @@ namespace NTwain
                         var twenum = twcap.ReadEnumeration<TValue>(this);
                         if (twenum.Items != null)
                         {
-                            value.EnumValue = new EnumValue<TValue>
-                            {
-                                CurrentIndex = twenum.CurrentIndex,
-                                DefaultIndex = twenum.DefaultIndex,
-                                Items = twenum.Items
-                            };
+                            value.EnumValue = twenum;
                         }
                         break;
                     case TWON.RANGE:
                         var range = twcap.ReadRange<TValue>(this);
-                        value.RangeValue = new RangeValue<TValue>
-                        {
-                            Min = range.MinValue,
-                            Max = range.MaxValue,
-                            Step = range.StepSize,
-                            DefaultValue = range.DefaultValue,
-                            CurrentValue = range.CurrentValue
-                        };
+                        value.RangeValue = range;
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
+                        if (twarr != null)
+                        {
+                            value.ArrayValue = twarr;
+                        }
+                        break;
+                    default:
+                        twcap.Free(this); break;
+                }
+            }
+            return sts;
+        }
+
+
+        /// <summary>
+        /// Gets a CAP's supported values. This is a simplified version that doesn't require
+        /// manual reading, but may or may not work.
+        /// </summary>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS GetCapValuesBoxed(CAP cap, out ValueContainer<object> value)
+        {
+            value = new ValueContainer<object> { ContainerType = TWON.DONTCARE };
+            var sts = GetCapValues(cap, out TW_CAPABILITY twcap);
+            if (sts.RC == TWRC.SUCCESS)
+            {
+                value.ContainerType = twcap.ConType;
+                switch (twcap.ConType)
+                {
+                    case TWON.ONEVALUE:
+                        value.OneValue = twcap.ReadOneValueBoxed(this);
+                        break;
+                    case TWON.ENUMERATION:
+                        var twenum = twcap.ReadEnumerationBoxed(this);
+                        if (twenum.Items != null)
+                        {
+                            value.EnumValue = twenum;
+                        }
+                        break;
+                    case TWON.RANGE:
+                        var range = twcap.ReadRangeBoxed(this);
+                        value.RangeValue = range;
+                        break;
+                    case TWON.ARRAY:
+                        var twarr = twcap.ReadArrayBoxed(this);
                         if (twarr != null)
                         {
                             value.ArrayValue = twarr;
@@ -309,8 +426,7 @@ namespace NTwain
         }
 
         /// <summary>
-        /// A simpler cap value setter for common one-value scenarios
-        /// that's easier to use. Not for other container type sets.
+        /// A simpler cap value setter for one-value type.
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="cap"></param>
@@ -320,6 +436,76 @@ namespace NTwain
         {
             var twcap = ValueWriter.CreateOneValueCap(cap, this, value);
             return SetCap(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap value setter for enumeration container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetCap<TValue>(CAP cap, Enumeration<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateEnumCap(cap, this, value);
+            return SetCap(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap value setter for range container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetCap<TValue>(CAP cap, Range<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateRangeCap(cap, this, value);
+            return SetCap(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap value setter for array container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetCap<TValue>(CAP cap, IList<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateArrayCap(cap, this, value);
+            return SetCap(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap value setter for all kinds of container types.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public STS SetCap<TValue>(CAP cap, ValueContainer<TValue> value) where TValue : struct
+        {
+            switch (value.ContainerType)
+            {
+                case TWON.ONEVALUE:
+                    return SetCap(cap, value.OneValue);
+                case TWON.ENUMERATION:
+                    if (value.EnumValue == null)
+                        throw new ArgumentException("EnumValue cannot be null when ContainerType is ENUMERATION.", nameof(value));
+                    return SetCap(cap, value.EnumValue);
+                case TWON.RANGE:
+                    if (value.RangeValue == null)
+                        throw new ArgumentException("RangeValue cannot be null when ContainerType is RANGE.", nameof(value));
+                    return SetCap(cap, value.RangeValue);
+                case TWON.ARRAY:
+                    if (value.ArrayValue == null)
+                        throw new ArgumentException("ArrayValue cannot be null when ContainerType is ARRAY.", nameof(value));
+                    return SetCap(cap, value.ArrayValue);
+                default:
+                    throw new ArgumentException("Unsupported ContainerType for setting CAP.", nameof(value));
+            }
         }
 
         /// <summary>
@@ -336,6 +522,90 @@ namespace NTwain
             var rc = DGControl.Capability.SetConstraint(ref _appIdentity, ref _currentDS, ref value);
             value.Free(this);
             return WrapInSTS(rc);
+        }
+
+
+        /// <summary>
+        /// A simpler cap constraint setter for one-value type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetConstraint<TValue>(CAP cap, TValue value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateOneValueCap(cap, this, value);
+            return SetConstraint(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap constraint setter for enumeration container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetConstraint<TValue>(CAP cap, Enumeration<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateEnumCap(cap, this, value);
+            return SetConstraint(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap constraint setter for range container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetConstraint<TValue>(CAP cap, Range<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateRangeCap(cap, this, value);
+            return SetConstraint(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap constraint setter for array container type.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS SetConstraint<TValue>(CAP cap, IList<TValue> value) where TValue : struct
+        {
+            var twcap = ValueWriter.CreateArrayCap(cap, this, value);
+            return SetConstraint(ref twcap);
+        }
+
+        /// <summary>
+        /// A cap constraint setter for all kinds of container types.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public STS SetConstraint<TValue>(CAP cap, ValueContainer<TValue> value) where TValue : struct
+        {
+            switch (value.ContainerType)
+            {
+                case TWON.ONEVALUE:
+                    return SetConstraint(cap, value.OneValue);
+                case TWON.ENUMERATION:
+                    if (value.EnumValue == null)
+                        throw new ArgumentException("EnumValue cannot be null when ContainerType is ENUMERATION.", nameof(value));
+                    return SetConstraint(cap, value.EnumValue);
+                case TWON.RANGE:
+                    if (value.RangeValue == null)
+                        throw new ArgumentException("RangeValue cannot be null when ContainerType is RANGE.", nameof(value));
+                    return SetConstraint(cap, value.RangeValue);
+                case TWON.ARRAY:
+                    if (value.ArrayValue == null)
+                        throw new ArgumentException("ArrayValue cannot be null when ContainerType is ARRAY.", nameof(value));
+                    return SetConstraint(cap, value.ArrayValue);
+                default:
+                    throw new ArgumentException("Unsupported ContainerType for setting CAP constraint.", nameof(value));
+            }
         }
 
         /// <summary>
@@ -365,30 +635,73 @@ namespace NTwain
         /// <param name="cap"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public STS ResetCap<TValue>(CAP cap, out TValue value) where TValue : struct
+        public STS ResetCap<TValue>(CAP cap, out List<TValue> value) where TValue : struct
         {
-            value = default;
+            value = [];
             var sts = ResetCap(cap, out TW_CAPABILITY twcap);
+
             if (sts.RC == TWRC.SUCCESS)
             {
                 switch (twcap.ConType)
                 {
                     case TWON.ONEVALUE:
-                        value = twcap.ReadOneValue<TValue>(this);
+                        value.Add(twcap.ReadOneValue<TValue>(this));
                         break;
                     case TWON.ENUMERATION:
                         var twenum = twcap.ReadEnumeration<TValue>(this);
                         if (twenum.Items != null && twenum.CurrentIndex < twenum.Items.Length)
                         {
-                            value = twenum.Items[twenum.CurrentIndex];
+                            value.Add(twenum.Items[twenum.CurrentIndex]);
                         }
                         break;
                     case TWON.RANGE:
-                        value = twcap.ReadRange<TValue>(this).CurrentValue;
+                        var range = twcap.ReadRange<TValue>(this);
+                        if (range != null) value.Add(range.CurrentValue);
                         break;
                     case TWON.ARRAY:
                         var twarr = twcap.ReadArray<TValue>(this);
-                        if (twarr != null && twarr.Count > 0) value = twarr[0];
+                        if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
+                        break;
+                    default:
+                        twcap.Free(this); break;
+                }
+            }
+            return sts;
+        }
+
+        /// <summary>
+        /// Resets a CAP's current value to power-on default.
+        /// </summary>
+        /// <param name="cap"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public STS ResetCapBoxed(CAP cap, out List<object> value)
+        {
+            value = [];
+            var sts = ResetCap(cap, out TW_CAPABILITY twcap);
+
+            if (sts.RC == TWRC.SUCCESS)
+            {
+                switch (twcap.ConType)
+                {
+                    case TWON.ONEVALUE:
+                        var read = twcap.ReadOneValueBoxed(this);
+                        if (read != null) value.Add(read);
+                        break;
+                    case TWON.ENUMERATION:
+                        var twenum = twcap.ReadEnumerationBoxed(this);
+                        if (twenum.Items != null && twenum.CurrentIndex < twenum.Items.Length)
+                        {
+                            value.Add(twenum.Items[twenum.CurrentIndex]);
+                        }
+                        break;
+                    case TWON.RANGE:
+                        var range = twcap.ReadRangeBoxed(this);
+                        if (range != null) value.Add(range.CurrentValue);
+                        break;
+                    case TWON.ARRAY:
+                        var twarr = twcap.ReadArrayBoxed(this);
+                        if (twarr != null && twarr.Count > 0) value.AddRange(twarr);
                         break;
                     default:
                         twcap.Free(this); break;

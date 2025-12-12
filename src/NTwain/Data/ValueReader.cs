@@ -85,6 +85,51 @@ namespace NTwain.Data
 
 
         /// <summary>
+        /// Reads a boxed one value out of a cap. This can only be done once if memory is freed.
+        /// </summary>
+        /// <param name="cap"></param>
+        /// <param name="memMgr"></param>
+        /// <param name="freeMemory"></param>
+        /// <returns></returns>
+        public static object? ReadOneValueBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true)
+        {
+            if (cap.ConType != TWON.ONEVALUE || cap.hContainer == IntPtr.Zero) return default;
+
+            var lockedPtr = memMgr.Lock(cap.hContainer);
+
+            try
+            {
+                TWTY itemType;
+                // Mac has a level of indirection and a different structure (ick)...
+                if (TWPlatform.IsMacOSX)
+                {
+                    // Crack the container...
+                    var onevalue = MarshalTo<TW_ONEVALUE_MACOSX>(lockedPtr);
+                    itemType = (TWTY)onevalue.ItemType;
+                    lockedPtr += Marshal.SizeOf(onevalue);
+                }
+                else
+                {
+                    // Crack the container...
+                    var onevalue = MarshalTo<TW_ONEVALUE>(lockedPtr);
+                    itemType = onevalue.ItemType;
+                    lockedPtr += Marshal.SizeOf(onevalue);
+                }
+
+                return ReadTWTYDataBoxed(lockedPtr, itemType, 0);
+            }
+            finally
+            {
+                if (lockedPtr != IntPtr.Zero) memMgr.Unlock(cap.hContainer);
+                if (freeMemory)
+                {
+                    memMgr.Free(cap.hContainer);
+                    cap.hContainer = IntPtr.Zero;
+                }
+            }
+        }
+
+        /// <summary>
         /// Reads a one value out of a cap. This can only be done once if memory is freed.
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
@@ -128,6 +173,78 @@ namespace NTwain.Data
                     cap.hContainer = IntPtr.Zero;
                 }
             }
+        }
+
+        public static Enumeration<object> ReadEnumerationBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true)
+        {
+            Enumeration<object> retVal = new();
+
+            if (cap.ConType != TWON.ENUMERATION || cap.hContainer == IntPtr.Zero) return retVal;
+
+            var lockedPtr = memMgr.Lock(cap.hContainer);
+
+            try
+            {
+                TWTY itemType;
+                int count = 0;
+
+                // Mac has a level of indirection and a different structure (ick)...
+                if (TWPlatform.IsMacOSX)
+                {
+                    // Crack the container...
+                    var twenumerationmacosx = MarshalTo<TW_ENUMERATION_MACOSX>(lockedPtr);
+                    itemType = (TWTY)twenumerationmacosx.ItemType;
+                    count = (int)twenumerationmacosx.NumItems;
+                    retVal.DefaultIndex = (int)twenumerationmacosx.DefaultIndex;
+                    retVal.CurrentIndex = (int)twenumerationmacosx.CurrentIndex;
+                    lockedPtr += Marshal.SizeOf(twenumerationmacosx);
+                }
+                // Windows or the 2.4+ Linux DSM...
+                else
+                {
+                    // Crack the container...
+                    var twenumeration = MarshalTo<TW_ENUMERATION>(lockedPtr);
+                    itemType = twenumeration.ItemType;
+                    count = (int)twenumeration.NumItems;
+                    retVal.DefaultIndex = (int)twenumeration.DefaultIndex;
+                    retVal.CurrentIndex = (int)twenumeration.CurrentIndex;
+                    lockedPtr += Marshal.SizeOf(twenumeration);
+                }
+                // The -2.3 Linux DSM...
+                //else if (twain.m_blFound020302Dsm64bit && (twain.m_linuxdsm == TWAIN.LinuxDsm.Is020302Dsm64bit))
+                //{
+                //  // Crack the container...
+                //  var twenumerationlinux64 = MarshalTo<TW_ENUMERATION_LINUX64>(lockedPtr);
+                //  itemType = twenumerationlinux64.ItemType;
+                //  count = (int)twenumerationlinux64.NumItems;
+                //  retVal.DefaultIndex = (int)twenumerationlinux64.DefaultIndex;
+                //  retVal.CurrentIndex = (int)twenumerationlinux64.CurrentIndex;
+                //  lockedPtr += Marshal.SizeOf(twenumerationlinux64);
+                //}
+                // This shouldn't be possible, but what the hey...
+                //else
+                //{
+                //  Log.Error("This is serious, you win a cookie for getting here...");
+                //  return retVal;
+                //}
+
+                retVal.Items = new object[count];
+
+                for (var i = 0; i < count; i++)
+                {
+                    retVal.Items[i] = ReadTWTYDataBoxed(lockedPtr, itemType, i);
+                }
+            }
+            finally
+            {
+                if (lockedPtr != IntPtr.Zero) memMgr.Unlock(cap.hContainer);
+                if (freeMemory)
+                {
+                    memMgr.Free(cap.hContainer);
+                    cap.hContainer = IntPtr.Zero;
+                }
+            }
+            return retVal;
         }
 
         public static Enumeration<TValue> ReadEnumeration<TValue>(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) where TValue : struct
@@ -202,6 +319,53 @@ namespace NTwain.Data
             return retVal;
         }
 
+        public static IList<object> ReadArrayBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true)
+        {
+            if (cap.ConType != TWON.ARRAY || cap.hContainer == IntPtr.Zero) return Array.Empty<object>();
+
+            var lockedPtr = memMgr.Lock(cap.hContainer);
+
+            try
+            {
+                TWTY itemType;
+                uint count;
+
+                // Mac has a level of indirection and a different structure (ick)...
+                if (TWPlatform.IsMacOSX)
+                {
+                    // Crack the container...
+                    var twarraymacosx = MarshalTo<TW_ARRAY_MACOSX>(lockedPtr);
+                    itemType = (TWTY)twarraymacosx.ItemType;
+                    count = twarraymacosx.NumItems;
+                    lockedPtr += Marshal.SizeOf(twarraymacosx);
+                }
+                else
+                {
+                    // Crack the container...
+                    var twarray = MarshalTo<TW_ARRAY>(lockedPtr);
+                    itemType = twarray.ItemType;
+                    count = twarray.NumItems;
+                    lockedPtr += Marshal.SizeOf(twarray);
+                }
+
+                var arr = new object[count];
+                for (var i = 0; i < count; i++)
+                {
+                    arr[i] = ReadTWTYDataBoxed(lockedPtr, itemType, i);
+                }
+                return arr;
+            }
+            finally
+            {
+                if (lockedPtr != IntPtr.Zero) memMgr.Unlock(cap.hContainer);
+                if (freeMemory)
+                {
+                    memMgr.Free(cap.hContainer);
+                    cap.hContainer = IntPtr.Zero;
+                }
+            }
+        }
+
         public static IList<TValue> ReadArray<TValue>(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) where TValue : struct
         {
             if (cap.ConType != TWON.ARRAY || cap.hContainer == IntPtr.Zero) return Array.Empty<TValue>();
@@ -249,11 +413,9 @@ namespace NTwain.Data
             }
         }
 
-        public static Range<TValue> ReadRange<TValue>(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) where TValue : struct
+        public static Range<object>? ReadRangeBoxed(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true)
         {
-            var retVal = new Range<TValue>();
-
-            if (cap.ConType != TWON.RANGE || cap.hContainer == IntPtr.Zero) return retVal;
+            if (cap.ConType != TWON.RANGE || cap.hContainer == IntPtr.Zero) return null;
 
             var lockedPtr = memMgr.Lock(cap.hContainer);
 
@@ -272,17 +434,75 @@ namespace NTwain.Data
                     itemType = (TWTY)Marshal.ReadInt16(lockedPtr);
                     lockedPtr += 2;
                 }
-                retVal.MinValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                var minValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.MaxValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                var maxValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.StepSize = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                var stepSize = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.CurrentValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                var currentValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                retVal.DefaultValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                var defaultValue = ReadTWTYDataBoxed(lockedPtr, itemType, 0);
                 lockedPtr += 4;
-                return retVal;
+                return new Range<object>
+                {
+                    MinValue = minValue,
+                    MaxValue = maxValue,
+                    StepSize = stepSize,
+                    CurrentValue = currentValue,
+                    DefaultValue = defaultValue
+                };
+            }
+            finally
+            {
+                if (lockedPtr != IntPtr.Zero) memMgr.Unlock(cap.hContainer);
+                if (freeMemory)
+                {
+                    memMgr.Free(cap.hContainer);
+                    cap.hContainer = IntPtr.Zero;
+                }
+            }
+        }
+
+        public static Range<TValue>? ReadRange<TValue>(this ref TW_CAPABILITY cap, IMemoryManager memMgr, bool freeMemory = true) where TValue : struct
+        {
+            if (cap.ConType != TWON.RANGE || cap.hContainer == IntPtr.Zero) return null;
+
+            var lockedPtr = memMgr.Lock(cap.hContainer);
+
+            try
+            {
+                TWTY itemType;
+                // Mac has a level of indirection and a different structure (ick)...
+                if (TWPlatform.IsMacOSX)
+                {
+                    itemType = (TWTY)Marshal.ReadInt32(lockedPtr);
+                    lockedPtr += 4;
+                }
+                else
+                {
+                    // Windows or the 2.4+ Linux DSM...
+                    itemType = (TWTY)Marshal.ReadInt16(lockedPtr);
+                    lockedPtr += 2;
+                }
+                var minValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                lockedPtr += 4;
+                var maxValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                lockedPtr += 4;
+                var stepSize = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                lockedPtr += 4;
+                var currentValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                lockedPtr += 4;
+                var defaultValue = ReadTWTYData<TValue>(lockedPtr, itemType, 0);
+                lockedPtr += 4;
+                return new Range<TValue>
+                {
+                    MinValue = minValue,
+                    MaxValue = maxValue,
+                    StepSize = stepSize,
+                    CurrentValue = currentValue,
+                    DefaultValue = defaultValue
+                };
             }
             finally
             {
@@ -372,6 +592,64 @@ namespace NTwain.Data
             return null;
         }
 
+
+
+        /// <summary>
+        /// Read the pointer content as a boxed value specified by <see cref="TWTY"/>, except <see cref="TWTY.HANDLE"/>.
+        /// </summary>
+        /// <param name="intptr">A locked pointer to the data pointer. If data is array this is the 0th item.</param>
+        /// <param name="type">The twain type.</param>
+        /// <param name="itemIndex">Index of the item if pointer is array.</param>
+        /// <returns></returns>
+        public static object ReadTWTYDataBoxed(this IntPtr intptr, TWTY type, int itemIndex)
+        {
+            switch (type)
+            {
+                default:
+                    throw new NotSupportedException($"Unsupported item type {type} for reading.");
+                // TODO: verify if needs to read int32 for small types
+                case TWTY.HANDLE:
+                    intptr += IntPtr.Size * itemIndex;
+                    return MarshalTo<IntPtr>(intptr);
+                case TWTY.INT8:
+                    intptr += 1 * itemIndex;
+                    return MarshalTo<sbyte>(intptr);
+                case TWTY.UINT8:
+                    intptr += 1 * itemIndex;
+                    return MarshalTo<byte>(intptr);
+                case TWTY.INT16:
+                    intptr += 2 * itemIndex;
+                    return MarshalTo<short>(intptr);
+                case TWTY.BOOL:
+                case TWTY.UINT16:
+                    intptr += 2 * itemIndex;
+                    return MarshalTo<ushort>(intptr);
+                case TWTY.INT32:
+                    intptr += 4 * itemIndex;
+                    return MarshalTo<int>(intptr);
+                case TWTY.UINT32:
+                    intptr += 4 * itemIndex;
+                    return MarshalTo<uint>(intptr);
+                case TWTY.FIX32:
+                    intptr += 4 * itemIndex;
+                    return MarshalTo<TW_FIX32>(intptr);
+                case TWTY.FRAME:
+                    intptr += 16 * itemIndex;
+                    return MarshalTo<TW_FRAME>(intptr);
+                case TWTY.STR32:
+                    intptr += TW_STR32.Size * itemIndex;
+                    return MarshalTo<TW_STR32>(intptr);
+                case TWTY.STR64:
+                    intptr += TW_STR64.Size * itemIndex;
+                    return MarshalTo<TW_STR64>(intptr);
+                case TWTY.STR128:
+                    intptr += TW_STR128.Size * itemIndex;
+                    return MarshalTo<TW_STR128>(intptr);
+                case TWTY.STR255:
+                    intptr += TW_STR255.Size * itemIndex;
+                    return MarshalTo<TW_STR255>(intptr);
+            }
+        }
 
         /// <summary>
         /// Read the pointer content as a value specified by <see cref="TWTY"/>, except <see cref="TWTY.HANDLE"/>.
