@@ -1,6 +1,7 @@
 ﻿#if WINDOWS || NETFRAMEWORK
 using NTwain.Data;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,7 +55,7 @@ namespace NTwain
                     }
                     else
                     {
-                        _dummyForm.Close();
+                        _dummyForm.Close(true);
                     }
                 }
                 finally
@@ -81,7 +82,7 @@ namespace NTwain
                     if (sts.IsSuccess)
                     {
                         _twain.RemoveWinformFilter();
-                        _dummyForm.Close();
+                        _dummyForm.Close(true);
                         _twain = null;
                     }
                     tcs.SetResult(sts);
@@ -116,24 +117,45 @@ namespace NTwain
             public DummyForm()
             {
                 ShowInTaskbar = false;
-                WindowState = FormWindowState.Minimized;
                 Text = "NTwain Internal Loop";
             }
 
-            protected override CreateParams CreateParams
+            protected override void OnHandleCreated(EventArgs e)
             {
-                get
-                {
-                    CreateParams cp = base.CreateParams;
-                    cp.ExStyle |= 0x80; // WS_EX_TOOLWINDOW
-                    return cp;
-                }
+                base.OnHandleCreated(e);
             }
+
+            //protected override CreateParams CreateParams
+            //{
+            //    get
+            //    {
+            //        CreateParams cp = base.CreateParams;
+            //        cp.ExStyle |= 0x80; // WS_EX_TOOLWINDOW
+            //        return cp;
+            //    }
+            //}
 
             protected override void OnShown(EventArgs e)
             {
-                BringToFront();
+                Hide();
                 base.OnShown(e);
+            }
+
+            bool _closeForReal = false;
+            internal void Close(bool forReal)
+            {
+                _closeForReal = forReal;
+                Close();
+            }
+
+            protected override void OnFormClosing(FormClosingEventArgs e)
+            {
+                if (e.CloseReason == CloseReason.UserClosing && !_closeForReal)
+                {
+                    e.Cancel = true;
+                    Hide();
+                }
+                base.OnFormClosing(e);
             }
         }
     }
