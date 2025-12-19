@@ -41,8 +41,8 @@ namespace NTwain.Caps
     public CapWriter<TW_BOOL> ICAP_AUTOMATICROTATE => _icap_automaticrotate ??= new(_twain, CAP.ICAP_AUTOMATICROTATE, 1.8f);
 
 
-    CapWriter<TW_BOOL>? _icap_autosize;
-    public CapWriter<TW_BOOL> ICAP_AUTOSIZE => _icap_autosize ??= new(_twain, CAP.ICAP_AUTOSIZE, 2);
+    CapWriter<TWAS>? _icap_autosize;
+    public CapWriter<TWAS> ICAP_AUTOSIZE => _icap_autosize ??= new(_twain, CAP.ICAP_AUTOSIZE, 2);
 
 
     CapWriter<TW_BOOL>? _icap_barcodedetectionenabled;
