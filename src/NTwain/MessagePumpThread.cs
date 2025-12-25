@@ -117,6 +117,9 @@ namespace NTwain
             public DummyForm()
             {
                 ShowInTaskbar = false;
+                Width = 1;
+                Height = 1;
+                WindowState = FormWindowState.Minimized;
                 Text = "NTwain Internal Loop";
             }
 
