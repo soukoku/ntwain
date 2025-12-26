@@ -23,9 +23,6 @@
 		<None Update="platforms\qwindows.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="runtimes\win-x86\native\TWAINDSM.dll">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
 	</ItemGroup>
 
 </Project>

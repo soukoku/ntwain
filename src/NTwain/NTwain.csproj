@@ -22,18 +22,6 @@
 	<ItemGroup Condition=" '$(TargetFramework)' != 'net472'">
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="10.0.1" />
 	</ItemGroup>
-	<ItemGroup Condition="'$(Configuration)'!='Release'">
-		<None Remove="runtimes\win-x64\native\TWAINDSM.dll" />
-		<None Remove="runtimes\win-x86\native\TWAINDSM.dll" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(Configuration)'!='Release'">
-		<Content Include="runtimes\win-x64\native\TWAINDSM.dll">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="runtimes\win-x86\native\TWAINDSM.dll">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
 		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.264">
