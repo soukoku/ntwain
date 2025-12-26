@@ -26,6 +26,7 @@ namespace NTwain
         /// Creates TWAIN session with explicit app info.
         /// </summary>
         /// <param name="appId"></param>
+        /// <param name="logger"></param>
         public TwainAppSession(TW_IDENTITY_LEGACY appId, ILogger? logger = null)
         {
             if (logger != null) _logger = logger;
