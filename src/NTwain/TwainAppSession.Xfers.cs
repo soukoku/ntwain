@@ -1,4 +1,5 @@
-﻿using NTwain.Data;
+﻿using Microsoft.Extensions.Logging;
+using NTwain.Data;
 using NTwain.Native;
 using NTwain.Triplets;
 using System;
@@ -524,7 +525,7 @@ namespace NTwain
                 {
                     if (tries++ < 3)
                     {
-                        Debug.WriteLine($"Using fileXfer timing workaround try {tries}.");
+                        Logger.LogDebug("Using fileXfer timing workaround try {Tries}.", tries);
                         Thread.Sleep(500);
                         goto RETRY;
                     }

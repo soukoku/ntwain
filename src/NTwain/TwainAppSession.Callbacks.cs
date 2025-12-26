@@ -1,4 +1,5 @@
-﻿using NTwain.Data;
+﻿using Microsoft.Extensions.Logging;
+using NTwain.Data;
 using NTwain.Triplets;
 using System;
 using System.Diagnostics;
@@ -70,7 +71,7 @@ namespace NTwain
             DG dg, DAT dat, MSG msg, IntPtr twnull
         )
         {
-            Debug.WriteLine($"Legacy callback got {msg}");
+            Logger.LogTrace("Legacy callback got {Msg}", msg);
             HandleSourceMsg(msg);
             return (ushort)TWRC.SUCCESS;
         }
@@ -81,7 +82,7 @@ namespace NTwain
             DG dg, DAT dat, MSG msg, IntPtr twnull
         )
         {
-            Debug.WriteLine($"OSX callback got {msg}");
+            Logger.LogTrace("OSX callback got {Msg}", msg);
             HandleSourceMsg(msg);
             return (ushort)TWRC.SUCCESS;
         }
@@ -89,7 +90,8 @@ namespace NTwain
 
         private void HandleSourceMsg(MSG msg, [CallerMemberName] string? caller = null)
         {
-            Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] {nameof(HandleSourceMsg)} called by {caller} at state {State} with {msg}.");
+            Logger.LogTrace("[thread {ThreadId}] {Caller} called by {Caller} at state {State} with {Msg}.",
+                Environment.CurrentManagedThreadId, nameof(HandleSourceMsg), caller, State, msg);
 
             // the reason we post these to the background is
             // if they're coming from UI message loop then

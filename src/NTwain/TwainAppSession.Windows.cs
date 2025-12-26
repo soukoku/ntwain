@@ -1,4 +1,5 @@
 ﻿#if WINDOWS || NETFRAMEWORK
+using Microsoft.Extensions.Logging;
 using NTwain.Data;
 using NTwain.Native;
 using NTwain.Triplets;
@@ -102,7 +103,8 @@ namespace NTwain
                     handled = rc == TWRC.DSEVENT;
                     if (_procEvent.TWMessage != 0 && (handled || rc == TWRC.NOTDSEVENT))
                     {
-                        //Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] CheckIfTwainMessage at state {State} with MSG={_procEvent.TWMessage}.");
+                        //Logger.LogTrace("[thread {ThreadId}] CheckIfTwainMessage at state {State} with MSG={Msg}.",
+                        //    Environment.CurrentManagedThreadId, State, _procEvent.TWMessage);
                         HandleSourceMsg((MSG)_procEvent.TWMessage);
                     }
                 }

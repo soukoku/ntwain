@@ -1,4 +1,5 @@
-﻿using NTwain.Data;
+﻿using Microsoft.Extensions.Logging;
+using NTwain.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,7 +21,7 @@ namespace NTwain.DSM
     {
         static IntPtr __dllPtr;
 
-        public static bool TryLoadCustomDSM()
+        public static bool TryLoadCustomDSM(ILogger logger)
         {
             if (__dllPtr == IntPtr.Zero)
             {
@@ -46,11 +47,11 @@ namespace NTwain.DSM
 
                 if (__dllPtr != IntPtr.Zero)
                 {
-                    Debug.WriteLine("Using our own dsm now :)");
+                    logger.LogTrace("Using our own dsm now :)");
                 }
                 else
                 {
-                    Debug.WriteLine("Will attempt to use default dsm :(");
+                    logger.LogTrace("Will attempt to use default dsm :(");
                 }
             }
             return __dllPtr != IntPtr.Zero;

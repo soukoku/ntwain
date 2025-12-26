@@ -1,4 +1,5 @@
 ﻿#if WINDOWS || NETFRAMEWORK
+using Microsoft.Extensions.Logging;
 using NTwain.Data;
 using System;
 using System.ComponentModel;
@@ -102,14 +103,21 @@ namespace NTwain
 
         void RunMessagePump()
         {
-            Debug.WriteLine("TWAIN pump thread starting");
+            _twain?.Logger.LogDebug("Starting TWAIN message pump thread.");
             _dummyForm = new DummyForm();
             _dummyForm.FormClosed += (s, e) =>
             {
                 _dummyForm = null;
             };
+            Application.ThreadException += Application_ThreadException;
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.Run(_dummyForm);
-            Debug.WriteLine("TWAIN pump thread ended");
+            _twain?.Logger.LogDebug("TWAIN message pump thread exiting.");
+        }
+
+        private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            _twain?.Logger.LogError(e.Exception, "Unhandled exception in TWAIN message pump thread.");
         }
 
         class DummyForm : Form
@@ -119,7 +127,7 @@ namespace NTwain
                 ShowInTaskbar = false;
                 Width = 1;
                 Height = 1;
-                WindowState = FormWindowState.Minimized;
+                //WindowState = FormWindowState.Minimized;
                 Text = "NTwain Internal Loop";
             }
 

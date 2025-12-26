@@ -1,6 +1,9 @@
-﻿using NTwain.Data;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using NTwain.Data;
 using NTwain.Triplets;
 using System;
+using System.IO.Packaging;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -23,10 +26,12 @@ namespace NTwain
         /// Creates TWAIN session with explicit app info.
         /// </summary>
         /// <param name="appId"></param>
-        public TwainAppSession(TW_IDENTITY_LEGACY appId)
+        public TwainAppSession(TW_IDENTITY_LEGACY appId, ILogger? logger = null)
         {
+            if (logger != null) _logger = logger;
+
 #if WINDOWS || NETFRAMEWORK
-            DSM.DsmLoader.TryLoadCustomDSM();
+            DSM.DsmLoader.TryLoadCustomDSM(Logger);
 #endif
             _appIdentity = appId;
 
@@ -36,6 +41,13 @@ namespace NTwain
             StartTransferThread();
         }
 
+        private ILogger _logger = NullLogger.Instance;
+
+        public ILogger Logger
+        {
+            get { return _logger = NullLogger.Instance; }
+            set { _logger = value ?? NullLogger.Instance; }
+        }
 
         internal IntPtr _hwnd;
         internal TW_USERINTERFACE _userInterface; // kept around for disable to use
