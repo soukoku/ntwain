@@ -104,13 +104,13 @@ namespace NTwain
         void RunMessagePump()
         {
             _twain?.Logger.LogDebug("Starting TWAIN message pump thread.");
+            Application.ThreadException += Application_ThreadException;
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             _dummyForm = new DummyForm();
             _dummyForm.FormClosed += (s, e) =>
             {
                 _dummyForm = null;
             };
-            Application.ThreadException += Application_ThreadException;
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.Run(_dummyForm);
             _twain?.Logger.LogDebug("TWAIN message pump thread exiting.");
         }
