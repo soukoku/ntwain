@@ -19,8 +19,9 @@ namespace NTwain
         /// <summary>
         /// Creates TWAIN session with current app info.
         /// </summary>
-        public TwainAppSession()
-          : this(new TW_IDENTITY_LEGACY(Environment.GetCommandLineArgs()[0])) { }
+        /// <param name="logger"></param>
+        public TwainAppSession(ILogger? logger = null)
+          : this(new TW_IDENTITY_LEGACY(Environment.GetCommandLineArgs()[0]), logger) { }
 
         /// <summary>
         /// Creates TWAIN session with explicit app info.
