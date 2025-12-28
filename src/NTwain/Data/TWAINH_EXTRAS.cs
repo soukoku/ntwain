@@ -349,11 +349,7 @@ namespace NTwain.Data
         {
             return Whole + Frac / 65536.0;
         }
-        public TW_FIX32(double value)
-        {
-            Whole = (short)value;
-            Frac = (ushort)((value - Whole) * 65536.0);
-        }
+        public TW_FIX32(double value) : this((float)value) { }
         public TW_FIX32(float value)
         {
             //int temp = (int)(value * 65536.0 + 0.5);
@@ -483,7 +479,7 @@ namespace NTwain.Data
         public static implicit operator TW_FIX32(float value) => new(value);
 
         public static implicit operator double(TW_FIX32 value) => value.ToDouble();
-        public static implicit operator TW_FIX32(double value) => new((float)value);
+        public static implicit operator TW_FIX32(double value) => new(value);
 
         public static bool operator ==(TW_FIX32 value1, TW_FIX32 value2) => value1.Equals(value2);
         public static bool operator !=(TW_FIX32 value1, TW_FIX32 value2) => !value1.Equals(value2);
