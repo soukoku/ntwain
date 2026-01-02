@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Versioning;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.UI.WindowsAndMessaging;
 
 namespace NTwain.Native;
+
 
 #if !NETFRAMEWORK
 [SupportedOSPlatform("windows5.1.2600")]
@@ -35,6 +34,9 @@ internal sealed class Win32MessagePump : IDisposable
     private readonly List<IWin32MessageFilter> _messageFilters = new();
     private readonly object _messageFiltersLock = new();
 
+    // SynchronizationContext
+    private Win32SynchronizationContext? _synchronizationContext;
+
     public Win32MessagePump()
     {
         _hInstance = PInvoke.GetModuleHandle((string?)null);
@@ -47,6 +49,11 @@ internal sealed class Win32MessagePump : IDisposable
     public HWND MainWindow => _mainWindow;
 
     public bool InvokeRequired => PInvoke.GetCurrentThreadId() != _threadId;
+
+    /// <summary>
+    /// Gets the SynchronizationContext associated with this message pump.
+    /// </summary>
+    public SynchronizationContext? SynchronizationContext => _synchronizationContext;
 
     /// <summary>
     /// Adds a message filter to the application's message pump.
@@ -83,7 +90,14 @@ internal sealed class Win32MessagePump : IDisposable
             return -1;
         }
 
+        // Create and install the SynchronizationContext
+        _synchronizationContext = new Win32SynchronizationContext(this);
+        SynchronizationContext.SetSynchronizationContext(_synchronizationContext);
+
         int exitCode = RunMessageLoop();
+
+        // Clear the SynchronizationContext
+        SynchronizationContext.SetSynchronizationContext(null);
 
         Dispose();
         return exitCode;
@@ -300,6 +314,87 @@ internal sealed class Win32MessagePump : IDisposable
     }
 }
 
+/// <summary>
+/// SynchronizationContext implementation for Win32MessagePump that integrates
+/// with async/await and other .NET frameworks.
+/// </summary>
+#if !NETFRAMEWORK
+[SupportedOSPlatform("windows5.1.2600")]
+#endif
+internal sealed class Win32SynchronizationContext : SynchronizationContext
+{
+    private readonly Win32MessagePump _messagePump;
+
+    public Win32SynchronizationContext(Win32MessagePump messagePump)
+    {
+        _messagePump = messagePump ?? throw new ArgumentNullException(nameof(messagePump));
+    }
+
+    /// <summary>
+    /// Dispatches an asynchronous message to the message pump thread.
+    /// </summary>
+    public override void Post(SendOrPostCallback d, object? state)
+    {
+        if (d == null) return;
+
+        _messagePump.PostToUIThread(() =>
+        {
+            d(state);
+        });
+    }
+
+    /// <summary>
+    /// Dispatches a synchronous message to the message pump thread.
+    /// This is not recommended for general use as it can cause deadlocks.
+    /// </summary>
+    public override void Send(SendOrPostCallback d, object? state)
+    {
+        if (d == null) return;
+
+        if (!_messagePump.InvokeRequired)
+        {
+            // Already on the UI thread
+            d(state);
+            return;
+        }
+
+        // Send is synchronous - we need to block until the callback completes
+        // This is dangerous and can cause deadlocks, but it's part of the contract
+        using var completed = new ManualResetEventSlim(false);
+        Exception? exception = null;
+
+        _messagePump.PostToUIThread(() =>
+        {
+            try
+            {
+                d(state);
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            finally
+            {
+                completed.Set();
+            }
+        });
+
+        completed.Wait();
+
+        if (exception != null)
+        {
+            throw new InvalidOperationException("Exception occurred in Send operation", exception);
+        }
+    }
+
+    /// <summary>
+    /// Creates a copy of the synchronization context.
+    /// </summary>
+    public override SynchronizationContext CreateCopy()
+    {
+        return new Win32SynchronizationContext(_messagePump);
+    }
+}
 
 /// <summary>
 /// Defines a message filter interface that allows external code to participate
