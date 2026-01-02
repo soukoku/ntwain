@@ -2,8 +2,7 @@
 using Microsoft.Extensions.Logging;
 using NTwain.Data;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,7 +14,7 @@ namespace NTwain
     /// </summary>
     class MessagePumpThread
     {
-        DummyForm? _dummyForm;
+        KeepAliveForm? _dummyForm;
         TwainAppSession? _twain;
 
         public bool IsRunning => _dummyForm != null && _dummyForm.IsHandleCreated;
@@ -106,7 +105,7 @@ namespace NTwain
             _twain?.Logger.LogDebug("Starting TWAIN message pump thread.");
             Application.ThreadException += Application_ThreadException;
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            _dummyForm = new DummyForm();
+            _dummyForm = new KeepAliveForm();
             _dummyForm.FormClosed += (s, e) =>
             {
                 _dummyForm = null;
@@ -120,20 +119,20 @@ namespace NTwain
             _twain?.Logger.LogError(e.Exception, "Unhandled exception in TWAIN message pump thread.");
         }
 
-        class DummyForm : Form
+        class KeepAliveForm : Form
         {
-            public DummyForm()
+            public KeepAliveForm()
             {
                 ShowInTaskbar = false;
-                Width = 1;
-                Height = 1;
-                //WindowState = FormWindowState.Minimized;
-                Text = "NTwain Internal Loop";
             }
+
+            [DllImport("user32.dll")]
+            static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
             protected override void OnHandleCreated(EventArgs e)
             {
                 base.OnHandleCreated(e);
+                SetParent(this.Handle, new IntPtr(-3)); // HWND_MESSAGE
             }
 
             //protected override CreateParams CreateParams
@@ -146,11 +145,11 @@ namespace NTwain
             //    }
             //}
 
-            protected override void OnShown(EventArgs e)
-            {
-                Hide();
-                base.OnShown(e);
-            }
+            //protected override void OnShown(EventArgs e)
+            //{
+            //    Hide();
+            //    base.OnShown(e);
+            //}
 
             bool _closeForReal = false;
             internal void Close(bool forReal)
