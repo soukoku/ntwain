@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
 using Windows.Win32;
@@ -119,7 +120,7 @@ internal sealed class Win32MessagePump : IDisposable
             {
                 var wc = new WNDCLASSEXW
                 {
-                    cbSize = (uint)sizeof(WNDCLASSEXW),
+                    cbSize = (uint)Marshal.SizeOf<WNDCLASSEXW>(),
                     style = 0,
                     lpfnWndProc = s_wndProc,
                     cbClsExtra = 0,
