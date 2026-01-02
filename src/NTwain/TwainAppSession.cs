@@ -334,7 +334,8 @@ namespace NTwain
                         {
                             try
                             {
-                                _ = CloseDSMAsync();
+                                if (OperatingSystem.IsWindowsVersionAtLeast(5, 1, 2600))
+                                    _ = CloseDSMAsync();
                             }
                             catch (InvalidOperationException) { }
                         }
