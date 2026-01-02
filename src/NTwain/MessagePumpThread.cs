@@ -2,8 +2,6 @@
 using NTwain.Data;
 using NTwain.Native;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
@@ -110,62 +108,14 @@ class MessagePumpThread
     {
         _twain?.Logger.LogDebug("Starting TWAIN message pump thread.");
         _pump = new Win32MessagePump();
+        _pump.UnhandledException += Application_ThreadException;
         _pump.Run();
         _twain?.Logger.LogDebug("TWAIN message pump thread exiting.");
     }
 
-    //private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
-    //{
-    //    _twain?.Logger.LogError(e.Exception, "Unhandled exception in TWAIN message pump thread.");
-    //}
-
-    //class DummyForm : Form
-    //{
-    //    public DummyForm()
-    //    {
-    //        ShowInTaskbar = false;
-    //        Width = 1;
-    //        Height = 1;
-    //        //WindowState = FormWindowState.Minimized;
-    //        Text = "NTwain Internal Loop";
-    //    }
-
-    //    protected override void OnHandleCreated(EventArgs e)
-    //    {
-    //        base.OnHandleCreated(e);
-    //    }
-
-    //    //protected override CreateParams CreateParams
-    //    //{
-    //    //    get
-    //    //    {
-    //    //        CreateParams cp = base.CreateParams;
-    //    //        cp.ExStyle |= 0x80; // WS_EX_TOOLWINDOW
-    //    //        return cp;
-    //    //    }
-    //    //}
-
-    //    protected override void OnShown(EventArgs e)
-    //    {
-    //        Hide();
-    //        base.OnShown(e);
-    //    }
-
-    //    bool _closeForReal = false;
-    //    internal void Close(bool forReal)
-    //    {
-    //        _closeForReal = forReal;
-    //        Close();
-    //    }
-
-    //    protected override void OnFormClosing(FormClosingEventArgs e)
-    //    {
-    //        if (e.CloseReason == CloseReason.UserClosing && !_closeForReal)
-    //        {
-    //            e.Cancel = true;
-    //            Hide();
-    //        }
-    //        base.OnFormClosing(e);
-    //    }
-    //}
+    private void Application_ThreadException(object? sender, Win32MessagePumpExceptionEventArgs e)
+    {
+        _twain?.Logger.LogError(e.Exception, "Unhandled exception in TWAIN message pump thread from {Source}.", e.Source);
+        e.Handled = true;
+    }
 }
