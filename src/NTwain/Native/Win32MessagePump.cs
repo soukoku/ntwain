@@ -44,6 +44,11 @@ internal sealed class Win32MessagePump : IDisposable
     }
 
     /// <summary>
+    /// Occurs when an unhandled exception is thrown during message processing.
+    /// </summary>
+    public event EventHandler<Win32MessagePumpExceptionEventArgs>? UnhandledException;
+
+    /// <summary>
     /// Gets the main (hidden) message window handle.
     /// </summary>
     public HWND MainWindow => _mainWindow;
@@ -213,7 +218,7 @@ internal sealed class Win32MessagePump : IDisposable
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Message filter exception: {ex}");
+                    OnUnhandledException(ex, ExceptionSource.MessageFilter);
                 }
             }
         }
@@ -281,8 +286,22 @@ internal sealed class Win32MessagePump : IDisposable
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Work item exception: {ex}");
+                OnUnhandledException(ex, ExceptionSource.WorkQueue);
             }
+        }
+    }
+
+    /// <summary>
+    /// Raises the UnhandledException event.
+    /// </summary>
+    internal void OnUnhandledException(Exception exception, ExceptionSource source)
+    {
+        var args = new Win32MessagePumpExceptionEventArgs(exception, source);
+        UnhandledException?.Invoke(this, args);
+
+        if (!args.Handled)
+        {
+            System.Diagnostics.Debug.WriteLine($"{source} exception: {exception}");
         }
     }
 
@@ -339,7 +358,14 @@ internal sealed class Win32SynchronizationContext : SynchronizationContext
 
         _messagePump.PostToUIThread(() =>
         {
-            d(state);
+            try
+            {
+                d(state);
+            }
+            catch (Exception ex)
+            {
+                _messagePump.OnUnhandledException(ex, ExceptionSource.SynchronizationContext);
+            }
         });
     }
 
@@ -354,7 +380,15 @@ internal sealed class Win32SynchronizationContext : SynchronizationContext
         if (!_messagePump.InvokeRequired)
         {
             // Already on the UI thread
-            d(state);
+            try
+            {
+                d(state);
+            }
+            catch (Exception ex)
+            {
+                _messagePump.OnUnhandledException(ex, ExceptionSource.SynchronizationContext);
+                throw;
+            }
             return;
         }
 
@@ -372,6 +406,7 @@ internal sealed class Win32SynchronizationContext : SynchronizationContext
             catch (Exception ex)
             {
                 exception = ex;
+                _messagePump.OnUnhandledException(ex, ExceptionSource.SynchronizationContext);
             }
             finally
             {
@@ -428,4 +463,53 @@ public struct Win32Message
         WParam = msg.wParam,
         LParam = msg.lParam
     };
+}
+
+/// <summary>
+/// Event args for unhandled exceptions in the message pump.
+/// </summary>
+public class Win32MessagePumpExceptionEventArgs : EventArgs
+{
+    public Win32MessagePumpExceptionEventArgs(Exception exception, ExceptionSource source)
+    {
+        Exception = exception;
+        Source = source;
+    }
+
+    /// <summary>
+    /// Gets the exception that occurred.
+    /// </summary>
+    public Exception Exception { get; }
+
+    /// <summary>
+    /// Gets the source where the exception occurred.
+    /// </summary>
+    public ExceptionSource Source { get; }
+
+    /// <summary>
+    /// Gets or sets whether the exception has been handled.
+    /// If false, the exception will be logged to Debug output.
+    /// </summary>
+    public bool Handled { get; set; }
+}
+
+/// <summary>
+/// Indicates where an exception originated in the message pump.
+/// </summary>
+public enum ExceptionSource
+{
+    /// <summary>
+    /// Exception occurred in a message filter.
+    /// </summary>
+    MessageFilter,
+
+    /// <summary>
+    /// Exception occurred in a work queue item.
+    /// </summary>
+    WorkQueue,
+
+    /// <summary>
+    /// Exception occurred in the SynchronizationContext.
+    /// </summary>
+    SynchronizationContext
 }
