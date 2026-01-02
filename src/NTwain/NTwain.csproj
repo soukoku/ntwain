@@ -3,16 +3,15 @@
 	<PropertyGroup>
 		<PackageId>NTwain</PackageId>
 		<Description>Library containing the TWAIN API for dotnet.</Description>
-		<!--<TargetFrameworks>net8.0;net8.0-windows;net9.0;net9.0-windows;net10.0;net10.0-windows;net472;</TargetFrameworks>-->
-		<TargetFrameworks>net8.0;net9.0;net10.0;net472;</TargetFrameworks>
+		<TargetFrameworks>net8.0;net8.0-windows;net9.0;net9.0-windows;net10.0;net10.0-windows;net472;</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
-	<!--<PropertyGroup Condition=" '$(TargetFramework)' == 'net472' OR $(TargetFramework.EndsWith('windows'))">
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net472' OR $(TargetFramework.EndsWith('windows'))">
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
-	</PropertyGroup>-->
+	</PropertyGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net472'">
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

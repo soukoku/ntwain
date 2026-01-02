@@ -21,6 +21,7 @@ namespace ScannerTester
             _twain.TransferReady += _twain_TransferReady;
             _twain.Transferred += _twain_Transferred;
             _twain.SourceDisabled += _twain_SourceDisabled;
+            _twain.AddWinformFilter();
         }
 
         private void _twain_SourceDisabled(TwainAppSession sender, TW_IDENTITY_LEGACY e)
@@ -31,12 +32,14 @@ namespace ScannerTester
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            _ = _twain.OpenDSMAsync();
+            _twain.OpenDSM(Handle, SynchronizationContext.Current!);
+            //_ = _twain.OpenDSMAsync();
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
-            _ = _twain.CloseDSMAsync();
+            _twain.CloseDSM();
+            //_ = _twain.CloseDSMAsync();
             base.OnFormClosed(e);
         }
 

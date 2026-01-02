@@ -1,121 +1,173 @@
-﻿using Microsoft.Extensions.Logging;
+﻿#if WINDOWS || NETFRAMEWORK
+using Microsoft.Extensions.Logging;
 using NTwain.Data;
-using NTwain.Native;
 using System;
-using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
-namespace NTwain;
-
-/// <summary>
-/// For use under Windows to host a message pump.
-/// </summary>
-#if !NETFRAMEWORK
-[SupportedOSPlatform("windows5.1.2600")]
-#endif
-class MessagePumpThread
+namespace NTwain
 {
-    Win32MessagePump? _pump;
-    TwainAppSession? _twain;
-
-    public bool IsRunning => _pump != null && !_pump.MainWindow.IsNull;
-
     /// <summary>
-    /// Starts the thread, attaches a twain session to it,
-    /// and opens the DSM.
+    /// For use under Windows to host a message pump.
     /// </summary>
-    /// <param name="twain"></param>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public async Task<STS> AttachAsync(TwainAppSession twain)
+    class MessagePumpThread
     {
-        if (_twain != null) return new STS { RC = TWRC.SUCCESS };
+        KeepAliveForm? _dummyForm;
+        TwainAppSession? _twain;
 
-        Thread t = new(RunMessagePump);
-        t.IsBackground = true;
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
+        public bool IsRunning => _dummyForm != null && _dummyForm.IsHandleCreated;
 
-        while (_pump == null || _pump.MainWindow.IsNull)
+        /// <summary>
+        /// Starts the thread, attaches a twain session to it,
+        /// and opens the DSM.
+        /// </summary>
+        /// <param name="twain"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async Task<STS> AttachAsync(TwainAppSession twain)
         {
-            await Task.Delay(50);
-        }
+            if (twain.State > STATE.S2) throw new InvalidOperationException("Cannot attach to an opened TWAIN session.");
+            if (_twain != null || _dummyForm != null) throw new InvalidOperationException("Already attached previously.");
 
-        STS sts = default;
-        TaskCompletionSource<bool> tcs = new();
-        _pump.PostToUIThread(() =>
-        {
-            try
+            Thread t = new(RunMessagePump);
+            t.IsBackground = true;
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+
+            while (_dummyForm == null || !_dummyForm.IsHandleCreated)
             {
-                sts = twain.OpenDSM(_pump.MainWindow, SynchronizationContext.Current!);
-                if (sts.IsSuccess)
-                {
-                    _pump.AddMessageFilter(twain);
-                    _twain = twain;
-                }
-                else
-                {
-                    _pump.Quit();
-                    _pump = null;
-                }
+                await Task.Delay(50);
             }
-            finally
-            {
-                tcs.TrySetResult(true);
-            }
-        });
-        await tcs.Task;
-        return sts;
-    }
 
-    /// <summary>
-    /// Detatches a previously attached session and stops the thread.
-    /// </summary>
-    public async Task<STS> DetachAsync()
-    {
-        STS sts = default;
-        if (_pump != null && _twain != null)
-        {
-            TaskCompletionSource<STS> tcs = new();
-            _pump.PostToUIThread(() =>
+            STS sts = default;
+            TaskCompletionSource<bool> tcs = new();
+            _dummyForm.BeginInvoke(() =>
             {
-                if (_twain == null) return;
-
-                sts = _twain.CloseDSMReal();
-                if (sts.IsSuccess)
+                try
                 {
-                    _pump.RemoveMessageFilter(_twain);
-                    _pump.Quit();
-                    _twain = null;
+                    sts = twain.OpenDSM(_dummyForm.Handle, SynchronizationContext.Current!);
+                    if (sts.IsSuccess)
+                    {
+                        twain.AddWinformFilter();
+                        _twain = twain;
+                    }
+                    else
+                    {
+                        _dummyForm.Close(true);
+                    }
                 }
-                tcs.SetResult(sts);
+                finally
+                {
+                    tcs.TrySetResult(true);
+                }
             });
             await tcs.Task;
+            return sts;
         }
-        return sts;
-    }
 
-    //public void BringWindowToFront()
-    //{
-    //    if (_dummyForm != null)
-    //    {
-    //        _dummyForm.BeginInvoke(_dummyForm.BringToFront);
-    //    }
-    //}
+        /// <summary>
+        /// Detatches a previously attached session and stops the thread.
+        /// </summary>
+        public async Task<STS> DetachAsync()
+        {
+            STS sts = default;
+            if (_dummyForm != null && _twain != null)
+            {
+                TaskCompletionSource<STS> tcs = new();
+                _dummyForm.BeginInvoke(() =>
+                {
+                    sts = _twain.CloseDSMReal();
+                    if (sts.IsSuccess)
+                    {
+                        _twain.RemoveWinformFilter();
+                        _dummyForm.Close(true);
+                        _twain = null;
+                    }
+                    tcs.SetResult(sts);
+                });
+                await tcs.Task;
+            }
+            return sts;
+        }
 
-    void RunMessagePump()
-    {
-        _twain?.Logger.LogDebug("Starting TWAIN message pump thread.");
-        _pump = new Win32MessagePump();
-        _pump.UnhandledException += Application_ThreadException;
-        _pump.Run();
-        _twain?.Logger.LogDebug("TWAIN message pump thread exiting.");
-    }
+        public void BringWindowToFront()
+        {
+            if (_dummyForm != null)
+            {
+                _dummyForm.BeginInvoke(_dummyForm.BringToFront);
+            }
+        }
 
-    private void Application_ThreadException(object? sender, Win32MessagePumpExceptionEventArgs e)
-    {
-        _twain?.Logger.LogError(e.Exception, "Unhandled exception in TWAIN message pump thread from {Source}.", e.Source);
-        e.Handled = true;
+        void RunMessagePump()
+        {
+            _twain?.Logger.LogDebug("Starting TWAIN message pump thread.");
+            Application.ThreadException += Application_ThreadException;
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            _dummyForm = new KeepAliveForm();
+            _dummyForm.FormClosed += (s, e) =>
+            {
+                _dummyForm = null;
+            };
+            Application.Run(_dummyForm);
+            _twain?.Logger.LogDebug("TWAIN message pump thread exiting.");
+        }
+
+        private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            _twain?.Logger.LogError(e.Exception, "Unhandled exception in TWAIN message pump thread.");
+        }
+
+        class KeepAliveForm : Form
+        {
+            public KeepAliveForm()
+            {
+                ShowInTaskbar = false;
+            }
+
+            [DllImport("user32.dll")]
+            static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+
+            protected override void OnHandleCreated(EventArgs e)
+            {
+                base.OnHandleCreated(e);
+                SetParent(this.Handle, new IntPtr(-3)); // HWND_MESSAGE
+            }
+
+            //protected override CreateParams CreateParams
+            //{
+            //    get
+            //    {
+            //        CreateParams cp = base.CreateParams;
+            //        cp.ExStyle |= 0x80; // WS_EX_TOOLWINDOW
+            //        return cp;
+            //    }
+            //}
+
+            //protected override void OnShown(EventArgs e)
+            //{
+            //    Hide();
+            //    base.OnShown(e);
+            //}
+
+            bool _closeForReal = false;
+            internal void Close(bool forReal)
+            {
+                _closeForReal = forReal;
+                Close();
+            }
+
+            protected override void OnFormClosing(FormClosingEventArgs e)
+            {
+                if (e.CloseReason == CloseReason.UserClosing && !_closeForReal)
+                {
+                    e.Cancel = true;
+                    Hide();
+                }
+                base.OnFormClosing(e);
+            }
+        }
     }
 }
+#endif

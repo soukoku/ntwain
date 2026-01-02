@@ -90,14 +90,25 @@ public partial class Form1 : Form
     {
         base.OnHandleCreated(e);
 
-        var sts = await twain.OpenDSMAsync();
-        Debug.WriteLine($"OpenDSMAsync={sts}");
+        if (useDiyPump)
+        {
+            var sts = await twain.OpenDSMAsync();
+            Debug.WriteLine($"OpenDSMAsync={sts}");
+        }
+        else
+        {
+            var hwnd = this.Handle;
+            var sts = twain.OpenDSM(hwnd, SynchronizationContext.Current!);
+            twain.AddWinformFilter();
+            Debug.WriteLine($"OpenDSM={sts}");
+        }
     }
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
         var finalState = twain.TryStepdown(STATE.S2);
         Debug.WriteLine($"Stepdown result state={finalState}");
+        twain.RemoveWinformFilter();
         base.OnFormClosing(e);
     }
 
