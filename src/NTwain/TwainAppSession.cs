@@ -3,10 +3,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NTwain.Data;
 using NTwain.Triplets;
 using System;
-using System.IO.Packaging;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -53,10 +51,9 @@ namespace NTwain
 
         internal IntPtr _hwnd;
         internal TW_USERINTERFACE _userInterface; // kept around for disable to use
-#if WINDOWS || NETFRAMEWORK
         MessagePumpThread? _selfPump;
         TW_EVENT _procEvent; // kept here so the alloc/free only happens once
-#endif
+
         // test threads a bit
         //readonly BlockingCollection<MSG> _bgPendingMsgs = new();
         SynchronizationContext? _pumpThreadMarshaller;
@@ -126,13 +123,15 @@ namespace NTwain
             GC.SuppressFinalize(this);
         }
 
-#if WINDOWS || NETFRAMEWORK
         /// <summary>
-        /// Loads and opens the TWAIN data source manager in a self-hosted message queue thread.
+        /// Loads and opens the TWAIN data source manager if you're using Windows.
         /// Must close with <see cref="CloseDSMAsync"/>
         /// if used.
         /// </summary>
         /// <returns></returns>
+#if !NETFRAMEWORK
+        [SupportedOSPlatform("windows5.1.2600")]
+#endif
         public async Task<STS> OpenDSMAsync()
         {
             if (_selfPump == null)
@@ -154,6 +153,9 @@ namespace NTwain
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
+#if !NETFRAMEWORK
+        [SupportedOSPlatform("windows5.1.2600")]
+#endif
         public async Task<STS> CloseDSMAsync()
         {
             if (_selfPump == null) throw new InvalidOperationException($"Cannot close if not opened with {nameof(OpenDSMAsync)}().");
@@ -165,10 +167,10 @@ namespace NTwain
             }
             return sts;
         }
-#endif
 
         /// <summary>
         /// Loads and opens the TWAIN data source manager.
+        /// If you're on windows you should NOT use this and instead use <see cref="OpenDSMAsync"/> and <see cref="CloseDSMAsync"/>.
         /// </summary>
         /// <param name="hwnd">Required if on Windows.</param>
         /// <param name="uiThreadMarshaller">Context for TWAIN to invoke certain actions on the thread that the hwnd lives on.</param>
@@ -210,9 +212,7 @@ namespace NTwain
         /// <exception cref="InvalidOperationException"></exception>
         public STS CloseDSM()
         {
-#if WINDOWS || NETFRAMEWORK
             if (_selfPump != null) throw new InvalidOperationException($"Cannot close if opened with {nameof(OpenDSMAsync)}().");
-#endif
             return CloseDSMReal();
         }
 
@@ -329,7 +329,6 @@ namespace NTwain
                         CloseSource();
                         break;
                     case STATE.S3:
-#if WINDOWS || NETFRAMEWORK
                         if (_selfPump != null)
                         {
                             try
@@ -342,9 +341,6 @@ namespace NTwain
                         {
                             CloseDSM();
                         }
-#else
-                        CloseDSM();
-#endif
                         break;
                     case STATE.S2:
                         // can't really go lower

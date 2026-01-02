@@ -6,3 +6,25 @@ GlobalUnlock
 BITMAPINFOHEADER
 BITMAPINFO
 BITMAPFILEHEADER
+
+// Window class and creation
+RegisterClassEx
+UnregisterClass
+CreateWindowEx
+DestroyWindow
+DefWindowProc
+
+// Message loop
+GetMessage
+TranslateMessage
+DispatchMessage
+PostQuitMessage
+PostMessage
+
+// System
+GetModuleHandle
+GetCurrentThreadId
+
+// Constants - Window Messages
+WM_DESTROY
+WM_APP

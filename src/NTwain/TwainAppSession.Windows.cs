@@ -1,13 +1,8 @@
-﻿#if WINDOWS || NETFRAMEWORK
-using Microsoft.Extensions.Logging;
-using NTwain.Data;
+﻿using NTwain.Data;
 using NTwain.Native;
 using NTwain.Triplets;
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using System.Windows.Interop;
 using Windows.Win32.Foundation;
 using MSG = NTwain.Data.MSG;
 
@@ -16,59 +11,12 @@ namespace NTwain
 
     // contains parts for winform/wpf message loop integration
 
-    partial class TwainAppSession : IMessageFilter
+    partial class TwainAppSession : IWin32MessageFilter
     {
-        HwndSource? _wpfhook;
 
-        /// <summary>
-        /// Registers this session for use in a Winform UI thread.
-        /// </summary>
-        public void AddWinformFilter()
+        bool IWin32MessageFilter.PreFilterMessage(ref Win32Message m)
         {
-            Application.AddMessageFilter(this);
-        }
-        /// <summary>
-        /// Unregisters this session if previously registered with <see cref="AddWinformFilter"/>.
-        /// </summary>
-        public void RemoveWinformFilter()
-        {
-            Application.RemoveMessageFilter(this);
-        }
-
-        /// <summary>
-        /// Registers this session for use in a WPF UI thread.
-        /// This requires the hwnd used in <see cref="OpenDSM"/>
-        /// be a valid WPF window handle.
-        /// </summary>
-        public void AddWpfHook()
-        {
-            if (_wpfhook == null)
-            {
-                _wpfhook = HwndSource.FromHwnd(_hwnd);
-                _wpfhook.AddHook(WpfHook);
-            }
-        }
-        /// <summary>
-        /// Unregisters this session if previously registered with <see cref="AddWpfHook"/>.
-        /// </summary>
-        public void RemoveWpfHook()
-        {
-            if (_wpfhook != null)
-            {
-                _wpfhook.RemoveHook(WpfHook);
-                _wpfhook = null;
-            }
-        }
-
-        bool IMessageFilter.PreFilterMessage(ref Message m)
-        {
-            return WndProc(m.HWnd, m.Msg, m.WParam, m.LParam);
-        }
-
-        IntPtr WpfHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            handled = WndProc(hwnd, msg, wParam, lParam);
-            return IntPtr.Zero;
+            return WndProc(m.HWnd, (int)m.Msg, (nint)m.WParam, m.LParam);
         }
 
         /// <summary>
@@ -113,4 +61,3 @@ namespace NTwain
         }
     }
 }
-#endif
