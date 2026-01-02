@@ -46,7 +46,7 @@ namespace NTwain
 
         public ILogger Logger
         {
-            get { return _logger = NullLogger.Instance; }
+            get { return _logger; }
             set { _logger = value ?? NullLogger.Instance; }
         }
 
