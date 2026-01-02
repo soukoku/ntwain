@@ -30,9 +30,10 @@ namespace NTwain
         {
             if (logger != null) _logger = logger;
 
-#if WINDOWS || NETFRAMEWORK
-            DSM.DsmLoader.TryLoadCustomDSM(Logger);
-#endif
+
+            if (OperatingSystem.IsWindows())
+                DSM.DsmLoader.TryLoadCustomDSM(Logger);
+
             _appIdentity = appId;
 
             _legacyCallbackDelegate = LegacyCallbackHandler;
@@ -69,9 +70,8 @@ namespace NTwain
             {
                 IsBackground = true
             };
-#if WINDOWS || NETFRAMEWORK
-            t.SetApartmentState(ApartmentState.STA); // just in case
-#endif
+            if (OperatingSystem.IsWindows())
+                t.SetApartmentState(ApartmentState.STA); // just in case
             t.Start();
         }
 
@@ -102,9 +102,10 @@ namespace NTwain
                     _xferReady.Dispose();
                     //_bgPendingMsgs.CompleteAdding();
                 }
-#if WINDOWS || NETFRAMEWORK
-                if (_procEvent.pEvent != IntPtr.Zero) Marshal.FreeHGlobal(_procEvent.pEvent);
-#endif
+
+                if (OperatingSystem.IsWindows())
+                    if (_procEvent.pEvent != IntPtr.Zero) Marshal.FreeHGlobal(_procEvent.pEvent);
+
                 disposedValue = true;
             }
         }
