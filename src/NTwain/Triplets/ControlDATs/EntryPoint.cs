@@ -13,7 +13,10 @@ namespace NTwain.Triplets.ControlDATs
     public TWRC Get(ref TW_IDENTITY_LEGACY app, out TW_ENTRYPOINT_DELEGATES entry)
     {
       entry = default;
-      TW_ENTRYPOINT rawentry = default;
+      TW_ENTRYPOINT rawentry = new()
+      {
+          Size = (uint)Marshal.SizeOf<TW_ENTRYPOINT>()
+      };
       var rc = DoIt(ref app, MSG.GET, ref rawentry);
       if (rc == TWRC.SUCCESS)
       {
