@@ -22,13 +22,13 @@ using NTwain.Data;
 using System;
 using System.Runtime.InteropServices;
 
-namespace NTwain.DSM
+namespace NTwain.DSM;
+
+/// <summary>
+/// Low-level pinvoke methods using <#= file.dllPath #>. <#= file.addlInfo #>
+/// </summary>
+public static partial class <#= file.className #>
 {
-  /// <summary>
-  /// Low-level pinvoke methods using <#= file.dllPath #>. <#= file.addlInfo #>
-  /// </summary>
-  public static partial class <#= file.className #>
-  {
     const string DsmName = "<#= file.dllPath #>";
 
 #if NET7_0_OR_GREATER
@@ -399,8 +399,8 @@ namespace NTwain.DSM
         ref <#= file.identityClass #> origin, ref <#= file.identityClass #> dest,
         DG dg, DAT dat, MSG msg, ref TW_RGBRESPONSE resp
     );
-  }
 }
+
 <#
   SaveOutput(file.className + ".cs");
 }#>

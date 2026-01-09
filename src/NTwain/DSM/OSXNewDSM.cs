@@ -2,13 +2,13 @@ using NTwain.Data;
 using System;
 using System.Runtime.InteropServices;
 
-namespace NTwain.DSM
+namespace NTwain.DSM;
+
+/// <summary>
+/// Low-level pinvoke methods using /Library/Frameworks/TWAINDSM.framework/TWAINDSM. 
+/// </summary>
+public static partial class OSXNewDSM
 {
-  /// <summary>
-  /// Low-level pinvoke methods using /Library/Frameworks/TWAINDSM.framework/TWAINDSM. 
-  /// </summary>
-  public static partial class OSXNewDSM
-  {
     const string DsmName = "/Library/Frameworks/TWAINDSM.framework/TWAINDSM";
 
 #if NET7_0_OR_GREATER
@@ -367,5 +367,5 @@ namespace NTwain.DSM
         ref TW_IDENTITY_MACOSX origin, ref TW_IDENTITY_MACOSX dest,
         DG dg, DAT dat, MSG msg, ref TW_RGBRESPONSE resp
     );
-  }
 }
+

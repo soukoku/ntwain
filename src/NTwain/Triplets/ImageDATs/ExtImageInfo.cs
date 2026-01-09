@@ -16,31 +16,29 @@ public class ExtImageInfo
     /// <param name="ds"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public TWRC Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_EXTIMAGEINFO data)
+    public TWRC Get(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_EXTIMAGEINFO data)
     {
         var rc = TWRC.FAILURE;
         if (TWPlatform.IsWindows)
         {
             if (TWPlatform.Is32bit && TWPlatform.PreferLegacyDSM)
             {
-                rc = WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.EXTIMAGEINFO, MSG.GET, ref data);
+                rc = WinLegacyDSM.DSM_Entry(ref app.TW_IDENTITY_LEGACY, ref ds.TW_IDENTITY_LEGACY, DG.IMAGE, DAT.EXTIMAGEINFO, MSG.GET, ref data);
             }
             else
             {
-                rc = WinNewDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.EXTIMAGEINFO, MSG.GET, ref data);
+                rc = WinNewDSM.DSM_Entry(ref app.TW_IDENTITY_LEGACY, ref ds.TW_IDENTITY_LEGACY, DG.IMAGE, DAT.EXTIMAGEINFO, MSG.GET, ref data);
             }
         }
         else if (TWPlatform.IsMacOSX)
         {
-            TW_IDENTITY_MACOSX app2 = app;
-            TW_IDENTITY_MACOSX ds2 = ds;
             if (TWPlatform.PreferLegacyDSM)
             {
-                rc = OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.EXTIMAGEINFO, MSG.GET, ref data);
+                rc = OSXLegacyDSM.DSM_Entry(ref app.TW_IDENTITY_MACOSX, ref ds.TW_IDENTITY_MACOSX, DG.IMAGE, DAT.EXTIMAGEINFO, MSG.GET, ref data);
             }
             else
             {
-                rc = OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.EXTIMAGEINFO, MSG.GET, ref data);
+                rc = OSXNewDSM.DSM_Entry(ref app.TW_IDENTITY_MACOSX, ref ds.TW_IDENTITY_MACOSX, DG.IMAGE, DAT.EXTIMAGEINFO, MSG.GET, ref data);
             }
         }
         return rc;
@@ -53,31 +51,29 @@ public class ExtImageInfo
     /// <param name="ds"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public TWRC GetSpecial(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_EXTIMAGEINFO data)
+    public TWRC GetSpecial(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_EXTIMAGEINFO data)
     {
         var rc = TWRC.FAILURE;
         if (TWPlatform.IsWindows)
         {
             if (TWPlatform.Is32bit && TWPlatform.PreferLegacyDSM)
             {
-                rc = WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.EXTIMAGEINFO, (MSG)KDS_MSG.GETSPECIAL, ref data);
+                rc = WinLegacyDSM.DSM_Entry(ref app.TW_IDENTITY_LEGACY, ref ds.TW_IDENTITY_LEGACY, DG.IMAGE, DAT.EXTIMAGEINFO, (MSG)KDS_MSG.GETSPECIAL, ref data);
             }
             else
             {
-                rc = WinNewDSM.DSM_Entry(ref app, ref ds, DG.IMAGE, DAT.EXTIMAGEINFO, (MSG)KDS_MSG.GETSPECIAL, ref data);
+                rc = WinNewDSM.DSM_Entry(ref app.TW_IDENTITY_LEGACY, ref ds.TW_IDENTITY_LEGACY, DG.IMAGE, DAT.EXTIMAGEINFO, (MSG)KDS_MSG.GETSPECIAL, ref data);
             }
         }
         else if (TWPlatform.IsMacOSX)
         {
-            TW_IDENTITY_MACOSX app2 = app;
-            TW_IDENTITY_MACOSX ds2 = ds;
             if (TWPlatform.PreferLegacyDSM)
             {
-                rc = OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.EXTIMAGEINFO, (MSG)KDS_MSG.GETSPECIAL, ref data);
+                rc = OSXLegacyDSM.DSM_Entry(ref app.TW_IDENTITY_MACOSX, ref ds.TW_IDENTITY_MACOSX, DG.IMAGE, DAT.EXTIMAGEINFO, (MSG)KDS_MSG.GETSPECIAL, ref data);
             }
             else
             {
-                rc = OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.IMAGE, DAT.EXTIMAGEINFO, (MSG)KDS_MSG.GETSPECIAL, ref data);
+                rc = OSXNewDSM.DSM_Entry(ref app.TW_IDENTITY_MACOSX, ref ds.TW_IDENTITY_MACOSX, DG.IMAGE, DAT.EXTIMAGEINFO, (MSG)KDS_MSG.GETSPECIAL, ref data);
             }
         }
         return rc;

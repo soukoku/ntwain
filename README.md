@@ -14,7 +14,7 @@ the TWAIN Working Group.
 V4 of this lib has these features:
 
 * Targets TWAIN version 2.5.
-* Runs under supported framework (4.6.2+) and netcore variants (6.0+).
+* Runs under supported framework (4.6.2+) and netcore variants (8.0+).
 * Easier to use than the low-level C API with many dotnet niceties.
 * Attempt at reducing heap allocations compared to previous versions.
 
@@ -23,17 +23,8 @@ V4 of this lib has these features:
 
 These are not implemented yet in this early version:
 
-* Image memory transfer (DAT_IMAGEMEMXFER). 
-* Audio native transfer (probably never will).
-
-As with previous versions, only Windows has been tested on and thus 
-supported really. Other changes include
-
 * All TWAIN data types are now struct instead of class (and they come
-from [twaincs](https://github.com/twain/twain-cs) for correctness. It may have
-been easier to implement them as classes when starting out this lib, but 
-it's not really ideal anymore. The change also makes them match the twain.h
-names and the spec pdf.
+from [twaincs](https://github.com/twain/twain-cs) for correctness. 
 
 * All lower-level TWAIN APIs are public instead of hidden away.
 

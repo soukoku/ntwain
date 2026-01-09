@@ -2,13 +2,13 @@ using NTwain.Data;
 using System;
 using System.Runtime.InteropServices;
 
-namespace NTwain.DSM
+namespace NTwain.DSM;
+
+/// <summary>
+/// Low-level pinvoke methods using /usr/local/lib/libtwaindsm.so. 
+/// </summary>
+public static partial class LinuxDSM
 {
-  /// <summary>
-  /// Low-level pinvoke methods using /usr/local/lib/libtwaindsm.so. 
-  /// </summary>
-  public static partial class LinuxDSM
-  {
     const string DsmName = "/usr/local/lib/libtwaindsm.so";
 
 #if NET7_0_OR_GREATER
@@ -367,5 +367,5 @@ namespace NTwain.DSM
         ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
         DG dg, DAT dat, MSG msg, ref TW_RGBRESPONSE resp
     );
-  }
 }
+

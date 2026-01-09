@@ -2822,7 +2822,7 @@
 //    /// <param name="a_twidentity">A TWAIN structure</param>
 //    /// <param name="a_szIdentity">A CSV string of the TWAIN structure</param>
 //    /// <returns>True if the conversion is successful</returns>
-//    public static bool CsvToIdentity(ref TW_IDENTITY a_twidentity, string a_szIdentity)
+//    public static bool CsvToIdentity(TW_IDENTITY a_twidentity, string a_szIdentity)
 //    {
 //      // Init stuff...
 //      a_twidentity = default(TW_IDENTITY);
@@ -7486,7 +7486,7 @@
 //      );
 //    }
 //    [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust", Unrestricted = false)]
-//    public STS DatIdentity(DG a_dg, MSG a_msg, ref TW_IDENTITY a_twidentity)
+//    public STS DatIdentity(DG a_dg, MSG a_msg, TW_IDENTITY a_twidentity)
 //    {
 //      STS sts;
 
@@ -13791,8 +13791,8 @@
 //    /// <returns>TWAIN status</returns>
 //    private UInt16 WindowsDsmEntryCallbackProxy
 //    (
-//        ref TW_IDENTITY_LEGACY origin,
-//        ref TW_IDENTITY_LEGACY dest,
+//        TW_IDENTITY_LEGACY origin,
+//        TW_IDENTITY_LEGACY dest,
 //        DG dg,
 //        DAT dat,
 //        MSG msg,
@@ -13815,8 +13815,8 @@
 //    /// <returns>TWAIN status</returns>
 //    private UInt16 LinuxDsmEntryCallbackProxy
 //    (
-//        ref TW_IDENTITY_LEGACY origin,
-//        ref TW_IDENTITY_LEGACY dest,
+//        TW_IDENTITY_LEGACY origin,
+//        TW_IDENTITY_LEGACY dest,
 //        DG dg,
 //        DAT dat,
 //        MSG msg,
@@ -13839,8 +13839,8 @@
 //    /// <returns>TWAIN status</returns>
 //    private UInt16 MacosxDsmEntryCallbackProxy
 //    (
-//        ref TW_IDENTITY_MACOSX origin,
-//        ref TW_IDENTITY_MACOSX dest,
+//        TW_IDENTITY_MACOSX origin,
+//        TW_IDENTITY_MACOSX dest,
 //        DG dg,
 //        DAT dat,
 //        MSG msg,
