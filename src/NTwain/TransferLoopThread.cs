@@ -64,7 +64,7 @@ partial class TransferLoopThread : IDisposable
                 }
                 catch (Exception ex)
                 {
-
+                    _twain.Logger.LogError(ex, "Exception occurred during transfer loop.");
                 }
                 finally
                 {
