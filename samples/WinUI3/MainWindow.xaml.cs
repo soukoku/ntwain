@@ -6,7 +6,6 @@ using NTwain.Events;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -21,7 +20,6 @@ public sealed partial class MainWindow : Window
     readonly uint _jpegQuality = 85;
     readonly string saveFolder;
     readonly Stopwatch watch = new();
-    bool _useThreadForImag;
 
     public MainWindow()
     {
