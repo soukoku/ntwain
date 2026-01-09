@@ -1,5 +1,6 @@
 <Solution>
   <Configurations>
+    <Platform Name="ARM64" />
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
@@ -20,11 +21,19 @@
     <Project Path="samples/KodakTester/KodakTester.csproj" />
     <Project Path="samples/WinForm32/WinForm32.csproj" />
     <Project Path="samples/WinForm64/WinForm64.csproj" />
+    <Project Path="samples/WinUI3/WinUI3.csproj" Id="9876f110-22e9-4813-8f5d-b317c152885f">
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
     <Project Path="samples\ConsoleSample\ConsoleSample.csproj">
+      <Platform Solution="*|ARM64" Project="x64" />
       <Platform Solution="*|x64" Project="x64" />
       <Platform Solution="*|x86" Project="x86" />
     </Project>
   </Folder>
-  <Project Path="csizes\csizes.vcxproj" Id="1aabd2dc-3f81-4301-938b-3ec2edef38d4" />
+  <Project Path="csizes\csizes.vcxproj" Id="1aabd2dc-3f81-4301-938b-3ec2edef38d4">
+    <Platform Solution="*|ARM64" Project="x64" />
+  </Project>
   <Project Path="src\NTwain\NTwain.csproj" />
 </Solution>
