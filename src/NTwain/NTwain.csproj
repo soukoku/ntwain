@@ -8,8 +8,13 @@
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<None Include="../../Readme.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+	
 	<!--<PropertyGroup Condition=" '$(TargetFramework)' == 'net472' OR $(TargetFramework.EndsWith('windows'))">
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
