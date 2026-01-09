@@ -1,366 +1,165 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NTwain.Data;
-using NTwain.Triplets;
+using NTwain.Platform;
 using System;
-using System.IO.Packaging;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using WinMSG = Windows.Win32.UI.WindowsAndMessaging.MSG;
 
-namespace NTwain
+namespace NTwain;
+
+// this file is for (non-twain) setup and cleanup.
+
+/// <summary>
+/// The main TWAIN access object for an application.
+/// There should only be one of these per application.
+/// </summary>
+public partial class TwainAppSession : IDisposable
 {
-    // this file contains initialization/cleanup things.
+    // internal pump is used for windows so it can run headless
+    Win32MessagePump? _twainPumpForWin;
+    TW_EVENT _procEvent;
+    // transfer has to happen on its own thread (not app thread, not windows message pump thread)
+    // so it won't block either.
+    TransferLoopThread _transferThread;
 
-    public partial class TwainAppSession : IDisposable
+    readonly TWIdentityWrapper _appIdentity;
+    public TWIdentityWrapper AppIdentity { get { return _appIdentity; } }
+
+
+    /// <summary>
+    /// Initializes a new instance of the TwainAppSession class, configuring the application session for TWAIN
+    /// operations and background processing.
+    /// </summary>
+    /// <param name="appIdentity">The app information to use in TWAIN dsm calls. 
+    /// If null, a default identity will be generated.</param>
+    /// <param name="appThreadContext">The synchronization context associated with the application's main thread. 
+    /// If null, then callbacks could happen on random threads.</param>
+    /// <param name="logger">The logger instance used for diagnostic and error logging.</param>
+    public TwainAppSession(
+        TWIdentityWrapper? appIdentity = null,
+        SynchronizationContext? appThreadContext = null,
+        ILogger? logger = null)
     {
-        /// <summary>
-        /// Creates TWAIN session with current app info.
-        /// </summary>
-        /// <param name="logger"></param>
-        public TwainAppSession(ILogger? logger = null)
-          : this(new TW_IDENTITY_LEGACY(Environment.GetCommandLineArgs()[0]), logger) { }
-
-        /// <summary>
-        /// Creates TWAIN session with explicit app info.
-        /// </summary>
-        /// <param name="appId"></param>
-        /// <param name="logger"></param>
-        public TwainAppSession(TW_IDENTITY_LEGACY appId, ILogger? logger = null)
-        {
-            if (logger != null) _logger = logger;
-
-#if WINDOWS || NETFRAMEWORK
-            DSM.DsmLoader.TryLoadCustomDSM(Logger);
+        _appIdentity = appIdentity ??
+            new TWIdentityWrapper(
+#if !NETFRAMEWORK
+                Environment.ProcessPath ??
 #endif
-            _appIdentity = appId;
+                Assembly.GetEntryAssembly()?.Location ??
+                Assembly.GetExecutingAssembly().Location);
 
-            _legacyCallbackDelegate = LegacyCallbackHandler;
-            _osxCallbackDelegate = OSXCallbackHandler;
-
-            StartTransferThread();
-        }
-
-        private ILogger _logger = NullLogger.Instance;
-
-        public ILogger Logger
-        {
-            get { return _logger; }
-            set { _logger = value ?? NullLogger.Instance; }
-        }
-
-        internal IntPtr _hwnd;
-        internal TW_USERINTERFACE _userInterface; // kept around for disable to use
-#if WINDOWS || NETFRAMEWORK
-        MessagePumpThread? _selfPump;
-        TW_EVENT _procEvent; // kept here so the alloc/free only happens once
+#if !NETFRAMEWORK
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
-        // test threads a bit
-        //readonly BlockingCollection<MSG> _bgPendingMsgs = new();
-        SynchronizationContext? _pumpThreadMarshaller;
-        bool _closeDsRequested;
-        bool _inTransfer;
-        readonly AutoResetEvent _xferReady = new(false);
-        private bool disposedValue;
-        bool _transferInCallbackThread = true;
-
-        void StartTransferThread()
+        AppThreadContext = appThreadContext ?? SynchronizationContext.Current;
+        _logger = logger ?? NullLogger.Instance;
+        _legacyCallbackDelegate = LegacyCallbackHandler;
+        _osxCallbackDelegate = OSXCallbackHandler;
+        //_dsmCalls = Channel.CreateUnbounded<Action>();
+        if (OperatingSystem.IsWindowsVersionAtLeast(6, 0, 6000))
         {
-            Thread t = new(TransferLoopLoop)
-            {
-                IsBackground = true
-            };
-#if WINDOWS || NETFRAMEWORK
-            t.SetApartmentState(ApartmentState.STA); // just in case
-#endif
-            t.Start();
-        }
+            DllPath.TryUseLocalDsm();
 
-        private void TransferLoopLoop(object? obj)
-        {
-            while (!disposedValue)
+            // no need to do another lock call when using marshal alloc
+            TW_EVENT _procEvent = default;
+            _procEvent.pEvent = Marshal.AllocHGlobal(Marshal.SizeOf<WinMSG>());
+
+            Thread pumpThread = new(() =>
             {
-                try
+                if (OperatingSystem.IsWindowsVersionAtLeast(5, 1, 2600))
                 {
-                    _xferReady.WaitOne();
-                }
-                catch (ObjectDisposedException) { break; }
-                try
-                {
-                    EnterTransferRoutine();
-                }
-                catch { }
-            }
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // this will end the bg thread
-                    _xferReady.Dispose();
-                    //_bgPendingMsgs.CompleteAdding();
-                }
-#if WINDOWS || NETFRAMEWORK
-                if (_procEvent.pEvent != IntPtr.Zero) Marshal.FreeHGlobal(_procEvent.pEvent);
-#endif
-                disposedValue = true;
-            }
-        }
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~TwainSession()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-#if WINDOWS || NETFRAMEWORK
-        /// <summary>
-        /// Loads and opens the TWAIN data source manager in a self-hosted message queue thread.
-        /// Must close with <see cref="CloseDSMAsync"/>
-        /// if used.
-        /// </summary>
-        /// <returns></returns>
-        public async Task<STS> OpenDSMAsync()
-        {
-            if (_selfPump == null)
-            {
-                _transferInCallbackThread = true;
-                var pump = new MessagePumpThread();
-                var sts = await pump.AttachAsync(this);
-                if (sts.IsSuccess)
-                {
-                    _selfPump = pump;
-                }
-                return sts;
-            }
-            return new STS { RC = TWRC.FAILURE, STATUS = new TW_STATUS { ConditionCode = TWCC.SEQERROR } };
-        }
-
-        /// <summary>
-        /// Closes the TWAIN data source manager if opened with <see cref="OpenDSMAsync"/>.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        public async Task<STS> CloseDSMAsync()
-        {
-            if (_selfPump == null) throw new InvalidOperationException($"Cannot close if not opened with {nameof(OpenDSMAsync)}().");
-
-            var sts = await _selfPump.DetachAsync();
-            if (sts.IsSuccess)
-            {
-                _selfPump = null;
-            }
-            return sts;
-        }
-#endif
-
-        /// <summary>
-        /// Loads and opens the TWAIN data source manager.
-        /// </summary>
-        /// <param name="hwnd">Required if on Windows.</param>
-        /// <param name="uiThreadMarshaller">Context for TWAIN to invoke certain actions on the thread that the hwnd lives on.</param>
-        /// <returns></returns>
-        public STS OpenDSM(IntPtr hwnd, SynchronizationContext uiThreadMarshaller)
-        {
-            var rc = DGControl.Parent.OpenDSM(ref _appIdentity, hwnd);
-            if (rc == TWRC.SUCCESS)
-            {
-                _transferInCallbackThread = true;
-                _hwnd = hwnd;
-                _pumpThreadMarshaller = uiThreadMarshaller;
-                State = STATE.S3;
-                // get default source
-                if (DGControl.Identity.GetDefault(ref _appIdentity, out TW_IDENTITY_LEGACY ds) == TWRC.SUCCESS)
-                {
-                    _defaultDS = ds;
-                    try
+                    _twainPumpForWin = new Win32MessagePump(_logger);
+                    _twainPumpForWin.UnhandledException += (s, e) =>
                     {
-                        DefaultSourceChanged?.Invoke(this, _defaultDS);
-                    }
-                    catch { }
+                        _logger.LogError(e.Exception, "Unhandled exception in TWAIN message pump.");
+                        e.Handled = true;
+                    };
+                    _twainPumpForWin.AddMessageFilter(this);
+                    _twainPumpForWin.Run();
                 }
+            });
+            pumpThread.IsBackground = true;
+            pumpThread.SetApartmentState(ApartmentState.STA);
+            pumpThread.Start();
 
-                // determine memory mgmt routines used
-                if (((DG)AppIdentity.SupportedGroups & DG.DSM2) == DG.DSM2)
+            while (_twainPumpForWin == null || _twainPumpForWin.MainWindow.IsNull)
+            {
+                Thread.Sleep(100);
+            }
+        }
+        _transferThread = new TransferLoopThread(this);
+    }
+
+
+    /// <summary>
+    /// Used to marshal results back to the application thread if set,
+    /// as many TWAIN activities occur on other threads.
+    /// </summary>
+    public SynchronizationContext? AppThreadContext { get; set; }
+
+    private ILogger _logger;
+
+    /// <summary>
+    /// Gets or sets the logger used to record diagnostic and operational messages for this instance.
+    /// </summary>
+    public ILogger Logger
+    {
+        get { return _logger; }
+        set { _logger = value ?? NullLogger.Instance; }
+    }
+
+    private bool _disposed;
+    /// <summary>
+    /// Overrides to clean up resources.
+    /// </summary>
+    /// <param name="disposing"></param>
+    protected virtual void OnDispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            _disposed = true;
+
+            if (disposing)
+            {
+                _transferThread.Dispose();
+
+                //_dsmCalls.Writer.TryComplete();
+                if (_twainPumpForWin != null && OperatingSystem.IsWindowsVersionAtLeast(5, 1, 2600))
                 {
-                    DGControl.EntryPoint.Get(ref _appIdentity, out _entryPoint);
+                    _twainPumpForWin.RemoveMessageFilter(this);
+                    _twainPumpForWin.Quit();
+                    _twainPumpForWin.Dispose();
                 }
-            }
-            return WrapInSTS(rc, true);
-        }
 
-
-        /// <summary>
-        /// Closes the TWAIN data source manager.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        public STS CloseDSM()
-        {
-#if WINDOWS || NETFRAMEWORK
-            if (_selfPump != null) throw new InvalidOperationException($"Cannot close if opened with {nameof(OpenDSMAsync)}().");
-#endif
-            return CloseDSMReal();
-        }
-
-        /// <summary>
-        /// Closes the TWAIN data source manager.
-        /// </summary>
-        /// <returns></returns>
-        internal STS CloseDSMReal()
-        {
-            var rc = DGControl.Parent.CloseDSM(ref _appIdentity, _hwnd);
-            if (rc == TWRC.SUCCESS)
-            {
-                State = STATE.S2;
-                _entryPoint = default;
-                _defaultDS = default;
-                try
+                if (_procEvent.pEvent != IntPtr.Zero)
                 {
-                    DefaultSourceChanged?.Invoke(this, _defaultDS);
-                }
-                catch { }
-                _hwnd = IntPtr.Zero;
-                _pumpThreadMarshaller = null;
-            }
-            return WrapInSTS(rc, true);
-        }
-
-        /// <summary>
-        /// Wraps a return code with additional status if not successful.
-        /// Use this right after an API call to get its condition code.
-        /// </summary>
-        /// <param name="rc"></param>
-        /// <param name="dsmOnly">true to get status for dsm operation error, false to get status for ds operation error,</param>
-        /// <returns></returns>
-        public STS WrapInSTS(TWRC rc, bool dsmOnly = false)
-        {
-            if (rc != TWRC.FAILURE) return new STS { RC = rc };
-            var sts = new STS { RC = rc, STATUS = GetLastStatus(dsmOnly) };
-            if (sts.STATUS.ConditionCode == TWCC.BADDEST)
-            {
-                // TODO: the current ds is bad, should assume we're back in S3?
-                // needs the dest parameter to find out.
-            }
-            else if (sts.STATUS.ConditionCode == TWCC.BUMMER)
-            {
-                // TODO: notify with critical event to end the twain stuff
-            }
-            return sts;
-        }
-
-        /// <summary>
-        /// Gets the last status code if an operation did not return success.
-        /// This can only be done once after an error.
-        /// </summary>
-        /// <param name="dsmOnly">true to get status for dsm operation error, false to get status for ds operation error,</param>
-        /// <returns></returns>
-        public TW_STATUS GetLastStatus(bool dsmOnly = false)
-        {
-            if (dsmOnly)
-            {
-                DGControl.Status.GetForDSM(ref _appIdentity, out TW_STATUS status);
-                return status;
-            }
-            else
-            {
-                DGControl.Status.GetForDS(ref _appIdentity, ref _currentDS, out TW_STATUS status);
-                return status;
-            }
-        }
-
-        /// <summary>
-        /// Tries to get string representation of a previously gotten status 
-        /// from <see cref="GetLastStatus"/> if possible.
-        /// </summary>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        public string? GetStatusText(TW_STATUS status)
-        {
-            if (DGControl.StatusUtf8.Get(ref _appIdentity, status, out TW_STATUSUTF8 extendedStatus) == TWRC.SUCCESS)
-            {
-                return extendedStatus.Read(this);
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Tries to bring the TWAIN session down to some state.
-        /// </summary>
-        /// <param name="targetState"></param>
-        /// <returns>The final state.</returns>
-        public STATE TryStepdown(STATE targetState)
-        {
-            int tries = 0;
-            while (State > targetState)
-            {
-                var oldState = State;
-
-                switch (oldState)
-                {
-                    // todo: finish
-                    case STATE.S7:
-                        var pending = TW_PENDINGXFERS.DONTCARE();
-                        DGControl.PendingXfers.EndXfer(ref _appIdentity, ref _currentDS, ref pending);
-                        _state = STATE.S6;
-                        break;
-                    case STATE.S6:
-                        pending = TW_PENDINGXFERS.DONTCARE();
-                        DGControl.PendingXfers.Reset(ref _appIdentity, ref _currentDS, ref pending);
-                        _state = STATE.S5;
-                        break;
-                    case STATE.S5:
-                        DisableSource();
-                        break;
-                    case STATE.S4:
-                        CloseSource();
-                        break;
-                    case STATE.S3:
-#if WINDOWS || NETFRAMEWORK
-                        if (_selfPump != null)
-                        {
-                            try
-                            {
-                                _ = CloseDSMAsync();
-                            }
-                            catch (InvalidOperationException) { }
-                        }
-                        else
-                        {
-                            CloseDSM();
-                        }
-#else
-                        CloseDSM();
-#endif
-                        break;
-                    case STATE.S2:
-                        // can't really go lower
-                        if (targetState < STATE.S2)
-                        {
-                            return State;
-                        }
-                        break;
-                }
-                if (oldState == State)
-                {
-                    // didn't work
-                    if (tries++ > 5) break;
+                    Marshal.FreeHGlobal(_procEvent.pEvent);
+                    _procEvent.pEvent = IntPtr.Zero;
                 }
             }
-            return State;
         }
+    }
+
+    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+    // ~TwainAppSession()
+    // {
+    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+    //     Dispose(disposing: false);
+    // }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        OnDispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    public override string ToString()
+    {
+        return $"State: {State}, App: {_appIdentity}, Source: {_currentDs}";
     }
 }

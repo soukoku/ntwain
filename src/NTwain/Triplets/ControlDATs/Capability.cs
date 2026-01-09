@@ -1,64 +1,61 @@
 ﻿using NTwain.Data;
 using NTwain.DSM;
 
-namespace NTwain.Triplets.ControlDATs
-{
-  /// <summary>
-  /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.CAPABILITY"/>.
-  /// </summary>
-  public class Capability
-  {
-    public TWRC Get(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
-      => DoIt(ref app, ref ds, MSG.GET, ref data);
-    public TWRC GetCurrent(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
-      => DoIt(ref app, ref ds, MSG.GETCURRENT, ref data);
-    public TWRC GetDefault(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
-      => DoIt(ref app, ref ds, MSG.GETDEFAULT, ref data);
-    public TWRC GetHelp(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
-      => DoIt(ref app, ref ds, MSG.GETHELP, ref data);
-    public TWRC GetLabel(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
-      => DoIt(ref app, ref ds, MSG.GETLABEL, ref data);
-    public TWRC GetLabelEnum(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
-      => DoIt(ref app, ref ds, MSG.GETLABELENUM, ref data);
-    public TWRC QuerySupport(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
-      => DoIt(ref app, ref ds, MSG.QUERYSUPPORT, ref data);
-    public TWRC Reset(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
-      => DoIt(ref app, ref ds, MSG.RESET, ref data);
-    public TWRC ResetAll(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
-      => DoIt(ref app, ref ds, MSG.RESETALL, ref data);
-    public TWRC Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
-      => DoIt(ref app, ref ds, MSG.SET, ref data);
-    public TWRC SetConstraint(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, ref TW_CAPABILITY data)
-      => DoIt(ref app, ref ds, MSG.SETCONSTRAINT, ref data);
+namespace NTwain.Triplets.ControlDATs;
 
-    static TWRC DoIt(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds, MSG msg, ref TW_CAPABILITY data)
+/// <summary>
+/// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.CAPABILITY"/>.
+/// </summary>
+public class Capability
+{
+    public TWRC Get(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_CAPABILITY data)
+      => DoIt(app, ds, MSG.GET, ref data);
+    public TWRC GetCurrent(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_CAPABILITY data)
+      => DoIt(app, ds, MSG.GETCURRENT, ref data);
+    public TWRC GetDefault(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_CAPABILITY data)
+      => DoIt(app, ds, MSG.GETDEFAULT, ref data);
+    public TWRC GetHelp(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_CAPABILITY data)
+      => DoIt(app, ds, MSG.GETHELP, ref data);
+    public TWRC GetLabel(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_CAPABILITY data)
+      => DoIt(app, ds, MSG.GETLABEL, ref data);
+    public TWRC GetLabelEnum(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_CAPABILITY data)
+      => DoIt(app, ds, MSG.GETLABELENUM, ref data);
+    public TWRC QuerySupport(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_CAPABILITY data)
+      => DoIt(app, ds, MSG.QUERYSUPPORT, ref data);
+    public TWRC Reset(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_CAPABILITY data)
+      => DoIt(app, ds, MSG.RESET, ref data);
+    public TWRC ResetAll(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_CAPABILITY data)
+      => DoIt(app, ds, MSG.RESETALL, ref data);
+    public TWRC Set(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_CAPABILITY data)
+      => DoIt(app, ds, MSG.SET, ref data);
+    public TWRC SetConstraint(TWIdentityWrapper app, TWIdentityWrapper ds, ref TW_CAPABILITY data)
+      => DoIt(app, ds, MSG.SETCONSTRAINT, ref data);
+
+    static TWRC DoIt(TWIdentityWrapper app, TWIdentityWrapper ds, MSG msg, ref TW_CAPABILITY data)
     {
-      var rc = TWRC.FAILURE;
-      if (TWPlatform.IsWindows)
-      {
-        if (TWPlatform.Is32bit && TWPlatform.PreferLegacyDSM)
+        var rc = TWRC.FAILURE;
+        if (TWPlatform.IsWindows)
         {
-          rc = WinLegacyDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
+            if (TWPlatform.Is32bit && TWPlatform.PreferLegacyDSM)
+            {
+                rc = WinLegacyDSM.DSM_Entry(ref app.TW_IDENTITY_LEGACY, ref ds.TW_IDENTITY_LEGACY, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
+            }
+            else
+            {
+                rc = WinNewDSM.DSM_Entry(ref app.TW_IDENTITY_LEGACY, ref ds.TW_IDENTITY_LEGACY, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
+            }
         }
-        else
+        else if (TWPlatform.IsMacOSX)
         {
-          rc = WinNewDSM.DSM_Entry(ref app, ref ds, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
+            if (TWPlatform.PreferLegacyDSM)
+            {
+                rc = OSXLegacyDSM.DSM_Entry(ref app.TW_IDENTITY_MACOSX, ref ds.TW_IDENTITY_MACOSX, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
+            }
+            else
+            {
+                rc = OSXNewDSM.DSM_Entry(ref app.TW_IDENTITY_MACOSX, ref ds.TW_IDENTITY_MACOSX, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
+            }
         }
-      }
-      else if (TWPlatform.IsMacOSX)
-      {
-        TW_IDENTITY_MACOSX app2 = app;
-        TW_IDENTITY_MACOSX ds2 = ds;
-        if (TWPlatform.PreferLegacyDSM)
-        {
-          rc = OSXLegacyDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
-        }
-        else
-        {
-          rc = OSXNewDSM.DSM_Entry(ref app2, ref ds2, DG.CONTROL, DAT.CAPABILITY, msg, ref data);
-        }
-      }
-      return rc;
+        return rc;
     }
-  }
 }

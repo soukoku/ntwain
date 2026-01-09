@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NTwain.Data
-{
+namespace NTwain.Data;
 
-  public static class SizeAndConversionUtils
-  {
+public static class SizeAndConversionUtils
+{
     /// <summary>
     /// Maps <see cref="CAP"/> id with its enum 
     /// value type when applicable 
@@ -15,10 +14,10 @@ namespace NTwain.Data
     /// <returns></returns>
     public static Type? GetEnumType(CAP cap)
     {
-      if (__map.ContainsKey(cap)) return __map[cap];
-      return null;
+        if (__map.ContainsKey(cap)) return __map[cap];
+        return null;
     }
-        static readonly Dictionary<CAP, Type> __map = new()
+    static readonly Dictionary<CAP, Type> __map = new()
     {
       { CAP.ACAP_XFERMECH, typeof(TWSX) },
       { CAP.CAP_ALARMS, typeof(TWAL) },
@@ -162,11 +161,11 @@ namespace NTwain.Data
     /// <returns></returns>
     public static int GetItemTypeSize(this TWTY type)
     {
-      if (__sizes.TryGetValue(type, out int size))
-      {
-        return size;
-      }
-      return 0;
+        if (__sizes.TryGetValue(type, out int size))
+        {
+            return size;
+        }
+        return 0;
     }
     static readonly IDictionary<TWTY, int> __sizes = new Dictionary<TWTY, int>
     {
@@ -186,5 +185,4 @@ namespace NTwain.Data
       // is it fixed 4 bytes or intptr size?
       {TWTY.HANDLE, IntPtr.Size},
     };
-  }
 }

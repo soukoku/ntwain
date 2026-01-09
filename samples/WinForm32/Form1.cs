@@ -2,6 +2,7 @@ using Microsoft.Win32;
 using NTwain;
 using NTwain.Caps;
 using NTwain.Data;
+using NTwain.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -38,7 +39,7 @@ public partial class Form1 : Form
 
         TWPlatform.PreferLegacyDSM = false;
 
-        twain = new TwainAppSession();
+        twain = new TwainAppSession(appThreadContext: SynchronizationContext.Current);
         twain.StateChanged += Twain_StateChanged;
         twain.DefaultSourceChanged += Twain_DefaultSourceChanged;
         twain.CurrentSourceChanged += Twain_CurrentSourceChanged;
@@ -62,16 +63,13 @@ public partial class Form1 : Form
         _jpegEncoder = ImageCodecInfo.GetImageEncoders().First(enc => enc.FormatID == ImageFormat.Jpeg.Guid);
     }
 
-    private void Twain_SourceDisabled(TwainAppSession sender, TW_IDENTITY_LEGACY e)
+    private void Twain_SourceDisabled(TwainAppSession sender, TWIdentityWrapper e)
     {
-        BeginInvoke(() =>
+        if (watch.IsRunning)
         {
-            if (watch.IsRunning)
-            {
-                watch.Stop();
-                MessageBox.Show($"Took {watch.Elapsed} to finish that transfer.");
-            }
-        });
+            watch.Stop();
+            MessageBox.Show($"Took {watch.Elapsed} to finish that transfer.");
+        }
     }
 
     private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
@@ -86,29 +84,18 @@ public partial class Form1 : Form
         }
     }
 
-    protected override async void OnHandleCreated(EventArgs e)
+    protected override void OnLoad(EventArgs e)
     {
-        base.OnHandleCreated(e);
+        base.OnLoad(e);
 
-        if (useDiyPump)
-        {
-            var sts = await twain.OpenDSMAsync();
-            Debug.WriteLine($"OpenDSMAsync={sts}");
-        }
-        else
-        {
-            var hwnd = this.Handle;
-            var sts = twain.OpenDSM(hwnd, SynchronizationContext.Current!);
-            twain.AddWinformFilter();
-            Debug.WriteLine($"OpenDSM={sts}");
-        }
+        var sts = twain.OpenDsm();
+        Debug.WriteLine($"OpenDSMAsync={sts}");
     }
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
         var finalState = twain.TryStepdown(STATE.S2);
         Debug.WriteLine($"Stepdown result state={finalState}");
-        twain.RemoveWinformFilter();
         base.OnFormClosing(e);
     }
 
@@ -224,44 +211,41 @@ public partial class Form1 : Form
         Debug.WriteLine($"[thread {Environment.CurrentManagedThreadId}] transfer ready.");
     }
 
-    private void Twain_DefaultSourceChanged(TwainAppSession sender, TW_IDENTITY_LEGACY ds)
+    private void Twain_DefaultSourceChanged(TwainAppSession sender, TWIdentityWrapper? ds)
     {
-        BeginInvoke(() => lblDefault.Text = ds.ProductName);
+        lblDefault.Text = ds?.ProductName;
     }
 
     private void Twain_StateChanged(TwainAppSession sender, STATE state)
     {
-        BeginInvoke(() => lblState.Text = state.ToString());
+        lblState.Text = state.ToString();
     }
 
-    private void Twain_CurrentSourceChanged(TwainAppSession sender, TW_IDENTITY_LEGACY ds)
+    private void Twain_CurrentSourceChanged(TwainAppSession sender, TWIdentityWrapper? ds)
     {
-        BeginInvoke(() =>
+        lblCurrent.Text = ds?.ToString();
+        if (twain.State == STATE.S4)
         {
-            lblCurrent.Text = ds.ToString();
-            if (twain.State == STATE.S4)
-            {
-                LoadCapInfoList();
+            LoadCapInfoList();
 
-                // never seen a driver support these but here it is to test it
-                if (twain.GetCapLabel(CAP.ICAP_SUPPORTEDSIZES, out string? test).RC == TWRC.SUCCESS)
-                {
-                    Debug.WriteLine($"Supported sizes label from ds = {test}");
-                }
-                if (twain.GetCapHelp(CAP.ICAP_SUPPORTEDSIZES, out string? test2).RC == TWRC.SUCCESS)
-                {
-                    Debug.WriteLine($"Supported sizes help from ds = {test2}");
-                }
-                if (twain.GetCapLabelEnum(CAP.ICAP_SUPPORTEDSIZES, out IList<string>? test3).RC == TWRC.SUCCESS && test3 != null)
-                {
-                    Debug.WriteLine($"Supported sizes label enum from ds = {string.Join(Environment.NewLine, test3)}");
-                }
-            }
-            else
+            // never seen a driver support these but here it is to test it
+            if (twain.GetCapLabel(CAP.ICAP_SUPPORTEDSIZES, out string? test).RC == TWRC.SUCCESS)
             {
-                capListView.Items.Clear();
+                Debug.WriteLine($"Supported sizes label from ds = {test}");
             }
-        });
+            if (twain.GetCapHelp(CAP.ICAP_SUPPORTEDSIZES, out string? test2).RC == TWRC.SUCCESS)
+            {
+                Debug.WriteLine($"Supported sizes help from ds = {test2}");
+            }
+            if (twain.GetCapLabelEnum(CAP.ICAP_SUPPORTEDSIZES, out IList<string>? test3).RC == TWRC.SUCCESS && test3 != null)
+            {
+                Debug.WriteLine($"Supported sizes label enum from ds = {string.Join(Environment.NewLine, test3)}");
+            }
+        }
+        else
+        {
+            capListView.Items.Clear();
+        }
     }
 
     private void LoadCapInfoList()
@@ -277,7 +261,7 @@ public partial class Form1 : Form
             if (twain.GetCapCurrent(c, out TW_CAPABILITY twcap).RC == TWRC.SUCCESS)
             {
                 var enumType = SizeAndConversionUtils.GetEnumType(c);
-                var realType = twcap.DetermineValueType(twain);
+                var realType = twcap.DetermineValueType(twain.MemoryManager);
                 it.SubItems.Add(enumType?.Name.ToString() ?? realType.ToString());
                 it.SubItems.Add(ReadTypedValue(c, enumType, realType, forCurrent: true));
                 it.SubItems.Add(ReadTypedValue(c, enumType, realType, forCurrent: false));
@@ -441,7 +425,7 @@ public partial class Form1 : Form
 
     private void btnSetDef_Click(object sender, EventArgs e)
     {
-        if (listSources.SelectedItem is TW_IDENTITY_LEGACY ds)
+        if (listSources.SelectedItem is TWIdentityWrapper ds)
         {
             twain.SetDefaultSource(ds);
         }
@@ -449,7 +433,7 @@ public partial class Form1 : Form
 
     private void btnOpen_Click(object sender, EventArgs e)
     {
-        if (listSources.SelectedItem is TW_IDENTITY_LEGACY ds)
+        if (listSources.SelectedItem is TWIdentityWrapper ds)
         {
             twain.TryStepdown(STATE.S3);
 
@@ -466,17 +450,22 @@ public partial class Form1 : Form
     {
         twain.TryStepdown(STATE.S3);
 
+        if (twain.DefaultSource == null)
+        {
+            MessageBox.Show("No default source set.");
+            return;
+        }
         twain.OpenSource(twain.DefaultSource);
     }
 
     private void btnShowSettings_Click(object sender, EventArgs e)
     {
-        twain.EnableSource(true, true);
+        twain.EnableSource(SourceEnableOption.UIOnly);
     }
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-        if (twain.EnableSource(ckShowUI.Checked, false).IsSuccess)
+        if (twain.EnableSource(ckShowUI.Checked ? SourceEnableOption.ShowUI : SourceEnableOption.NoUI).IsSuccess)
         {
             _useThreadForImag = ckBgImageHandling.Checked;
             _useSystemDrawing = ckSystemDrawing.Checked;

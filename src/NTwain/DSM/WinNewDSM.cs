@@ -2,13 +2,13 @@ using NTwain.Data;
 using System;
 using System.Runtime.InteropServices;
 
-namespace NTwain.DSM
+namespace NTwain.DSM;
+
+/// <summary>
+/// Low-level pinvoke methods using twaindsm.dll. 
+/// </summary>
+public static partial class WinNewDSM
 {
-  /// <summary>
-  /// Low-level pinvoke methods using twaindsm.dll. 
-  /// </summary>
-  public static partial class WinNewDSM
-  {
     const string DsmName = "twaindsm.dll";
 
 #if NET7_0_OR_GREATER
@@ -367,5 +367,5 @@ namespace NTwain.DSM
         ref TW_IDENTITY_LEGACY origin, ref TW_IDENTITY_LEGACY dest,
         DG dg, DAT dat, MSG msg, ref TW_RGBRESPONSE resp
     );
-  }
 }
+

@@ -2,18 +2,18 @@
 using NTwain.DSM;
 using System;
 
-namespace NTwain.Triplets.ControlDATs
-{
-  /// <summary>
-  /// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.IDENTITY"/>.
-  /// </summary>
-  public class Identity
-  {
-    public TWRC OpenDS(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds)
-      => DoIt(ref app, MSG.OPENDS, ref ds);
+namespace NTwain.Triplets.ControlDATs;
 
-    public TWRC CloseDS(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds)
-      => DoIt(ref app, MSG.CLOSEDS, ref ds);
+/// <summary>
+/// Contains calls used with <see cref="DG.CONTROL"/> and <see cref="DAT.IDENTITY"/>.
+/// </summary>
+public class Identity
+{
+    public TWRC OpenDS(TWIdentityWrapper app, TWIdentityWrapper ds)
+      => DoIt(app, MSG.OPENDS, ds);
+
+    public TWRC CloseDS(TWIdentityWrapper app, TWIdentityWrapper ds)
+      => DoIt(app, MSG.CLOSEDS, ds);
 
     /// <summary>
     /// Opens the TWAIN data source selector dialog
@@ -22,16 +22,16 @@ namespace NTwain.Triplets.ControlDATs
     /// <param name="app"></param>
     /// <param name="ds"></param>
     /// <returns></returns>
-    public TWRC UserSelect(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)
+    public TWRC UserSelect(TWIdentityWrapper app, out TWIdentityWrapper ds)
     {
-      ds = default;
-      return DoIt(ref app, MSG.USERSELECT, ref ds);
+        ds = new();
+        return DoIt(app, MSG.USERSELECT, ds);
     }
 
-    public TWRC GetDefault(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)
+    public TWRC GetDefault(TWIdentityWrapper app, out TWIdentityWrapper ds)
     {
-      ds = default;
-      return DoIt(ref app, MSG.GETDEFAULT, ref ds);
+        ds = new();
+        return DoIt(app, MSG.GETDEFAULT, ds);
     }
 
     /// <summary>
@@ -40,8 +40,8 @@ namespace NTwain.Triplets.ControlDATs
     /// <param name="app"></param>
     /// <param name="ds"></param>
     /// <returns></returns>
-    public TWRC Set(ref TW_IDENTITY_LEGACY app, ref TW_IDENTITY_LEGACY ds)
-      => DoIt(ref app, MSG.SET, ref ds);
+    public TWRC Set(TWIdentityWrapper app, TWIdentityWrapper ds)
+      => DoIt(app, MSG.SET, ds);
 
     /// <summary>
     /// Gets the first available data source in an enumerating fashion 
@@ -50,10 +50,10 @@ namespace NTwain.Triplets.ControlDATs
     /// <param name="app"></param>
     /// <param name="ds"></param>
     /// <returns></returns>
-    public TWRC GetFirst(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)
+    public TWRC GetFirst(TWIdentityWrapper app, out TWIdentityWrapper ds)
     {
-      ds = default;
-      return DoIt(ref app, MSG.GETFIRST, ref ds);
+        ds = new();
+        return DoIt(app, MSG.GETFIRST, ds);
     }
 
     /// <summary>
@@ -63,42 +63,40 @@ namespace NTwain.Triplets.ControlDATs
     /// <param name="app"></param>
     /// <param name="ds"></param>
     /// <returns></returns>
-    public TWRC GetNext(ref TW_IDENTITY_LEGACY app, out TW_IDENTITY_LEGACY ds)
+    public TWRC GetNext(TWIdentityWrapper app, out TWIdentityWrapper ds)
     {
-      ds = default;
-      return DoIt(ref app, MSG.GETNEXT, ref ds);
+        ds = new();
+        return DoIt(app, MSG.GETNEXT, ds);
     }
 
 
-    static TWRC DoIt(ref TW_IDENTITY_LEGACY app, MSG msg, ref TW_IDENTITY_LEGACY ds)
+    static TWRC DoIt(TWIdentityWrapper app, MSG msg, TWIdentityWrapper ds)
     {
-      var rc = TWRC.FAILURE;
-      if (TWPlatform.IsWindows)
-      {
-        if (TWPlatform.Is32bit && TWPlatform.PreferLegacyDSM)
+        var rc = TWRC.FAILURE;
+        if (TWPlatform.IsWindows)
         {
-          rc = WinLegacyDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref ds);
+            if (TWPlatform.Is32bit && TWPlatform.PreferLegacyDSM)
+            {
+                rc = WinLegacyDSM.DSM_Entry(ref app.TW_IDENTITY_LEGACY, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref ds.TW_IDENTITY_LEGACY);
+            }
+            else
+            {
+                rc = WinNewDSM.DSM_Entry(ref app.TW_IDENTITY_LEGACY, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref ds.TW_IDENTITY_LEGACY);
+            }
+            ds.SetIdentity(ds.TW_IDENTITY_LEGACY);
         }
-        else
+        else if (TWPlatform.IsMacOSX)
         {
-          rc = WinNewDSM.DSM_Entry(ref app, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref ds);
+            if (TWPlatform.PreferLegacyDSM)
+            {
+                rc = OSXLegacyDSM.DSM_Entry(ref app.TW_IDENTITY_MACOSX, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref ds.TW_IDENTITY_MACOSX);
+            }
+            else
+            {
+                rc = OSXNewDSM.DSM_Entry(ref app.TW_IDENTITY_MACOSX, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref ds.TW_IDENTITY_MACOSX);
+            }
+            ds.SetIdentity(ds.TW_IDENTITY_MACOSX);
         }
-      }
-      else if (TWPlatform.IsMacOSX)
-      {
-        TW_IDENTITY_MACOSX app2 = app;
-        TW_IDENTITY_MACOSX osxds = ds;
-        if (TWPlatform.PreferLegacyDSM)
-        {
-          rc = OSXLegacyDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref osxds);
-        }
-        else
-        {
-          rc = OSXNewDSM.DSM_Entry(ref app2, IntPtr.Zero, DG.CONTROL, DAT.IDENTITY, msg, ref osxds);
-        }
-        ds = osxds;
-      }
-      return rc;
+        return rc;
     }
-  }
 }

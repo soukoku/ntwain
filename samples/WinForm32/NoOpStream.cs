@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WinFormSample
+namespace WinFormSample;
+
+internal class NoOpStream : Stream
 {
-  internal class NoOpStream : Stream
-  {
     public override bool CanRead => false;
 
     public override bool CanSeek => false;
@@ -25,12 +25,12 @@ namespace WinFormSample
 
     public override int Read(byte[] buffer, int offset, int count)
     {
-      throw new NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public override long Seek(long offset, SeekOrigin origin)
     {
-      throw new NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public override void SetLength(long value)
@@ -40,5 +40,4 @@ namespace WinFormSample
     public override void Write(byte[] buffer, int offset, int count)
     {
     }
-  }
 }

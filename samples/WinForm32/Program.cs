@@ -7,39 +7,38 @@ using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Windows.Forms;
 
-namespace WinFormSample
-{
-    internal static class Program
-    {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        [HandleProcessCorruptedStateExceptions]
-        static void Main()
-        {
-            //if (DsmLoader.TryUseCustomDSM())
-            //{
-            //  Debug.WriteLine("Using our own dsm now :)");
-            //}
-            //else
-            //{
-            //  Debug.WriteLine("Will attempt to use default dsm :(");
-            //}
+namespace WinFormSample;
 
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            try
-            {
-                ApplicationConfiguration.Initialize();
-                Application.Run(new Form1());
-            }
-            catch (Exception ex)
-            {
-                if (!Debugger.IsAttached) Debugger.Launch();
-                Debugger.Break();
-                Debug.WriteLine("Unhandled exception: " + ex.ToString());
-            }
+internal static class Program
+{
+    /// <summary>
+    ///  The main entry point for the application.
+    /// </summary>
+    [STAThread]
+    //[HandleProcessCorruptedStateExceptions]
+    static void Main()
+    {
+        //if (DsmLoader.TryUseCustomDSM())
+        //{
+        //  Debug.WriteLine("Using our own dsm now :)");
+        //}
+        //else
+        //{
+        //  Debug.WriteLine("Will attempt to use default dsm :(");
+        //}
+
+        // To customize application configuration such as set high DPI settings or default font,
+        // see https://aka.ms/applicationconfiguration.
+        try
+        {
+            ApplicationConfiguration.Initialize();
+            Application.Run(new Form1());
+        }
+        catch (Exception ex)
+        {
+            if (!Debugger.IsAttached) Debugger.Launch();
+            Debugger.Break();
+            Debug.WriteLine("Unhandled exception: " + ex.ToString());
         }
     }
 }
