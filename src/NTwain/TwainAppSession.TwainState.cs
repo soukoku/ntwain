@@ -370,7 +370,7 @@ partial class TwainAppSession
                 RegisterCallback();
                 State = STATE.S4;
             }
-            return WrapInSTS(rc);
+            return WrapInSTS(rc, forDsm: true);
         });
     }
 
