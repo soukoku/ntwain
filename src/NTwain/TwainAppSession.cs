@@ -65,7 +65,7 @@ public partial class TwainAppSession : IDisposable
             DllPath.TryUseLocalDsm();
 
             // no need to do another lock call when using marshal alloc
-            TW_EVENT _procEvent = default;
+            _procEvent = default;
             _procEvent.pEvent = Marshal.AllocHGlobal(Marshal.SizeOf<WinMSG>());
 
             Thread pumpThread = new(() =>
