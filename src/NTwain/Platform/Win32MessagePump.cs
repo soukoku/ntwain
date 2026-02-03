@@ -22,7 +22,6 @@ namespace NTwain.Platform;
 #endif
 internal sealed class Win32MessagePump : IDisposable
 {
-    private const string WindowClassName = "MsgPumpParkWindow";
     private const uint WM_APP_INVOKE = PInvoke.WM_APP + 1;
 
     private readonly FreeLibrarySafeHandle _hInstance;
@@ -31,7 +30,7 @@ internal sealed class Win32MessagePump : IDisposable
     private bool _disposed;
 
     // Store the delegate to prevent garbage collection
-    private static WNDPROC? s_wndProc;
+    private WNDPROC _wndProc;  // Instance field, not static
 
     // Queue for work items posted to the UI thread
     private readonly Queue<Action> _workQueue = new();
@@ -45,11 +44,14 @@ internal sealed class Win32MessagePump : IDisposable
     // SynchronizationContext
     private Win32SynchronizationContext? _synchronizationContext;
 
+    private readonly string _windowClassName;
+
     public Win32MessagePump(ILogger logger)
     {
         _hInstance = PInvoke.GetModuleHandle((string?)null);
         _threadId = PInvoke.GetCurrentThreadId();
         _logger = logger;
+        _windowClassName = $"MsgPumpParkWindow_{Guid.NewGuid():N}";
     }
 
     /// <summary>
@@ -121,17 +123,17 @@ internal sealed class Win32MessagePump : IDisposable
 
     private bool RegisterWindowClass()
     {
-        s_wndProc = WindowProc;
+        _wndProc = WindowProc;
 
         unsafe
         {
-            fixed (char* className = WindowClassName)
+            fixed (char* className = _windowClassName)
             {
                 var wc = new WNDCLASSEXW
                 {
                     cbSize = (uint)Marshal.SizeOf<WNDCLASSEXW>(),
                     style = 0,
-                    lpfnWndProc = s_wndProc,
+                    lpfnWndProc = _wndProc,
                     cbClsExtra = 0,
                     cbWndExtra = 0,
                     hInstance = (HINSTANCE)_hInstance.DangerousGetHandle(),
@@ -156,7 +158,7 @@ internal sealed class Win32MessagePump : IDisposable
 
     private void UnregisterWindowClass()
     {
-        PInvoke.UnregisterClass(WindowClassName, _hInstance);
+        PInvoke.UnregisterClass(_windowClassName, _hInstance);
     }
 
     private bool CreateMainWindow()
@@ -165,7 +167,7 @@ internal sealed class Win32MessagePump : IDisposable
         {
             _mainWindow = PInvoke.CreateWindowEx(
                 0,
-                WindowClassName,
+                _windowClassName,
                 "MsgPump Window",
                 0,
                 0, 0, 0, 0,
