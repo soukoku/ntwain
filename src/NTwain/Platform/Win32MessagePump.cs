@@ -205,8 +205,6 @@ internal sealed class Win32MessagePump : IDisposable
                 return -1;
             }
 
-            ProcessWorkQueue();
-
             if (FilterMessage(ref msg))
             {
                 continue;
@@ -332,8 +330,13 @@ internal sealed class Win32MessagePump : IDisposable
         }
     }
 
-    private static LRESULT WindowProc(HWND hwnd, uint msg, WPARAM wParam, LPARAM lParam)
+    private LRESULT WindowProc(HWND hwnd, uint msg, WPARAM wParam, LPARAM lParam)
     {
+        if (msg == WM_APP_INVOKE)
+        {
+            ProcessWorkQueue();
+            return new LRESULT(0);
+        }
         if (msg == PInvoke.WM_DESTROY)
         {
             PInvoke.PostQuitMessage(0);
