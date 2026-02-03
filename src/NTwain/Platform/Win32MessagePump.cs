@@ -20,14 +20,13 @@ namespace NTwain.Platform;
 #if !NETFRAMEWORK
 [SupportedOSPlatform("windows5.1.2600")]
 #endif
-internal sealed class Win32MessagePump : IDisposable
+internal sealed class Win32MessagePump
 {
     private const uint WM_APP_INVOKE = PInvoke.WM_APP + 1;
 
     private readonly FreeLibrarySafeHandle _hInstance;
     private readonly uint _threadId;
     private HWND _mainWindow;
-    private bool _disposed;
 
     // Store the delegate to prevent garbage collection
     private WNDPROC _wndProc;  // Instance field, not static
@@ -107,17 +106,28 @@ internal sealed class Win32MessagePump : IDisposable
             UnregisterWindowClass();
             return -1;
         }
-
-        // Create and install the SynchronizationContext
+        
         _synchronizationContext = new Win32SynchronizationContext(this);
         SynchronizationContext.SetSynchronizationContext(_synchronizationContext);
 
-        int exitCode = RunMessageLoop();
+        int exitCode;
+        try
+        {
+            exitCode = RunMessageLoop();
+        }
+        finally
+        {
+            if (!_mainWindow.IsNull)
+            {
+                PInvoke.DestroyWindow(_mainWindow);
+                _mainWindow = HWND.Null;
+            }
 
-        // Clear the SynchronizationContext
-        SynchronizationContext.SetSynchronizationContext(null);
+            UnregisterWindowClass();
 
-        Dispose();
+            SynchronizationContext.SetSynchronizationContext(null);
+            _synchronizationContext = null;
+        }
         return exitCode;
     }
 
@@ -257,6 +267,8 @@ internal sealed class Win32MessagePump : IDisposable
     /// </summary>
     public void PostToUIThread(Action action)
     {
+        if (_mainWindow.IsNull) throw new InvalidOperationException("Message pump main window is not available.");
+
         if (InvokeRequired)
         {
             lock (_workQueueLock)
@@ -280,6 +292,8 @@ internal sealed class Win32MessagePump : IDisposable
     /// </summary>
     public void Quit(int exitCode = 0)
     {
+        if (_mainWindow.IsNull) throw new InvalidOperationException("Message pump main window is not available.");
+
         if (InvokeRequired)
         {
             PostToUIThread(() =>
@@ -344,22 +358,6 @@ internal sealed class Win32MessagePump : IDisposable
         }
 
         return PInvoke.DefWindowProc(hwnd, msg, wParam, lParam);
-    }
-
-    public void Dispose()
-    {
-        if (_disposed)
-            return;
-
-        _disposed = true;
-
-        if (!_mainWindow.IsNull)
-        {
-            PInvoke.DestroyWindow(_mainWindow);
-            _mainWindow = HWND.Null;
-        }
-
-        UnregisterWindowClass();
     }
 }
 

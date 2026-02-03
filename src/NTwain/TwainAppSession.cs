@@ -132,7 +132,6 @@ public partial class TwainAppSession : IDisposable
                 {
                     _twainPumpForWin.RemoveMessageFilter(this);
                     _twainPumpForWin.Quit();
-                    _twainPumpForWin.Dispose();
                 }
 
                 if (_procEvent.pEvent != IntPtr.Zero)
