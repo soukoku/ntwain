@@ -24,7 +24,8 @@ internal sealed class Win32MessagePump
 {
     private const uint WM_APP_INVOKE = PInvoke.WM_APP + 1;
 
-    private readonly FreeLibrarySafeHandle _hInstance;
+    static readonly FreeLibrarySafeHandle _hInstance = PInvoke.GetModuleHandle((string?)null);
+
     private readonly uint _threadId;
     private HWND _mainWindow;
 
@@ -47,10 +48,11 @@ internal sealed class Win32MessagePump
 
     public Win32MessagePump(ILogger logger)
     {
-        _hInstance = PInvoke.GetModuleHandle((string?)null);
         _threadId = PInvoke.GetCurrentThreadId();
         _logger = logger;
         _windowClassName = $"MsgPumpParkWindow_{Guid.NewGuid():N}";
+        _wndProc = WindowProc;
+
     }
 
     /// <summary>
@@ -133,8 +135,6 @@ internal sealed class Win32MessagePump
 
     private bool RegisterWindowClass()
     {
-        _wndProc = WindowProc;
-
         unsafe
         {
             fixed (char* className = _windowClassName)
