@@ -18,9 +18,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Magick.NET-Q8-x86" Version="14.10.1" />
+		<PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.10.2" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7463" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251106002" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260101001" />
 	</ItemGroup>
 
 	<ItemGroup>

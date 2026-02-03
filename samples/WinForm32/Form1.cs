@@ -1,11 +1,9 @@
 using Microsoft.Win32;
 using NTwain;
-using NTwain.Caps;
 using NTwain.Data;
 using NTwain.Events;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -20,7 +18,6 @@ namespace WinFormSample;
 
 public partial class Form1 : Form
 {
-    bool useDiyPump = true;
     TwainAppSession twain;
     readonly string saveFolder;
     readonly Stopwatch watch = new();

@@ -18,7 +18,11 @@
     <File Path="twain-doc\twain2.5.h" />
   </Folder>
   <Folder Name="/Samples/">
-    <Project Path="samples/KodakTester/KodakTester.csproj" />
+    <Project Path="samples/KodakTester/KodakTester.csproj">
+      <Platform Solution="*|ARM64" Project="x64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
     <Project Path="samples/WinForm32/WinForm32.csproj" />
     <Project Path="samples/WinForm64/WinForm64.csproj" />
     <Project Path="samples/WinUI3/WinUI3.csproj" Id="9876f110-22e9-4813-8f5d-b317c152885f">
