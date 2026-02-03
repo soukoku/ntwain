@@ -382,7 +382,14 @@ partial class TransferLoopThread
             }
             else
             {
-                Debugger.Break();
+                if (Debugger.IsAttached) Debugger.Break();
+
+                _twain.Logger.LogWarning(
+                    "TransferFileImage failed unexpectedly: RC={RC}, CC={CC}",
+                    sts.RC, sts.ConditionCode);
+
+                // Or raise error event for user to handle
+                _twain.RaiseTransferError(new TransferErrorEventArgs(sts, "TransferFileImage"));
             }
         }
         return sts;
