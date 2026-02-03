@@ -241,7 +241,7 @@ partial class TransferLoopThread
         }
         finally
         {
-            if (lockedPtr != IntPtr.Zero) _twain.MemoryManager.Unlock(lockedPtr);
+            if (lockedPtr != IntPtr.Zero) _twain.MemoryManager.Unlock(dataPtr);
             if (dataPtr != IntPtr.Zero) _twain.MemoryManager.Free(dataPtr);
         }
     }
@@ -332,7 +332,7 @@ partial class TransferLoopThread
         }
         finally
         {
-            if (lockedPtr != IntPtr.Zero) _twain.MemoryManager.Unlock(lockedPtr);
+            if (lockedPtr != IntPtr.Zero) _twain.MemoryManager.Unlock(dataPtr);
             if (dataPtr != IntPtr.Zero) _twain.MemoryManager.Free(dataPtr);
         }
     }
