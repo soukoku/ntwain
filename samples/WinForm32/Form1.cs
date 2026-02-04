@@ -131,20 +131,22 @@ public partial class Form1 : Form
         if (_useThreadForImag)
         {
             // bad thread example but whatev. should use a dedicated thread of some sort for real
+            var data = e.TakeDataOwnership();
             Task.Run(() =>
             {
-                HandleTransferredData(e);
+                HandleTransferredData(data);
+                data?.Dispose();
             });
         }
         else
         {
-            HandleTransferredData(e);
+            HandleTransferredData(e.Data);
         }
     }
 
-    private void HandleTransferredData(TransferredEventArgs e)
+    private void HandleTransferredData(BufferedData? data)
     {
-        if (e.Data != null)
+        if (data != null)
         {
             try
             {
@@ -153,7 +155,7 @@ public partial class Form1 : Form
 
                 if (_useSystemDrawing)
                 {
-                    using (var img = Image.FromStream(e.Data.AsStream()))
+                    using (var img = Image.FromStream(data.AsStream()))
                     {
                         if (img.PixelFormat == System.Drawing.Imaging.PixelFormat.Format1bppIndexed ||
                           img.PixelFormat == System.Drawing.Imaging.PixelFormat.Format8bppIndexed)
@@ -174,7 +176,7 @@ public partial class Form1 : Form
                 }
                 else
                 {
-                    using (var img = new ImageMagick.MagickImage(e.Data.AsSpan()))
+                    using (var img = new ImageMagick.MagickImage(data.AsSpan()))
                     {
                         var format = ImageMagick.MagickFormat.Png;
                         if (img.ColorType == ImageMagick.ColorType.Palette)
@@ -198,7 +200,7 @@ public partial class Form1 : Form
             catch { }
             finally
             {
-                e.Dispose();
+                data.Dispose();
             }
         }
     }

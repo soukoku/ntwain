@@ -224,10 +224,7 @@ partial class TransferLoopThread
                         var args = new TransferredEventArgs(info, data);
                         _twain.RaiseTransferred(args);
                     }
-                    catch
-                    {
-                        data.Dispose();
-                    }
+                    catch { }
                 }
             }
 
@@ -314,10 +311,7 @@ partial class TransferLoopThread
                         var args = new TransferredEventArgs(_twain, info, null, data);
                         _twain.RaiseTransferred(args);
                     }
-                    catch
-                    {
-                        data.Dispose();
-                    }
+                    catch { }
                 }
 
 

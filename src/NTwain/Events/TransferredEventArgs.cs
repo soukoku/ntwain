@@ -34,11 +34,14 @@ public class TransferredEventArgs : EventArgs, IDisposable
     /// </summary>
     public bool IsImage { get; }
 
-    private readonly BufferedData? _data;
+    private BufferedData? _data;
+    private bool _dataOwnershipTransferred;
+
     /// <summary>
-    /// The complete file data if memory was involved in the transfer. 
-    /// IMPORTANT: Content of this array will not be valid once
-    /// this event arg has been disposed.
+    /// Gets the transferred data. 
+    /// IMPORTANT: This data is only valid during the event handler execution.
+    /// If you need to keep the data after the event handler returns, call <see cref="TakeDataOwnership"/> first.
+    /// Otherwise, the data will be automatically disposed when the event completes.
     /// </summary>
     public BufferedData? Data => _data;
 
@@ -73,8 +76,51 @@ public class TransferredEventArgs : EventArgs, IDisposable
         return _twain.WrapInSTS(DGImage.ExtImageInfo.Get(_twain.AppIdentity, _twain.CurrentSource, ref container));
     }
 
+    /// <summary>
+    /// Transfers ownership of the in-memory data to the caller, preventing automatic disposal.
+    /// Use this when you need to process the data asynchronously or keep it beyond the event handler scope.
+    /// After calling this, you MUST manually dispose the returned BufferedData when finished.
+    /// </summary>
+    /// <returns>
+    /// The buffered data with transferred ownership, or null if no data exists or ownership was already transferred.
+    /// </returns>
+    /// <example>
+    /// <code>
+    /// private async void OnTransferred(TwainAppSession sender, TransferredEventArgs e)
+    /// {
+    ///     var data = e.TakeDataOwnership();  // Take ownership
+    ///     if (data != null)
+    ///     {
+    ///         try
+    ///         {
+    ///             await ProcessDataAsync(data);  // Can use beyond event handler
+    ///         }
+    ///         finally
+    ///         {
+    ///             data.Dispose();  // Must dispose when done
+    ///         }
+    ///     }
+    /// }
+    /// </code>
+    /// </example>
+    public BufferedData? TakeDataOwnership()
+    {
+        if (_dataOwnershipTransferred || _data == null)
+            return null;
+
+        _dataOwnershipTransferred = true;
+        var data = _data;
+        _data = null;
+        return data;
+    }
+
     public void Dispose()
     {
-        _data?.Dispose();
+        // Only dispose if ownership wasn't transferred
+        if (!_dataOwnershipTransferred && _data != null)
+        {
+            _data.Dispose();
+            _data = null;
+        }
     }
 }

@@ -141,6 +141,5 @@ internal class Program
         {
             Console.WriteLine($"BUMMER! No twain data #{++xferCount} on thread {Environment.CurrentManagedThreadId}.");
         }
-        e.Dispose();
     }
 }
