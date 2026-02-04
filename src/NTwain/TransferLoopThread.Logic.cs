@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Windows.Win32.Graphics.Gdi;
 
 namespace NTwain;
 
@@ -391,16 +392,32 @@ partial class TransferLoopThread
 
     private STS TransferMemoryImage(ref TW_PENDINGXFERS pending)
     {
-        // TODO: build the image from strips before firing off transferred event
-
-
         var rc = DGControl.SetupMemXfer.Get(_twain.AppIdentity, _twain.CurrentSource!, out TW_SETUPMEMXFER memSetup);
         if (rc != TWRC.SUCCESS) return _twain.WrapInSTS(rc);
         rc = DGImage.ImageInfo.Get(_twain.AppIdentity, _twain.CurrentSource!, out TW_IMAGEINFO info);
         if (rc != TWRC.SUCCESS) return _twain.WrapInSTS(rc);
-        rc = DGImage.ImageLayout.Get(_twain.AppIdentity, _twain.CurrentSource!, out TW_IMAGELAYOUT layout);
-        if (rc != TWRC.SUCCESS) return _twain.WrapInSTS(rc);
 
+        // Check if the image is compressed (TIFF, JPEG, etc.) or uncompressed (raw pixels)
+        // When compressed, the data forms a complete file format (like TIFF) and strips are just concatenated.
+        // When uncompressed, we need to build a BMP from raw pixel strips.
+        bool isCompressed = info.Compression != TWCP.NONE;
+
+        if (isCompressed)
+        {
+            return TransferMemoryImageCompressed(ref pending, ref info, ref memSetup);
+        }
+        else
+        {
+            return TransferMemoryImageUncompressed(ref pending, ref info, ref memSetup);
+        }
+    }
+
+    /// <summary>
+    /// Handles memory transfer for compressed images (TIFF, JPEG, etc.).
+    /// The strips form a complete file format and are simply concatenated.
+    /// </summary>
+    private STS TransferMemoryImageCompressed(ref TW_PENDINGXFERS pending, ref TW_IMAGEINFO info, ref TW_SETUPMEMXFER memSetup)
+    {
         uint buffSize = memSetup.DetermineBufferSize();
         var memPtr = _twain.MemoryManager.Alloc(buffSize);
 
@@ -414,7 +431,12 @@ partial class TransferLoopThread
         };
         memXferOSX.Memory = memXfer.Memory;
 
-        byte[] dotnetBuff = BufferedData.MemPool.Rent((int)buffSize);
+        // For compressed transfers, we don't know the final size upfront,
+        // so use a MemoryStream to accumulate the data
+        byte[] stripBuff = BufferedData.MemPool.Rent((int)buffSize);
+        using var outStream = new MemoryStream();
+        TWRC rc;
+
         try
         {
             do
@@ -427,15 +449,11 @@ partial class TransferLoopThread
                 {
                     try
                     {
-                        var written = TWPlatform.IsMacOSX ?
-                          memXferOSX.BytesWritten : memXfer.BytesWritten;
+                        var written = TWPlatform.IsMacOSX ? memXferOSX.BytesWritten : memXfer.BytesWritten;
 
                         IntPtr lockedPtr = _twain.MemoryManager.Lock(memPtr);
-
-                        // assemble!
-
-                        //Marshal.Copy(lockedPtr, dotnetBuff, 0, (int)written);
-                        //outStream.Write(dotnetBuff, 0, (int)written);
+                        Marshal.Copy(lockedPtr, stripBuff, 0, (int)written);
+                        outStream.Write(stripBuff, 0, (int)written);
                     }
                     finally
                     {
@@ -443,32 +461,223 @@ partial class TransferLoopThread
                     }
                 }
             } while (rc == TWRC.SUCCESS);
+
+            if (rc == TWRC.XFERDONE)
+            {
+                _twain.State = STATE.S7;
+
+                try
+                {
+                    // The accumulated data is the complete compressed image (TIFF, JPEG, etc.)
+                    var finalData = outStream.ToArray();
+                    var data = new BufferedData(finalData, (int)outStream.Length, false);
+
+                    var args = new TransferredEventArgs(_twain, info, null, data);
+                    _twain.RaiseTransferred(args);
+                }
+                catch { }
+
+                pending = TW_PENDINGXFERS.DONTCARE();
+                var sts = _twain.WrapInSTS(DGControl.PendingXfers.EndXfer(_twain.AppIdentity, _twain.CurrentSource!, ref pending));
+                if (sts.RC == TWRC.SUCCESS)
+                {
+                    _twain.State = pending.Count == 0 ? STATE.S5 : STATE.S6;
+                }
+                return sts;
+            }
+
+            return _twain.WrapInSTS(rc);
         }
         finally
         {
             if (memPtr != IntPtr.Zero) _twain.MemoryManager.Free(memPtr);
-            BufferedData.MemPool.Return(dotnetBuff);
+            BufferedData.MemPool.Return(stripBuff);
         }
+    }
 
+    /// <summary>
+    /// Handles memory transfer for uncompressed images (raw pixels).
+    /// Builds a BMP file from the raw pixel strips.
+    /// </summary>
+    private STS TransferMemoryImageUncompressed(ref TW_PENDINGXFERS pending, ref TW_IMAGEINFO info, ref TW_SETUPMEMXFER memSetup)
+    {
+        uint buffSize = memSetup.DetermineBufferSize();
+        var memPtr = _twain.MemoryManager.Alloc(buffSize);
 
-        if (rc == TWRC.XFERDONE)
+        TW_IMAGEMEMXFER memXfer = TW_IMAGEMEMXFER.DONTCARE();
+        TW_IMAGEMEMXFER_MACOSX memXferOSX = TW_IMAGEMEMXFER_MACOSX.DONTCARE();
+        memXfer.Memory = new TW_MEMORY
         {
-            try
-            {
-                DGImage.ImageInfo.Get(_twain.AppIdentity, _twain.CurrentSource!, out info);
-                //var args = new DataTransferredEventArgs(info, null, outStream.ToArray());
-                //DataTransferred?.Invoke(this, args);
-            }
-            catch { }
+            Flags = (uint)(TWMF.APPOWNS | TWMF.POINTER),
+            Length = buffSize,
+            TheMem = memPtr
+        };
+        memXferOSX.Memory = memXfer.Memory;
 
-            pending = TW_PENDINGXFERS.DONTCARE();
-            var sts = _twain.WrapInSTS(DGControl.PendingXfers.EndXfer(_twain.AppIdentity, _twain.CurrentSource!, ref pending));
-            if (sts.RC == TWRC.SUCCESS)
-            {
-                _twain.State = pending.Count == 0 ? STATE.S5 : STATE.S6;
-            }
-            return sts;
+        // Calculate image dimensions for BMP construction
+        // BMP rows must be aligned to 4-byte boundaries
+        int stride = ((info.ImageWidth * info.BitsPerPixel + 31) / 32) * 4;
+        int imageDataSize = stride * Math.Abs(info.ImageLength);
+
+        // Calculate color table size (for indexed images)
+        int colorTableSize = 0;
+        if (info.BitsPerPixel <= 8)
+        {
+            int colorCount = 1 << info.BitsPerPixel;
+            colorTableSize = colorCount * 4; // RGBQUAD is 4 bytes
         }
+
+        int bitmapInfoHeaderSize = Marshal.SizeOf<BITMAPINFOHEADER>();
+        int bitmapFileHeaderSize = Marshal.SizeOf<BITMAPFILEHEADER>();
+        int totalSize = bitmapFileHeaderSize + bitmapInfoHeaderSize + colorTableSize + imageDataSize;
+
+        // Allocate output buffer from pool
+        byte[] outputBuff = BufferedData.MemPool.Rent(totalSize);
+        byte[] stripBuff = BufferedData.MemPool.Rent((int)buffSize);
+        int pixelDataOffset = bitmapFileHeaderSize + bitmapInfoHeaderSize + colorTableSize;
+        TWRC rc;
+
+        try
+        {
+            // Build BMP headers
+            var fileHeader = new BITMAPFILEHEADER
+            {
+                bfType = 0x4D42, // "BM"
+                bfSize = (uint)totalSize,
+                bfOffBits = (uint)pixelDataOffset
+            };
+
+            var infoHeader = new BITMAPINFOHEADER
+            {
+                biSize = (uint)bitmapInfoHeaderSize,
+                biWidth = info.ImageWidth,
+                biHeight = info.ImageLength, // positive = bottom-up DIB
+                biPlanes = 1,
+                biBitCount = (ushort)info.BitsPerPixel,
+                biCompression = 0, // BI_RGB (uncompressed)
+                biSizeImage = (uint)imageDataSize,
+                biXPelsPerMeter = (int)(info.XResolution * 39.3701), // DPI to pixels per meter
+                biYPelsPerMeter = (int)(info.YResolution * 39.3701),
+                biClrUsed = (uint)(info.BitsPerPixel <= 8 ? (1 << info.BitsPerPixel) : 0),
+                biClrImportant = 0
+            };
+
+            // Write file header
+            unsafe
+            {
+                fixed (byte* p = outputBuff)
+                {
+                    Marshal.StructureToPtr(fileHeader, (IntPtr)p, false);
+                    Marshal.StructureToPtr(infoHeader, (IntPtr)(p + bitmapFileHeaderSize), false);
+                }
+            }
+
+            do
+            {
+                rc = TWPlatform.IsMacOSX ?
+                  DGImage.ImageMemXfer.Get(_twain.AppIdentity, _twain.CurrentSource!, ref memXferOSX) :
+                  DGImage.ImageMemXfer.Get(_twain.AppIdentity, _twain.CurrentSource!, ref memXfer);
+
+                if (rc == TWRC.SUCCESS || rc == TWRC.XFERDONE)
+                {
+                    try
+                    {
+                        var written = TWPlatform.IsMacOSX ? memXferOSX.BytesWritten : memXfer.BytesWritten;
+                        var rows = TWPlatform.IsMacOSX ? memXferOSX.Rows : memXfer.Rows;
+                        var bytesPerRow = TWPlatform.IsMacOSX ? memXferOSX.BytesPerRow : memXfer.BytesPerRow;
+                        var yOffset = TWPlatform.IsMacOSX ? memXferOSX.YOffset : memXfer.YOffset;
+
+                        IntPtr lockedPtr = _twain.MemoryManager.Lock(memPtr);
+
+                        // Copy strip data to temp buffer
+                        Marshal.Copy(lockedPtr, stripBuff, 0, (int)written);
+
+                        // Copy each row to the correct position in output buffer
+                        // BMP is stored bottom-up, so we need to flip the row order
+                        for (int row = 0; row < rows; row++)
+                        {
+                            int srcOffset = (int)(row * bytesPerRow);
+                            // Calculate destination row (flip for bottom-up BMP)
+                            int destRow = info.ImageLength - 1 - ((int)yOffset + row);
+                            int destOffset = pixelDataOffset + (destRow * stride);
+
+                            // Copy the row data (up to the actual bytes per row from source, but pad to stride)
+                            int bytesToCopy = Math.Min((int)bytesPerRow, stride);
+                            Buffer.BlockCopy(stripBuff, srcOffset, outputBuff, destOffset, bytesToCopy);
+                        }
+                    }
+                    finally
+                    {
+                        _twain.MemoryManager.Unlock(memPtr);
+                    }
+                }
+            } while (rc == TWRC.SUCCESS);
+
+            if (rc == TWRC.XFERDONE)
+            {
+                _twain.State = STATE.S7;
+
+                // Handle color table for indexed images
+                if (colorTableSize > 0)
+                {
+                    // For grayscale images, create a grayscale palette
+                    if (info.PixelType == TWPT.GRAY || info.PixelType == TWPT.BW)
+                    {
+                        int colorCount = 1 << info.BitsPerPixel;
+                        int paletteOffset = bitmapFileHeaderSize + bitmapInfoHeaderSize;
+                        for (int i = 0; i < colorCount; i++)
+                        {
+                            byte grayValue = (byte)(i * 255 / (colorCount - 1));
+                            outputBuff[paletteOffset + i * 4 + 0] = grayValue; // Blue
+                            outputBuff[paletteOffset + i * 4 + 1] = grayValue; // Green
+                            outputBuff[paletteOffset + i * 4 + 2] = grayValue; // Red
+                            outputBuff[paletteOffset + i * 4 + 3] = 0;         // Reserved
+                        }
+                    }
+                    // For B&W images specifically, ensure proper black/white palette
+                    if (info.BitsPerPixel == 1)
+                    {
+                        int paletteOffset = bitmapFileHeaderSize + bitmapInfoHeaderSize;
+                        // Index 0 = Black (for TWAIN B&W where 0 is typically black)
+                        outputBuff[paletteOffset + 0] = 0;   // Blue
+                        outputBuff[paletteOffset + 1] = 0;   // Green
+                        outputBuff[paletteOffset + 2] = 0;   // Red
+                        outputBuff[paletteOffset + 3] = 0;   // Reserved
+                        // Index 1 = White
+                        outputBuff[paletteOffset + 4] = 255; // Blue
+                        outputBuff[paletteOffset + 5] = 255; // Green
+                        outputBuff[paletteOffset + 6] = 255; // Red
+                        outputBuff[paletteOffset + 7] = 0;   // Reserved
+                    }
+                }
+
+                try
+                {
+                    var data = new BufferedData(outputBuff, totalSize, true);
+                    // Transfer ownership to BufferedData, so don't return to pool in finally
+                    outputBuff = null!;
+
+                    var args = new TransferredEventArgs(_twain, info, null, data);
+                    _twain.RaiseTransferred(args);
+                }
+                catch { }
+
+                pending = TW_PENDINGXFERS.DONTCARE();
+                var sts = _twain.WrapInSTS(DGControl.PendingXfers.EndXfer(_twain.AppIdentity, _twain.CurrentSource!, ref pending));
+                if (sts.RC == TWRC.SUCCESS)
+                {
+                    _twain.State = pending.Count == 0 ? STATE.S5 : STATE.S6;
+                }
+                return sts;
+            }
+        }
+        finally
+        {
+            if (memPtr != IntPtr.Zero) _twain.MemoryManager.Free(memPtr);
+            if (outputBuff != null) BufferedData.MemPool.Return(outputBuff);
+            BufferedData.MemPool.Return(stripBuff);
+        }
+
         return _twain.WrapInSTS(rc);
     }
 
