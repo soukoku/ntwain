@@ -9,11 +9,11 @@
 
     <!--even more unlikely to change-->
     <FileVersion>$(VersionPrefix)</FileVersion>
-    <PackageProjectUrl>https://github.com/soukoku/ntwain5</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/soukoku/ntwain</PackageProjectUrl>
     <PackageTags>twain scan</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Scanner-Icon.png</PackageIcon>
-    <RepositoryUrl>https://github.com/soukoku/ntwain5</RepositoryUrl>
+    <RepositoryUrl>https://github.com/soukoku/ntwain</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Copyright>Eugene Wang 2012-2026</Copyright>
