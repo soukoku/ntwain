@@ -77,7 +77,7 @@ public class BufferedData : IDisposable
 
     public void Dispose()
     {
-        if (_fromPool && _disposed)
+        if (_fromPool && !_disposed)
         {
             MemPool.Return(_buffer);
             _disposed = true;

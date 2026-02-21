@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<PlatformTarget>x86</PlatformTarget>
+		<Platforms>x86;x64</Platforms>
 		<ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
 		<ApplicationVisualStyles>true</ApplicationVisualStyles>
 	</PropertyGroup>

@@ -66,7 +66,7 @@ partial class TwainAppSession
     internal void RaiseTransferred(TransferredEventArgs args)
     {
         // no wait here, app can handle at its leisure
-        RaiseEvent(Transferred, args);
+        RaiseEvent(Transferred, args, static e => e.Dispose());
     }
 
 
@@ -139,17 +139,24 @@ partial class TwainAppSession
     /// <typeparam name="TEventArgs">The type of event arguments.</typeparam>
     /// <param name="eventHandler">The event handler to invoke.</param>
     /// <param name="eventArgs">The event arguments.</param>
-    protected void RaiseEvent<TEventArgs>(EventHandler<TwainAppSession, TEventArgs>? eventHandler, TEventArgs eventArgs)
+    /// <param name="completeCallback"></param>
+    protected void RaiseEvent<TEventArgs>(EventHandler<TwainAppSession, TEventArgs>? eventHandler, TEventArgs eventArgs,
+        Action<TEventArgs>? completeCallback = null)
     {
         if (eventHandler == null) return;
 
         if (AppThreadContext != null)
         {
-            AppThreadContext.Post(_ => eventHandler(this, eventArgs), null);
+            AppThreadContext.Post(_ =>
+            {
+                eventHandler(this, eventArgs);
+                completeCallback?.Invoke(eventArgs);
+            }, null);
         }
         else
         {
             eventHandler(this, eventArgs);
+            completeCallback?.Invoke(eventArgs);
         }
     }
 

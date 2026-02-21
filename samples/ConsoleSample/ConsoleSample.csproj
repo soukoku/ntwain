@@ -13,7 +13,7 @@
 		<ProjectReference Include="..\..\src\NTwain\NTwain.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.10.1" />
+		<PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.10.2" />
 	</ItemGroup>
 
 

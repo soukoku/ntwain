@@ -110,10 +110,6 @@ public sealed partial class MainWindow : Window
             }
         }
         catch { }
-        finally
-        {
-            e.Dispose();
-        }
     }
 
     private void Session_SourceDisabled(TwainAppSession sender, TWIdentityWrapper e)

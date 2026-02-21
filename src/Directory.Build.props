@@ -2,18 +2,18 @@
   <PropertyGroup>
     <!--change these in each release-->
     <VersionPrefix>4.0.0.0</VersionPrefix>
-    <VersionSuffix>beta.1</VersionSuffix>
+    <VersionSuffix>beta.4</VersionSuffix>
     
     <!--keep it the same until major # changes-->
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
 
     <!--even more unlikely to change-->
     <FileVersion>$(VersionPrefix)</FileVersion>
-    <PackageProjectUrl>https://github.com/soukoku/ntwain5</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/soukoku/ntwain</PackageProjectUrl>
     <PackageTags>twain scan</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Scanner-Icon.png</PackageIcon>
-    <RepositoryUrl>https://github.com/soukoku/ntwain5</RepositoryUrl>
+    <RepositoryUrl>https://github.com/soukoku/ntwain</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Copyright>Eugene Wang 2012-2026</Copyright>

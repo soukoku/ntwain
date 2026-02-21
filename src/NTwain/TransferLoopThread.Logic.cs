@@ -224,10 +224,7 @@ partial class TransferLoopThread
                         var args = new TransferredEventArgs(info, data);
                         _twain.RaiseTransferred(args);
                     }
-                    catch
-                    {
-                        data.Dispose();
-                    }
+                    catch { }
                 }
             }
 
@@ -241,7 +238,7 @@ partial class TransferLoopThread
         }
         finally
         {
-            if (lockedPtr != IntPtr.Zero) _twain.MemoryManager.Unlock(lockedPtr);
+            if (lockedPtr != IntPtr.Zero) _twain.MemoryManager.Unlock(dataPtr);
             if (dataPtr != IntPtr.Zero) _twain.MemoryManager.Free(dataPtr);
         }
     }
@@ -314,10 +311,7 @@ partial class TransferLoopThread
                         var args = new TransferredEventArgs(_twain, info, null, data);
                         _twain.RaiseTransferred(args);
                     }
-                    catch
-                    {
-                        data.Dispose();
-                    }
+                    catch { }
                 }
 
 
@@ -332,7 +326,7 @@ partial class TransferLoopThread
         }
         finally
         {
-            if (lockedPtr != IntPtr.Zero) _twain.MemoryManager.Unlock(lockedPtr);
+            if (lockedPtr != IntPtr.Zero) _twain.MemoryManager.Unlock(dataPtr);
             if (dataPtr != IntPtr.Zero) _twain.MemoryManager.Free(dataPtr);
         }
     }
@@ -382,7 +376,14 @@ partial class TransferLoopThread
             }
             else
             {
-                Debugger.Break();
+                if (Debugger.IsAttached) Debugger.Break();
+
+                _twain.Logger.LogWarning(
+                    "TransferFileImage failed unexpectedly: RC={RC}, CC={CC}",
+                    sts.RC, sts.ConditionCode);
+
+                // Or raise error event for user to handle
+                _twain.RaiseTransferError(new TransferErrorEventArgs(sts, "TransferFileImage"));
             }
         }
         return sts;

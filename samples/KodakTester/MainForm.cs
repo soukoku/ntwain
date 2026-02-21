@@ -98,7 +98,6 @@ public partial class MainForm : Form
             var path = info.FileName.ToString();
             LogIt($"Received {e.ImageInfo.PixelType} {info.Format} in {e.ImageInfo.Compression} compressed file {path}");
         }
-        e.Dispose();
         LogIt("");
     }
 
