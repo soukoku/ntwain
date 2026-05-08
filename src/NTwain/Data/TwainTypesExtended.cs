@@ -758,8 +758,7 @@ namespace NTwain.Data
                 case ItemType.String255:
                 case ItemType.String32:
                 case ItemType.String64:
-
-                    _hContainer = memoryManager.Allocate((uint)(Marshal.SizeOf(typeof(TWFrame)) + 2));
+                    _hContainer = memoryManager.Allocate((uint)(TypeExtensions.GetItemTypeSize(type) + 2));
                     if (_hContainer != IntPtr.Zero)
                     {
                         IntPtr baseAddr = memoryManager.Lock(_hContainer);
