@@ -110,7 +110,7 @@ namespace NTwain.Internals
                             }
                         }
 
-                        if (rc != ReturnCode.Success && session.StopOnTransferError)
+                        if (rc != ReturnCode.XferDone && session.StopOnTransferError)
                         {
                             // end xfer without setting rc to exit (good/bad?)
                             session.DGControl.PendingXfers.Reset(pending);
